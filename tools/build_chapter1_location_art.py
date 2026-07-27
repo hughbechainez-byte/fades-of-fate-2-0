@@ -191,6 +191,7 @@ def _alpha_rect(
     overlay.fill(color)
     surface.blit(overlay, (int(rect[0]), int(rect[1])))
 
+
 def _layer_asset_path(route: Mapping[str, Any], layer: str) -> Path:
     route_value = str(route.get(f"{layer}_asset", "")).strip()
     if route_value:
@@ -298,7 +299,11 @@ def _draw_structural_handoff(
         )
 
 
-def _panel_panorama(route: Mapping[str, Any]) -> pygame.Surface:
+def _build_panorama_layers(route: Mapping[str, Any]) -> tuple[
+    pygame.Surface,
+    pygame.Surface,
+    pygame.Surface,
+]:
     theme = str(route["theme"])
     width = int(route["world_width"])
     specs = PANEL_SPECS.get(theme)
@@ -415,35 +420,6 @@ def _build_layered_assets(route: Mapping[str, Any]) -> dict[str, pygame.Surface]
     _copy_band(main, layers["ground"], ground_row, height)
     _copy_band(near, layers["near_occluder"], near_min, height)
     return layers
-
-
-def _build_panorama_layers(route: Mapping[str, Any]) -> tuple[
-    pygame.Surface,
-    pygame.Surface,
-    pygame.Surface,
-]:
-    theme = str(route["theme"])
-    width = int(route["world_width"])
-    specs = PANEL_SPECS.get(theme)
-    if specs is None:
-        raise ValueError(f"unsupported Chapter 1 route theme: {theme}")
-    if sum(spec.width for spec in specs) != width:
-        raise ValueError(f"{theme} panel widths do not sum to route width {width}")
-    panorama = pygame.Surface((width, HEIGHT)).convert()
-    cursor = 0
-    seams: list[int] = []
-    for index, spec in enumerate(specs):
-        panorama.blit(_load_panel(spec), (cursor, 0))
-        cursor += spec.width
-        if index + 1 < len(specs):
-            seams.append(cursor)
-    accent = ROUTE_ACCENTS[theme]
-    _alpha_rect(panorama, (*accent, 10), (0, 0, width, HEIGHT))
-    _alpha_rect(panorama, (18, 20, 24, 18), (0, 286, width, HEIGHT - 286))
-    for seam_index, seam in enumerate(seams):
-        _draw_structural_handoff(panorama, seam, accent, seam_index)
-
-    return panorama
 
 
 def _build_route(route: Mapping[str, Any]) -> tuple[pygame.Surface, pygame.Surface, pygame.Surface]:

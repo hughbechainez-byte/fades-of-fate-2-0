@@ -63,21 +63,21 @@ class ChapterOneArtGeneratorTests(unittest.TestCase):
 
     def test_layer_artifacts_are_true_alpha_surfaces(self) -> None:
         for route in self.manifest["routes"]:
-            main = art._build_layered_assets(route)
+            layers = art._build_layered_assets(route)
             with self.subTest(theme=route["theme"]):
                 expected_size = (route["world_width"], art.HEIGHT)
-                for layer_name, layer in main.items():
+                for layer_name, layer in layers.items():
                     self.assertEqual(layer.get_size(), expected_size)
                     self.assertEqual(layer.get_flags() & pygame.SRCALPHA, pygame.SRCALPHA)
-                self.assertEqual(main["haze"].get_size(), expected_size)
-                self.assertEqual(main["ground"].get_size(), expected_size)
+                self.assertEqual(layers["haze"].get_size(), expected_size)
+                self.assertEqual(layers["ground"].get_size(), expected_size)
                 ground_row = int(route["ground_opaque_from_y"])
                 self.assertLess(ground_row, art.HEIGHT)
                 world_width = int(route["world_width"])
                 sampled_x = range(0, world_width, 80)
-                ground_alpha = [main["ground"].get_at((x, ground_row))[3] for x in sampled_x]
+                ground_alpha = [layers["ground"].get_at((x, ground_row))[3] for x in sampled_x]
                 haze_alpha = [
-                    main["haze"].get_at((x, max(0, ground_row - 8)))[3] for x in sampled_x
+                    layers["haze"].get_at((x, max(0, ground_row - 8)))[3] for x in sampled_x
                 ]
                 self.assertIn(255, ground_alpha)
                 architecture_rows = [
@@ -87,7 +87,7 @@ class ChapterOneArtGeneratorTests(unittest.TestCase):
                 ]
                 self.assertTrue(
                     any(
-                        any(main["architecture"].get_at((x, row))[3] > 0 for x in sampled_x)
+                        any(layers["architecture"].get_at((x, row))[3] > 0 for x in sampled_x)
                         for row in architecture_rows
                     )
                 )
