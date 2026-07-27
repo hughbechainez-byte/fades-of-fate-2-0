@@ -1,0 +1,788 @@
+{
+  "schema_version": 1,
+  "chapter": {
+    "id": "chapter_1",
+    "title": "Chapter 1 - Northbound Second Street",
+    "direction": "northbound",
+    "playable_side": "west_even_address_side",
+    "tone": "sunset parking-lot odyssey with escalating freeway shadow and a comic BMX finale"
+  },
+  "player_count_scaling": {
+    "1": {
+      "max_live_enemies": 5,
+      "enemy_health_multiplier": 1.0,
+      "enemy_damage_multiplier": 1.0,
+      "reward_multiplier": 1.0
+    },
+    "2": {
+      "max_live_enemies": 6,
+      "enemy_health_multiplier": 1.1,
+      "enemy_damage_multiplier": 1.05,
+      "reward_multiplier": 1.12
+    },
+    "3": {
+      "max_live_enemies": 7,
+      "enemy_health_multiplier": 1.18,
+      "enemy_damage_multiplier": 1.1,
+      "reward_multiplier": 1.24
+    },
+    "4": {
+      "max_live_enemies": 8,
+      "enemy_health_multiplier": 1.25,
+      "enemy_damage_multiplier": 1.15,
+      "reward_multiplier": 1.36
+    }
+  },
+  "enemy_variants": [
+    {
+      "id": "road_raider_stick",
+      "runtime_kind": "stick",
+      "fictional_role": "road-raider harasser",
+      "behavior_note": "circles the group and attacks after a readable feint"
+    },
+    {
+      "id": "road_raider_cart",
+      "runtime_kind": "cart",
+      "fictional_role": "road-raider rusher",
+      "behavior_note": "telegraphs a lane charge and can be redirected into set dressing"
+    },
+    {
+      "id": "road_raider_pipe",
+      "runtime_kind": "pipe",
+      "fictional_role": "road-raider bruiser",
+      "behavior_note": "holds space near a landmark while lighter allies flank"
+    },
+    {
+      "id": "road_raider_whip",
+      "runtime_kind": "whip",
+      "fictional_role": "road-raider reach specialist",
+      "behavior_note": "uses a long but clearly telegraphed lane strike"
+    },
+    {
+      "id": "freeway_scout",
+      "runtime_kind": "stick",
+      "fictional_role": "fictional freeway scout",
+      "behavior_note": "appears from ramp shadows and calls a short ambush cue"
+    },
+    {
+      "id": "alley_rusher",
+      "runtime_kind": "cart",
+      "fictional_role": "fictional alley rusher",
+      "behavior_note": "uses a blocked lane only after a warning marker appears"
+    },
+    {
+      "id": "parking_security",
+      "runtime_kind": "security",
+      "fictional_role": "uniformed parking security",
+      "behavior_note": "uses badge, flashlight, radio bark, and safe spacing"
+    },
+    {
+      "id": "couch",
+      "runtime_kind": "couch",
+      "fictional_role": "Couch boss",
+      "behavior_note": "owns the Awaken front lot, BMX retreats, and crew calls"
+    }
+  ],
+  "levels": [
+    {
+      "number": 1,
+      "runtime_level_id": "chapter_1_level_1",
+      "route": {
+        "start_anchor_id": "sprouts_parking_lot",
+        "end_anchor_id": "el_cilantro_madison",
+        "start": "Sprouts Parking Lot",
+        "end": "El Cilantro at Madison",
+        "stops": [
+          "Sprouts Parking Lot",
+          "Cart Return",
+          "Wells Drive",
+          "Walmart Neighborhood Market",
+          "Town & Country Strip",
+          "Madison Avenue",
+          "El Cilantro at Madison"
+        ]
+      },
+      "establishing_shot": {
+        "id": "sprouts_deep_lot_establishing",
+        "camera_note": "Begin deep in the setback with parked-car rows, palms, cart corral, green storefront massing, and the distant northbound road.",
+        "input_gate_seconds": 1.2
+      },
+      "major_fights": [
+        {
+          "id": "sprouts_cart_return_onboarding",
+          "title": "Cart Return Basics",
+          "runtime_hook": "Sprouts Parking Lot",
+          "normal_duration_seconds": 145,
+          "experienced_duration_seconds": 92,
+          "tutorial_focus": ["move", "light_combo", "throw_cart"],
+          "spawn_groups": [
+            {
+              "id": "cart_return_gradual_arrivals",
+              "variants": ["road_raider_stick", "road_raider_stick", "road_raider_cart"],
+              "player_count_additions": {
+                "2": ["road_raider_stick"],
+                "3": ["road_raider_stick", "road_raider_cart"],
+                "4": ["road_raider_stick", "road_raider_cart", "road_raider_pipe"]
+              }
+            }
+          ],
+          "completion_note": "Unlocks the cart interaction prompt after the first clean hit, without a full-screen tutorial panel."
+        },
+        {
+          "id": "town_country_alarm_escalation",
+          "title": "Town & Country Alarm",
+          "runtime_hook": "Town & Country",
+          "normal_duration_seconds": 190,
+          "experienced_duration_seconds": 122,
+          "spawn_groups": [
+            {
+              "id": "storefront_raiders",
+              "variants": ["road_raider_stick", "road_raider_whip", "road_raider_cart", "road_raider_pipe"],
+              "player_count_additions": {
+                "2": ["road_raider_stick"],
+                "3": ["road_raider_cart", "road_raider_whip"],
+                "4": ["road_raider_cart", "road_raider_pipe", "road_raider_whip"]
+              }
+            },
+            {
+              "id": "alarm_security_arrival",
+              "variants": ["parking_security"],
+              "player_count_additions": {
+                "3": ["parking_security"],
+                "4": ["parking_security"]
+              }
+            }
+          ],
+          "completion_note": "A car alarm, pulsing hazard lights, and a rolling delivery van change the arena read before the final wave."
+        },
+        {
+          "id": "el_cilantro_corner_climax",
+          "title": "El Cilantro Corner",
+          "runtime_hook": "El Cilantro at Madison",
+          "normal_duration_seconds": 210,
+          "experienced_duration_seconds": 135,
+          "spawn_groups": [
+            {
+              "id": "madison_corner_crew",
+              "variants": ["road_raider_cart", "road_raider_stick", "road_raider_whip", "road_raider_pipe"],
+              "player_count_additions": {
+                "2": ["road_raider_stick"],
+                "3": ["road_raider_cart", "road_raider_whip"],
+                "4": ["road_raider_pipe", "road_raider_cart", "road_raider_whip"]
+              }
+            },
+            {
+              "id": "corner_flashlight_detail",
+              "variants": ["parking_security"],
+              "player_count_additions": {
+                "2": ["parking_security"],
+                "4": ["parking_security"]
+              }
+            }
+          ],
+          "completion_note": "The corner locks only long enough for a meaningful route climax, then opens to the Jerry story beat."
+        }
+      ],
+      "ambush_or_optional": [
+        {
+          "id": "wells_service_alley",
+          "title": "Wells Service Alley",
+          "runtime_hook": "Wells Drive optional branch",
+          "branch_type": "optional_storefront_alley",
+          "reward": "BB tin or Super Butane cache plus score multiplier",
+          "risk": "narrow exit, alley rusher, and a time-costing side fight",
+          "normal_duration_seconds": 65,
+          "experienced_duration_seconds": 38,
+          "spawn_groups": [
+            {
+              "id": "alley_pickup_guard",
+              "variants": ["alley_rusher", "road_raider_stick"],
+              "player_count_additions": {
+                "3": ["road_raider_whip"],
+                "4": ["road_raider_cart"]
+              }
+            }
+          ]
+        }
+      ],
+      "environmental_events": [
+        {
+          "id": "cart_return_throwable",
+          "description": "A marked cart can be pushed, thrown, or used as lane cover, and returns safely after the encounter."
+        },
+        {
+          "id": "town_country_alarm",
+          "description": "An alarm, vehicle hazard lights, and a slow delivery-van pass make the middle fight escalate without blocking the route."
+        }
+      ],
+      "story_beats": [
+        {
+          "id": "jerry_fresh_edge",
+          "description": "Jerry gets a staged, skippable edge-of-screen arrival at El Cilantro and points the party toward the 7-Eleven clue."
+        }
+      ],
+      "landmark_set_pieces": [
+        {
+          "id": "madison_corner_turn",
+          "description": "Madison traffic, corner curb geometry, Goodwill massing, and the El Cilantro facade create a real level ending rather than a repeated storefront."
+        }
+      ],
+      "traversal_gaps": [
+        {
+          "id": "madison_driveway_weave",
+          "description": "A driveway and temporary vehicle lane require a short depth weave with clear ground markers and no dead-end collision."
+        }
+      ],
+      "ending": {
+        "id": "jerry_to_seven_eleven",
+        "visual": "El Cilantro corner settles into a warm store-light silhouette while the party faces north.",
+        "narrative": "Jerry's clue turns the next destination into a visible 7-Eleven lead."
+      },
+      "checkpoints": ["level_start", "cart_return_clear", "town_country_clear", "el_cilantro_clear"]
+    },
+    {
+      "number": 2,
+      "runtime_level_id": "chapter_1_level_2",
+      "route": {
+        "start_anchor_id": "seven_eleven",
+        "end_anchor_id": "i8_underpass",
+        "start": "7-Eleven",
+        "end": "I-8 Underpass",
+        "stops": [
+          "7-Eleven",
+          "Fuel Islands",
+          "Carl's Jr. Edge",
+          "Madison Plaza",
+          "Recessed Storefront Threshold",
+          "Union Shell",
+          "Valvoline Bays",
+          "I-8 Underpass"
+        ]
+      },
+      "establishing_shot": {
+        "id": "seven_eleven_clue_establishing",
+        "camera_note": "Frame the 7-Eleven facade, forecourt canopy, clue marker, and far-side traffic before the player gets control.",
+        "input_gate_seconds": 1.0
+      },
+      "major_fights": [
+        {
+          "id": "seven_eleven_forecourt",
+          "title": "Forecourt Fuel Islands",
+          "runtime_hook": "7-Eleven Pad",
+          "normal_duration_seconds": 180,
+          "experienced_duration_seconds": 112,
+          "spawn_groups": [
+            {
+              "id": "forecourt_lurkers",
+              "variants": ["road_raider_stick", "road_raider_cart", "road_raider_whip"],
+              "player_count_additions": {
+                "2": ["road_raider_stick"],
+                "3": ["road_raider_cart", "road_raider_pipe"],
+                "4": ["road_raider_whip", "road_raider_cart", "road_raider_pipe"]
+              }
+            }
+          ],
+          "completion_note": "Fuel-island bollards create readable cover; no explosive hazard can soft-lock the walk lane."
+        },
+        {
+          "id": "madison_plaza_layers",
+          "title": "Madison Plaza Layers",
+          "runtime_hook": "Madison Plaza",
+          "normal_duration_seconds": 205,
+          "experienced_duration_seconds": 132,
+          "spawn_groups": [
+            {
+              "id": "plaza_tiered_arrivals",
+              "variants": ["road_raider_stick", "road_raider_whip", "road_raider_cart", "road_raider_pipe"],
+              "player_count_additions": {
+                "2": ["road_raider_stick"],
+                "3": ["road_raider_whip", "road_raider_cart"],
+                "4": ["road_raider_pipe", "road_raider_cart", "road_raider_whip"]
+              }
+            },
+            {
+              "id": "plaza_flashlight_response",
+              "variants": ["parking_security"],
+              "player_count_additions": {
+                "2": ["parking_security"],
+                "4": ["parking_security"]
+              }
+            }
+          ],
+          "completion_note": "Carl's Jr. depth layer, plaza storefront band, and distant road layer remain separate so the lot reads in 2.5D."
+        },
+        {
+          "id": "i8_ramp_shadow",
+          "title": "I-8 Ramp Shadow",
+          "runtime_hook": "I-8 Underpass",
+          "normal_duration_seconds": 225,
+          "experienced_duration_seconds": 145,
+          "spawn_groups": [
+            {
+              "id": "ramp_scout_escalation",
+              "variants": ["freeway_scout", "road_raider_cart", "road_raider_pipe", "road_raider_whip"],
+              "player_count_additions": {
+                "2": ["freeway_scout"],
+                "3": ["road_raider_cart", "road_raider_whip"],
+                "4": ["road_raider_pipe", "road_raider_cart", "road_raider_whip"]
+              }
+            }
+          ],
+          "completion_note": "The underpass ends with a tonal shift to concrete, water reflection, ramp noise, and a clean camera exit."
+        }
+      ],
+      "ambush_or_optional": [
+        {
+          "id": "madison_recessed_threshold",
+          "title": "Recessed Threshold Cache",
+          "runtime_hook": "Madison Plaza optional threshold",
+          "branch_type": "optional_parking_route",
+          "reward": "health snack, Chief command charge, and score bonus",
+          "risk": "a recessed storefront keeps the camera tighter while a whip specialist guards the return line",
+          "normal_duration_seconds": 70,
+          "experienced_duration_seconds": 42,
+          "spawn_groups": [
+            {
+              "id": "threshold_ambush",
+              "variants": ["road_raider_whip", "alley_rusher"],
+              "player_count_additions": {
+                "3": ["road_raider_stick"],
+                "4": ["road_raider_pipe"]
+              }
+            }
+          ]
+        }
+      ],
+      "environmental_events": [
+        {
+          "id": "fuel_island_spacing",
+          "description": "Fuel islands and bollards bend approach lines while preserving a visible safe route around every obstacle."
+        },
+        {
+          "id": "freeway_ramp_escalation",
+          "description": "Ramp traffic shadows, concrete pillars, and a passing headlight sweep increase pressure as the party enters I-8."
+        }
+      ],
+      "story_beats": [
+        {
+          "id": "seven_eleven_clue",
+          "description": "The party confirms Couch's trail at the 7-Eleven exterior before the forecourt fight begins."
+        }
+      ],
+      "landmark_set_pieces": [
+        {
+          "id": "i8_underpass_tonal_turn",
+          "description": "The playable route ends inside the underpass shadow with creek edge, retaining wall, columns, and roadway sound."
+        }
+      ],
+      "traversal_gaps": [
+        {
+          "id": "forecourt_to_ramp_weave",
+          "description": "Driveways, service bays, and a ramp merge create a short layered traversal segment with visible warning arrows."
+        }
+      ],
+      "ending": {
+        "id": "i8_to_showroom_travel",
+        "visual": "The camera pulls past the last I-8 column into a limited travel montage.",
+        "narrative": "The crew crosses the shadow toward the 690 showroom and fuel row before Soapy Joe's."
+      },
+      "checkpoints": ["level_start", "forecourt_clear", "plaza_clear", "underpass_clear"]
+    },
+    {
+      "number": 3,
+      "runtime_level_id": "chapter_1_level_3",
+      "route": {
+        "start_anchor_id": "soapy_joes",
+        "end_anchor_id": "revive_pathway",
+        "start": "Soapy Joe's",
+        "end": "Revive Pathway",
+        "stops": [
+          "Soapy Joe's",
+          "Vacuum Canopy",
+          "Starbucks Drive-Through",
+          "Marechiaro",
+          "Carl's Boot & Leather",
+          "CVS Broadway Corner",
+          "Broadway Turn",
+          "Revive Pathway"
+        ]
+      },
+      "establishing_shot": {
+        "id": "soapy_joes_canopy_establishing",
+        "camera_note": "Open on the white wash structure, vivid blue roof band, palms, wet pavement, and repeating vacuum arches.",
+        "input_gate_seconds": 1.1
+      },
+      "major_fights": [
+        {
+          "id": "soapy_joes_front_lot",
+          "title": "Soapy Joe's Front Lot",
+          "runtime_hook": "Soapy Joe's Front Lot",
+          "normal_duration_seconds": 205,
+          "experienced_duration_seconds": 130,
+          "spawn_groups": [
+            {
+              "id": "wash_lane_raiders",
+              "variants": ["road_raider_stick", "road_raider_cart", "road_raider_pipe", "road_raider_whip"],
+              "player_count_additions": {
+                "2": ["road_raider_stick"],
+                "3": ["road_raider_cart", "road_raider_whip"],
+                "4": ["road_raider_pipe", "road_raider_cart", "road_raider_whip"]
+              }
+            }
+          ],
+          "completion_note": "Wash foam, wet reflections, and moving canopy lights remain visual dressing with collision-safe boundaries."
+        },
+        {
+          "id": "broadway_turn_pressure",
+          "title": "Broadway Turn Pressure",
+          "runtime_hook": "Broadway Turn",
+          "normal_duration_seconds": 235,
+          "experienced_duration_seconds": 150,
+          "spawn_groups": [
+            {
+              "id": "turning_corner_crew",
+              "variants": ["road_raider_cart", "road_raider_stick", "road_raider_whip", "road_raider_pipe"],
+              "player_count_additions": {
+                "2": ["road_raider_whip"],
+                "3": ["road_raider_cart", "road_raider_pipe"],
+                "4": ["road_raider_cart", "road_raider_pipe", "road_raider_whip"]
+              }
+            },
+            {
+              "id": "broadway_flashlight_detail",
+              "variants": ["parking_security"],
+              "player_count_additions": {
+                "3": ["parking_security"],
+                "4": ["parking_security"]
+              }
+            }
+          ],
+          "completion_note": "The major fight turns the camera with the intersection, so Broadway feels like a route change rather than a backdrop swap."
+        },
+        {
+          "id": "revive_pathway_final_push",
+          "title": "Revive Pathway Final Push",
+          "runtime_hook": "Revive Approach",
+          "normal_duration_seconds": 260,
+          "experienced_duration_seconds": 172,
+          "spawn_groups": [
+            {
+              "id": "revive_approach_crew",
+              "variants": ["road_raider_stick", "road_raider_whip", "road_raider_cart", "road_raider_pipe"],
+              "player_count_additions": {
+                "2": ["road_raider_stick"],
+                "3": ["road_raider_whip", "road_raider_cart"],
+                "4": ["road_raider_pipe", "road_raider_cart", "road_raider_whip"]
+              }
+            }
+          ],
+          "completion_note": "The cleared pathway points to Awaken with an explicit route card instead of an unexplained mission jump."
+        }
+      ],
+      "ambush_or_optional": [
+        {
+          "id": "boot_shop_loading_bay",
+          "title": "Boot Shop Loading Bay",
+          "runtime_hook": "Boot & Leather optional bay",
+          "branch_type": "optional_storefront_alley",
+          "reward": "temporary score multiplier, weapon pickup, and a revive snack",
+          "risk": "a short side arena with a bruiser and limited dodge space",
+          "normal_duration_seconds": 78,
+          "experienced_duration_seconds": 48,
+          "spawn_groups": [
+            {
+              "id": "loading_bay_guard",
+              "variants": ["road_raider_pipe", "road_raider_stick"],
+              "player_count_additions": {
+                "2": ["road_raider_whip"],
+                "4": ["road_raider_cart"]
+              }
+            }
+          ]
+        }
+      ],
+      "environmental_events": [
+        {
+          "id": "wash_reflection_runoff",
+          "description": "Reflective runoff, canopy light sweeps, and soap foam add motion without creating hidden hazards or muddy collision."
+        },
+        {
+          "id": "broadway_signal_change",
+          "description": "A traffic-signal cycle and passing vehicle light turn the CVS corner into a readable directional change."
+        }
+      ],
+      "story_beats": [
+        {
+          "id": "revive_route_confirmation",
+          "description": "A final clue at Revive reframes the Awaken lot as Couch's chosen stage and prepares the BMX reveal."
+        }
+      ],
+      "landmark_set_pieces": [
+        {
+          "id": "broadway_cvs_turn",
+          "description": "The CVS corner, street sign, receding Broadway storefronts, and Revive medical-office massing explain the lateral turn."
+        }
+      ],
+      "traversal_gaps": [
+        {
+          "id": "vacuum_canopy_to_broadway",
+          "description": "A drive-through lane, curb ramp, and crossing traffic create an authored pace break before the Broadway turn."
+        }
+      ],
+      "ending": {
+        "id": "revive_to_awaken",
+        "visual": "Revive signage falls behind as the route card tracks north-west toward the Awaken lot.",
+        "narrative": "The chapter turns personal: Couch is waiting by Dave's BMX."
+      },
+      "checkpoints": ["level_start", "wash_lot_clear", "broadway_turn_clear", "revive_clear"]
+    },
+    {
+      "number": 4,
+      "runtime_level_id": "chapter_1_level_4",
+      "route": {
+        "start_anchor_id": "awaken_church_lot",
+        "end_anchor_id": "daves_bmx",
+        "start": "Awaken Church",
+        "end": "Dave's BMX",
+        "stops": ["Awaken Church", "Awaken Front Lot", "Couch Showdown", "Dave's BMX"]
+      },
+      "establishing_shot": {
+        "id": "awaken_lot_bmx_establishing",
+        "camera_note": "Reveal the Awaken facade, lit front lot, Couch's silhouette, and Dave's BMX at x=1080 before the confrontation closes in.",
+        "input_gate_seconds": 1.4
+      },
+      "major_fights": [
+        {
+          "id": "awaken_arrival_scouts",
+          "title": "Awaken Arrival Scouts",
+          "runtime_hook": "Awaken South Lot",
+          "normal_duration_seconds": 130,
+          "experienced_duration_seconds": 80,
+          "spawn_groups": [
+            {
+              "id": "arrival_raiders",
+              "variants": ["road_raider_stick", "road_raider_cart", "road_raider_whip"],
+              "player_count_additions": {
+                "2": ["road_raider_stick"],
+                "3": ["road_raider_cart", "road_raider_pipe"],
+                "4": ["road_raider_whip", "road_raider_cart", "road_raider_pipe"]
+              }
+            }
+          ],
+          "completion_note": "The group clears enough space for the Awaken facade and BMX story prop to become readable."
+        },
+        {
+          "id": "awaken_lot_intercept",
+          "title": "Awaken Lot Intercept",
+          "runtime_hook": "Awaken front-lot pre-boss hook",
+          "normal_duration_seconds": 165,
+          "experienced_duration_seconds": 102,
+          "spawn_groups": [
+            {
+              "id": "front_lot_intercept",
+              "variants": ["road_raider_cart", "road_raider_stick", "road_raider_pipe"],
+              "player_count_additions": {
+                "2": ["road_raider_whip"],
+                "3": ["road_raider_cart", "road_raider_pipe"],
+                "4": ["road_raider_cart", "road_raider_pipe", "road_raider_whip"]
+              }
+            }
+          ],
+          "completion_note": "Couch watches from the BMX line and does not become damageable until the lot intercept is cleared."
+        },
+        {
+          "id": "couch_three_phase_showdown",
+          "title": "Couch at Awaken",
+          "runtime_hook": "Couch at Awaken",
+          "normal_duration_seconds": 310,
+          "experienced_duration_seconds": 205,
+          "spawn_groups": [
+            {
+              "id": "couch_opening",
+              "variants": ["couch"],
+              "player_count_additions": {}
+            }
+          ],
+          "completion_note": "Couch's two BMX retreats force crew clears before the final damage window; neither retreat can skip the next phase."
+        }
+      ],
+      "ambush_or_optional": [
+        {
+          "id": "bmx_lockup_cache",
+          "title": "BMX Lockup Cache",
+          "runtime_hook": "Awaken side-lot optional cache",
+          "branch_type": "optional_side_lot",
+          "reward": "Chief meter refill and a life-saving snack before the boss lock",
+          "risk": "a short side-lot ambush can drain health before Couch begins",
+          "normal_duration_seconds": 55,
+          "experienced_duration_seconds": 32,
+          "spawn_groups": [
+            {
+              "id": "side_lot_watchers",
+              "variants": ["freeway_scout", "road_raider_whip"],
+              "player_count_additions": {
+                "3": ["road_raider_cart"],
+                "4": ["road_raider_pipe"]
+              }
+            }
+          ]
+        }
+      ],
+      "environmental_events": [
+        {
+          "id": "awaken_floodlight_sweep",
+          "description": "A floodlight sweep, gate rattle, and parked-bike shine make the confrontation feel staged without hiding player silhouettes."
+        },
+        {
+          "id": "bmx_retreat_path",
+          "description": "Couch's jump arc travels to the actual BMX refuge marker, preserving collision and showing why she is temporarily unreachable."
+        }
+      ],
+      "story_beats": [
+        {
+          "id": "couch_confrontation",
+          "description": "Couch identifies the BMX, mocks the party, and escalates through two crew bargains before the final defeat."
+        }
+      ],
+      "landmark_set_pieces": [
+        {
+          "id": "awaken_bmx_finale",
+          "description": "The church facade, front-lot median, single BMX marker, and sunset end strip carry the finale's geography."
+        }
+      ],
+      "traversal_gaps": [
+        {
+          "id": "front_lot_median_weave",
+          "description": "Players move around the front-lot median before the boss lock; it is a readable depth-navigation moment, not a permanent block."
+        }
+      ],
+      "ending": {
+        "id": "bmx_sunset_celebration",
+        "visual": "The crew reunites beside Dave's BMX under a sunset lot silhouette before the results screen.",
+        "narrative": "The Chapter 1 victory beat resolves the chase while leaving the road open for the next route."
+      },
+      "checkpoints": ["level_start", "arrival_scouts_clear", "front_lot_clear", "couch_phase_two", "couch_complete"]
+    }
+  ],
+  "inter_level_travel": [
+    {
+      "from_level_id": "chapter_1_level_1",
+      "to_level_id": "chapter_1_level_2",
+      "heading": "EL CILANTRO TO 7-ELEVEN",
+      "beats": [
+        "Jerry's clue holds on the northbound road arrow.",
+        "A short moving panorama carries the party past Madison without a silent teleport."
+      ]
+    },
+    {
+      "from_level_id": "chapter_1_level_2",
+      "to_level_id": "chapter_1_level_3",
+      "heading": "I-8 TO SOAPY JOE'S",
+      "beats": [
+        "The party crosses the I-8 shadow past the 690 showroom shell.",
+        "The fuel corridor and smog row pass in a non-combat moving montage before Soapy Joe's appears."
+      ]
+    },
+    {
+      "from_level_id": "chapter_1_level_3",
+      "to_level_id": "chapter_1_level_4",
+      "heading": "REVIVE TO AWAKEN",
+      "beats": [
+        "Broadway street signs and the route turn point toward the Awaken lot.",
+        "The final approach lets the BMX and facade appear before Couch gets her opening line."
+      ]
+    }
+  ],
+  "pacing": {
+    "targets": {
+      "normal_minutes": [45, 60],
+      "experienced_minutes": [30, 40],
+      "minimum_minutes": 35,
+      "normal_travel_dialogue_minutes": [4, 7],
+      "level_target_minutes": {
+        "chapter_1_level_1": [10, 13],
+        "chapter_1_level_2": [10, 13],
+        "chapter_1_level_3": [12, 15],
+        "chapter_1_level_4": [10, 15]
+      }
+    },
+    "profiles": {
+      "normal": {
+        "level_minutes": {
+          "chapter_1_level_1": 11.25,
+          "chapter_1_level_2": 11.5,
+          "chapter_1_level_3": 13.25,
+          "chapter_1_level_4": 11.75
+        },
+        "travel_dialogue_minutes": 5.25
+      },
+      "experienced": {
+        "level_minutes": {
+          "chapter_1_level_1": 7.6,
+          "chapter_1_level_2": 7.8,
+          "chapter_1_level_3": 9.2,
+          "chapter_1_level_4": 8.6
+        },
+        "travel_dialogue_minutes": 3.4
+      },
+      "minimum": {
+        "level_minutes": {
+          "chapter_1_level_1": 7.0,
+          "chapter_1_level_2": 7.3,
+          "chapter_1_level_3": 8.5,
+          "chapter_1_level_4": 8.2
+        },
+        "travel_dialogue_minutes": 4.0
+      }
+    }
+  },
+  "couch_boss_contract": {
+    "runtime_level_id": "chapter_1_level_4",
+    "boss_variant": "couch",
+    "bike_refuge": {
+      "landmark_id": "daves_bmx",
+      "x": 1080,
+      "jump_height": 58,
+      "returns_to_front_lot_after_clear": true
+    },
+    "phases": [
+      {
+        "id": "front_lot_engage",
+        "starts_at_health_ratio": 1.0,
+        "objective": "Fight Couch in the front lot until the first health gate; Couch remains targetable."
+      },
+      {
+        "id": "bmx_bargain_one",
+        "starts_at_health_ratio": 0.67,
+        "objective": "Clear Couch's first fictional road-raider crew, then bring her back from the BMX to resume the fight.",
+        "retreat": {
+          "destination": "daves_bmx",
+          "taunt": "I'LL GIVE YOU DOPE IF YOU BEAT THEM UP!",
+          "reinforcement_variants": ["road_raider_stick", "road_raider_pipe"],
+          "player_count_additions": {
+            "2": ["road_raider_cart"],
+            "3": ["road_raider_cart", "road_raider_whip"],
+            "4": ["road_raider_cart", "road_raider_whip", "road_raider_pipe"]
+          },
+          "returns_targetable_after_clear": true
+        }
+      },
+      {
+        "id": "bmx_bargain_two_finish",
+        "starts_at_health_ratio": 0.34,
+        "objective": "Clear a larger second fictional road-raider crew, then finish Couch after she returns from the BMX.",
+        "retreat": {
+          "destination": "daves_bmx",
+          "taunt": "I'LL GIVE YOU DOPE IF YOU BEAT THEM UP!",
+          "reinforcement_variants": ["road_raider_stick", "road_raider_whip", "road_raider_cart"],
+          "player_count_additions": {
+            "2": ["road_raider_pipe"],
+            "3": ["road_raider_cart", "road_raider_pipe"],
+            "4": ["road_raider_cart", "road_raider_pipe", "road_raider_whip"]
+          },
+          "returns_targetable_after_clear": true
+        }
+      }
+    ]
+  }
+}

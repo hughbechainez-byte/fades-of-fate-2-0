@@ -1,0 +1,1066 @@
+﻿{
+    "meta":  {
+                 "title":  "The Fades of Fate",
+                 "stage":  "Second Street - Level 1",
+                 "level_id":  "chapter_1_level_1",
+                 "level_title":  "Sprouts to El Cilantro",
+                 "background_theme":  "sprouts_el_cilantro",
+                 "virtual_resolution":  [
+                                            640,
+                                            360
+                                        ],
+                 "fixed_hz":  60,
+                 "stage_width":  3200,
+                 "lane_top":  235,
+                 "lane_bottom":  326
+             },
+    "campaign":  {
+                     "active_level_id":  "chapter_1_level_1",
+                     "location_manifest":  "data/chapter1_location_lock.json",
+                     "chapters":  [
+                                      {
+                                          "id":  "chapter_1",
+                                          "title":  "Chapter 1 - Northbound Second Street",
+                                          "direction":  "northbound",
+                                          "route_side":  "west_even_address_side",
+                                          "levels":  [
+                                                         {
+                                                             "id":  "chapter_1_level_1",
+                                                             "number":  1,
+                                                             "title":  "Sprouts to El Cilantro",
+                                                             "status":  "playable",
+                                                             "chapter_finale":  false,
+                                                             "boss":  null,
+                                                             "boss_transition":  false,
+                                                             "outro":  "jerry_warning",
+                                                             "start":  {"id": "sprouts_parking_lot"},
+                                                             "end":  {"id": "el_cilantro_madison"},
+                                                             "landmark_ids":  [
+                                                                 "sprouts_parking_lot",
+                                                                 "wells_fargo_pad",
+                                                                 "walmart_neighborhood_market",
+                                                                 "town_country",
+                                                                 "goodwill_frontage",
+                                                                 "madison_intersection",
+                                                                 "el_cilantro_madison"
+                                                             ],
+                                                              "encounters":  [
+                                                                                  {"name": "Sprouts Parking Lot", "trigger_x": 430, "gate_x": 1010, "camera_x": 350, "base": ["stick", "cart", "stick", "pipe", "whip"]},
+                                                                                  {"name": "Town & Country", "trigger_x": 1370, "gate_x": 2050, "camera_x": 1300, "base": ["stick", "whip", "cart", "pipe", "stick", "cart"], "post_clear_reinforcements": [{"name": "Town & Country Security", "base": ["security"], "speech": "YOU GUYS CAN'T BE HERE!"}]},
+                                                                                  {"name": "El Cilantro at Madison", "trigger_x": 2460, "gate_x": 3130, "camera_x": 2420, "base": ["cart", "stick", "whip", "pipe", "stick", "cart", "pipe"], "post_clear_reinforcements": [{"name": "El Cilantro Security", "base": ["security", "security"], "speech": "GET OUT OF HERE!"}]}
+                                                                              ],
+                                                              "stage_geometry": {
+                                                                  "rails": [
+                                                                      {"start_x": 0, "end_x": 800, "far_depth": 235, "near_depth": 326},
+                                                                      {"start_x": 800, "end_x": 1600, "far_depth": 232, "near_depth": 326},
+                                                                      {"start_x": 1600, "end_x": 2400, "far_depth": 234, "near_depth": 327},
+                                                                      {"start_x": 2400, "end_x": 3200, "far_depth": 231, "near_depth": 326}
+                                                                  ],
+                                                                  "obstacles": [
+                                                                      {"id": "sprouts_cart_return", "location_feature_id": "l1_sprouts_cart_return", "kind": "cart_return", "x": 470, "depth": 247, "half_width": 30, "half_depth": 7},
+                                                                      {"id": "wells_driveway_sign", "location_feature_id": "l1_wells_driveway_sign", "kind": "bollards", "x": 870, "depth": 313, "half_width": 22, "half_depth": 7},
+                                                                      {"id": "town_country_planter", "location_feature_id": "l1_town_country_planter", "kind": "planter", "x": 1850, "depth": 249, "half_width": 36, "half_depth": 9},
+                                                                      {"id": "madison_road_barrier", "location_feature_id": "l1_madison_road_barrier", "kind": "road_barrier", "x": 2570, "depth": 316, "half_width": 32, "half_depth": 7}
+                                                                  ],
+                                                                  "camera_zones": [
+                                                                      {"name": "Sprouts Parking Lot", "start_x": 0, "end_x": 850},
+                                                                      {"name": "Wells and Wall-Mart", "start_x": 800, "end_x": 1530},
+                                                                      {"name": "Town and Country", "start_x": 1480, "end_x": 2480},
+                                                                      {"name": "Madison and El Cilantro", "start_x": 2430, "end_x": 3200}
+                                                                  ]
+                                                              },
+                                                              "boss_loading": {
+                                                                  "duration_seconds": 8.4,
+                                                                  "relocate_seconds": 1.05,
+                                                                  "party_x": 3075,
+                                                                  "party_depth": 266
+                                                              }
+                                                          },
+                                                          {
+                                                              "id":  "chapter_1_level_2",
+                                                              "number":  2,
+                                                              "title":  "7-Eleven to I-8 Underpass",
+                                                              "status":  "playable",
+                                                              "chapter_finale":  false,
+                                                              "boss":  null,
+                                                              "boss_transition":  false,
+                                                              "start":  {"id": "seven_eleven"},
+                                                              "end":  {"id": "i8_underpass"},
+                                                              "landmark_ids": [
+                                                                  "seven_eleven",
+                                                                  "carls_jr_pad",
+                                                                  "madison_plaza",
+                                                                  "former_union_bank",
+                                                                  "valvoline",
+                                                                  "freeway_approach",
+                                                                  "i8_underpass"
+                                                              ],
+                                                               "encounters":  [
+                                                                                  {"name": "7-Eleven Pad", "trigger_x": 400, "gate_x": 970, "camera_x": 300, "base": ["stick", "cart", "pipe", "stick", "whip"]},
+                                                                                  {"name": "Madison Plaza", "trigger_x": 1260, "gate_x": 1950, "camera_x": 1180, "base": ["stick", "whip", "cart", "pipe", "stick", "cart", "whip"], "post_clear_reinforcements": [{"name": "Madison Plaza Security", "base": ["security", "security"], "speech": "THIS IS PRIVATE PROPERTY!"}]},
+                                                                                  {"name": "I-8 Underpass", "trigger_x": 2260, "gate_x": 3120, "camera_x": 2240, "base": ["whip", "cart", "pipe", "stick", "whip", "cart", "pipe", "stick"], "post_clear_reinforcements": [{"name": "I-8 Security", "base": ["security", "security"], "speech": "MOVE IT ALONG, NOW!"}]}
+                                                                              ],
+                                                              "stage_geometry": {
+                                                                  "rails": [
+                                                                      {"start_x": 0, "end_x": 780, "far_depth": 234, "near_depth": 326},
+                                                                      {"start_x": 780, "end_x": 1550, "far_depth": 232, "near_depth": 326},
+                                                                      {"start_x": 1550, "end_x": 2360, "far_depth": 230, "near_depth": 328},
+                                                                      {"start_x": 2360, "end_x": 3200, "far_depth": 228, "near_depth": 330}
+                                                                  ],
+                                                                  "obstacles": [
+                                                                      {"id": "seven_canopy_island", "location_feature_id": "l2_seven_canopy_island", "kind": "planter", "x": 315, "depth": 247, "half_width": 38, "half_depth": 8},
+                                                                      {"id": "madison_plaza_planter", "location_feature_id": "l2_madison_plaza_planter", "kind": "planter", "x": 1275, "depth": 316, "half_width": 48, "half_depth": 8},
+                                                                      {"id": "union_driveway_bollards", "location_feature_id": "l2_union_driveway_bollards", "kind": "bollards", "x": 1790, "depth": 248, "half_width": 26, "half_depth": 7},
+                                                                      {"id": "lube_bay_bollards", "location_feature_id": "l2_lube_bay_bollards", "kind": "bollards", "x": 2185, "depth": 314, "half_width": 28, "half_depth": 7},
+                                                                      {"id": "i8_support_column", "location_feature_id": "l2_i8_support_column", "kind": "road_barrier", "x": 2710, "depth": 252, "half_width": 24, "half_depth": 9}
+                                                                  ],
+                                                                  "camera_zones": [
+                                                                      {"name": "7-Eleven and Carl's Corner", "start_x": 0, "end_x": 780},
+                                                                      {"name": "Madison Plaza", "start_x": 720, "end_x": 1640},
+                                                                      {"name": "Union and Lube Line", "start_x": 1540, "end_x": 2380},
+                                                                      {"name": "I-8 Underpass", "start_x": 2300, "end_x": 3200}
+                                                                  ]
+                                                              },
+                                                              "boss_loading": {
+                                                                  "duration_seconds": 8.4,
+                                                                  "relocate_seconds": 1.05,
+                                                                  "party_x": 3060,
+                                                                  "party_depth": 266
+                                                              },
+                                                              "travel_to_next": {
+                                                                  "heading": "I-8 TO SOAPY JOE'S",
+                                                                  "detail": "THE PARTY CROSSES THE I-8 SHADOW, PAST THE 690 SHOWROOM AND FUEL ROW."
+                                                              }
+                                                          },
+                                                          {
+                                                              "id":  "chapter_1_level_3",
+                                                              "number":  3,
+                                                              "title":  "Soapy Joe's to Revive Approach",
+                                                              "status":  "playable",
+                                                              "chapter_finale":  false,
+                                                              "boss":  null,
+                                                              "boss_transition":  false,
+                                                              "start":  {"id": "soapy_joes"},
+                                                              "end":  {"id": "revive_pathway"},
+                                                              "landmark_ids": [
+                                                                  "soapy_joes",
+                                                                  "starbucks_pad",
+                                                                  "marechiaro",
+                                                                  "carls_boot_leather",
+                                                                  "cvs_broadway_corner",
+                                                                  "broadway_turn",
+                                                                  "revive_pathway"
+                                                              ],
+                                                               "encounters":  [
+                                                                                  {"name": "Soapy Joe's Front Lot", "trigger_x": 410, "gate_x": 990, "camera_x": 300, "base": ["stick", "cart", "pipe", "whip", "stick", "cart", "pipe"], "post_clear_reinforcements": [{"name": "Soapy Joe's Security", "base": ["security"], "speech": "KEEP WALKING!"}]},
+                                                                                  {"name": "Broadway Turn", "trigger_x": 1230, "gate_x": 1950, "camera_x": 1170, "base": ["cart", "stick", "whip", "pipe", "cart", "whip", "pipe", "stick"], "post_clear_reinforcements": [{"name": "Broadway Security", "base": ["security", "security"], "speech": "YOU'RE TRESPASSING!"}]},
+                                                                                  {"name": "Revive Approach", "trigger_x": 2240, "gate_x": 3115, "camera_x": 2230, "base": ["stick", "whip", "cart", "pipe", "stick", "whip", "cart", "pipe", "whip"], "post_clear_reinforcements": [{"name": "Revive Security", "base": ["security", "security"], "speech": "LAST WARNING — OUT!"}]}
+                                                                              ],
+                                                              "stage_geometry": {
+                                                                  "rails": [
+                                                                      {"start_x": 0, "end_x": 760, "far_depth": 234, "near_depth": 326},
+                                                                      {"start_x": 760, "end_x": 1530, "far_depth": 232, "near_depth": 327},
+                                                                      {"start_x": 1530, "end_x": 2350, "far_depth": 233, "near_depth": 329},
+                                                                      {"start_x": 2350, "end_x": 3200, "far_depth": 230, "near_depth": 328}
+                                                                  ],
+                                                                  "obstacles": [
+                                                                      {"id": "soapy_vacuum_post", "location_feature_id": "l3_soapy_vacuum_post", "kind": "bollards", "x": 390, "depth": 247, "half_width": 22, "half_depth": 7},
+                                                                      {"id": "starcups_drive_lane", "location_feature_id": "l3_starbucks_drive_lane", "kind": "road_barrier", "x": 750, "depth": 315, "half_width": 34, "half_depth": 7},
+                                                                      {"id": "marechiaro_planter", "location_feature_id": "l3_marechiaro_planter", "kind": "planter", "x": 1260, "depth": 249, "half_width": 38, "half_depth": 9},
+                                                                      {"id": "broadway_median", "location_feature_id": "l3_broadway_median", "kind": "road_barrier", "x": 2055, "depth": 316, "half_width": 44, "half_depth": 8},
+                                                                      {"id": "revive_entry_planter", "location_feature_id": "l3_revive_entry_planter", "kind": "planter", "x": 2760, "depth": 249, "half_width": 42, "half_depth": 9}
+                                                                  ],
+                                                                  "camera_zones": [
+                                                                      {"name": "Soapy Joe's Blue Roof", "start_x": 0, "end_x": 780},
+                                                                      {"name": "Starcups and Marechiaro", "start_x": 720, "end_x": 1580},
+                                                                      {"name": "Boot and Broadway", "start_x": 1500, "end_x": 2380},
+                                                                      {"name": "Revive Pathway", "start_x": 2300, "end_x": 3200}
+                                                                  ]
+                                                              },
+                                                              "boss_loading": {
+                                                                  "duration_seconds": 8.4,
+                                                                  "relocate_seconds": 1.05,
+                                                                  "party_x": 3060,
+                                                                  "party_depth": 266
+                                                              },
+                                                              "travel_to_next": {
+                                                                  "heading": "REVIVE TO AWAKEN",
+                                                                  "detail": "A ROUTE CARD CARRIES THE PARTY FROM REVIVE BACK TO AWAKEN AT 950 N 2ND ST."
+                                                              }
+                                                          },
+                                                          {
+                                                              "id":  "chapter_1_level_4",
+                                                              "number":  4,
+                                                              "title":  "Awaken Church Showdown",
+                                                              "status":  "playable",
+                                                              "chapter_finale":  true,
+                                                              "boss":  "couch",
+                                                              "boss_transition":  true,
+                                                              "start":  {"id": "awaken_church_lot"},
+                                                              "end":  {"id": "daves_bmx"},
+                                                              "landmark_ids": [
+                                                                  "awaken_church_lot",
+                                                                  "awaken_facade",
+                                                                  "awaken_front_lot",
+                                                                  "daves_bmx"
+                                                              ],
+                                                              "encounters":  [
+                                                                 {"name": "Awaken Lot Intercept", "trigger_x": 350, "gate_x": 900, "camera_x": 300, "base": ["stick", "cart", "whip", "pipe", "whip", "cart"]},
+                                                                 {"name": "Couch at Awaken", "trigger_x": 1050, "gate_x": 1530, "camera_x": 960, "base": ["couch"]}
+                                                                             ],
+                                                              "stage_geometry": {
+                                                                  "rails": [
+                                                                      {"start_x": 0, "end_x": 800, "far_depth": 232, "near_depth": 328},
+                                                                      {"start_x": 800, "end_x": 1600, "far_depth": 230, "near_depth": 330}
+                                                                  ],
+                                                                  "obstacles": [
+                                                                      {"id": "awaken_entry_planter", "location_feature_id": "l4_awaken_entry_planter", "kind": "planter", "x": 330, "depth": 248, "half_width": 42, "half_depth": 9},
+                                                                      {"id": "awaken_light_pole", "location_feature_id": "l4_awaken_light_pole", "kind": "bollards", "x": 760, "depth": 315, "half_width": 20, "half_depth": 7},
+                                                                      {"id": "front_lot_median", "location_feature_id": "l4_front_lot_median", "kind": "road_barrier", "x": 1010, "depth": 248, "half_width": 36, "half_depth": 8}
+                                                                  ],
+                                                                  "camera_zones": [
+                                                                      {"name": "Awaken South Lot", "start_x": 0, "end_x": 640},
+                                                                      {"name": "Awaken Front Lot", "start_x": 600, "end_x": 1120},
+                                                                      {"name": "Couch Showdown", "start_x": 1080, "end_x": 1600}
+                                                                  ]
+                                                              },
+                                                              "boss_loading": {
+                                                                  "duration_seconds": 8.4,
+                                                                  "relocate_seconds": 1.05,
+                                                                  "party_x": 1120,
+                                                                  "party_depth": 266
+                                                              }
+                                                          }
+                                                     ]
+                                      }
+                                  ]
+                 },
+    "engine":  {
+                   "schema_version":  2,
+                   "projection":  {
+                                      "mode":  "oblique_orthographic",
+                                      "depth_origin":  280,
+                                      "screen_y_origin":  280,
+                                      "depth_scale":  1.0,
+                                      "oblique_x_shear":  0.07,
+                                      "pixel_snap":  true,
+                                      "scale_sprites_with_depth":  false
+                                  },
+                   "camera":  {
+                                  "dead_zone_left":  238,
+                                  "dead_zone_right":  398,
+                                  "look_ahead":  50,
+                                  "follow_speed":  250,
+                                  "catch_up_speed":  520,
+                                  "scripted_pan_speed":  335,
+                                  "group_tether_width":  552,
+                                  "shake_decay":  18.0
+                              },
+                   "physics":  {
+                                   "spatial_cell_size":  72,
+                                   "player_radius_x":  13,
+                                   "player_radius_depth":  7,
+                                   "enemy_radius_x":  14,
+                                   "enemy_radius_depth":  7,
+                                   "boss_radius_x":  24,
+                                   "boss_radius_depth":  11,
+                                   "chief_radius_x":  12,
+                                   "chief_radius_depth":  6,
+                                   "separation_iterations":  8,
+                                   "player_attack_reach_bonus":  5,
+                                   "player_attack_aim_range_bonus":  10,
+                                   "player_attack_lane_assist":  9,
+                                   "player_attack_depth_tolerance":  6,
+                                   "player_attack_max_targets":  1,
+                                   "player_attack_rear_tolerance":  3,
+                                   "enemy_attack_max_targets":  1,
+                                   "enemy_attack_rear_tolerance":  2,
+                                   "enemy_wakeup_invulnerability":  0.18,
+                                   "enemy_hold_hysteresis_x":  8,
+                                   "enemy_hold_hysteresis_depth":  5,
+                                   "enemy_obstacle_clearance":  3,
+                                   "enemy_detour_dead_zone":  1.5,
+                                   "light_hitstop":  0.040,
+                                   "heavy_hitstop":  0.080,
+                                   "super_hitstop":  0.110
+                               }
+               },
+    "stage_geometry":  {
+                           "rails":  [
+                                         {
+                                             "start_x":  0,
+                                             "end_x":  800,
+                                             "far_depth":  235,
+                                             "near_depth":  326
+                                         },
+                                         {
+                                             "start_x":  800,
+                                             "end_x":  1600,
+                                             "far_depth":  232,
+                                             "near_depth":  326
+                                         },
+                                         {
+                                             "start_x":  1600,
+                                             "end_x":  2400,
+                                             "far_depth":  234,
+                                             "near_depth":  327
+                                         },
+                                         {
+                                             "start_x":  2400,
+                                             "end_x":  3200,
+                                             "far_depth":  231,
+                                             "near_depth":  326
+                                         }
+                                     ],
+                           "obstacles":  [
+                                             {
+                                                 "id":  "sprouts_cart_return",
+                                                 "location_feature_id":  "l1_sprouts_cart_return",
+                                                 "kind":  "cart_return",
+                                                 "x":  470,
+                                                 "depth":  247,
+                                                 "half_width":  30,
+                                                 "half_depth":  7
+                                             },
+                                             {
+                                                 "id":  "wells_driveway_sign",
+                                                 "location_feature_id":  "l1_wells_driveway_sign",
+                                                 "kind":  "bollards",
+                                                 "x":  870,
+                                                 "depth":  313,
+                                                 "half_width":  22,
+                                                 "half_depth":  7
+                                             },
+                                             {
+                                                 "id":  "town_country_planter",
+                                                 "location_feature_id":  "l1_town_country_planter",
+                                                 "kind":  "planter",
+                                                 "x":  1850,
+                                                 "depth":  249,
+                                                 "half_width":  36,
+                                                 "half_depth":  9
+                                             },
+                                             {
+                                                 "id":  "madison_road_barrier",
+                                                 "location_feature_id":  "l1_madison_road_barrier",
+                                                 "kind":  "road_barrier",
+                                                 "x":  2570,
+                                                 "depth":  316,
+                                                 "half_width":  32,
+                                                 "half_depth":  7
+                                             }
+                                         ],
+                           "camera_zones":  [
+                                                {
+                                                    "name":  "Sprouts Parking Lot",
+                                                    "start_x":  0,
+                                                    "end_x":  850
+                                                },
+                                                {
+                                                    "name":  "Wells and Wall-Mart",
+                                                    "start_x":  800,
+                                                    "end_x":  1530
+                                                },
+                                                {
+                                                    "name":  "Town and Country",
+                                                    "start_x":  1480,
+                                                    "end_x":  2480
+                                                },
+                                                {
+                                                    "name":  "Madison and El Cilantro",
+                                                    "start_x":  2430,
+                                                    "end_x":  3200
+                                                }
+                                            ]
+                       },
+    "players":  {
+                    "global":  {
+                                   "max_health":  100,
+                                   "lives":  3,
+                                   "unlimited_lives":  true,
+                                   "x_speed":  126,
+                                   "y_speed":  92,
+                                   "jump_velocity":  250,
+                                   "gravity":  760,
+                                   "dodge_speed":  255,
+                                   "dodge_duration":  0.40,
+                                   "dodge_invulnerable":  0.23,
+                                   "revive_window":  8.0,
+                                   "revive_hold":  1.25,
+                                   "revive_health":  30,
+                                   "depth_tolerance":  21,
+                                   "super_cost":  100
+                               },
+                    "black_dave":  {
+                                       "display_name":  "KO",
+                                       "height_scale":  1.05,
+                                       "speed_scale":  1.0,
+                                       "max_health":  108,
+                                        "weapon":  "FISTS",
+                                        "super_name":  "BASS DROP",
+                                        "super_damage":  1000000,
+                                        "super_radius":  190,
+                                        "super_full_map":  true,
+                                        "super_clear_spawn_queue":  true,
+                                        "super_effect_radius":  3200,
+                                        "super_screen_radius":  340,
+                                        "super_screen_seconds":  0.68,
+                                        "super_hitstun":  0.82,
+                                        "super_knockback":  108,
+                                        "super_enemy_pulse_radius":  48,
+                                        "super_camera_strength":  14,
+                                        "super_camera_seconds":  0.46,
+                                        "super_flash_seconds":  0.16,
+                                        "super_text":  "BASS DROP!",
+                                        "fist_effects":  {
+                                                             "trail_radius":  18,
+                                                             "contact_radius":  28,
+                                                             "color":  [
+                                                                           90,
+                                                                           226,
+                                                                           255
+                                                                       ],
+                                                             "contact_color":  [
+                                                                                   235,
+                                                                                   253,
+                                                                                   255
+                                                                               ],
+                                                             "combo_color":  [
+                                                                                 147,
+                                                                                 245,
+                                                                                 255
+                                                                             ]
+                                                         },
+                                       "fist_flames":  {
+                                                           "activation_presses":  6,
+                                                           "press_window_seconds":  1.45,
+                                                           "active_seconds":  10.0,
+                                                           "refresh_presses":  4,
+                                                           "damage_multiplier":  1.20,
+                                                           "description":  "Ignite after six light-attack presses; renew only with a four-press burst."
+                                                       },
+                                       "light_combo_sequence":  [
+                                                                    0,
+                                                                    1,
+                                                                    2,
+                                                                    3
+                                                                ],
+                                       "description":  "Slim and lean in a backward cap, black tank, gold-trim glasses and diamond studs; fists plus a Bluetooth-speaker shockwave."
+                                   },
+                    "shelly":  {
+                                   "display_name":  "SHELLY",
+                                   "height_scale":  0.92,
+                                   "speed_scale":  1.04,
+                                   "max_health":  96,
+                                   "weapon":  "TORCH LIGHTER",
+                                   "super_name":  "CHIEF, SIC \u0027EM!",
+                                   "super_damage":  0,
+                                   "chief_frenzy_seconds":  8.0,
+                                   "super_gain_multiplier":  1.7,
+                                   "frenzy_burst_targets":  4,
+                                   "frenzy_burst_radius":  390,
+                                   "frenzy_burst_damage":  260,
+                                   "frenzy_burst_hitstun":  0.72,
+                                   "frenzy_burst_knockback":  78,
+                                   "frenzy_burst_enemy_radius":  48,
+                                   "frenzy_burst_screen_radius":  182,
+                                   "frenzy_cinematic_seconds":  0.62,
+                                   "frenzy_cinematic_dark_alpha":  166,
+                                   "frenzy_camera_strength":  9.0,
+                                   "frenzy_hitstop_seconds":  0.08,
+                                   "frenzy_flash_seconds":  0.16,
+                                   "description":  "Shorter, curvy and naturally soft; torch pressure with Chief guarding her side."
+                               }
+                },
+    "moves":  {
+                  "light_combo":  [
+                                      {
+                                          "startup":  0.07,
+                                          "active":  0.07,
+                                          "recovery":  0.12,
+                                          "damage":  9,
+                                          "range_x":  37,
+                                          "range_y":  21,
+                                          "hitstun":  0.22,
+                                          "knockback":  9,
+                                          "meter":  5,
+                                          "buffer_window":  0.22,
+                                          "cancel_start":  0.18,
+                                          "combo_grace":  0.52,
+                                          "chain_on_whiff":  true,
+                                          "heavy_cancel":  true,
+                                          "max_targets":  1,
+                                          "max_hits_per_target":  1,
+                                          "rehit_delay":  0.0,
+                                          "hit_downed":  false,
+                                          "reach_forgiveness":  0.0,
+                                          "depth_forgiveness":  0.5,
+                                          "elevation_forgiveness":  1.0,
+                                          "lane_assist":  7.0,
+                                          "aim_range_bonus":  8.0,
+                                          "lunge":  0.0,
+                                          "combo_radius":  40,
+                                          "hitbox_frames":  [
+                                                                  {"at":  0.0, "reach_scale":  0.84, "depth_scale":  1.08, "height_scale":  0.94, "offset_x":  -1.0},
+                                                                  {"at":  0.5, "reach_scale":  1.0, "depth_scale":  1.0, "height_scale":  1.0, "offset_x":  1.0},
+                                                                  {"at":  1.0, "reach_scale":  0.92, "depth_scale":  1.06, "height_scale":  0.96, "offset_x":  0.0}
+                                                              ]
+                                      },
+                                      {
+                                          "startup":  0.08,
+                                          "active":  0.07,
+                                          "recovery":  0.14,
+                                          "damage":  10,
+                                          "range_x":  39,
+                                          "range_y":  21,
+                                          "hitstun":  0.23,
+                                          "knockback":  10,
+                                          "meter":  6,
+                                          "buffer_window":  0.23,
+                                          "cancel_start":  0.20,
+                                          "combo_grace":  0.52,
+                                          "chain_on_whiff":  true,
+                                          "heavy_cancel":  true,
+                                          "max_targets":  1,
+                                          "max_hits_per_target":  1,
+                                          "rehit_delay":  0.0,
+                                          "hit_downed":  false,
+                                          "reach_forgiveness":  1.0,
+                                          "depth_forgiveness":  1.0,
+                                          "elevation_forgiveness":  2.0,
+                                          "lane_assist":  8.0,
+                                          "aim_range_bonus":  9.0,
+                                          "lunge":  1.5,
+                                          "combo_radius":  56,
+                                          "hitbox_frames":  [
+                                                                  {"at":  0.0, "reach_scale":  0.84, "depth_scale":  1.10, "height_scale":  0.96, "offset_x":  -1.0},
+                                                                  {"at":  0.5, "reach_scale":  1.04, "depth_scale":  1.0, "height_scale":  1.0, "offset_x":  2.0},
+                                                                  {"at":  1.0, "reach_scale":  0.95, "depth_scale":  1.06, "height_scale":  0.98, "offset_x":  0.0}
+                                                              ]
+                                      },
+                                      {
+                                          "startup":  0.09,
+                                          "active":  0.08,
+                                          "recovery":  0.16,
+                                          "damage":  13,
+                                          "range_x":  43,
+                                          "range_y":  22,
+                                          "hitstun":  0.29,
+                                          "knockback":  14,
+                                          "meter":  8,
+                                          "buffer_window":  0.24,
+                                          "cancel_start":  0.23,
+                                          "combo_grace":  0.54,
+                                          "chain_on_whiff":  true,
+                                          "heavy_cancel":  true,
+                                          "max_targets":  1,
+                                          "max_hits_per_target":  1,
+                                          "rehit_delay":  0.0,
+                                          "hit_downed":  false,
+                                          "reach_forgiveness":  2.0,
+                                          "depth_forgiveness":  2.0,
+                                          "elevation_forgiveness":  3.0,
+                                          "lane_assist":  9.0,
+                                          "aim_range_bonus":  10.0,
+                                          "lunge":  3.0,
+                                          "combo_radius":  64,
+                                          "hitbox_frames":  [
+                                                                  {"at":  0.0, "reach_scale":  0.82, "depth_scale":  1.14, "height_scale":  0.96, "offset_x":  -1.0},
+                                                                  {"at":  0.5, "reach_scale":  1.08, "depth_scale":  1.02, "height_scale":  1.04, "offset_x":  3.0},
+                                                                  {"at":  1.0, "reach_scale":  0.98, "depth_scale":  1.08, "height_scale":  1.0, "offset_x":  1.0}
+                                                              ]
+                                      },
+                                      {
+                                          "startup":  0.12,
+                                          "active":  0.10,
+                                          "recovery":  0.24,
+                                          "damage":  19,
+                                          "range_x":  46,
+                                          "range_y":  24,
+                                          "hitstun":  0.44,
+                                          "knockback":  42,
+                                          "knockdown":  true,
+                                          "meter":  12,
+                                          "buffer_window":  0.24,
+                                          "cancel_start":  0.45,
+                                          "combo_grace":  0.58,
+                                          "chain_on_whiff":  true,
+                                          "heavy_cancel":  false,
+                                          "max_targets":  2,
+                                          "max_hits_per_target":  1,
+                                          "rehit_delay":  0.0,
+                                          "hit_downed":  false,
+                                          "reach_forgiveness":  3.0,
+                                          "depth_forgiveness":  3.0,
+                                          "elevation_forgiveness":  4.0,
+                                          "lane_assist":  10.0,
+                                          "aim_range_bonus":  12.0,
+                                          "lunge":  5.0,
+                                          "combo_radius":  76,
+                                          "chain_finisher":  true,
+                                          "hitbox_frames":  [
+                                                                  {"at":  0.0, "reach_scale":  0.78, "depth_scale":  1.18, "height_scale":  1.02, "offset_x":  -2.0},
+                                                                  {"at":  0.5, "reach_scale":  1.12, "depth_scale":  1.08, "height_scale":  1.10, "offset_x":  4.0},
+                                                                  {"at":  1.0, "reach_scale":  1.02, "depth_scale":  1.12, "height_scale":  1.04, "offset_x":  2.0}
+                                                              ]
+                                      }
+                                  ],
+                  "heavy":  {
+                                "startup":  0.23,
+                                "active":  0.11,
+                                "recovery":  0.34,
+                                "damage":  25,
+                                "range_x":  48,
+                                "range_y":  24,
+                                "hitstun":  0.45,
+                                "knockback":  50,
+                                "knockdown":  true,
+                                "meter":  12,
+                                "max_targets":  1,
+                                "max_hits_per_target":  1,
+                                "rehit_delay":  0.0,
+                                "hit_downed":  false,
+                                "reach_forgiveness":  2.0,
+                                "depth_forgiveness":  2.0,
+                                "elevation_forgiveness":  3.0,
+                                "lane_assist":  7.0,
+                                "aim_range_bonus":  9.0,
+                                "lunge":  2.0,
+                                "hitbox_frames":  [
+                                                        {"at":  0.0, "reach_scale":  0.78, "depth_scale":  1.12, "height_scale":  1.0, "offset_x":  -2.0},
+                                                        {"at":  0.55, "reach_scale":  1.10, "depth_scale":  1.04, "height_scale":  1.08, "offset_x":  4.0},
+                                                        {"at":  1.0, "reach_scale":  1.0, "depth_scale":  1.10, "height_scale":  1.02, "offset_x":  1.0}
+                                                    ]
+                            },
+                  "air":  {
+                              "startup":  0.07,
+                              "active":  0.16,
+                              "recovery":  0.14,
+                              "damage":  17,
+                              "range_x":  40,
+                              "range_y":  23,
+                              "hitstun":  0.34,
+                              "knockback":  32,
+                              "knockdown":  true,
+                              "meter":  8,
+                              "max_targets":  1,
+                              "max_hits_per_target":  1,
+                              "rehit_delay":  0.0,
+                              "hit_downed":  false,
+                              "reach_forgiveness":  2.0,
+                              "depth_forgiveness":  2.0,
+                              "elevation_forgiveness":  8.0,
+                              "lane_assist":  6.0,
+                              "aim_range_bonus":  8.0,
+                              "lunge":  1.0,
+                              "hitbox_frames":  [
+                                                      {"at":  0.0, "reach_scale":  0.88, "depth_scale":  1.12, "height_scale":  1.08, "offset_x":  -1.0},
+                                                      {"at":  0.5, "reach_scale":  1.06, "depth_scale":  1.0, "height_scale":  1.16, "offset_x":  2.0},
+                                                      {"at":  1.0, "reach_scale":  0.96, "depth_scale":  1.08, "height_scale":  1.10, "offset_x":  0.0}
+                                                  ]
+                          },
+                  "throw":  {
+                                "damage":  28,
+                                "range_x":  24,
+                                "range_y":  15,
+                                "hitstun":  0.55,
+                                "knockback":  72,
+                                "knockdown":  true,
+                                "meter":  14,
+                                "max_targets":  1,
+                                "max_hits_per_target":  1,
+                                "rehit_delay":  0.0,
+                                "hit_downed":  false,
+                                "reach_forgiveness":  0.0,
+                                "depth_forgiveness":  0.0,
+                                "elevation_forgiveness":  0.0
+                            }
+              },
+    "enemies":  {
+                    "stick":  {
+                                  "display_name":  "STICK RAIDER",
+                                  "health":  50,
+                                  "speed":  62,
+                                  "damage":  7,
+                                  "attack_range":  31,
+                                  "depth_range":  15,
+                                  "windup":  0.30,
+                                  "active":  0.10,
+                                  "recovery":  0.55,
+                                  "cooldown":  1.25,
+                                  "score":  100,
+                                  "token_cost":  1
+                              },
+                    "cart":  {
+                                 "display_name":  "CART CHARGER",
+                                 "health":  78,
+                                 "speed":  50,
+                                 "damage":  14,
+                                 "attack_range":  125,
+                                 "depth_range":  17,
+                                 "windup":  0.72,
+                                 "active":  0.50,
+                                 "recovery":  0.80,
+                                 "cooldown":  2.6,
+                                 "score":  175,
+                                 "token_cost":  2
+                             },
+                    "whip":  {
+                                 "display_name":  "CORD WHIPPER",
+                                 "health":  62,
+                                 "speed":  58,
+                                 "damage":  10,
+                                 "attack_range":  72,
+                                 "depth_range":  13,
+                                 "windup":  0.48,
+                                 "active":  0.13,
+                                 "recovery":  0.68,
+                                 "cooldown":  1.75,
+                                 "score":  150,
+                                 "token_cost":  1
+                             },
+                     "pipe":  {
+                                  "display_name":  "PIPE TOSSER",
+                                  "health":  58,
+                                 "speed":  54,
+                                 "damage":  9,
+                                 "attack_range":  150,
+                                 "depth_range":  25,
+                                 "windup":  0.62,
+                                 "active":  0.10,
+                                 "recovery":  0.72,
+                                 "cooldown":  2.25,
+                                  "score":  160,
+                                  "token_cost":  2
+                              },
+                    "security":  {
+                                     "display_name":  "SECOND STREET SECURITY",
+                                     "health":  142,
+                                     "speed":  66,
+                                     "damage":  17,
+                                     "attack_range":  43,
+                                     "depth_range":  16,
+                                     "windup":  0.38,
+                                     "active":  0.14,
+                                     "recovery":  0.45,
+                                     "cooldown":  1.05,
+                                     "score":  360,
+                                     "token_cost":  2
+                                 },
+                    "couch":  {
+                                  "display_name":  "COUCH",
+                                  "health":  620,
+                                  "speed":  58,
+                                  "damage":  13,
+                                  "attack_range":  52,
+                                  "depth_range":  22,
+                                  "windup":  0.55,
+                                  "active":  0.22,
+                                  "recovery":  0.60,
+                                  "cooldown":  1.0,
+                                  "score":  2500,
+                                  "token_cost":  2,
+                                  "retreat_health_ratios":  [
+                                                                  0.67,
+                                                                  0.34
+                                                              ],
+                                  "retreat_add_waves":  [
+                                                             [
+                                                                 "stick",
+                                                                 "pipe"
+                                                             ],
+                                                             [
+                                                                 "stick",
+                                                                 "whip",
+                                                                 "cart"
+                                                             ]
+                                                         ],
+                                  "retreat_jump_speed":  275,
+                                  "retreat_return_speed":  250,
+                                  "retreat_refuge_x":  1080,
+                                  "retreat_refuge_depth":  244,
+                                  "retreat_hop_height":  58,
+                                  "retreat_refuge_visual_offset_x":  54,
+                                  "retreat_minimum_refuge_seconds":  0.72,
+                                  "retreat_return_cooldown":  0.85,
+                                  "retreat_taunt_seconds":  2.8
+                              }
+                },
+    "chief":  {
+                  "command_meter_max":  100,
+                  "command_start_meter":  100,
+                  "command_cost":  35,
+                  "command_recharge_per_second":  9.0,
+                  "command_damage":  25,
+                  "command_hitstun":  0.46,
+                  "command_knockback":  30,
+                  "command_speed":  285,
+                  "command_contact_x":  37,
+                  "command_contact_depth":  23,
+                  "command_return_speed":  240,
+                  "command_cooldown":  0.9,
+                  "command_pet_seconds":  0.9,
+                  "command_pet_distance_x":  31,
+                  "command_pet_distance_depth":  20,
+                  "command_recall_distance":  460,
+                  "offscreen_recall_margin":  80,
+                  "watchdog_recall_distance":  560,
+                  "watchdog_recall_margin":  160,
+                  "passive_damage":  12,
+                  "passive_cooldown":  1.9,
+                  "passive_speed":  175,
+                  "passive_contact_x":  31,
+                  "passive_contact_depth":  20,
+                  "guard_radius":  150,
+                  "autonomous_radius":  220,
+                  "max_roam_from_shelly":  260,
+                  "settle_idle_seconds":  0.3,
+                  "settle_radius_x":  38,
+                  "settle_radius_depth":  20,
+                  "pet_cooldown":  9.0,
+                   "frenzy_damage":  14,
+                   "frenzy_cooldown":  0.48,
+                   "frenzy_speed":  185,
+                   "frenzy_clear_linger_seconds":  0.42,
+                   "maul_seconds":  0.52
+              },
+    "bb_gun":  {
+                    "max_ammo":  6,
+                    "start_ammo":  4,
+                    "cooldown":  0.38,
+                    "animation_seconds":  0.26,
+                    "damage":  12,
+                    "speed":  420,
+                    "range":  500,
+                    "shot_height":  28,
+                    "muzzle_offset":  22,
+                    "lane_tolerance":  10,
+                    "hit_radius_x":  14,
+                    "hitstun":  0.20,
+                    "knockback":  10,
+                    "pickup_amount":  3,
+                    "pickup_radius_x":  23,
+                    "pickup_radius_depth":  15,
+                    "pickup_ttl":  18.0,
+                    "drop_ko_min":  2,
+                    "drop_ko_max":  4,
+                    "drop_excluded_kinds":  [
+                                                 "couch"
+                                             ],
+                    "cpu_min_range":  62,
+                    "cpu_max_range":  255,
+                    "cpu_lane_tolerance":  18,
+                    "cpu_action_cooldown":  0.45
+                },
+    "shelly_propane":  {
+                            "meter_max":  100,
+                            "start_meter":  0,
+                            "activation_minimum":  18,
+                            "drain_per_second":  92.0,
+                            "tick_seconds":  0.10,
+                            "damage_per_tick":  20,
+                            "range":  310,
+                            "lane_tolerance":  42,
+                            "hitstun":  0.16,
+                            "knockback":  16,
+                            "pickup_amount":  52,
+                            "pickup_radius_x":  24,
+                            "pickup_radius_depth":  16,
+                            "pickup_ttl":  18.0,
+                            "drop_ko_min":  2,
+                            "drop_ko_max":  3,
+                            "drop_excluded_kinds":  [
+                                                        "couch"
+                                                    ],
+                            "cpu_min_range":  58,
+                            "cpu_max_range":  310,
+                            "cpu_lane_tolerance":  42,
+                            "cpu_action_cooldown":  0.85,
+                            "cpu_chief_super_range":  420
+                        },
+    "companion_ai":  {
+                         "follow_distance":  47,
+                         "engage_range":  215,
+                         "attack_range":  38,
+                         "depth_range":  18,
+                         "lane_offset":  9,
+                         "target_hysteresis":  54,
+                         "follow_depth_offset":  18,
+                         "chief_command_range":  205,
+                         "chief_command_cooldown":  0.75,
+                         "super_min_enemies":  2,
+                         "super_low_health_ratio":  0.45,
+                         "super_on_boss":  true,
+                         "cpu_shelly_frenzy_goal":  2,
+                         "cpu_shelly_frenzy_group_min":  3,
+                         "cpu_shelly_frenzy_charge_seconds":  0.45,
+                         "cpu_shelly_frenzy_rearm_seconds":  0.85,
+                         "light_cooldown":  0.20,
+                         "heavy_cooldown":  1.75,
+                         "dodge_cooldown":  2.6,
+                         "revive_priority_range":  320,
+                         "pet_idle_seconds":  3.0
+                     },
+    "audio":  {
+                  "music_volume":  0.42,
+                  "sfx_volume":  0.76,
+                  "menu_music":  "friday_activities_klickaud_menu.ogg",
+                  "stage_music":  "red_2nd_track_stage_8bit.ogg"
+              },
+    "transitions":  {
+                         "boss_loading":  {
+                                              "enabled":  false,
+                                              "duration_seconds":  8.4,
+                                              "relocate_seconds":  1.05,
+                                              "party_x":  3075,
+                                              "party_depth":  266
+                                          }
+                     },
+    "completion":  {
+                       "hug_seconds":  1.25,
+                       "treat_toss_seconds":  1.15,
+                       "treat_release_seconds":  0.38,
+                       "rank_rules":  {
+                                          "hit_value":  8,
+                                          "ko_value":  125,
+                                          "damage_penalty":  5,
+                                          "par_seconds":  300,
+                                          "early_second_bonus":  3,
+                                          "overtime_second_penalty":  2,
+                                          "thresholds":  {
+                                                             "S":  6500,
+                                                             "A":  4500,
+                                                             "B":  3000,
+                                                             "C":  1500,
+                                                             "D":  0
+                                                         }
+                                      }
+                   },
+    "scoring":  {
+                    "hit":  10,
+                    "assist":  50,
+                    "combo_grace":  2.0,
+                    "combo_step_hits":  10,
+                    "combo_step_multiplier":  0.30,
+                    "combo_multiplier_cap":  3.0
+                },
+    "scaling":  {
+                    "wave_budget":  [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                    ],
+                     "boss_health":  [
+                                         1.0,
+                                         1.6,
+                                         2.1,
+                                         2.5
+                                     ],
+                     "encounter_density_multiplier":  [
+                                                          1.0,
+                                                          1.0,
+                                                          1.0,
+                                                          1.0
+                                                      ],
+                     "enemy_durability_scale":  [
+                                                     2.0,
+                                                     2.25,
+                                                     2.50,
+                                                     2.75
+                                                 ],
+                     "enemy_damage_scale":  [
+                                                 0.78,
+                                                 0.85,
+                                                 0.92,
+                                                 1.0
+                                             ],
+                     "enemy_score_scale":  [
+                                                2.0,
+                                                2.25,
+                                                2.50,
+                                                2.75
+                                            ],
+                     "focused_enemy_queue_cap":  [
+                                                        4,
+                                                        5,
+                                                        6,
+                                                        7
+                                                    ],
+                     "enemy_caps":  [
+                                        2,
+                                        3,
+                                        4,
+                                        5
+                                   ],
+                    "attack_tokens":  [
+                                          1,
+                                          1,
+                                          2,
+                                          2
+                                      ]
+                },
+    "encounters":  [
+                       {
+                           "name":  "Sprouts Parking Lot",
+                           "trigger_x":  430,
+                           "gate_x":  1010,
+                           "camera_x":  350,
+                            "base":  [
+                                          "stick",
+                                          "cart",
+                                          "stick",
+                                          "pipe",
+                                          "whip"
+                                      ]
+                       },
+                       {
+                           "name":  "Town & Country",
+                           "trigger_x":  1370,
+                           "gate_x":  2050,
+                           "camera_x":  1300,
+                           "base":  [
+                                         "stick",
+                                          "whip",
+                                          "cart",
+                                          "pipe",
+                                          "stick",
+                                          "cart"
+                                      ],
+                            "post_clear_reinforcements":  [
+                                                                 {
+                                                                     "name":  "Town & Country Security",
+                                                                     "base":  [
+                                                                                  "security"
+                                                                              ],
+                                                                     "speech":  "YOU GUYS CAN'T BE HERE!"
+                                                                 }
+                                                             ]
+                       },
+                       {
+                           "name":  "El Cilantro at Madison",
+                           "trigger_x":  2460,
+                           "gate_x":  3130,
+                           "camera_x":  2420,
+                           "base":  [
+                                         "cart",
+                                         "stick",
+                                        "whip",
+                                         "pipe",
+                                          "stick",
+                                          "cart",
+                                          "pipe"
+                                      ],
+                            "post_clear_reinforcements":  [
+                                                                 {
+                                                                     "name":  "El Cilantro Security",
+                                                                     "base":  [
+                                                                                  "security",
+                                                                                  "security"
+                                                                              ],
+                                                                     "speech":  "GET OUT OF HERE!"
+                                                                 }
+                                                             ]
+                       }
+                   ]
+}
