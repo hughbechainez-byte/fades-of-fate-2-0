@@ -159,6 +159,20 @@ class ChapterOneWindowsBuildGateTests(unittest.TestCase):
             script.index("-m PyInstaller"),
         )
 
+    def test_visual_qa_renders_panel_handoffs_instead_of_hiding_them_at_edges(
+        self,
+    ) -> None:
+        script = (
+            PROJECT_ROOT / "tools" / "Render-Route-Scenery-QA.py"
+        ).read_text(encoding="utf-8-sig")
+
+        self.assertIn("chapter1_location_lock_seam_qa.png", script)
+        self.assertIn('"authoring_panels": authoring_panels', script)
+        self.assertIn('"uniform_cover_scale": scale', script)
+        self.assertIn("seam_world_x - width // 2", script)
+        self.assertIn("panel_handoffs_are_structurally_masked", script)
+        self.assertIn("no_anisotropic_scaling_or_miniature_traffic", script)
+
 
 if __name__ == "__main__":
     unittest.main()

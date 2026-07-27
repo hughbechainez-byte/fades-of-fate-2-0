@@ -25,6 +25,11 @@ if str(PROJECT_ROOT) not in sys.path:
 from src import pixel_art  # noqa: E402
 from src.game import FadesGame, LOGICAL_SIZE, SelectSlot  # noqa: E402
 from src.input_manager import InputManager  # noqa: E402
+from tools.build_chapter1_location_art import (  # noqa: E402
+    HEIGHT as PANORAMA_HEIGHT,
+    PANEL_SPECS,
+    cover_crop_geometry,
+)
 from tools.validate_chapter1 import build_location_lock_report  # noqa: E402
 
 
@@ -393,7 +398,16 @@ def main(argv: Sequence[str] | None = None) -> int:
     font.set_bold(True)
     normal_sheet = pygame.Surface((width * len(CHECKPOINTS), height * len(routes))).convert()
     overlay_sheet = pygame.Surface(normal_sheet.get_size()).convert()
+    max_seams = max(
+        (len(PANEL_SPECS[str(route["theme"])]) - 1 for route in routes),
+        default=0,
+    )
+    seam_sheet = pygame.Surface(
+        (width * max(1, max_seams), height * len(routes))
+    ).convert()
+    seam_sheet.fill((15, 16, 20))
     checkpoint_results: list[dict[str, Any]] = []
+    seam_results: list[dict[str, Any]] = []
     gameplay_screenshots: list[dict[str, Any]] = []
     try:
         for row, route in enumerate(routes):
@@ -434,6 +448,34 @@ def main(argv: Sequence[str] | None = None) -> int:
                     "checkpoint_hashes_unique": len(set(route_hashes)) == len(route_hashes),
                 }
             )
+            seam_world_x = 0
+            specs = PANEL_SPECS[str(route["theme"])]
+            for seam_index, spec in enumerate(specs[:-1]):
+                seam_world_x += spec.width
+                seam_camera_x = max(
+                    0,
+                    min(max_camera, seam_world_x - width // 2),
+                )
+                seam_frame = _render_checkpoint(
+                    route,
+                    seam_camera_x,
+                    font,
+                    seam_world_x / world_width,
+                )
+                seam_sheet.blit(
+                    seam_frame,
+                    (seam_index * width, row * height),
+                )
+                seam_results.append(
+                    {
+                        "level_id": str(route["level_id"]),
+                        "seam_world_x": seam_world_x,
+                        "camera_x": seam_camera_x,
+                        "sha256": hashlib.sha256(
+                            pygame.image.tobytes(seam_frame, "RGB", False)
+                        ).hexdigest(),
+                    }
+                )
             screenshot_path = (
                 build_dir
                 / f"chapter1_location_lock_{str(route['level_id'])}_gameplay.png"
@@ -444,12 +486,15 @@ def main(argv: Sequence[str] | None = None) -> int:
 
         qa_path = build_dir / "chapter1_location_lock_qa.png"
         overlay_path = build_dir / "chapter1_location_lock_overlay_qa.png"
+        seam_path = build_dir / "chapter1_location_lock_seam_qa.png"
         pygame.image.save(normal_sheet, qa_path)
         pygame.image.save(normal_sheet, build_dir / "route_worldlocked_qa.png")
         pygame.image.save(overlay_sheet, overlay_path)
+        pygame.image.save(seam_sheet, seam_path)
 
         validation = build_location_lock_report(project_root)
         sources: list[dict[str, Any]] = []
+        authoring_panels: list[dict[str, Any]] = []
         for route in routes:
             for side_field in ("landmarks", "opposite_side_landmarks"):
                 for landmark in route.get(side_field, ()):
@@ -469,6 +514,36 @@ def main(argv: Sequence[str] | None = None) -> int:
                             "confidence": landmark.get("confidence"),
                         }
                     )
+            panel_cursor = 0
+            for spec in PANEL_SPECS[str(route["theme"])]:
+                source_path = project_root / spec.source
+                source_image = pygame.image.load(str(source_path))
+                source_size = (
+                    spec.source_crop[2:4]
+                    if spec.source_crop is not None
+                    else source_image.get_size()
+                )
+                scale, scaled_size, crop = cover_crop_geometry(
+                    source_size,
+                    (spec.width, PANORAMA_HEIGHT),
+                    focal_x=spec.focal_x,
+                    focal_y=spec.focal_y,
+                )
+                authoring_panels.append(
+                    {
+                        "level_id": route.get("level_id"),
+                        "source_asset": spec.source,
+                        "source_sha256": hashlib.sha256(source_path.read_bytes()).hexdigest(),
+                        "source_size": list(source_image.get_size()),
+                        "target_world_range": [panel_cursor, panel_cursor + spec.width],
+                        "target_size": [spec.width, PANORAMA_HEIGHT],
+                        "anchor_ids": list(spec.anchor_ids),
+                        "uniform_cover_scale": scale,
+                        "scaled_size": list(scaled_size),
+                        "crop_rect": [crop.x, crop.y, crop.width, crop.height],
+                    }
+                )
+                panel_cursor += spec.width
         unique_checks_pass = all(
             item.get("checkpoint_hashes_unique", True)
             for item in checkpoint_results
@@ -495,6 +570,12 @@ def main(argv: Sequence[str] | None = None) -> int:
                 "no_generic_fantasy_or_placeholder_scenery": bool(
                     args.visual_review_approved
                 ),
+                "no_anisotropic_scaling_or_miniature_traffic": bool(
+                    args.visual_review_approved
+                ),
+                "panel_handoffs_are_structurally_masked": bool(
+                    args.visual_review_approved
+                ),
             },
             "note": (
                 "The all-route actor and overlay sheets were visually inspected "
@@ -513,12 +594,15 @@ def main(argv: Sequence[str] | None = None) -> int:
             "classification": "automated_location_source_and_render_validation",
             "automated_validation": validation,
             "checkpoint_results": checkpoint_results,
+            "seam_results": seam_results,
             "gameplay_screenshots": gameplay_screenshots,
             "mandatory_references": manifest.get("mandatory_references", ()),
             "sources": sources,
+            "authoring_panels": authoring_panels,
             "artifacts": {
                 "normal_sheet": str(qa_path),
                 "overlay_sheet": str(overlay_path),
+                "seam_sheet": str(seam_path),
             },
             "manual_reference_comparison": visual_review,
             "passed": bool(validation["passed"] and unique_checks_pass),
@@ -531,6 +615,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         )
         print(qa_path)
         print(overlay_path)
+        print(seam_path)
         print(report_path)
         return 0 if report["passed"] else 1
     finally:
