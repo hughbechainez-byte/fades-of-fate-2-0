@@ -77,7 +77,8 @@ class ChapterOneArtGeneratorTests(unittest.TestCase):
                 sampled_x = range(0, world_width, 80)
                 ground_alpha = [layers["ground"].get_at((x, ground_row))[3] for x in sampled_x]
                 haze_alpha = [
-                    layers["haze"].get_at((x, max(0, ground_row - 8)))[3] for x in sampled_x
+                    layers["haze"].get_at((x, max(0, ground_row - 8)))[3]
+                    for x in sampled_x
                 ]
                 self.assertIn(255, ground_alpha)
                 architecture_rows = [
