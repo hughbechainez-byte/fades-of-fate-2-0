@@ -62,6 +62,36 @@ class ProjectionTests(unittest.TestCase):
         self.assertEqual(result.sprite_scale, 1.0)
         self.assertEqual(BeatEmUpProjection.sprite_scale_at_depth(10_000), 1.0)
 
+    def test_oblique_orthographic_projection_shears_scenery_without_stretching_billboards(self) -> None:
+        projection = BeatEmUpProjection(
+            ProjectionConfig(
+                mode="oblique_orthographic",
+                screen_origin_x=3,
+                floor_screen_y=200,
+                pixels_per_world_x=2,
+                pixels_per_depth=2,
+                pixels_per_elevation=3,
+                oblique_x_per_depth=0.5,
+                pixel_snap=False,
+            )
+        )
+        result = projection.project(WorldPoint(100, 10, 4), camera_x=20)
+        self.assertEqual(result.xy, (168.0, 208.0))
+        self.assertEqual(result.sprite_scale, 1.0)
+
+    def test_depth_increase_moves_rendered_depth_forward_and_monotonic(self) -> None:
+        projection = BeatEmUpProjection(
+            ProjectionConfig(
+                mode="oblique_orthographic",
+                floor_screen_y=220,
+                pixels_per_world_x=2.0,
+                pixels_per_depth=1.5,
+                pixel_snap=False,
+            )
+        )
+        values = [projection.project(WorldPoint(40, depth)).y for depth in (200, 250, 310)]
+        self.assertTrue(all(a < b for a, b in zip(values, values[1:])))
+
     def test_floor_unprojection_round_trips_orthographic_and_oblique_points(self) -> None:
         for mode, shear in (("orthographic", 0.0), ("oblique", -0.35)):
             with self.subTest(mode=mode):

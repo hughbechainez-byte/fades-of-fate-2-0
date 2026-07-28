@@ -88,16 +88,16 @@ class ProjectedPoint:
         return int(round(self.x)), int(round(self.y))
 
 
-ProjectionMode = Literal["orthographic", "oblique"]
+ProjectionMode = Literal["orthographic", "oblique", "oblique_orthographic"]
 
 
 @dataclass(frozen=True, slots=True)
 class ProjectionConfig:
     """Configuration for a camera-facing sprite projection.
 
-    Orthographic mode maps depth only to screen Y. Oblique mode additionally
-    shears screen X by ``oblique_x_per_depth`` to reveal more of 3D scenery while
-    retaining unscaled, unrotated sprites.
+    Orthographic mode maps depth only to screen Y. Oblique modes additionally
+    shear screen X by ``oblique_x_per_depth`` to reveal more of 3D scenery
+    while retaining unscaled, unrotated sprites.
     """
 
     mode: ProjectionMode = "orthographic"
@@ -110,8 +110,8 @@ class ProjectionConfig:
     pixel_snap: bool = True
 
     def __post_init__(self) -> None:
-        if self.mode not in {"orthographic", "oblique"}:
-            raise ValueError("mode must be 'orthographic' or 'oblique'")
+        if self.mode not in {"orthographic", "oblique", "oblique_orthographic"}:
+            raise ValueError("mode must be orthographic or oblique")
         for name in ("screen_origin_x", "floor_screen_y", "oblique_x_per_depth"):
             object.__setattr__(self, name, _finite(getattr(self, name), name))
         for name in ("pixels_per_world_x", "pixels_per_depth", "pixels_per_elevation"):
@@ -151,7 +151,7 @@ class BeatEmUpProjection:
         shake_y = _finite(screen_shake[1], "screen_shake.y")
         cfg = self.config
         depth_delta = point.depth - camera_depth
-        shear = cfg.oblique_x_per_depth if cfg.mode == "oblique" else 0.0
+        shear = cfg.oblique_x_per_depth if cfg.mode != "orthographic" else 0.0
         screen_x = (
             cfg.screen_origin_x
             + (point.x - camera_x) * cfg.pixels_per_world_x
@@ -229,7 +229,7 @@ class BeatEmUpProjection:
         depth_delta = (
             float(screen_y) - cfg.floor_screen_y - float(shake_y) + float(elevation) * cfg.pixels_per_elevation
         ) / cfg.pixels_per_depth
-        shear = cfg.oblique_x_per_depth if cfg.mode == "oblique" else 0.0
+        shear = cfg.oblique_x_per_depth if cfg.mode != "orthographic" else 0.0
         world_x = (
             float(screen_x)
             - cfg.screen_origin_x

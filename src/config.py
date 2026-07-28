@@ -215,6 +215,162 @@ def _validate_hitbox_frames(frames: Any, label: str) -> None:
         raise ConfigError(f"{label} must end at at=1")
 
 
+def _validate_projection_profile(profile: Mapping[str, Any], label: str) -> None:
+    if not isinstance(profile, Mapping):
+        raise ConfigError(f"{label} must be an object")
+
+    mode = str(profile.get("mode", "")).strip()
+    if mode not in {"orthographic", "oblique", "oblique_orthographic"}:
+        raise ConfigError(f"{label}.mode must be orthographic or oblique")
+
+    logical_resolution = profile.get("logical_resolution", LOGICAL_SIZE)
+    if (
+        not isinstance(logical_resolution, (list, tuple))
+        or len(logical_resolution) != 2
+        or tuple(logical_resolution) != LOGICAL_SIZE
+    ):
+        raise ConfigError(f"{label}.logical_resolution must be [640, 360]")
+
+    for field in ("depth_scale", "world_x_scale", "elevation_scale"):
+        value = _finite_number(
+            profile.get(field, 1.0),
+            f"{label}.{field}",
+        )
+        if value <= 0.0:
+            raise ConfigError(f"{label}.{field} must be positive")
+    _finite_number(
+        profile.get("oblique_x_shear", profile.get("oblique_x_per_depth", 0.0)),
+        f"{label}.oblique_x_shear|oblique_x_per_depth",
+    )
+
+    for field in ("screen_origin_x", "screen_y_origin", "depth_origin"):
+        _finite_number(profile.get(field, 0.0), f"{label}.{field}")
+
+    pixel_snap = profile.get("pixel_snap", True)
+    if not isinstance(pixel_snap, bool):
+        raise ConfigError(f"{label}.pixel_snap must be boolean")
+
+    rails = profile.get("playable_depth_rails")
+    if not isinstance(rails, Mapping):
+        raise ConfigError(f"{label}.playable_depth_rails must be an object")
+    far = _finite_number(rails.get("far"), f"{label}.playable_depth_rails.far")
+    middle = _finite_number(rails.get("middle"), f"{label}.playable_depth_rails.middle")
+    near = _finite_number(rails.get("near"), f"{label}.playable_depth_rails.near")
+    if not (far <= middle <= near):
+        raise ConfigError(
+            f"{label}.playable_depth_rails must be ordered from far to near"
+        )
+
+    reference = profile.get("reference_physical_dimensions")
+    if not isinstance(reference, Mapping):
+        raise ConfigError(f"{label}.reference_physical_dimensions must be an object")
+    adult_height = _finite_number(
+        reference.get("neutral_adult_height_m"),
+        f"{label}.reference_physical_dimensions.neutral_adult_height_m",
+    )
+    sedan_height = _finite_number(
+        reference.get("sedan_roof_height_m"),
+        f"{label}.reference_physical_dimensions.sedan_roof_height_m",
+    )
+    door_height = _finite_number(
+        reference.get("door_height_m"),
+        f"{label}.reference_physical_dimensions.door_height_m",
+    )
+    if not (adult_height > 0 and sedan_height > 0 and door_height > 0):
+        raise ConfigError(f"{label}.reference_physical_dimensions must be positive")
+    if not 0.7 <= (sedan_height / adult_height) <= 0.9:
+        raise ConfigError(
+            f"{label}.reference_physical_dimensions.sedan_roof_height_m must stay 0.70-0.90 of "
+            "neutral_adult_height_m"
+        )
+    if not 1.05 <= (door_height / adult_height) <= 1.20:
+        raise ConfigError(
+            f"{label}.reference_physical_dimensions.door_height_m must stay 1.05-1.20 of "
+            "neutral_adult_height_m"
+        )
+
+
+def _merge_projection_settings(
+    projection: Mapping[str, Any],
+    profiles: Mapping[str, Any],
+) -> dict[str, Any]:
+    profile_id = str(projection.get("profile_id", "")).strip()
+    if not profile_id:
+        return dict(projection)
+    base = profiles.get(profile_id)
+    if not isinstance(base, Mapping):
+        raise ConfigError(f"engine.projection profile_id '{profile_id}' does not exist")
+    merged = dict(base)
+    merged.update({key: value for key, value in projection.items() if key != "profile_id"})
+    return merged
+
+
+def _projection_float(
+    projection: Mapping[str, Any],
+    names: tuple[str, ...],
+    label: str,
+    default: float | None = None,
+) -> float:
+    for name in names:
+        if name in projection:
+            return _finite_number(projection[name], label)
+    if default is None:
+        raise ConfigError(f"{label} must be set")
+    return _finite_number(default, label)
+
+
+def _validate_projection_settings(projection: Mapping[str, Any]) -> None:
+    mode = str(projection.get("mode", "")).strip()
+    if mode not in {"orthographic", "oblique", "oblique_orthographic"}:
+        raise ConfigError("engine.projection.mode must be orthographic or oblique")
+    _projection_float(
+        projection,
+        ("screen_origin_x",),
+        "engine.projection.screen_origin_x",
+        default=0.0,
+    )
+    screen_y = _projection_float(
+        projection,
+        ("screen_y_origin", "floor_screen_y"),
+        "engine.projection.screen_y_origin",
+    )
+    _projection_float(
+        projection,
+        ("depth_origin",),
+        "engine.projection.depth_origin",
+        default=screen_y,
+    )
+    _projection_float(
+        projection,
+        ("pixels_per_world_x", "world_x_scale"),
+        "engine.projection.pixels_per_world_x",
+        default=1.0,
+    )
+    _projection_float(
+        projection,
+        ("pixels_per_depth", "depth_scale"),
+        "engine.projection.pixels_per_depth",
+        default=1.0,
+    )
+    _projection_float(
+        projection,
+        ("pixels_per_elevation", "elevation_scale"),
+        "engine.projection.pixels_per_elevation",
+        default=1.0,
+    )
+    _projection_float(
+        projection,
+        ("oblique_x_per_depth", "oblique_x_shear"),
+        "engine.projection.oblique_x_per_depth",
+        default=0.0,
+    )
+    scale_sprites_with_depth = projection.get("scale_sprites_with_depth", False)
+    if not isinstance(scale_sprites_with_depth, bool):
+        raise ConfigError("engine.projection.scale_sprites_with_depth must be boolean")
+    if scale_sprites_with_depth:
+        raise ConfigError("engine projection must keep pixel sprites at a constant depth scale")
+
+
 def _validate_combat_move(move: Any, label: str) -> None:
     """Validate one player move's required payload and optional combat tuning."""
 
@@ -499,13 +655,22 @@ def validate_gameplay(
     engine = data["engine"]
     if int(engine.get("schema_version", 0)) != 2:
         raise ConfigError("engine.schema_version must be 2")
+
+    engine = data["engine"]
+    projection_profiles = data.get("projection_profiles", {})
+    if not projection_profiles:
+        projection_profiles = engine.get("projection_profiles", {})
     projection = engine.get("projection", {})
-    if str(projection.get("mode", "")) not in {"orthographic", "oblique", "oblique_orthographic"}:
-        raise ConfigError("engine.projection.mode must be orthographic or oblique")
-    if bool(projection.get("scale_sprites_with_depth", True)):
-        raise ConfigError("engine projection must keep pixel sprites at a constant depth scale")
-    if float(projection.get("depth_scale", 0)) <= 0:
-        raise ConfigError("engine.projection.depth_scale must be positive")
+    if not isinstance(projection_profiles, Mapping):
+        raise ConfigError("projection_profiles must be an object")
+    if "chapter1_oblique_v2" not in projection_profiles:
+        raise ConfigError("projection_profiles must define chapter1_oblique_v2")
+    for profile_id, profile in projection_profiles.items():
+        _validate_projection_profile(profile, f"projection_profiles[{profile_id}]")
+    if not isinstance(projection, Mapping):
+        raise ConfigError("engine.projection must be an object")
+    merged_projection = _merge_projection_settings(projection, projection_profiles)
+    _validate_projection_settings(merged_projection)
     camera = engine.get("camera", {})
     left = float(camera.get("dead_zone_left", -1))
     right = float(camera.get("dead_zone_right", -1))

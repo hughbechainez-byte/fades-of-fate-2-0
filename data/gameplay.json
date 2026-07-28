@@ -237,7 +237,35 @@
                  },
     "engine":  {
                    "schema_version":  2,
+                   "projection_profiles":  {
+                                               "chapter1_oblique_v2":  {
+                                                                              "mode":  "oblique_orthographic",
+                                                                              "logical_resolution":  [
+                                                                                                         640,
+                                                                                                         360
+                                                                                                     ],
+                                                                              "screen_origin_x":  0,
+                                                                              "screen_y_origin":  280,
+                                                                              "depth_origin":  280,
+                                                                              "world_x_scale":  1.0,
+                                                                              "depth_scale":  1.0,
+                                                                              "elevation_scale":  1.0,
+                                                                              "oblique_x_shear":  0.07,
+                                                                              "pixel_snap":  true,
+                                                                              "playable_depth_rails":  {
+                                                                                                         "far":  235,
+                                                                                                         "middle":  280,
+                                                                                                         "near":  326
+                                                                                                     },
+                                                                              "reference_physical_dimensions":  {
+                                                                                                                 "neutral_adult_height_m":  1.8,
+                                                                                                                 "sedan_roof_height_m":  1.35,
+                                                                                                                 "door_height_m":  1.95
+                                                                                                             }
+                                                                          }
+                                           },
                    "projection":  {
+                                      "profile_id":  "chapter1_oblique_v2",
                                       "mode":  "oblique_orthographic",
                                       "depth_origin":  280,
                                       "screen_y_origin":  280,
