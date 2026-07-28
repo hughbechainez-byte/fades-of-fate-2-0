@@ -27,6 +27,40 @@ ROUTE_ACCENTS = {
     "awaken_church_finale": (203, 118, 73),
 }
 
+LAYER_NAMES = (
+    "haze",
+    "skyline",
+    "architecture",
+    "ground",
+    "near_occluder",
+)
+ROUTE_LAYER_Y: dict[str, dict[str, int]] = {
+    "sprouts_el_cilantro": {
+        "haze_max_y": 112,
+        "skyline_max_y": 176,
+        "architecture_min_y": 96,
+        "near_min_y": 190,
+    },
+    "seven_eleven_underpass": {
+        "haze_max_y": 108,
+        "skyline_max_y": 182,
+        "architecture_min_y": 92,
+        "near_min_y": 190,
+    },
+    "soapy_joes_revive": {
+        "haze_max_y": 110,
+        "skyline_max_y": 184,
+        "architecture_min_y": 99,
+        "near_min_y": 192,
+    },
+    "awaken_church_finale": {
+        "haze_max_y": 120,
+        "skyline_max_y": 186,
+        "architecture_min_y": 106,
+        "near_min_y": 198,
+    },
+}
+
 ART_LABELS = {
     "sprouts_parking_lot": "FRESH MARKET",
     "wells_fargo_pad": "BANK PAD",
@@ -157,6 +191,14 @@ def _alpha_rect(
     overlay.fill(color)
     surface.blit(overlay, (int(rect[0]), int(rect[1])))
 
+def _layer_asset_path(route: Mapping[str, Any], layer: str) -> Path:
+    route_value = str(route.get(f"{layer}_asset", "")).strip()
+    if route_value:
+        return ROOT / route_value
+    main_path = Path(str(route["main_panorama_asset"]))
+    stem = main_path.stem.replace("_main_", f"_{layer}_")
+    return main_path.with_name(f"{stem}{main_path.suffix}")
+
 
 def cover_crop_geometry(
     source_size: tuple[int, int],
@@ -183,6 +225,27 @@ def cover_crop_geometry(
     crop_y = round(overflow_y * focal_y)
     crop = pygame.Rect(crop_x, crop_y, target_width, target_height)
     return scale, (scaled_width, scaled_height), crop
+
+
+def _copy_band(
+    source: pygame.Surface,
+    destination: pygame.Surface,
+    y_start: int,
+    y_end: int,
+) -> None:
+    width, height = source.get_size()
+    y0 = max(0, min(height, int(round(y_start))))
+    y1 = max(y0, min(height, int(round(y_end))))
+    if y1 <= y0:
+        return
+    if source.get_masks()[3] == 0:
+        source_band = pygame.Surface((width, y1 - y0), pygame.SRCALPHA)
+        source_band.blit(source, (0, -y0))
+        source_band.convert_alpha()
+    else:
+        source_band = source.subsurface(pygame.Rect(0, y0, width, y1 - y0)).copy()
+        source_band = source_band.convert_alpha()
+    destination.blit(source_band, (0, y0))
 
 
 def _load_panel(spec: PanelSpec) -> pygame.Surface:
@@ -326,8 +389,65 @@ def _draw_near(route: Mapping[str, Any]) -> pygame.Surface:
     return near
 
 
+def _build_layered_assets(route: Mapping[str, Any]) -> dict[str, pygame.Surface]:
+    main, far, near = _build_route(route)
+    width, height = main.get_size()
+    ground_row = max(1, min(height, int(route.get("ground_opaque_from_y", 238))))
+    layer_profile = ROUTE_LAYER_Y.get(
+        str(route["theme"]),
+        ROUTE_LAYER_Y["sprouts_el_cilantro"],
+    )
+    haze_max = min(ground_row, int(layer_profile["haze_max_y"]))
+    skyline_max = min(ground_row - 2, int(layer_profile["skyline_max_y"]))
+    architecture_min = min(max(0, int(layer_profile["architecture_min_y"])), ground_row - 1)
+    near_min = min(max(architecture_min + 2, int(layer_profile["near_min_y"])), height)
+
+    layers = {
+        "haze": pygame.Surface((width, height), pygame.SRCALPHA),
+        "skyline": pygame.Surface((width, height), pygame.SRCALPHA),
+        "architecture": pygame.Surface((width, height), pygame.SRCALPHA),
+        "ground": pygame.Surface((width, height), pygame.SRCALPHA),
+        "near_occluder": pygame.Surface((width, height), pygame.SRCALPHA),
+    }
+    _copy_band(far, layers["haze"], 0, haze_max)
+    _copy_band(far, layers["skyline"], 0, skyline_max)
+    _copy_band(main, layers["architecture"], architecture_min, ground_row)
+    _copy_band(main, layers["ground"], ground_row, height)
+    _copy_band(near, layers["near_occluder"], near_min, height)
+    return layers
+
+
+def _build_panorama_layers(route: Mapping[str, Any]) -> tuple[
+    pygame.Surface,
+    pygame.Surface,
+    pygame.Surface,
+]:
+    theme = str(route["theme"])
+    width = int(route["world_width"])
+    specs = PANEL_SPECS.get(theme)
+    if specs is None:
+        raise ValueError(f"unsupported Chapter 1 route theme: {theme}")
+    if sum(spec.width for spec in specs) != width:
+        raise ValueError(f"{theme} panel widths do not sum to route width {width}")
+    panorama = pygame.Surface((width, HEIGHT)).convert()
+    cursor = 0
+    seams: list[int] = []
+    for index, spec in enumerate(specs):
+        panorama.blit(_load_panel(spec), (cursor, 0))
+        cursor += spec.width
+        if index + 1 < len(specs):
+            seams.append(cursor)
+    accent = ROUTE_ACCENTS[theme]
+    _alpha_rect(panorama, (*accent, 10), (0, 0, width, HEIGHT))
+    _alpha_rect(panorama, (18, 20, 24, 18), (0, 286, width, HEIGHT - 286))
+    for seam_index, seam in enumerate(seams):
+        _draw_structural_handoff(panorama, seam, accent, seam_index)
+
+    return panorama
+
+
 def _build_route(route: Mapping[str, Any]) -> tuple[pygame.Surface, pygame.Surface, pygame.Surface]:
-    main = _panel_panorama(route)
+    main = _build_panorama_layers(route)
     _draw_natural_signs(main, route)
     return main, _draw_far(route), _draw_near(route)
 
@@ -336,6 +456,14 @@ def _save(surface: pygame.Surface, relative_asset: str) -> None:
     path = ROOT / relative_asset
     path.parent.mkdir(parents=True, exist_ok=True)
     pygame.image.save(surface, str(path))
+
+
+def _save_layered_assets(route: Mapping[str, Any]) -> None:
+    main, far, near = _build_route(route)
+    layers = _build_layered_assets(route)
+    for layer_name in LAYER_NAMES:
+        _save(layers[layer_name], str(_layer_asset_path(route, layer_name)))
+    return main, far, near
 
 
 def main() -> None:
@@ -347,6 +475,7 @@ def main() -> None:
     routes: Iterable[Mapping[str, Any]] = manifest["routes"]
     for route in routes:
         main_surface, far_surface, near_surface = _build_route(route)
+        _save_layered_assets(route)
         _save(main_surface, str(route["main_panorama_asset"]))
         _save(far_surface, str(route["far_asset"]))
         _save(near_surface, str(route["near_asset"]))

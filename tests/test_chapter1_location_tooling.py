@@ -7,6 +7,7 @@ import json
 import os
 from pathlib import Path
 import unittest
+from typing import Mapping
 
 os.environ.setdefault("SDL_VIDEODRIVER", "dummy")
 os.environ.setdefault("SDL_AUDIODRIVER", "dummy")
@@ -36,6 +37,11 @@ class ChapterOneLocationValidationTests(unittest.TestCase):
 
     def test_canonical_source_tree_passes_location_and_asset_validation(self) -> None:
         report = build_location_lock_report(PROJECT_ROOT)
+        manifest = json.loads(
+            (PROJECT_ROOT / "data" / "chapter1_location_lock.json").read_text(
+                encoding="utf-8-sig"
+            )
+        )
 
         self.assertTrue(report["passed"], report["errors"])
         self.assertEqual(len(report["routes"]), 4)
@@ -44,9 +50,23 @@ class ChapterOneLocationValidationTests(unittest.TestCase):
             sum(route["opposite_side_landmark_count"] for route in report["routes"]),
             0,
         )
+
+        routes_by_level = {
+            str(route["level_id"]): route
+            for route in manifest.get("routes", ())
+            if isinstance(route, Mapping)
+        }
         for route in report["routes"]:
             self.assertGreater(route["landmark_count"], 2)
             self.assertGreater(route["registered_feature_count"], 0)
+            manifest_route = routes_by_level.get(route["level_id"])
+            self.assertIsNotNone(manifest_route, route["level_id"])
+            assert manifest_route is not None
+            self.assertIn("projection_profile_id", manifest_route)
+            self.assertIn("sky_profile_id", manifest_route)
+            self.assertEqual(manifest_route["projection_profile_id"], "chapter1_oblique_v2")
+            self.assertIsInstance(manifest_route["physical_scene_objects"], list)
+            self.assertGreater(len(manifest_route["physical_scene_objects"]), 0)
             for field, asset in route["assets"].items():
                 with self.subTest(level_id=route["level_id"], field=field):
                     self.assertTrue(asset["exists"])
@@ -55,6 +75,48 @@ class ChapterOneLocationValidationTests(unittest.TestCase):
             self.assertTrue(route["assets"]["main_panorama_asset"]["fully_opaque"])
             self.assertTrue(route["assets"]["far_asset"]["has_alpha"])
             self.assertTrue(route["assets"]["near_asset"]["has_alpha"])
+            self.assertIn("haze_asset", manifest_route)
+            self.assertIn("skyline_asset", manifest_route)
+            self.assertIn("architecture_asset", manifest_route)
+            self.assertIn("ground_asset", manifest_route)
+            self.assertIn("near_occluder_asset", manifest_route)
+            layered = (
+                manifest_route["haze_asset"],
+                manifest_route["skyline_asset"],
+                manifest_route["architecture_asset"],
+                manifest_route["ground_asset"],
+                manifest_route["near_occluder_asset"],
+            )
+            self.assertEqual(len(set(layered)), len(layered))
+            for field in (
+                "haze_asset",
+                "skyline_asset",
+                "architecture_asset",
+                "ground_asset",
+                "near_occluder_asset",
+            ):
+                path = PROJECT_ROOT / str(manifest_route[field])
+                with self.subTest(level_id=route["level_id"], field=field):
+                    self.assertTrue(path.is_file())
+                    image = pygame.image.load(str(path)).convert_alpha()
+                    self.assertEqual(image.get_size(), (route["world_width"], 360))
+                    self.assertEqual(image.get_flags() & pygame.SRCALPHA, pygame.SRCALPHA)
+            required_object_fields = (
+                "id",
+                "kind",
+                "asset",
+                "x",
+                "depth",
+                "elevation",
+                "anchor",
+                "physical_height_m",
+            )
+            for item in manifest_route["physical_scene_objects"]:
+                with self.subTest(level_id=route["level_id"], object_id=item.get("id")):
+                    for field in required_object_fields:
+                        self.assertIn(field, item)
+                    self.assertTrue(item["depth"] <= 360)
+                    self.assertTrue(0.0 <= float(item["physical_height_m"]) <= 12.0)
 
     def test_missing_declared_asset_is_a_real_failure(self) -> None:
         manifest_path = PROJECT_ROOT / "data" / "chapter1_location_lock.json"

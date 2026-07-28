@@ -43,6 +43,56 @@ class ChapterOneArtGeneratorTests(unittest.TestCase):
                     route["world_width"],
                 )
 
+    def test_layered_manifest_fields_are_present_and_route_specific(self) -> None:
+        required_fields = (
+            "projection_profile_id",
+            "sky_profile_id",
+            "ground_opaque_from_y",
+            "haze_asset",
+            "skyline_asset",
+            "architecture_asset",
+            "ground_asset",
+            "near_occluder_asset",
+            "physical_scene_objects",
+        )
+        for route in self.manifest["routes"]:
+            with self.subTest(theme=route["theme"]):
+                for field in required_fields:
+                    self.assertIn(field, route, f"{route['theme']} missing {field}")
+                self.assertEqual(route["projection_profile_id"], "chapter1_oblique_v2")
+
+    def test_layer_artifacts_are_true_alpha_surfaces(self) -> None:
+        for route in self.manifest["routes"]:
+            main = art._build_layered_assets(route)
+            with self.subTest(theme=route["theme"]):
+                expected_size = (route["world_width"], art.HEIGHT)
+                for layer_name, layer in main.items():
+                    self.assertEqual(layer.get_size(), expected_size)
+                    self.assertEqual(layer.get_flags() & pygame.SRCALPHA, pygame.SRCALPHA)
+                self.assertEqual(main["haze"].get_size(), expected_size)
+                self.assertEqual(main["ground"].get_size(), expected_size)
+                ground_row = int(route["ground_opaque_from_y"])
+                self.assertLess(ground_row, art.HEIGHT)
+                world_width = int(route["world_width"])
+                sampled_x = range(0, world_width, 80)
+                ground_alpha = [main["ground"].get_at((x, ground_row))[3] for x in sampled_x]
+                haze_alpha = [
+                    main["haze"].get_at((x, max(0, ground_row - 8)))[3] for x in sampled_x
+                ]
+                self.assertIn(255, ground_alpha)
+                architecture_rows = [
+                    max(0, ground_row - 20),
+                    max(0, ground_row - 12),
+                    max(0, ground_row - 8),
+                ]
+                self.assertTrue(
+                    any(
+                        any(main["architecture"].get_at((x, row))[3] > 0 for x in sampled_x)
+                        for row in architecture_rows
+                    )
+                )
+                self.assertTrue(all(alpha == 0 for alpha in haze_alpha))
+
     def test_panel_anchor_bands_exactly_cover_manifest_order(self) -> None:
         for route in self.manifest["routes"]:
             theme = route["theme"]
