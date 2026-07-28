@@ -7,7 +7,9 @@ import tempfile
 from pathlib import Path
 import unittest
 
+import src.atmosphere as atmosphere
 from src.atmosphere import AtmosphereSnapshot, AtmosphereState
+from src.config import resource_path
 from src.progression import (
     DEFAULT_FIRST_LEVEL_ID,
     GameOptions,
@@ -74,6 +76,12 @@ class AtmosphereSnapshotTests(unittest.TestCase):
 
 
 class AtmosphereStateTests(unittest.TestCase):
+    def test_profile_data_uses_runtime_resource_resolution(self) -> None:
+        self.assertEqual(
+            atmosphere._ATMO_DATA,
+            resource_path("data/atmosphere.json"),
+        )
+
     def test_determinism_holds_across_update_partitions(self) -> None:
         state_a = AtmosphereState.new(seed=99, profile_id="chapter_1_sunset")
         state_b = AtmosphereState.new(seed=99, profile_id="chapter_1_sunset")
@@ -125,6 +133,16 @@ class AtmosphereStateTests(unittest.TestCase):
         self.assertTrue(after.time_seconds > mid.time_seconds)
         self.assertNotEqual(after.cloud_phases, AtmosphereState.new(seed=555).cloud_phases)
         self.assertNotEqual(after.cloud_phases, mid.cloud_phases)
+
+    def test_reaffirming_active_target_does_not_restart_transition(self) -> None:
+        state = AtmosphereState.new(seed=555, profile_id="chapter_1_sunset")
+        state.set_target_profile("i8_underpass_dimming")
+        state.advance(0.75)
+        before = state.snapshot()
+
+        state.set_target_profile("i8_underpass_dimming")
+
+        self.assertEqual(state.snapshot(), before)
 
     def test_transition_reaches_target(self) -> None:
         state = AtmosphereState.new(seed=321, profile_id="chapter_1_sunset")

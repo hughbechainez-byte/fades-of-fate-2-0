@@ -12,6 +12,7 @@ from src.location_lock import (
     LEVEL_IDS,
     MANDATORY_REFERENCE_URLS,
     REQUIRED_LANDMARK_ORDERS,
+    SUPPORTED_PHYSICAL_SCENE_OBJECT_KINDS,
     LocationLockError,
     coordinate_normalized_distances,
     landmark_for_id,
@@ -242,7 +243,7 @@ class ChapterOneLocationLockTests(unittest.TestCase):
 
     def test_layer_asset_pairing_is_required(self) -> None:
         missing_size = deepcopy(self.manifest)
-        missing_size["routes"][1]["far_skyline_asset"] = "assets/stage/chapter1_location_locked/test_fallback.png"
+        missing_size["routes"][1].pop("far_skyline_asset_size")
         with self.assertRaisesRegex(LocationLockError, "must declare far_skyline_asset and far_skyline_asset_size together"):
             validate_location_lock(
                 missing_size,
@@ -251,7 +252,7 @@ class ChapterOneLocationLockTests(unittest.TestCase):
             )
 
         missing_asset = deepcopy(self.manifest)
-        missing_asset["routes"][1]["far_skyline_asset_size"] = [3200, 360]
+        missing_asset["routes"][1].pop("far_skyline_asset")
         with self.assertRaisesRegex(LocationLockError, "must declare far_skyline_asset and far_skyline_asset_size together"):
             validate_location_lock(
                 missing_asset,
@@ -262,7 +263,8 @@ class ChapterOneLocationLockTests(unittest.TestCase):
     def test_optional_layer_assets_validate_size_and_alpha(self) -> None:
         from PIL import Image
 
-        with TemporaryDirectory(dir=ROOT) as temp_root:
+        locked_art_root = ROOT / "assets" / "stage" / "chapter1_location_locked"
+        with TemporaryDirectory(dir=locked_art_root) as temp_root:
             temp_dir = Path(temp_root)
             route = deepcopy(self.manifest)["routes"][2]
             world_width = int(route["world_width"])
@@ -302,7 +304,8 @@ class ChapterOneLocationLockTests(unittest.TestCase):
     def test_ground_coverage_requires_opaque_floor_at_or_below_threshold(self) -> None:
         from PIL import Image
 
-        with TemporaryDirectory(dir=ROOT) as temp_root:
+        locked_art_root = ROOT / "assets" / "stage" / "chapter1_location_locked"
+        with TemporaryDirectory(dir=locked_art_root) as temp_root:
             temp_dir = Path(temp_root)
             route = deepcopy(self.manifest)["routes"][0]
             world_width = int(route["world_width"])
@@ -353,9 +356,50 @@ class ChapterOneLocationLockTests(unittest.TestCase):
             validate_location_lock(invalid, project_root=ROOT, validate_assets=False)
 
         malformed = deepcopy(self.manifest)
-        malformed["routes"][1]["physical_scene_objects"] = [{"id": "bad", "kind": "box", "world_x": "N/A", "height": -1}]
+        malformed["routes"][1]["physical_scene_objects"] = [{"id": "bad", "kind": "sedan", "world_x": "N/A", "height": -1}]
         with self.assertRaisesRegex(LocationLockError, "physical_scene_objects\\[0\\].world_x"):
             validate_location_lock(malformed, project_root=ROOT, validate_assets=False)
+
+    def test_physical_scene_objects_share_renderer_kind_registry(self) -> None:
+        self.assertEqual(
+            SUPPORTED_PHYSICAL_SCENE_OBJECT_KINDS,
+            frozenset({"sedan"}),
+        )
+        unsupported = deepcopy(self.manifest)
+        unsupported["routes"][0]["physical_scene_objects"][0]["kind"] = "lamp_post"
+        with self.assertRaisesRegex(LocationLockError, "kind must be renderer-supported"):
+            validate_location_lock(unsupported, project_root=ROOT, validate_assets=False)
+
+    def test_physical_scene_objects_stay_outside_walkable_rails_or_collide(self) -> None:
+        intruding = deepcopy(self.manifest)
+        intruding_object = intruding["routes"][0]["physical_scene_objects"][0]
+        intruding_object["world_x"] = 470
+        intruding_object["depth"] = 247
+        with self.assertRaisesRegex(LocationLockError, "outside the walkable rail"):
+            validate_location_lock(intruding, project_root=ROOT, validate_assets=False)
+
+        collision_backed = deepcopy(intruding)
+        collision_backed_object = collision_backed["routes"][0]["physical_scene_objects"][0]
+        collision_backed_object["collision_obstacle_id"] = "sprouts_cart_return"
+        validate_location_lock(
+            collision_backed,
+            project_root=ROOT,
+            validate_assets=False,
+        )
+
+        dangling_collision = deepcopy(collision_backed)
+        dangling_collision["routes"][0]["physical_scene_objects"][0][
+            "collision_obstacle_id"
+        ] = "missing_obstacle"
+        with self.assertRaisesRegex(
+            LocationLockError,
+            "must reference a gameplay obstacle",
+        ):
+            validate_location_lock(
+                dangling_collision,
+                project_root=ROOT,
+                validate_assets=False,
+            )
 
     def test_production_mapping_never_references_old_generic_stage_art(self) -> None:
         raw = json.dumps(self.manifest).lower()

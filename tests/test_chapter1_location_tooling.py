@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 from copy import deepcopy
+import hashlib
+import importlib.util
 import json
 import os
 from pathlib import Path
@@ -17,6 +19,7 @@ import pygame
 
 from tools.validate_chapter1 import (
     FIXED_STEP_BUDGET_MS,
+    _asset_inventory_digest,
     build_location_lock_report,
     run_scenery_camera_sweep,
 )
@@ -44,6 +47,23 @@ class ChapterOneLocationValidationTests(unittest.TestCase):
         )
 
         self.assertTrue(report["passed"], report["errors"])
+        self.assertEqual(len(report["asset_inventory_sha256"]), 64)
+        atmosphere_file = report["authoritative_runtime_files"]["atmosphere"]
+        atmosphere_path = PROJECT_ROOT / "data" / "atmosphere.json"
+        self.assertTrue(atmosphere_file["exists"])
+        self.assertEqual(atmosphere_file["path"], "data/atmosphere.json")
+        self.assertEqual(
+            atmosphere_file["size_bytes"],
+            atmosphere_path.stat().st_size,
+        )
+        self.assertEqual(
+            atmosphere_file["sha256"],
+            hashlib.sha256(atmosphere_path.read_bytes()).hexdigest(),
+        )
+        self.assertNotEqual(
+            report["asset_inventory_sha256"],
+            _asset_inventory_digest(report["routes"]),
+        )
         self.assertEqual(len(report["routes"]), 4)
         self.assertTrue(all(route["passed"] for route in report["routes"]))
         self.assertGreater(
@@ -70,31 +90,38 @@ class ChapterOneLocationValidationTests(unittest.TestCase):
             for field, asset in route["assets"].items():
                 with self.subTest(level_id=route["level_id"], field=field):
                     self.assertTrue(asset["exists"])
+                    if field == "physical_scene_object_assets":
+                        self.assertIsNone(asset["size"])
+                        self.assertEqual(len(asset["sha256"]), 64)
+                        self.assertGreater(len(asset["items"]), 0)
+                        continue
                     self.assertEqual(asset["size"][1], 360)
                     self.assertEqual(len(asset["sha256"]), 64)
             self.assertTrue(route["assets"]["main_panorama_asset"]["fully_opaque"])
             self.assertTrue(route["assets"]["far_asset"]["has_alpha"])
             self.assertTrue(route["assets"]["near_asset"]["has_alpha"])
-            self.assertIn("haze_asset", manifest_route)
-            self.assertIn("skyline_asset", manifest_route)
-            self.assertIn("architecture_asset", manifest_route)
-            self.assertIn("ground_asset", manifest_route)
-            self.assertIn("near_occluder_asset", manifest_route)
+            layered_fields = (
+                "far_haze_asset",
+                "far_skyline_asset",
+                "architecture_asset",
+                "ground_asset",
+                "near_occluder_asset",
+            )
+            for field in layered_fields:
+                self.assertIn(field, manifest_route)
+                self.assertEqual(
+                    manifest_route[f"{field}_size"],
+                    [route["world_width"], 360],
+                )
             layered = (
-                manifest_route["haze_asset"],
-                manifest_route["skyline_asset"],
+                manifest_route["far_haze_asset"],
+                manifest_route["far_skyline_asset"],
                 manifest_route["architecture_asset"],
                 manifest_route["ground_asset"],
                 manifest_route["near_occluder_asset"],
             )
             self.assertEqual(len(set(layered)), len(layered))
-            for field in (
-                "haze_asset",
-                "skyline_asset",
-                "architecture_asset",
-                "ground_asset",
-                "near_occluder_asset",
-            ):
+            for field in layered_fields:
                 path = PROJECT_ROOT / str(manifest_route[field])
                 with self.subTest(level_id=route["level_id"], field=field):
                     self.assertTrue(path.is_file())
@@ -105,7 +132,7 @@ class ChapterOneLocationValidationTests(unittest.TestCase):
                 "id",
                 "kind",
                 "asset",
-                "x",
+                "world_x",
                 "depth",
                 "elevation",
                 "anchor",
@@ -117,6 +144,8 @@ class ChapterOneLocationValidationTests(unittest.TestCase):
                         self.assertIn(field, item)
                     self.assertTrue(item["depth"] <= 360)
                     self.assertTrue(0.0 <= float(item["physical_height_m"]) <= 12.0)
+                    self.assertTrue(str(item["asset"]).startswith("assets/"))
+                    self.assertTrue((PROJECT_ROOT / str(item["asset"])).is_file())
 
     def test_missing_declared_asset_is_a_real_failure(self) -> None:
         manifest_path = PROJECT_ROOT / "data" / "chapter1_location_lock.json"
@@ -189,6 +218,142 @@ class ChapterOneLocationValidationTests(unittest.TestCase):
             self.assertTrue(route["checkpoints_visually_distinct"])
             self.assertTrue(route["p95_within_fixed_step_budget"])
 
+    def test_visual_qa_projects_a_calibrated_prop_into_each_route_sheet(
+        self,
+    ) -> None:
+        script_path = PROJECT_ROOT / "tools" / "Render-Route-Scenery-QA.py"
+        spec = importlib.util.spec_from_file_location(
+            "render_route_scenery_qa_for_test",
+            script_path,
+        )
+        self.assertIsNotNone(spec)
+        self.assertIsNotNone(spec.loader)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        gameplay = json.loads(
+            (PROJECT_ROOT / "data" / "gameplay.json").read_text(
+                encoding="utf-8-sig"
+            )
+        )
+        manifest = json.loads(
+            (PROJECT_ROOT / "data" / "chapter1_location_lock.json").read_text(
+                encoding="utf-8-sig"
+            )
+        )
+        projection, camera_depth, profile_id = module._build_active_projection(
+            gameplay
+        )
+
+        self.assertEqual(profile_id, "chapter1_oblique_v2")
+        for route in manifest["routes"]:
+            max_camera = max(0, int(route["world_width"]) - 640)
+            visible_checkpoints: list[float] = []
+            for fraction in module.CHECKPOINTS:
+                frame = pygame.Surface((640, 360)).convert()
+                placements = module._draw_physical_scene_objects(
+                    frame,
+                    route,
+                    int(round(max_camera * fraction)),
+                    projection,
+                    camera_depth,
+                )
+                self.assertGreater(len(placements), 0)
+                self.assertTrue(
+                    all(
+                        item["bottom_center_matches_projection"]
+                        for item in placements
+                    )
+                )
+                if any(item["visible"] for item in placements):
+                    visible_checkpoints.append(fraction)
+            with self.subTest(level_id=route["level_id"]):
+                self.assertGreater(len(visible_checkpoints), 0)
+
+    def test_visual_qa_uses_settled_route_profiles_and_animated_phases(
+        self,
+    ) -> None:
+        script_path = PROJECT_ROOT / "tools" / "Render-Route-Scenery-QA.py"
+        spec = importlib.util.spec_from_file_location(
+            "render_route_atmosphere_qa_for_test",
+            script_path,
+        )
+        self.assertIsNotNone(spec)
+        self.assertIsNotNone(spec.loader)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        gameplay = json.loads(
+            (PROJECT_ROOT / "data" / "gameplay.json").read_text(
+                encoding="utf-8-sig"
+            )
+        )
+        manifest = json.loads(
+            (PROJECT_ROOT / "data" / "chapter1_location_lock.json").read_text(
+                encoding="utf-8-sig"
+            )
+        )
+        atmosphere_data = json.loads(
+            (PROJECT_ROOT / "data" / "atmosphere.json").read_text(
+                encoding="utf-8-sig"
+            )
+        )
+        projection, camera_depth, _ = module._build_active_projection(gameplay)
+        font = pygame.font.Font(None, 14)
+
+        for route in manifest["routes"]:
+            samples = module._build_route_atmosphere_samples(
+                route,
+                atmosphere_data,
+            )
+            steady = samples["steady"]
+            animated = samples["animated"]
+            self.assertEqual(
+                samples["mapped_profile_id"],
+                route["sky_profile_id"],
+            )
+            self.assertEqual(steady.current_profile_id, route["sky_profile_id"])
+            self.assertEqual(steady.target_profile_id, route["sky_profile_id"])
+            self.assertEqual(steady.transition_progress, 1.0)
+            self.assertGreater(animated.time_seconds, steady.time_seconds)
+            self.assertNotEqual(animated.cloud_phases, steady.cloud_phases)
+
+            camera_x = max(
+                0,
+                min(
+                    int(route["world_width"]) - 640,
+                    int(route["physical_scene_objects"][0]["world_x"]) - 320,
+                ),
+            )
+            steady_frame, _ = module._render_checkpoint(
+                route,
+                camera_x,
+                font,
+                0.5,
+                projection,
+                camera_depth,
+                steady,
+                "STEADY",
+            )
+            animated_frame, _ = module._render_checkpoint(
+                route,
+                camera_x,
+                font,
+                0.5,
+                projection,
+                camera_depth,
+                animated,
+                "STEADY",
+            )
+            with self.subTest(level_id=route["level_id"]):
+                self.assertNotEqual(
+                    module._sky_region_sha256(steady_frame),
+                    module._sky_region_sha256(animated_frame),
+                )
+
+        script = script_path.read_text(encoding="utf-8-sig")
+        self.assertIn('"atmosphere_phase_results"', script)
+        self.assertIn('"fixed_camera_phase_hashes_distinct"', script)
+        self.assertIn('"sky_region_sha256"', script)
+
     def test_scenery_sweep_rejects_too_few_or_too_many_frames(self) -> None:
         for frame_count in (0, 4, 241):
             with self.subTest(frame_count=frame_count):
@@ -203,6 +368,26 @@ class ChapterOneWindowsBuildGateTests(unittest.TestCase):
         )
 
         self.assertIn("Render-Route-Scenery-QA.py", script)
+        self.assertEqual(script.count("Render-Route-Scenery-QA.py"), 1)
+        self.assertIn("Render-Projection-Calibration.py", script)
+        self.assertIn("$VisualReviewApproved", script)
+        self.assertIn("Remove-Item -LiteralPath $staleArtifact", script)
+        self.assertIn("asset_inventory_sha256", script)
+        self.assertIn("Packaged location asset inventory mismatch", script)
+        self.assertIn("Installed location asset inventory mismatch", script)
+        self.assertIn(
+            "Get-FileHash -Algorithm SHA256 -LiteralPath $exe",
+            script,
+        )
+        self.assertIn(
+            "Get-FileHash -Algorithm SHA256 -LiteralPath $desktopExe",
+            script,
+        )
+        self.assertIn("Installed executable hash mismatch", script)
+        self.assertLess(
+            script.index("Installed executable hash mismatch"),
+            script.index("Desktop self-test failed"),
+        )
         self.assertIn("chapter1_validation_build.json", script)
         self.assertIn("--location-only", script)
         self.assertIn("--project-root $packageDir", script)
@@ -234,6 +419,8 @@ class ChapterOneWindowsBuildGateTests(unittest.TestCase):
         self.assertIn("seam_world_x - width // 2", script)
         self.assertIn("panel_handoffs_are_structurally_masked", script)
         self.assertIn("no_anisotropic_scaling_or_miniature_traffic", script)
+        self.assertIn("failed_location_preflight", script)
+        self.assertIn('"completed_by_codex_visual_review"', script)
 
 
 if __name__ == "__main__":

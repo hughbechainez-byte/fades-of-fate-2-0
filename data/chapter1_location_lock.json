@@ -710,55 +710,29 @@
         }
       ],
       "projection_profile_id": "chapter1_oblique_v2",
-      "sky_profile_id": "sky_profile_chapter1_northbound_midday",
+      "sky_profile_id": "chapter_1_sunset",
       "ground_opaque_from_y": 238,
-      "haze_asset": "assets/stage/chapter1_location_locked/ch1_l1_haze_v2.png",
-      "skyline_asset": "assets/stage/chapter1_location_locked/ch1_l1_skyline_v2.png",
+      "far_haze_asset": "assets/stage/chapter1_location_locked/ch1_l1_haze_v2.png",
+      "far_haze_asset_size": [3200, 360],
+      "far_skyline_asset": "assets/stage/chapter1_location_locked/ch1_l1_skyline_v2.png",
+      "far_skyline_asset_size": [3200, 360],
       "architecture_asset": "assets/stage/chapter1_location_locked/ch1_l1_architecture_v2.png",
+      "architecture_asset_size": [3200, 360],
       "ground_asset": "assets/stage/chapter1_location_locked/ch1_l1_ground_v2.png",
+      "ground_asset_size": [3200, 360],
       "near_occluder_asset": "assets/stage/chapter1_location_locked/ch1_l1_near_occluder_v2.png",
+      "near_occluder_asset_size": [3200, 360],
       "physical_scene_objects": [
         {
           "id": "l1_sprouts_sedan_parked",
           "kind": "sedan",
-          "asset": "props/vehicles/compact_sedan_v2.png",
-          "x": 470,
-          "depth": 292,
-          "elevation": 0.0,
-          "anchor": "sprouts_parking_lot",
-          "physical_height_m": 0.82
-        },
-        {
-          "id": "l1_town_country_storefront",
-          "kind": "storefront",
-          "asset": "props/buildings/strip_mall_front_v2.png",
-          "x": 1660,
-          "depth": 258,
+          "asset": "assets/props/vehicles/compact_sedan_v2.png",
+          "world_x": 1320,
+          "depth": 224,
           "elevation": 0.0,
           "anchor": "walmart_neighborhood_market",
-          "physical_height_m": 2.1,
-          "collision_feature_reference": "l1_town_country_planter"
-        },
-        {
-          "id": "l1_madison_signal_mast",
-          "kind": "signal_pole",
-          "asset": "props/urban/signal_pole_v2.png",
-          "x": 2740,
-          "depth": 246,
-          "elevation": 0.0,
-          "anchor": "madison_intersection",
-          "physical_height_m": 4.9
-        },
-        {
-          "id": "l1_el_cilantro_baylight",
-          "kind": "door",
-          "asset": "props/civic/graffiti_door_v2.png",
-          "x": 3110,
-          "depth": 244,
-          "elevation": 0.0,
-          "anchor": "el_cilantro_madison",
-          "physical_height_m": 1.1,
-          "collision_feature_reference": "el_cilantro_madison"
+          "physical_height_m": 1.35,
+          "facing": -1
         }
       ]
     },
@@ -1209,54 +1183,30 @@
         }
       ],
       "projection_profile_id": "chapter1_oblique_v2",
-      "sky_profile_id": "sky_profile_chapter1_near_underpass",
+      "sky_profile_id": "i8_underpass_dimming",
       "ground_opaque_from_y": 236,
-      "haze_asset": "assets/stage/chapter1_location_locked/ch1_l2_haze_v2.png",
-      "skyline_asset": "assets/stage/chapter1_location_locked/ch1_l2_skyline_v2.png",
+      "far_haze_asset": "assets/stage/chapter1_location_locked/ch1_l2_haze_v2.png",
+      "far_haze_asset_size": [3200, 360],
+      "far_skyline_asset": "assets/stage/chapter1_location_locked/ch1_l2_skyline_v2.png",
+      "far_skyline_asset_size": [3200, 360],
       "architecture_asset": "assets/stage/chapter1_location_locked/ch1_l2_architecture_v2.png",
+      "architecture_asset_size": [3200, 360],
       "ground_asset": "assets/stage/chapter1_location_locked/ch1_l2_ground_v2.png",
+      "ground_asset_size": [3200, 360],
       "near_occluder_asset": "assets/stage/chapter1_location_locked/ch1_l2_near_occluder_v2.png",
+      "near_occluder_asset_size": [3200, 360],
       "physical_scene_objects": [
         {
           "id": "l2_seven_eleven_crew_car",
           "kind": "sedan",
-          "asset": "props/vehicles/compact_sedan_v2.png",
-          "x": 360,
-          "depth": 292,
+          "asset": "assets/props/vehicles/compact_sedan_v2.png",
+          "world_x": 360,
+          "depth": 222,
           "elevation": 0.0,
           "anchor": "seven_eleven",
-          "physical_height_m": 0.83
-        },
-        {
-          "id": "l2_carls_jr_canopy_pole",
-          "kind": "awning_support",
-          "asset": "props/retail/carls_jr_canopy_v2.png",
-          "x": 730,
-          "depth": 248,
-          "elevation": 0.0,
-          "anchor": "carls_jr_pad",
-          "physical_height_m": 0.95
-        },
-        {
-          "id": "l2_valvoline_service_bay",
-          "kind": "service_bay",
-          "asset": "props/automotive/service_bay_v2.png",
-          "x": 2060,
-          "depth": 236,
-          "elevation": 0.0,
-          "anchor": "valvoline",
-          "physical_height_m": 2.2
-        },
-        {
-          "id": "l2_i8_support_bird",
-            "kind": "bridge_support",
-            "asset": "props/infrastructure/bridge_column_v2.png",
-            "x": 3060,
-            "depth": 210,
-            "elevation": 0.0,
-            "anchor": "i8_underpass"
-            ,"physical_height_m": 4.8
-          }
+          "physical_height_m": 1.35,
+          "facing": 1
+        }
       ]
     },
     {
@@ -1515,53 +1465,29 @@
         }
       ],
       "projection_profile_id": "chapter1_oblique_v2",
-      "sky_profile_id": "sky_profile_chapter1_pacific_sky",
+      "sky_profile_id": "i8_underpass_dimming",
       "ground_opaque_from_y": 236,
-      "haze_asset": "assets/stage/chapter1_location_locked/ch1_l3_haze_v2.png",
-      "skyline_asset": "assets/stage/chapter1_location_locked/ch1_l3_skyline_v2.png",
+      "far_haze_asset": "assets/stage/chapter1_location_locked/ch1_l3_haze_v2.png",
+      "far_haze_asset_size": [3200, 360],
+      "far_skyline_asset": "assets/stage/chapter1_location_locked/ch1_l3_skyline_v2.png",
+      "far_skyline_asset_size": [3200, 360],
       "architecture_asset": "assets/stage/chapter1_location_locked/ch1_l3_architecture_v2.png",
+      "architecture_asset_size": [3200, 360],
       "ground_asset": "assets/stage/chapter1_location_locked/ch1_l3_ground_v2.png",
+      "ground_asset_size": [3200, 360],
       "near_occluder_asset": "assets/stage/chapter1_location_locked/ch1_l3_near_occluder_v2.png",
+      "near_occluder_asset_size": [3200, 360],
       "physical_scene_objects": [
         {
-          "id": "l3_soapy_wash_vacuum",
-          "kind": "vacuum_canopy",
-          "asset": "props/auto_detail/vacuum_unit_v2.png",
-          "x": 240,
-          "depth": 293,
-          "elevation": 0.0,
-          "anchor": "soapy_joes",
-          "physical_height_m": 1.35
-        },
-        {
-          "id": "l3_starbucks_turn_buoy",
-          "kind": "traffic_island",
-          "asset": "props/road/traffic_island_v2.png",
-          "x": 790,
-          "depth": 271,
-          "elevation": 0.0,
-          "anchor": "starbucks_pad",
-          "physical_height_m": 0.6
-        },
-        {
-          "id": "l3_broadway_sign_mast",
-          "kind": "sign_pole",
-          "asset": "props/signage/street_sign_pole_v2.png",
-          "x": 2240,
-          "depth": 246,
+          "id": "l3_broadway_sedan_parked",
+          "kind": "sedan",
+          "asset": "assets/props/vehicles/compact_sedan_v2.png",
+          "world_x": 2110,
+          "depth": 224,
           "elevation": 0.0,
           "anchor": "broadway_turn",
-          "physical_height_m": 3.0
-        },
-        {
-          "id": "l3_revive_path_entry_sign",
-          "kind": "wayfinding_sign",
-          "asset": "props/office/route_sign_v2.png",
-          "x": 3010,
-          "depth": 250,
-          "elevation": 0.0,
-          "anchor": "revive_pathway",
-          "physical_height_m": 1.4
+          "physical_height_m": 1.35,
+          "facing": -1
         }
       ]
     },
@@ -1736,53 +1662,29 @@
         }
       ],
       "projection_profile_id": "chapter1_oblique_v2",
-      "sky_profile_id": "sky_profile_chapter1_evening_halo",
+      "sky_profile_id": "awaken_finale",
       "ground_opaque_from_y": 244,
-      "haze_asset": "assets/stage/chapter1_location_locked/ch1_l4_haze_v2.png",
-      "skyline_asset": "assets/stage/chapter1_location_locked/ch1_l4_skyline_v2.png",
+      "far_haze_asset": "assets/stage/chapter1_location_locked/ch1_l4_haze_v2.png",
+      "far_haze_asset_size": [1600, 360],
+      "far_skyline_asset": "assets/stage/chapter1_location_locked/ch1_l4_skyline_v2.png",
+      "far_skyline_asset_size": [1600, 360],
       "architecture_asset": "assets/stage/chapter1_location_locked/ch1_l4_architecture_v2.png",
+      "architecture_asset_size": [1600, 360],
       "ground_asset": "assets/stage/chapter1_location_locked/ch1_l4_ground_v2.png",
+      "ground_asset_size": [1600, 360],
       "near_occluder_asset": "assets/stage/chapter1_location_locked/ch1_l4_near_occluder_v2.png",
+      "near_occluder_asset_size": [1600, 360],
       "physical_scene_objects": [
         {
           "id": "l4_awaken_sunday_car",
           "kind": "sedan",
-          "asset": "props/vehicles/compact_sedan_v2.png",
-          "x": 180,
-          "depth": 300,
+          "asset": "assets/props/vehicles/compact_sedan_v2.png",
+          "world_x": 180,
+          "depth": 222,
           "elevation": 0.0,
           "anchor": "awaken_church_lot",
-          "physical_height_m": 0.79
-        },
-        {
-          "id": "l4_awaken_facade_door",
-          "kind": "door",
-          "asset": "props/church/facade_door_v2.png",
-          "x": 510,
-          "depth": 246,
-          "elevation": 0.0,
-          "anchor": "awaken_facade",
-          "physical_height_m": 1.06
-        },
-        {
-          "id": "l4_awaken_light_pole_front",
-          "kind": "light_pole",
-          "asset": "props/urban/light_pole_v2.png",
-          "x": 760,
-          "depth": 244,
-          "elevation": 0.0,
-          "anchor": "awaken_front_lot",
-          "physical_height_m": 4.8
-        },
-        {
-          "id": "l4_awaken_bmx_prop",
-          "kind": "story_prop",
-          "asset": "props/props/dave_bike_line_v2.png",
-          "x": 1080,
-          "depth": 236,
-          "elevation": 0.0,
-          "anchor": "daves_bmx",
-          "physical_height_m": 1.05
+          "physical_height_m": 1.35,
+          "facing": 1
         }
       ]
     }

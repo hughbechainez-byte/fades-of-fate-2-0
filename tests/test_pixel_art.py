@@ -359,8 +359,9 @@ class PixelArtTests(unittest.TestCase):
 
     def test_public_signatures_stay_game_compatible(self) -> None:
         expected = {
-            draw_stage_background: ("surface", "camera_x", "stage_width", "shake_y", "theme"),
+            draw_stage_background: ("surface", "camera_x", "stage_width", "shake_y", "theme", "atmosphere"),
             draw_stage_foreground: ("surface", "camera_x", "stage_width", "shake_y", "theme"),
+            pixel_art.draw_physical_scene_object: ("surface", "x", "y", "feature", "frame"),
             draw_player: ("surface", "x", "y", "z", "facing", "state", "character", "frame", "player_color", "hit_flash"),
             draw_chief: ("surface", "x", "y", "z", "facing", "state", "frame"),
             draw_enemy: ("surface", "x", "y", "z", "facing", "state", "kind", "frame", "tint", "hit_flash"),
@@ -534,14 +535,31 @@ class PixelArtTests(unittest.TestCase):
                 )
 
     def test_location_locked_palette_preserves_clear_depth_grading(self) -> None:
-        def mean_luma(surface: pygame.Surface, top: int, bottom: int) -> float:
-            samples = [
+        def mean_luma(samples: list[pygame.Color]) -> float:
+            values = [
                 (color.r * 3 + color.g * 4 + color.b) / 8
-                for x in range(4, DESIGN_WIDTH, 16)
-                for y in range(top + 4, bottom, 12)
-                for color in (surface.get_at((x, y)),)
+                for color in samples
             ]
-            return sum(samples) / len(samples)
+            self.assertTrue(values)
+            return sum(values) / len(values)
+
+        def semantic_samples(
+            surface: pygame.Surface,
+            architecture: pygame.Surface,
+            camera_x: int,
+            ground_row: int,
+        ) -> tuple[list[pygame.Color], list[pygame.Color], list[pygame.Color]]:
+            sky: list[pygame.Color] = []
+            facade: list[pygame.Color] = []
+            ground: list[pygame.Color] = []
+            for x in range(4, DESIGN_WIDTH, 8):
+                for y in range(4, ground_row, 8):
+                    sample = surface.get_at((x, y))
+                    authored = architecture.get_at((camera_x + x, y))
+                    (facade if authored.a else sky).append(sample)
+                for y in range(ground_row + 4, DESIGN_HEIGHT, 8):
+                    ground.append(surface.get_at((x, y)))
+            return sky, facade, ground
 
         for theme, stage_width in pixel_art._CHAPTER_ONE_THEME_ROUTE_WIDTHS.items():
             surface = pygame.Surface((DESIGN_WIDTH, DESIGN_HEIGHT))
@@ -552,9 +570,17 @@ class PixelArtTests(unittest.TestCase):
                 stage_width,
                 theme=theme,
             )
-            sky = mean_luma(surface, 0, 120)
-            facade = mean_luma(surface, 120, 240)
-            ground = mean_luma(surface, 240, 360)
+            route = pixel_art._location_route(theme)
+            layers = pixel_art._location_art_layers(theme)
+            sky_samples, facade_samples, ground_samples = semantic_samples(
+                surface,
+                layers["architecture"],
+                camera_x,
+                int(route["ground_opaque_from_y"]),
+            )
+            sky = mean_luma(sky_samples)
+            facade = mean_luma(facade_samples)
+            ground = mean_luma(ground_samples)
             sampled_luma = [
                 (color.r * 3 + color.g * 4 + color.b) / 8
                 for x in range(4, DESIGN_WIDTH, 8)
@@ -585,6 +611,34 @@ class PixelArtTests(unittest.TestCase):
                 draw_stage_background(surface, 0, stage_width, theme=theme)
                 parked_car.assert_not_called()
                 ambient_vehicle.assert_not_called()
+
+    def test_physical_sedan_uses_the_same_height_ruler_as_dave(self) -> None:
+        route = pixel_art._location_route("sprouts_el_cilantro")
+        self.assertIsNotNone(route)
+        feature = route["physical_scene_objects"][0]
+        sprite = pixel_art._physical_scene_object_sprite(feature)
+        surface = pygame.Surface((DESIGN_WIDTH, DESIGN_HEIGHT), pygame.SRCALPHA)
+        dave = pixel_art.draw_player(
+            surface,
+            180,
+            300,
+            0,
+            1,
+            "idle",
+            "black_dave",
+            0,
+            (217, 72, 64),
+        )
+        expected = round(
+            float(feature["physical_height_m"])
+            / 1.8
+            * dave.height
+        )
+
+        self.assertEqual(dave.height, 134)
+        self.assertEqual(sprite.get_height(), expected)
+        self.assertGreaterEqual(sprite.get_height() / dave.height, 0.70)
+        self.assertLessEqual(sprite.get_height() / dave.height, 0.90)
 
     def test_ambient_planes_move_independently_at_pixel_aligned_rates(self) -> None:
         first = {plane: pixel_art._ambient_plane_offset(400, plane) for plane in ("far", "mid", "world")}
@@ -672,6 +726,53 @@ class PixelArtTests(unittest.TestCase):
             pygame.image.tobytes(stable_overlap, "RGB"),
             pygame.image.tobytes(shaken_overlap, "RGB"),
         )
+
+    def test_camera_shake_overscans_layered_route_with_live_atmosphere(self) -> None:
+        theme = "seven_eleven_underpass"
+        stage_width = pixel_art._CHAPTER_ONE_THEME_ROUTE_WIDTHS[theme]
+        atmosphere = {
+            "time_seconds": 7.25,
+            "seed": 17,
+            "cloud_phases": (0.2, 0.4),
+            "wind": {"speed": 2.0, "direction": 0.0},
+            "transition_progress": 1.0,
+            "current_profile_id": "i8_underpass_dimming",
+            "target_profile_id": "i8_underpass_dimming",
+            "parallax_factors": (0.15, 0.3, 1.0),
+        }
+        stable = pygame.Surface((DESIGN_WIDTH, DESIGN_HEIGHT))
+        positive = pygame.Surface((DESIGN_WIDTH, DESIGN_HEIGHT))
+        negative = pygame.Surface((DESIGN_WIDTH, DESIGN_HEIGHT))
+        draw_stage_background(stable, 760, stage_width, theme=theme, atmosphere=atmosphere)
+        draw_stage_background(positive, 760, stage_width, 4.0, theme=theme, atmosphere=atmosphere)
+        draw_stage_background(negative, 760, stage_width, -4.0, theme=theme, atmosphere=atmosphere)
+
+        self.assertEqual(
+            pygame.image.tobytes(stable.subsurface((0, 0, DESIGN_WIDTH, DESIGN_HEIGHT - 4)), "RGB"),
+            pygame.image.tobytes(positive.subsurface((0, 4, DESIGN_WIDTH, DESIGN_HEIGHT - 4)), "RGB"),
+        )
+        self.assertEqual(
+            pygame.image.tobytes(stable.subsurface((0, 4, DESIGN_WIDTH, DESIGN_HEIGHT - 4)), "RGB"),
+            pygame.image.tobytes(negative.subsurface((0, 0, DESIGN_WIDTH, DESIGN_HEIGHT - 4)), "RGB"),
+        )
+        stable_top = pygame.image.tobytes(stable.subsurface((0, 0, DESIGN_WIDTH, 1)), "RGB")
+        stable_bottom = pygame.image.tobytes(
+            stable.subsurface((0, DESIGN_HEIGHT - 1, DESIGN_WIDTH, 1)),
+            "RGB",
+        )
+        for y in range(4):
+            self.assertEqual(
+                pygame.image.tobytes(positive.subsurface((0, y, DESIGN_WIDTH, 1)), "RGB"),
+                stable_top,
+            )
+            self.assertEqual(
+                pygame.image.tobytes(
+                    negative.subsurface((0, DESIGN_HEIGHT - 1 - y, DESIGN_WIDTH, 1)),
+                    "RGB",
+                ),
+                stable_bottom,
+            )
+        self.assertNotEqual(negative.get_at((DESIGN_WIDTH // 2, DESIGN_HEIGHT - 1)), pygame.Color(*pixel_art.SKY_TOP))
 
     def test_near_foreground_is_separate_occluding_layer_and_shares_camera_shake(self) -> None:
         stable = pygame.Surface((DESIGN_WIDTH, DESIGN_HEIGHT), pygame.SRCALPHA)

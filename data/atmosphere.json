@@ -17,7 +17,7 @@
       "transition_duration_seconds": 6.0
     },
     "i8_underpass_dimming": {
-      "palette": ["#2e2f42", "#3c4757", "#596f78", "#c2d0dd"],
+      "palette": ["#202336", "#303849", "#596f78", "#c2d0dd"],
       "wind_direction": 185.0,
       "wind_speed": 0.9,
       "cloud_speeds": [0.14, 0.08, 0.04],

@@ -5,12 +5,12 @@ from __future__ import annotations
 import json
 import math
 from dataclasses import dataclass
-from pathlib import Path
 from typing import Any, Mapping
 
+from .config import resource_path
 
-_MODULE_DIR = Path(__file__).resolve().parent
-_ATMO_DATA = _MODULE_DIR.parent / "data" / "atmosphere.json"
+
+_ATMO_DATA = resource_path("data/atmosphere.json")
 _CLOUD_PHASE_COUNT = 3
 
 
@@ -448,6 +448,11 @@ class AtmosphereState:
     def set_target_profile(self, profile_id: str) -> None:
         target = _identifier(profile_id, "target_profile_id")
         _get_profile(target)
+        # Route selection is intentionally allowed to reaffirm the active
+        # target.  Treat that as a no-op so the handoff started by an
+        # interlevel bridge is not restarted when gameplay begins.
+        if target == self.target_profile_id:
+            return
         if target == self.current_profile_id:
             self.target_profile_id = target
             self.transition_progress = 1.0

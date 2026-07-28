@@ -52,6 +52,7 @@ __all__ = [
     "LocationArtError",
     "draw_stage_background",
     "draw_stage_foreground",
+    "draw_physical_scene_object",
     "draw_location_travel_panel",
     "draw_stage_prop",
     "draw_bmx_bike",
@@ -251,6 +252,7 @@ _STAGE_NEAR_LAYER_CACHE: dict[tuple[str, int, int], pygame.Surface | None] = {}
 _SUNSET_BACKGROUND_CACHE: dict[tuple[int, int], dict[str, pygame.Surface] | None] = {}
 _LOCATION_ART_CACHE: dict[str, dict[str, pygame.Surface | None]] = {}
 _TRAVEL_PANEL_CACHE: dict[tuple[object, ...], pygame.Surface] = {}
+_PHYSICAL_SCENE_OBJECT_CACHE: dict[tuple[object, ...], pygame.Surface] = {}
 
 # A camera can remain settled for much longer than the actors/effects rendered
 # above it.  Cache the fully composited opaque foundation at those exact
@@ -1950,6 +1952,7 @@ def _draw_location_locked_background(
     cx: float,
     world_width: int,
     theme: str,
+    atmosphere: Any | None = None,
 ) -> None:
     route = _location_route(theme)
     if route is None:
@@ -1970,7 +1973,7 @@ def _draw_location_locked_background(
         layers=layers,
         camera_x=cx,
         world_width=world_width,
-        atmosphere=None,
+        atmosphere=atmosphere,
         loader_identity=id(pygame.image.load),
     )
 
@@ -2440,7 +2443,8 @@ def _draw_chapter_one_near_layer(
     route = _location_route(theme)
     if route is None:
         return False
-    layer = _location_art_layers(theme)["near"]
+    layers = _location_art_layers(theme)
+    layer = layers.get("near_occluder") or layers.get("near")
     if layer is None:
         return True
     x = _chapter_one_near_layer_offset(surface, cx, theme)
@@ -2572,6 +2576,7 @@ def draw_stage_background(
     shake_y: float = 0.0,
     *,
     theme: str = "legacy_second_street",
+    atmosphere: Any | None = None,
 ) -> pygame.Rect:
     """Draw a strict location-locked route or the non-campaign legacy stage."""
 
@@ -2580,12 +2585,51 @@ def draw_stage_background(
     vertical_offset = _i(shake_y)
     if vertical_offset:
         world_layer = pygame.Surface((width, height))
-        draw_stage_background(world_layer, camera_x, stage_width, 0.0, theme=theme)
-        surface.fill(SKY_TOP)
-        surface.blit(world_layer, (0, vertical_offset))
+        draw_stage_background(
+            world_layer,
+            camera_x,
+            stage_width,
+            0.0,
+            theme=theme,
+            atmosphere=atmosphere,
+        )
+        # Camera shake must never reveal a synthetic clear color at either
+        # edge.  In particular, a negative shake previously exposed SKY_TOP
+        # beneath the authored asphalt and read as a warped/missing floor.
+        # Extend the rendered world with its own edge scanlines, then take the
+        # vertically shifted viewport from that overscanned composition.
+        overscan = abs(vertical_offset)
+        world_overscan = pygame.Surface((width, height + overscan * 2))
+        world_overscan.blit(world_layer, (0, overscan))
+        top_edge = world_layer.subsurface((0, 0, width, 1))
+        bottom_edge = world_layer.subsurface((0, height - 1, width, 1))
+        world_overscan.blit(
+            pygame.transform.scale(top_edge, (width, overscan)),
+            (0, 0),
+        )
+        world_overscan.blit(
+            pygame.transform.scale(bottom_edge, (width, overscan)),
+            (0, overscan + height),
+        )
+        source_y = overscan - vertical_offset
+        surface.blit(
+            world_overscan,
+            (0, 0),
+            pygame.Rect(0, source_y, width, height),
+        )
         return surface.get_rect()
     world_width = max(width, _i(stage_width))
     cx = max(0.0, min(float(camera_x), max(0, world_width - width)))
+    route = _location_route(theme)
+    if route is not None and atmosphere is not None:
+        _draw_location_locked_background(
+            surface,
+            cx,
+            world_width,
+            theme,
+            atmosphere=atmosphere,
+        )
+        return surface.get_rect()
     frame_key = _stage_background_frame_key(theme, width, height, world_width, cx)
     cached = _STAGE_BACKGROUND_FRAME_CACHE.get(frame_key)
     if cached is not None:
@@ -2600,7 +2644,14 @@ def draw_stage_background(
         baked = pygame.Surface((width, height))
         _STAGE_BACKGROUND_FRAME_BUILDING.add(frame_key)
         try:
-            draw_stage_background(baked, cx, world_width, 0.0, theme=theme)
+            draw_stage_background(
+                baked,
+                cx,
+                world_width,
+                0.0,
+                theme=theme,
+                atmosphere=None,
+            )
             if pygame.display.get_surface() is not None:
                 baked = baked.convert()
             _store_stage_background_frame(frame_key, baked)
@@ -2608,9 +2659,8 @@ def draw_stage_background(
             _STAGE_BACKGROUND_FRAME_BUILDING.discard(frame_key)
         surface.blit(baked, (0, 0))
         return surface.get_rect()
-    route = _location_route(theme)
     if route is not None:
-        _draw_location_locked_background(surface, cx, world_width, theme)
+        _draw_location_locked_background(surface, cx, world_width, theme, atmosphere=None)
         return surface.get_rect()
     if theme != "legacy_second_street":
         raise LocationArtError(
@@ -2774,10 +2824,7 @@ def _travel_panel_strip(
     if len(waypoints) < 2:
         raise LocationArtError("travel panels require at least two manifest waypoints")
     strip_width = max(width * 3, width * len(waypoints))
-    strip = pygame.Surface((strip_width, height))
-    strip.fill((36, 42, 73))
-    pygame.draw.rect(strip, (78, 56, 83), (0, 62, strip_width, 62))
-    pygame.draw.rect(strip, (219, 126, 86), (0, 124, strip_width, 72))
+    strip = pygame.Surface((strip_width, height), pygame.SRCALPHA)
     pygame.draw.rect(strip, (85, 82, 86), (0, 196, strip_width, 92))
     pygame.draw.rect(strip, (47, 50, 61), (0, 288, strip_width, height - 288))
 
@@ -2846,14 +2893,100 @@ def draw_location_travel_panel(
     surface: pygame.Surface,
     panel: Mapping[str, Any],
     progress: float,
+    *,
+    atmosphere: Any | None = None,
 ) -> pygame.Rect:
     """Render a pixel-aligned moving bridge between two locked route strips."""
 
     width, height = surface.get_size()
+    backdrop._draw_opaque_sky(  # type: ignore[attr-defined]
+        surface,
+        {
+            "sky_profile_id": getattr(
+                atmosphere,
+                "current_profile_id",
+                "chapter_1_sunset",
+            )
+        },
+        atmosphere,
+    )
+    time_seconds = backdrop._read_time_seconds(atmosphere)  # type: ignore[attr-defined]
+    cloud_shift = _i(time_seconds * 7.0)
+    for cloud_x, cloud_y, cloud_width in ((72, 62, 112), (332, 38, 146), (590, 91, 96)):
+        sx = (cloud_x + cloud_shift) % (width + 190) - 95
+        pygame.draw.rect(surface, (116, 71, 102), (sx, cloud_y, cloud_width, 5))
+        pygame.draw.rect(surface, (172, 87, 104), (sx + 25, cloud_y - 5, max(22, cloud_width - 52), 5))
     strip = _travel_panel_strip(panel, width, height)
     camera = _travel_panel_camera_x(panel, progress, width, height)
     surface.blit(strip, (-camera, 0))
     return surface.get_rect()
+
+
+def _physical_scene_object_sprite(feature: Mapping[str, Any]) -> pygame.Surface:
+    asset = str(feature.get("asset", "")).strip()
+    kind = str(feature.get("kind", "")).strip().lower()
+    if kind not in location_lock.SUPPORTED_PHYSICAL_SCENE_OBJECT_KINDS:
+        raise LocationArtError(f"unsupported physical scene object kind: {kind!r}")
+    if not asset:
+        raise LocationArtError("physical scene object asset must be declared")
+    physical_height = float(feature.get("physical_height_m", 0.0))
+    # The projection calibration measures the shipped Dave idle silhouette at
+    # 134 logical pixels.  Physical props must use that same screen-space
+    # ruler; the previous 120px fallback made a 1.35m sedan undersized despite
+    # otherwise correct world placement.
+    reference_adult_height_px = 134.0
+    visible_height = max(
+        1,
+        int(
+            round(
+                float(
+                    feature.get(
+                        "render_height_px",
+                        physical_height / 1.8 * reference_adult_height_px,
+                    )
+                )
+            )
+        ),
+    )
+    facing = -1 if int(feature.get("facing", 1)) < 0 else 1
+    key = (asset, kind, visible_height, facing, id(pygame.image.load))
+    cached = _PHYSICAL_SCENE_OBJECT_CACHE.get(key)
+    if cached is not None:
+        return cached
+    path = resource_path(asset)
+    try:
+        authored = pygame.image.load(str(path))
+    except (OSError, pygame.error) as exc:
+        raise LocationArtError(f"physical scene object asset is missing: {asset}") from exc
+    if not authored.get_masks()[3]:
+        raise LocationArtError(f"physical scene object asset must retain alpha: {asset}")
+    authored = authored.convert_alpha() if pygame.display.get_surface() is not None else authored.copy()
+    visible_bounds = authored.get_bounding_rect(min_alpha=1)
+    if not visible_bounds.width or not visible_bounds.height:
+        raise LocationArtError(f"physical scene object asset has no visible pixels: {asset}")
+    visible = authored.subsurface(visible_bounds).copy()
+    visible_width = max(1, int(round(visible.get_width() * visible_height / visible.get_height())))
+    sprite = pygame.transform.smoothscale(visible, (visible_width, visible_height))
+    if facing < 0:
+        sprite = pygame.transform.flip(sprite, True, False)
+    _PHYSICAL_SCENE_OBJECT_CACHE[key] = sprite
+    return sprite
+
+
+def draw_physical_scene_object(
+    surface: pygame.Surface,
+    x: float,
+    y: float,
+    feature: Mapping[str, Any],
+    frame: int = 0,
+) -> pygame.Rect:
+    """Draw a validated physical prop at a bottom-center projected anchor."""
+
+    del frame  # Reserved for future animated physical props.
+    sprite = _physical_scene_object_sprite(feature)
+    rect = sprite.get_rect(midbottom=(_i(x), _i(y)))
+    surface.blit(sprite, rect)
+    return rect
 
 
 def _shadow(

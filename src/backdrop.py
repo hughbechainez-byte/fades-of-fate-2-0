@@ -10,6 +10,10 @@ import pygame
 
 
 BACKDROP_RENDER_CACHE_LIMIT = 16
+HAZE_BAND_COUNT = 3
+HAZE_PHASE_AMPLITUDES = (12, 10, 8)
+
+_PROFILE_PALETTE_CACHE: dict[str, tuple[tuple[int, int, int], ...]] = {}
 
 
 class AtmosphereState(Protocol):
@@ -130,6 +134,115 @@ def _read_transition_progress(state: Any) -> float:
     return _clamp01(_finite(raw, "transition_progress"))
 
 
+def _state_value(state: Any, name: str, default: Any = None) -> Any:
+    if state is None:
+        return default
+    if isinstance(state, Mapping):
+        return state.get(name, default)
+    return getattr(state, name, default)
+
+
+def _color(value: object) -> tuple[int, int, int] | None:
+    if isinstance(value, str):
+        text_value = value.strip().lstrip("#")
+        if len(text_value) == 6:
+            try:
+                return tuple(int(text_value[index:index + 2], 16) for index in (0, 2, 4))
+            except ValueError:
+                return None
+    if isinstance(value, Sequence) and not isinstance(value, (str, bytes)) and len(value) >= 3:
+        try:
+            return tuple(max(0, min(255, int(value[index]))) for index in range(3))
+        except (TypeError, ValueError):
+            return None
+    return None
+
+
+def _palette(value: object) -> tuple[tuple[int, int, int], ...] | None:
+    if not isinstance(value, Sequence) or isinstance(value, (str, bytes)):
+        return None
+    colors = tuple(filter(None, (_color(item) for item in value)))
+    return colors if len(colors) >= 2 else None
+
+
+def _profile_palette(profile_id: object) -> tuple[tuple[int, int, int], ...] | None:
+    """Resolve a profile palette from the authoritative atmosphere data."""
+
+    normalized = str(profile_id or "").strip()
+    if not normalized:
+        return None
+    cached = _PROFILE_PALETTE_CACHE.get(normalized)
+    if cached is not None:
+        return cached
+    # Keep this import lazy so the reusable renderer remains dependency-light
+    # for procedural/legacy backgrounds while sharing one profile authority.
+    from .atmosphere import AtmosphereState as RuntimeAtmosphereState
+
+    try:
+        palette = RuntimeAtmosphereState.new(profile_id=normalized).snapshot().sky_palette
+    except ValueError:
+        return None
+    _PROFILE_PALETTE_CACHE[normalized] = palette
+    return palette
+
+
+def _lerp_palette(
+    current: tuple[tuple[int, int, int], ...],
+    target: tuple[tuple[int, int, int], ...],
+    amount: float,
+) -> tuple[tuple[int, int, int], ...]:
+    count = max(len(current), len(target))
+    if len(current) != count:
+        current = tuple(current[min(index, len(current) - 1)] for index in range(count))
+    if len(target) != count:
+        target = tuple(target[min(index, len(target) - 1)] for index in range(count))
+    fraction = _clamp01(amount)
+    return tuple(
+        tuple(
+            int(round(start[channel] + (end[channel] - start[channel]) * fraction))
+            for channel in range(3)
+        )
+        for start, end in zip(current, target, strict=False)
+    )
+
+
+def _sky_palette(
+    route: Mapping[str, Any],
+    atmosphere: AtmosphereState | Mapping[str, Any] | None,
+) -> tuple[tuple[int, int, int], ...]:
+    explicit = _palette(_state_value(atmosphere, "sky_palette"))
+    if explicit is None:
+        explicit = _palette(_state_value(atmosphere, "palette"))
+    if explicit is not None:
+        return explicit
+    route_palette = _palette(route.get("sky_palette"))
+    fallback = (
+        route_palette
+        or _profile_palette(route.get("sky_profile_id"))
+        or _profile_palette("chapter_1_sunset")
+        or ((20, 25, 40),)
+    )
+    current = _profile_palette(_state_value(atmosphere, "current_profile_id")) or fallback
+    target = _profile_palette(_state_value(atmosphere, "target_profile_id")) or current
+    return _lerp_palette(current, target, _read_transition_progress(atmosphere))
+
+
+def _draw_opaque_sky(
+    surface: pygame.Surface,
+    route: Mapping[str, Any],
+    atmosphere: AtmosphereState | Mapping[str, Any] | None,
+) -> None:
+    """Draw a cheap opaque profile sky without allocating a frame surface."""
+
+    colors = _sky_palette(route, atmosphere)
+    height = surface.get_height()
+    surface.fill(colors[0])
+    band_height = max(1, math.ceil(height / len(colors)))
+    for index, color in enumerate(colors):
+        top = index * band_height
+        pygame.draw.rect(surface, color, (0, top, surface.get_width(), min(band_height, height - top)))
+
+
 def _bounded_location_layer_offset(
     camera_x: float,
     rate: float,
@@ -157,6 +270,90 @@ def _draw_wrapped(surface: pygame.Surface, layer: pygame.Surface, x: int, y: int
     left = x % layer.get_width()
     surface.blit(layer, (left - layer.get_width(), y))
     surface.blit(layer, (left, y))
+
+
+def _haze_band_rects(
+    route: Mapping[str, Any],
+    layer: pygame.Surface,
+) -> tuple[pygame.Rect, ...]:
+    """Split authored haze into the three declared atmosphere motion planes."""
+
+    ground_y = int(route.get("ground_opaque_from_y", 240))
+    haze_bottom = max(
+        HAZE_BAND_COUNT,
+        min(layer.get_height(), max(96, ground_y // 2)),
+    )
+    return tuple(
+        pygame.Rect(
+            0,
+            (haze_bottom * index) // HAZE_BAND_COUNT,
+            layer.get_width(),
+            (haze_bottom * (index + 1)) // HAZE_BAND_COUNT
+            - (haze_bottom * index) // HAZE_BAND_COUNT,
+        )
+        for index in range(HAZE_BAND_COUNT)
+    )
+
+
+def _atmosphere_haze_offset(
+    route: Mapping[str, Any],
+    atmosphere: AtmosphereState | Mapping[str, Any] | None,
+    camera_x: float,
+    layer_width: int,
+    viewport_width: int,
+    band_index: int,
+) -> int:
+    """Resolve one independently phased atmosphere plane.
+
+    ``AtmosphereState.advance`` integrates the profile's declared cloud speed
+    and parallax factor into each normalized cloud phase.  Convert that phase
+    to a small cyclic pixel drift instead of treating it as a full 3200px
+    texture cycle; that keeps 60 Hz motion slow, bounded, and seamless.
+    """
+
+    factors = _state_value(atmosphere, "parallax_factors", ())
+    if not isinstance(factors, Sequence) or isinstance(factors, (str, bytes)):
+        factors = ()
+    rate = (
+        float(factors[band_index])
+        if band_index < len(factors)
+        else float(route.get("far_parallax", 1.0))
+    )
+    base_x = _bounded_location_layer_offset(
+        camera_x,
+        rate,
+        float(route.get("far_max_offset", 0.0)),
+        layer_width,
+        viewport_width,
+    )
+    phase = _read_cloud_phase(atmosphere, band_index) % 1.0
+    _, direction = _read_wind(atmosphere)
+    horizontal_wind = math.cos(math.radians(direction))
+    direction_sign = -1 if horizontal_wind < 0.0 else 1
+    amplitude = HAZE_PHASE_AMPLITUDES[
+        min(band_index, len(HAZE_PHASE_AMPLITUDES) - 1)
+    ]
+    phase_pixels = _i(math.sin(phase * math.tau) * amplitude)
+    return base_x + direction_sign * phase_pixels
+
+
+def _draw_wrapped_band(
+    surface: pygame.Surface,
+    layer: pygame.Surface,
+    x: int,
+    band: pygame.Rect,
+) -> None:
+    previous_clip = surface.get_clip()
+    band_clip = previous_clip.clip(
+        pygame.Rect(0, band.y, surface.get_width(), band.height)
+    )
+    if band_clip.width <= 0 or band_clip.height <= 0:
+        return
+    try:
+        surface.set_clip(band_clip)
+        _draw_wrapped(surface, layer, x, 0)
+    finally:
+        surface.set_clip(previous_clip)
 
 
 def _read_layer(
@@ -235,22 +432,22 @@ def _compose_static_backdrop_layers(
 
     Returns:
         (sky_layer, structure_layer)
-    where sky_layer is the unmodified base panorama and
-    structure_layer contains architecture/ground/near occluders.
+    where sky_layer is the legacy fallback panorama and structure_layer
+    contains only world-locked architecture and ground.
     """
 
     sky_layer = pygame.Surface((width, height), pygame.SRCALPHA)
     structure_layer = pygame.Surface((width, height), pygame.SRCALPHA)
 
+    architecture = layers.get("architecture")
+    ground = layers.get("ground")
+    layered_route = architecture is not None and ground is not None
+
     main = layers.get("main")
-    if main is not None:
+    if not layered_route and main is not None:
         if main.get_size() != (world_width, height):
             raise ValueError("main layer must match route dimensions")
         sky_layer.blit(main, (-_i(camera_x), 0))
-
-    architecture = layers.get("architecture")
-    ground = layers.get("ground")
-    near_occluder = _read_layer(route, "near_occluder", layers)
 
     if architecture is not None:
         if architecture.get_size() != (world_width, height):
@@ -263,18 +460,6 @@ def _compose_static_backdrop_layers(
             raise ValueError("ground_asset must match route dimensions")
         if ground.get_masks()[3]:
             structure_layer.blit(ground, (-_i(camera_x), 0))
-
-    if near_occluder is not None and near_occluder.get_masks()[3]:
-        if near_occluder.get_size() != (world_width, height):
-            raise ValueError("near_occluder_asset must match route dimensions")
-        near_x = _bounded_location_layer_offset(
-            camera_x,
-            float(route.get("near_parallax", 1.0)),
-            float(route.get("near_max_offset", 0.0)),
-            near_occluder.get_width(),
-            width,
-        )
-        _draw_wrapped(structure_layer, near_occluder, near_x, 0)
 
     return sky_layer.convert_alpha(), structure_layer.convert_alpha()
 
@@ -293,42 +478,22 @@ def _apply_dynamic_atmosphere(
     with the same result even without a runtime atmosphere object.
     """
 
-    transition = _read_transition_progress(atmosphere)
-    if transition <= 0.0:
-        return
-
     cloud_layer = _read_layer(route, "far_haze", layers)
     if cloud_layer is None:
         return
     if not cloud_layer.get_masks()[3] or cloud_layer.get_width() <= 0:
         return
 
-    base_x = _bounded_location_layer_offset(
-        camera_x,
-        float(route.get("far_parallax", 1.0)),
-        float(route.get("far_max_offset", 0.0)),
-        cloud_layer.get_width(),
-        width,
-    )
-
-    speed, direction = _read_wind(atmosphere)
-    time_seconds = _read_time_seconds(atmosphere)
-    if not math.isfinite(time_seconds) or time_seconds < 0.0:
-        time_seconds = 0.0
-    phase = _read_cloud_phase(atmosphere, 0)
-    wind_phase = _read_cloud_phase(atmosphere, 1)
-    seed = _read_seed(atmosphere)
-    wind_x = math.cos(math.radians(direction))
-    if direction and abs(wind_x) < 1e-3:
-        wind_x = 1.0
-
-    drift = int(
-        (speed * 20.0 * time_seconds * wind_x)
-        + math.sin(time_seconds + phase) * 32
-        + wind_phase * 120.0
-        + (seed % 17) - 8,
-    )
-    _draw_wrapped(surface, cloud_layer, base_x + int(transition * drift), 0)
+    for band_index, band in enumerate(_haze_band_rects(route, cloud_layer)):
+        band_x = _atmosphere_haze_offset(
+            route,
+            atmosphere,
+            camera_x,
+            cloud_layer.get_width(),
+            width,
+            band_index,
+        )
+        _draw_wrapped_band(surface, cloud_layer, band_x, band)
 
     skyline = _read_layer(route, "far_skyline", layers)
     if skyline is None:
@@ -396,7 +561,11 @@ def render_route_backdrop(
         _BACKDROP_CACHE.move_to_end(key)
 
     sky_layer, structure_layer = cached
-    surface.blit(sky_layer, (0, 0))
+    layered_route = layers.get("architecture") is not None and layers.get("ground") is not None
+    if layered_route:
+        _draw_opaque_sky(surface, route, atmosphere)
+    else:
+        surface.blit(sky_layer, (0, 0))
     _apply_dynamic_atmosphere(surface, route, layers, camera_x, atmosphere, width)
     surface.blit(structure_layer, (0, 0))
 

@@ -48,11 +48,16 @@ class ChapterOneArtGeneratorTests(unittest.TestCase):
             "projection_profile_id",
             "sky_profile_id",
             "ground_opaque_from_y",
-            "haze_asset",
-            "skyline_asset",
+            "far_haze_asset",
+            "far_haze_asset_size",
+            "far_skyline_asset",
+            "far_skyline_asset_size",
             "architecture_asset",
+            "architecture_asset_size",
             "ground_asset",
+            "ground_asset_size",
             "near_occluder_asset",
+            "near_occluder_asset_size",
             "physical_scene_objects",
         )
         for route in self.manifest["routes"]:
@@ -60,6 +65,27 @@ class ChapterOneArtGeneratorTests(unittest.TestCase):
                 for field in required_fields:
                     self.assertIn(field, route, f"{route['theme']} missing {field}")
                 self.assertEqual(route["projection_profile_id"], "chapter1_oblique_v2")
+
+    def test_authored_doors_share_the_runtime_adult_height_ruler(self) -> None:
+        profile = json.loads(
+            (PROJECT_ROOT / "data" / "gameplay.json").read_text(
+                encoding="utf-8-sig"
+            )
+        )["engine"]["projection_profiles"]["chapter1_oblique_v2"]
+        reference = profile["reference_physical_dimensions"]
+        expected = round(
+            art.REFERENCE_ADULT_HEIGHT_PX
+            * reference["door_height_m"]
+            / reference["neutral_adult_height_m"]
+        )
+
+        self.assertEqual(art.REFERENCE_ADULT_HEIGHT_PX, 134)
+        self.assertEqual(art.REFERENCE_DOOR_HEIGHT_PX, expected)
+        self.assertTrue(
+            1.05
+            <= art.REFERENCE_DOOR_HEIGHT_PX / art.REFERENCE_ADULT_HEIGHT_PX
+            <= 1.20
+        )
 
     def test_layer_artifacts_are_true_alpha_surfaces(self) -> None:
         for route in self.manifest["routes"]:

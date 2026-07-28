@@ -16,6 +16,8 @@ from urllib.parse import urlparse
 
 
 LOGICAL_HEIGHT = 360
+SUPPORTED_PHYSICAL_SCENE_OBJECT_KINDS = frozenset({"sedan"})
+PHYSICAL_SCENE_OBJECT_RAIL_MARGIN = 4.0
 LEVEL_IDS = (
     "chapter_1_level_1",
     "chapter_1_level_2",
@@ -96,10 +98,9 @@ def _require_mapping(value: Any, label: str) -> Mapping[str, Any]:
 
 
 def _require_text(value: Any, label: str) -> str:
-    text = str(value or "").strip()
-    if not text:
+    if not isinstance(value, str) or not value.strip():
         raise LocationLockError(f"{label} must be non-empty text")
-    return text
+    return value.strip()
 
 
 def _finite(value: Any, label: str) -> float:
@@ -244,26 +245,189 @@ def _validate_physical_scene_objects(
     route: Mapping[str, Any],
     route_label: str,
     world_width: float,
+    stage_geometry: Mapping[str, Any],
+    *,
+    project_root: Path,
+    validate_assets: bool,
 ) -> None:
     objects = route.get("physical_scene_objects")
     if objects is None:
         return
     if not isinstance(objects, list):
         raise LocationLockError(f"{route_label}.physical_scene_objects must be a list")
+    landmark_ids = {
+        str(item.get("id", "")).strip()
+        for item in route.get("landmarks", ())
+        if isinstance(item, Mapping)
+    }
+    rails = stage_geometry.get("rails")
+    if not isinstance(rails, list) or not rails:
+        raise LocationLockError(
+            f"{route_label}.physical_scene_objects require gameplay walkable rails"
+        )
+    obstacles = stage_geometry.get("obstacles", ())
+    if not isinstance(obstacles, list):
+        raise LocationLockError(
+            f"{route_label}.physical_scene_objects require gameplay collision obstacles"
+        )
+    object_ids: set[str] = set()
     for object_index, object_value in enumerate(objects):
         object_label = f"{route_label}.physical_scene_objects[{object_index}]"
         feature = _require_mapping(object_value, object_label)
-        _require_text(feature.get("id"), f"{object_label}.id")
-        _require_text(feature.get("kind"), f"{object_label}.kind")
+        object_id = _require_text(feature.get("id"), f"{object_label}.id")
+        if object_id in object_ids:
+            raise LocationLockError(f"{object_label}.id must be unique within the route")
+        object_ids.add(object_id)
+        kind = _require_text(feature.get("kind"), f"{object_label}.kind")
+        if kind not in SUPPORTED_PHYSICAL_SCENE_OBJECT_KINDS:
+            supported = ", ".join(sorted(SUPPORTED_PHYSICAL_SCENE_OBJECT_KINDS))
+            raise LocationLockError(
+                f"{object_label}.kind must be renderer-supported ({supported})"
+            )
         world_x = _finite(feature.get("world_x"), f"{object_label}.world_x")
         if not 0 <= world_x <= world_width:
             raise LocationLockError(f"{object_label}.world_x must be inside route bounds")
-        if "height" in feature:
-            if _finite(feature.get("height"), f"{object_label}.height") <= 0:
-                raise LocationLockError(f"{object_label}.height must be positive")
-        if "width" in feature:
-            if _finite(feature.get("width"), f"{object_label}.width") <= 0:
-                raise LocationLockError(f"{object_label}.width must be positive")
+        depth = _finite(feature.get("depth"), f"{object_label}.depth")
+        if not 0 <= depth <= LOGICAL_HEIGHT:
+            raise LocationLockError(f"{object_label}.depth must be between 0 and {LOGICAL_HEIGHT}")
+        covering_rails = [
+            _require_mapping(rail, f"{route_label}.stage_geometry.rails[{rail_index}]")
+            for rail_index, rail in enumerate(rails)
+            if isinstance(rail, Mapping)
+            and _finite(rail.get("start_x"), f"{route_label}.stage_geometry.rails[{rail_index}].start_x")
+            <= world_x
+            <= _finite(rail.get("end_x"), f"{route_label}.stage_geometry.rails[{rail_index}].end_x")
+        ]
+        if not covering_rails:
+            raise LocationLockError(
+                f"{object_label}.world_x must be covered by a gameplay walkable rail"
+            )
+        outside_walkable_rail = all(
+            depth
+            <= _finite(
+                rail.get("far_depth"),
+                f"{route_label}.stage_geometry.rails.far_depth",
+            )
+            - PHYSICAL_SCENE_OBJECT_RAIL_MARGIN
+            or depth
+            >= _finite(
+                rail.get("near_depth"),
+                f"{route_label}.stage_geometry.rails.near_depth",
+            )
+            + PHYSICAL_SCENE_OBJECT_RAIL_MARGIN
+            for rail in covering_rails
+        )
+
+        collision_id_value = feature.get("collision_obstacle_id")
+        enclosed_by_collision = False
+        if collision_id_value is not None:
+            collision_id = _require_text(
+                collision_id_value,
+                f"{object_label}.collision_obstacle_id",
+            )
+            collision = next(
+                (
+                    item
+                    for item in obstacles
+                    if isinstance(item, Mapping)
+                    and str(item.get("id", "")).strip() == collision_id
+                ),
+                None,
+            )
+            if collision is None:
+                raise LocationLockError(
+                    f"{object_label}.collision_obstacle_id must reference a gameplay obstacle"
+                )
+            obstacle_x = _finite(collision.get("x"), f"{object_label}.collision_obstacle.x")
+            obstacle_depth = _finite(
+                collision.get("depth"),
+                f"{object_label}.collision_obstacle.depth",
+            )
+            half_width = _finite(
+                collision.get("half_width"),
+                f"{object_label}.collision_obstacle.half_width",
+            )
+            half_depth = _finite(
+                collision.get("half_depth"),
+                f"{object_label}.collision_obstacle.half_depth",
+            )
+            enclosed_by_collision = (
+                obstacle_x - half_width <= world_x <= obstacle_x + half_width
+                and obstacle_depth - half_depth <= depth <= obstacle_depth + half_depth
+            )
+            if not enclosed_by_collision:
+                raise LocationLockError(
+                    f"{object_label} must be enclosed by its collision_obstacle_id"
+                )
+        if not outside_walkable_rail and not enclosed_by_collision:
+            raise LocationLockError(
+                f"{object_label} must remain at least "
+                f"{PHYSICAL_SCENE_OBJECT_RAIL_MARGIN:g}px outside the walkable rail "
+                "or reference an enclosing collision_obstacle_id"
+            )
+        _finite(feature.get("elevation"), f"{object_label}.elevation")
+        anchor = _require_text(feature.get("anchor"), f"{object_label}.anchor")
+        if anchor not in landmark_ids:
+            raise LocationLockError(f"{object_label}.anchor must reference a route landmark")
+        physical_height = _finite(
+            feature.get("physical_height_m"),
+            f"{object_label}.physical_height_m",
+        )
+        if not 0.1 <= physical_height <= 12.0:
+            raise LocationLockError(
+                f"{object_label}.physical_height_m must be between 0.1 and 12.0"
+            )
+        asset = _require_text(feature.get("asset"), f"{object_label}.asset")
+        asset_path = Path(asset)
+        if asset_path.suffix.lower() != ".png" or "assets" not in asset_path.parts:
+            raise LocationLockError(f"{object_label}.asset must be an assets/... PNG")
+        if validate_assets:
+            expected_path = project_root / asset_path
+            if not expected_path.is_file():
+                raise LocationLockError(f"{object_label}.asset is missing: {asset}")
+            try:
+                from PIL import Image
+
+                with Image.open(expected_path) as image:
+                    if image.format != "PNG" or "A" not in image.getbands():
+                        raise LocationLockError(
+                            f"{object_label}.asset must be a transparent RGBA PNG"
+                        )
+                    if image.getchannel("A").getbbox() is None:
+                        raise LocationLockError(f"{object_label}.asset must contain visible pixels")
+            except LocationLockError:
+                raise
+            except Exception as exc:
+                raise LocationLockError(f"{object_label}.asset is unreadable: {asset}") from exc
+        if kind == "sedan" and not 1.2 <= physical_height <= 1.65:
+            raise LocationLockError(
+                f"{object_label}.physical_height_m must be a calibrated sedan height"
+            )
+
+
+@lru_cache(maxsize=8)
+def _gameplay_stage_geometry(root_text: str) -> dict[str, Mapping[str, Any]]:
+    """Load the combat rails needed to keep rendered physical props truthful."""
+
+    gameplay_path = Path(root_text) / "data" / "gameplay.json"
+    try:
+        gameplay = json.loads(gameplay_path.read_text(encoding="utf-8-sig"))
+    except Exception as exc:
+        raise LocationLockError(
+            f"unable to load gameplay geometry for physical scene objects: {gameplay_path}"
+        ) from exc
+    geometry_by_level: dict[str, Mapping[str, Any]] = {}
+    for chapter in gameplay.get("campaign", {}).get("chapters", ()):
+        if not isinstance(chapter, Mapping):
+            continue
+        for level in chapter.get("levels", ()):
+            if not isinstance(level, Mapping):
+                continue
+            level_id = str(level.get("id", "")).strip()
+            geometry = level.get("stage_geometry")
+            if level_id in LEVEL_IDS and isinstance(geometry, Mapping):
+                geometry_by_level[level_id] = geometry
+    return geometry_by_level
 
 
 def _validate_ground_coverage(
@@ -343,6 +507,7 @@ def validate_location_lock(
         raise LocationLockError("location manifest routes must follow Chapter 1 level order")
 
     root = Path(project_root).resolve() if project_root is not None else Path(__file__).resolve().parents[1]
+    geometry_by_level = _gameplay_stage_geometry(str(root))
     global_ids: set[str] = set(reference_ids)
     themes: set[str] = set()
     for route_index, route_value in enumerate(routes):
@@ -472,7 +637,14 @@ def validate_location_lock(
             if not 0 <= world_x <= world_width:
                 raise LocationLockError(f"{feature_label}.world_x must be inside route bounds")
 
-        _validate_physical_scene_objects(route, label, world_width)
+        _validate_physical_scene_objects(
+            route,
+            label,
+            world_width,
+            geometry_by_level.get(level_id, {}),
+            project_root=root,
+            validate_assets=validate_assets,
+        )
 
         optional_asset_specs = (
             ("far_haze_asset", "far_haze_asset_size"),

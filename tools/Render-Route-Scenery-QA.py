@@ -23,8 +23,14 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from src import pixel_art  # noqa: E402
+from src.atmosphere import AtmosphereSnapshot, AtmosphereState  # noqa: E402
 from src.game import FadesGame, LOGICAL_SIZE, SelectSlot  # noqa: E402
 from src.input_manager import InputManager  # noqa: E402
+from src.world_engine import (  # noqa: E402
+    BeatEmUpProjection,
+    ProjectionConfig,
+    WorldPoint,
+)
 from tools.build_chapter1_location_art import (  # noqa: E402
     HEIGHT as PANORAMA_HEIGHT,
     PANEL_SPECS,
@@ -35,6 +41,9 @@ from tools.validate_chapter1 import run_integration_visual_matrix  # noqa: E402
 
 
 CHECKPOINTS = (0.0, 0.25, 0.5, 0.75, 1.0)
+QA_ATMOSPHERE_SEED = 20260727
+QA_ATMOSPHERE_SETTLE_MARGIN_SECONDS = 1.0
+QA_ATMOSPHERE_ANIMATION_OFFSET_SECONDS = 30.0
 CONFIDENCE_COLORS = {
     "high": (94, 242, 155),
     "medium": (255, 205, 76),
@@ -100,17 +109,202 @@ def _draw_actor_scale(frame: pygame.Surface) -> None:
     pixel_art.draw_chief(frame, 425, 311, 0, 1, "idle", 0)
 
 
+def _build_active_projection(
+    gameplay: Mapping[str, Any],
+) -> tuple[BeatEmUpProjection, float, str]:
+    """Build the exact profile-backed projection used by ``FadesGame``."""
+
+    engine = gameplay.get("engine", {})
+    if not isinstance(engine, Mapping):
+        raise ValueError("engine must be an object")
+    projection_override = engine.get("projection", {})
+    projection_profiles = engine.get("projection_profiles", {})
+    if not isinstance(projection_override, Mapping):
+        raise ValueError("engine.projection must be an object")
+    if not isinstance(projection_profiles, Mapping):
+        raise ValueError("engine.projection_profiles must be an object")
+    profile_id = str(projection_override.get("profile_id", "")).strip()
+    profile = projection_profiles.get(profile_id)
+    if profile_id != "chapter1_oblique_v2" or not isinstance(profile, Mapping):
+        raise ValueError("chapter1_oblique_v2 must be the active projection profile")
+    projection_data = dict(profile)
+    projection_data.update(
+        {
+            key: value
+            for key, value in projection_override.items()
+            if key != "profile_id"
+        }
+    )
+    depth_origin = float(projection_data.get("depth_origin", 280.0))
+    projection = BeatEmUpProjection(
+        ProjectionConfig(
+            mode=str(projection_data.get("mode", "orthographic")),
+            screen_origin_x=float(projection_data.get("screen_origin_x", 0.0)),
+            floor_screen_y=float(
+                projection_data.get("screen_y_origin", depth_origin)
+            ),
+            pixels_per_world_x=float(
+                projection_data.get("world_x_scale", 1.0)
+            ),
+            pixels_per_depth=float(projection_data.get("depth_scale", 1.0)),
+            pixels_per_elevation=float(
+                projection_data.get("elevation_scale", 1.0)
+            ),
+            oblique_x_per_depth=float(
+                projection_data.get("oblique_x_shear", 0.0)
+            ),
+            pixel_snap=bool(projection_data.get("pixel_snap", True)),
+        )
+    )
+    return projection, depth_origin, profile_id
+
+
+def _draw_physical_scene_objects(
+    frame: pygame.Surface,
+    route: Mapping[str, Any],
+    camera_x: float,
+    projection: BeatEmUpProjection,
+    camera_depth: float,
+) -> tuple[dict[str, Any], ...]:
+    """Project and draw calibrated props through the gameplay sprite helper."""
+
+    placements: list[dict[str, Any]] = []
+    objects = route.get("physical_scene_objects", ())
+    if not isinstance(objects, Sequence) or isinstance(objects, (str, bytes)):
+        return ()
+    for feature in sorted(
+        (item for item in objects if isinstance(item, Mapping)),
+        key=lambda item: (
+            float(item.get("depth", 0.0)),
+            str(item.get("id", "")),
+        ),
+    ):
+        projected = projection.project(
+            WorldPoint(
+                float(feature["world_x"]),
+                float(feature["depth"]),
+                float(feature.get("elevation", 0.0)),
+            ),
+            camera_x=float(camera_x),
+            camera_depth=float(camera_depth),
+        )
+        rect = pixel_art.draw_physical_scene_object(
+            frame,
+            projected.x,
+            projected.y,
+            feature,
+        )
+        placements.append(
+            {
+                "id": str(feature.get("id", "")),
+                "kind": str(feature.get("kind", "")),
+                "asset": str(feature.get("asset", "")),
+                "world_x": float(feature["world_x"]),
+                "depth": float(feature["depth"]),
+                "projected_foot": list(projected.pixel_xy),
+                "rect": list(rect),
+                "bottom_center_matches_projection": (
+                    rect.midbottom == projected.pixel_xy
+                ),
+                "visible": rect.colliderect(frame.get_rect()),
+            }
+        )
+    return tuple(placements)
+
+
+def _atmosphere_snapshot_metadata(
+    snapshot: AtmosphereSnapshot,
+) -> dict[str, Any]:
+    return {
+        **snapshot.to_mapping(),
+        "sky_palette": [list(color) for color in snapshot.sky_palette],
+        "parallax_factors": list(snapshot.parallax_factors),
+    }
+
+
+def _sky_region_sha256(frame: pygame.Surface) -> str:
+    """Hash sky pixels below the label but above the calibrated roof line."""
+
+    sky_region = frame.subsurface(
+        pygame.Rect(0, 24, frame.get_width(), min(48, frame.get_height() - 24))
+    )
+    return hashlib.sha256(
+        pygame.image.tobytes(sky_region, "RGB", False)
+    ).hexdigest()
+
+
+def _build_route_atmosphere_samples(
+    route: Mapping[str, Any],
+    atmosphere_data: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Settle the declared route transition and capture a later sky phase."""
+
+    route_id = str(route["level_id"])
+    route_profile_map = atmosphere_data.get("route_profile_map", {})
+    profiles = atmosphere_data.get("profiles", {})
+    if not isinstance(route_profile_map, Mapping):
+        raise ValueError("atmosphere.route_profile_map must be an object")
+    if not isinstance(profiles, Mapping):
+        raise ValueError("atmosphere.profiles must be an object")
+    mapped_profile_id = str(route_profile_map.get(route_id, "")).strip()
+    manifest_profile_id = str(route.get("sky_profile_id", "")).strip()
+    if not mapped_profile_id or mapped_profile_id != manifest_profile_id:
+        raise ValueError(
+            f"{route_id} atmosphere map/profile mismatch: "
+            f"{mapped_profile_id!r} != {manifest_profile_id!r}"
+        )
+    default_profile_id = str(
+        atmosphere_data.get("default_profile_id", "")
+    ).strip()
+    default_profile = profiles.get(default_profile_id, {})
+    mapped_profile = profiles.get(mapped_profile_id, {})
+    if not isinstance(default_profile, Mapping) or not isinstance(
+        mapped_profile,
+        Mapping,
+    ):
+        raise ValueError(f"{route_id} atmosphere profile is unavailable")
+    settle_seconds = max(
+        float(default_profile.get("transition_duration_seconds", 0.0)),
+        float(mapped_profile.get("transition_duration_seconds", 0.0)),
+    ) + QA_ATMOSPHERE_SETTLE_MARGIN_SECONDS
+    state = AtmosphereState.new(
+        seed=QA_ATMOSPHERE_SEED,
+        profile_id=default_profile_id,
+    )
+    state.set_profile_for_route(route_id)
+    state.advance(settle_seconds)
+    steady = state.snapshot()
+    if (
+        steady.current_profile_id != mapped_profile_id
+        or steady.target_profile_id != mapped_profile_id
+        or steady.transition_progress != 1.0
+    ):
+        raise ValueError(f"{route_id} atmosphere did not reach its steady profile")
+    state.advance(QA_ATMOSPHERE_ANIMATION_OFFSET_SECONDS)
+    animated = state.snapshot()
+    return {
+        "route_id": route_id,
+        "seed": QA_ATMOSPHERE_SEED,
+        "mapped_profile_id": mapped_profile_id,
+        "settle_seconds": settle_seconds,
+        "animation_offset_seconds": QA_ATMOSPHERE_ANIMATION_OFFSET_SECONDS,
+        "steady": steady,
+        "animated": animated,
+    }
+
+
 def _draw_frame_label(
     frame: pygame.Surface,
     font: pygame.font.Font,
     route: Mapping[str, Any],
     fraction: float,
     camera_x: int,
+    atmosphere_label: str,
 ) -> None:
     label = font.render(
         (
             f"{str(route['level_id']).replace('chapter_1_', '').upper()}  "
-            f"{fraction:.0%}  CAMERA {camera_x}"
+            f"{fraction:.0%}  CAMERA {camera_x}  {atmosphere_label}"
         ),
         False,
         (255, 244, 208),
@@ -128,7 +322,11 @@ def _render_checkpoint(
     camera_x: int,
     font: pygame.font.Font,
     fraction: float,
-) -> pygame.Surface:
+    projection: BeatEmUpProjection,
+    camera_depth: float,
+    atmosphere: AtmosphereSnapshot,
+    atmosphere_label: str,
+) -> tuple[pygame.Surface, tuple[dict[str, Any], ...]]:
     width, height = LOGICAL_SIZE
     frame = pygame.Surface((width, height)).convert()
     world_width = int(route["world_width"])
@@ -138,6 +336,14 @@ def _render_checkpoint(
         camera_x,
         world_width,
         theme=theme,
+        atmosphere=atmosphere,
+    )
+    physical_scene_objects = _draw_physical_scene_objects(
+        frame,
+        route,
+        camera_x,
+        projection,
+        camera_depth,
     )
     _draw_actor_scale(frame)
     pixel_art.draw_stage_foreground(
@@ -146,8 +352,15 @@ def _render_checkpoint(
         world_width,
         theme=theme,
     )
-    _draw_frame_label(frame, font, route, fraction, camera_x)
-    return frame
+    _draw_frame_label(
+        frame,
+        font,
+        route,
+        fraction,
+        camera_x,
+        atmosphere_label,
+    )
+    return frame, physical_scene_objects
 
 
 def _draw_overlay(
@@ -320,6 +533,7 @@ def _draw_overlay(
 def _render_gameplay_screenshot(
     output_path: Path,
     route: Mapping[str, Any],
+    atmosphere: AtmosphereSnapshot,
 ) -> dict[str, Any]:
     """Render a normal runtime game frame from the route midpoint."""
 
@@ -336,6 +550,7 @@ def _render_gameplay_screenshot(
             ),
         ]
         game._start_stage()
+        game.atmosphere = AtmosphereState.from_mapping(atmosphere.to_mapping())
         max_camera = max(0.0, float(route["world_width"]) - LOGICAL_SIZE[0])
         camera_x = max_camera * 0.5
         game.camera.pan_to(camera_x, 0.0)
@@ -362,6 +577,7 @@ def _render_gameplay_screenshot(
                 pygame.image.tobytes(canvas, "RGB", False)
             ).hexdigest(),
             "actors": len(game.players) + len(game.chiefs),
+            "atmosphere": _atmosphere_snapshot_metadata(atmosphere),
         }
     finally:
         game.close()
@@ -384,14 +600,57 @@ def main(argv: Sequence[str] | None = None) -> int:
     project_root = args.project_root.resolve()
     build_dir = project_root / "build"
     build_dir.mkdir(parents=True, exist_ok=True)
+    report_path = build_dir / "chapter1_location_sources_report.json"
     manifest = _read_json(project_root / "data" / "chapter1_location_lock.json")
     gameplay = _read_json(project_root / "data" / "gameplay.json")
     content = _read_json(project_root / "data" / "chapter_content.json")
+    atmosphere_data = _read_json(project_root / "data" / "atmosphere.json")
+    validation = build_location_lock_report(project_root)
+    if not validation["passed"]:
+        report = {
+            "schema_version": 2,
+            "generated_at_utc": datetime.now(timezone.utc).isoformat(),
+            "classification": "failed_location_preflight",
+            "automated_validation": validation,
+            "integration_visual_matrix": None,
+            "checkpoint_results": [],
+            "seam_results": [],
+            "gameplay_screenshots": [],
+            "mandatory_references": manifest.get("mandatory_references", ()),
+            "sources": [],
+            "authoring_panels": [],
+            "artifacts": {},
+            "manual_reference_comparison": {
+                "required": True,
+                "status": "blocked_by_automated_preflight",
+                "criteria": {},
+                "note": "Resolve automated source/runtime contract failures before visual approval.",
+            },
+            "passed": False,
+        }
+        report_path.write_text(
+            json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True)
+            + "\n",
+            encoding="utf-8",
+            newline="\n",
+        )
+        print(report_path)
+        return 1
     routes = tuple(
         route for route in manifest.get("routes", ())
         if isinstance(route, Mapping)
     )
     gameplay_by_id = _gameplay_levels(gameplay)
+    projection, projection_depth_origin, projection_profile_id = (
+        _build_active_projection(gameplay)
+    )
+    route_atmosphere_samples = {
+        str(route["level_id"]): _build_route_atmosphere_samples(
+            route,
+            atmosphere_data,
+        )
+        for route in routes
+    }
 
     pygame.init()
     pygame.display.set_mode((1, 1))
@@ -400,6 +659,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     font.set_bold(True)
     normal_sheet = pygame.Surface((width * len(CHECKPOINTS), height * len(routes))).convert()
     overlay_sheet = pygame.Surface(normal_sheet.get_size()).convert()
+    atmosphere_sheet = pygame.Surface(
+        (width * 2, height * len(routes))
+    ).convert()
     max_seams = max(
         (len(PANEL_SPECS[str(route["theme"])]) - 1 for route in routes),
         default=0,
@@ -411,14 +673,36 @@ def main(argv: Sequence[str] | None = None) -> int:
     checkpoint_results: list[dict[str, Any]] = []
     seam_results: list[dict[str, Any]] = []
     gameplay_screenshots: list[dict[str, Any]] = []
+    atmosphere_phase_results: list[dict[str, Any]] = []
     try:
         for row, route in enumerate(routes):
+            atmosphere_samples = route_atmosphere_samples[
+                str(route["level_id"])
+            ]
+            steady_atmosphere = atmosphere_samples["steady"]
+            animated_atmosphere = atmosphere_samples["animated"]
+            steady_label = (
+                f"{atmosphere_samples['mapped_profile_id']} "
+                f"T={steady_atmosphere.time_seconds:g}"
+            )
             world_width = int(route["world_width"])
             max_camera = max(0, world_width - width)
             route_hashes: list[str] = []
+            route_visible_physical_checkpoints: list[float] = []
             for column, fraction in enumerate(CHECKPOINTS):
                 camera_x = int(round(max_camera * fraction))
-                frame = _render_checkpoint(route, camera_x, font, fraction)
+                frame, physical_scene_objects = _render_checkpoint(
+                    route,
+                    camera_x,
+                    font,
+                    fraction,
+                    projection,
+                    projection_depth_origin,
+                    steady_atmosphere,
+                    steady_label,
+                )
+                if any(item["visible"] for item in physical_scene_objects):
+                    route_visible_physical_checkpoints.append(fraction)
                 frame_hash = hashlib.sha256(
                     pygame.image.tobytes(frame, "RGB", False)
                 ).hexdigest()
@@ -442,12 +726,26 @@ def main(argv: Sequence[str] | None = None) -> int:
                         "fraction": fraction,
                         "camera_x": camera_x,
                         "sha256": frame_hash,
+                        "projection_profile_id": projection_profile_id,
+                        "physical_scene_objects": list(physical_scene_objects),
+                        "atmosphere": _atmosphere_snapshot_metadata(
+                            steady_atmosphere
+                        ),
                     }
                 )
             checkpoint_results.append(
                 {
                     "level_id": str(route["level_id"]),
                     "checkpoint_hashes_unique": len(set(route_hashes)) == len(route_hashes),
+                    "physical_scene_objects_declared": len(
+                        route.get("physical_scene_objects", ())
+                    ),
+                    "physical_scene_object_visible_checkpoints": (
+                        route_visible_physical_checkpoints
+                    ),
+                    "physical_scene_objects_visible_at_checkpoint": bool(
+                        route_visible_physical_checkpoints
+                    ),
                 }
             )
             seam_world_x = 0
@@ -458,11 +756,15 @@ def main(argv: Sequence[str] | None = None) -> int:
                     0,
                     min(max_camera, seam_world_x - width // 2),
                 )
-                seam_frame = _render_checkpoint(
+                seam_frame, _ = _render_checkpoint(
                     route,
                     seam_camera_x,
                     font,
                     seam_world_x / world_width,
+                    projection,
+                    projection_depth_origin,
+                    steady_atmosphere,
+                    steady_label,
                 )
                 seam_sheet.blit(
                     seam_frame,
@@ -476,25 +778,125 @@ def main(argv: Sequence[str] | None = None) -> int:
                         "sha256": hashlib.sha256(
                             pygame.image.tobytes(seam_frame, "RGB", False)
                         ).hexdigest(),
+                        "atmosphere": _atmosphere_snapshot_metadata(
+                            steady_atmosphere
+                        ),
                     }
                 )
+            first_physical_object = next(
+                (
+                    item
+                    for item in route.get("physical_scene_objects", ())
+                    if isinstance(item, Mapping)
+                ),
+                None,
+            )
+            atmosphere_camera_x = (
+                max(
+                    0,
+                    min(
+                        max_camera,
+                        int(round(float(first_physical_object["world_x"])))
+                        - width // 2,
+                    ),
+                )
+                if first_physical_object is not None
+                else max_camera // 2
+            )
+            steady_phase_frame, steady_phase_props = _render_checkpoint(
+                route,
+                atmosphere_camera_x,
+                font,
+                atmosphere_camera_x / max(1, world_width),
+                projection,
+                projection_depth_origin,
+                steady_atmosphere,
+                (
+                    f"STEADY {atmosphere_samples['mapped_profile_id']} "
+                    f"T={steady_atmosphere.time_seconds:g}"
+                ),
+            )
+            animated_phase_frame, animated_phase_props = _render_checkpoint(
+                route,
+                atmosphere_camera_x,
+                font,
+                atmosphere_camera_x / max(1, world_width),
+                projection,
+                projection_depth_origin,
+                animated_atmosphere,
+                (
+                    f"ANIMATED {atmosphere_samples['mapped_profile_id']} "
+                    f"T={animated_atmosphere.time_seconds:g}"
+                ),
+            )
+            steady_phase_hash = hashlib.sha256(
+                pygame.image.tobytes(steady_phase_frame, "RGB", False)
+            ).hexdigest()
+            animated_phase_hash = hashlib.sha256(
+                pygame.image.tobytes(animated_phase_frame, "RGB", False)
+            ).hexdigest()
+            steady_sky_hash = _sky_region_sha256(steady_phase_frame)
+            animated_sky_hash = _sky_region_sha256(animated_phase_frame)
+            atmosphere_sheet.blit(steady_phase_frame, (0, row * height))
+            atmosphere_sheet.blit(animated_phase_frame, (width, row * height))
+            atmosphere_phase_results.append(
+                {
+                    "level_id": str(route["level_id"]),
+                    "camera_x": atmosphere_camera_x,
+                    "projection_profile_id": projection_profile_id,
+                    "mapped_profile_id": atmosphere_samples[
+                        "mapped_profile_id"
+                    ],
+                    "seed": atmosphere_samples["seed"],
+                    "settle_seconds": atmosphere_samples["settle_seconds"],
+                    "animation_offset_seconds": atmosphere_samples[
+                        "animation_offset_seconds"
+                    ],
+                    "steady": {
+                        **_atmosphere_snapshot_metadata(steady_atmosphere),
+                        "sha256": steady_phase_hash,
+                        "sky_region_sha256": steady_sky_hash,
+                        "visible_physical_scene_objects": sum(
+                            item["visible"] for item in steady_phase_props
+                        ),
+                    },
+                    "animated": {
+                        **_atmosphere_snapshot_metadata(animated_atmosphere),
+                        "sha256": animated_phase_hash,
+                        "sky_region_sha256": animated_sky_hash,
+                        "visible_physical_scene_objects": sum(
+                            item["visible"] for item in animated_phase_props
+                        ),
+                    },
+                    "fixed_camera_phase_hashes_distinct": (
+                        steady_sky_hash != animated_sky_hash
+                    ),
+                }
+            )
             screenshot_path = (
                 build_dir
                 / f"chapter1_location_lock_{str(route['level_id'])}_gameplay.png"
             )
             gameplay_screenshots.append(
-                _render_gameplay_screenshot(screenshot_path, route)
+                _render_gameplay_screenshot(
+                    screenshot_path,
+                    route,
+                    steady_atmosphere,
+                )
             )
 
         qa_path = build_dir / "chapter1_location_lock_qa.png"
         overlay_path = build_dir / "chapter1_location_lock_overlay_qa.png"
         seam_path = build_dir / "chapter1_location_lock_seam_qa.png"
+        atmosphere_path = (
+            build_dir / "chapter1_location_lock_atmosphere_qa.png"
+        )
         pygame.image.save(normal_sheet, qa_path)
         pygame.image.save(normal_sheet, build_dir / "route_worldlocked_qa.png")
         pygame.image.save(overlay_sheet, overlay_path)
         pygame.image.save(seam_sheet, seam_path)
+        pygame.image.save(atmosphere_sheet, atmosphere_path)
 
-        validation = build_location_lock_report(project_root)
         integration_matrix = run_integration_visual_matrix(
             project_root=project_root,
             manifest=manifest,
@@ -555,7 +957,17 @@ def main(argv: Sequence[str] | None = None) -> int:
                 panel_cursor += spec.width
         unique_checks_pass = all(
             item.get("checkpoint_hashes_unique", True)
+            and item.get("physical_scene_objects_visible_at_checkpoint", True)
             for item in checkpoint_results
+        )
+        atmosphere_checks_pass = all(
+            item["fixed_camera_phase_hashes_distinct"]
+            and item["steady"]["current_profile_id"]
+            == item["mapped_profile_id"]
+            and item["steady"]["target_profile_id"]
+            == item["mapped_profile_id"]
+            and item["steady"]["transition_progress"] == 1.0
+            for item in atmosphere_phase_results
         )
         visual_review = {
             "required": True,
@@ -606,6 +1018,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             "checkpoint_results": checkpoint_results,
             "seam_results": seam_results,
             "gameplay_screenshots": gameplay_screenshots,
+            "atmosphere_phase_results": atmosphere_phase_results,
             "mandatory_references": manifest.get("mandatory_references", ()),
             "sources": sources,
             "authoring_panels": authoring_panels,
@@ -613,15 +1026,18 @@ def main(argv: Sequence[str] | None = None) -> int:
                 "normal_sheet": str(qa_path),
                 "overlay_sheet": str(overlay_path),
                 "seam_sheet": str(seam_path),
+                "atmosphere_phase_sheet": str(atmosphere_path),
             },
             "manual_reference_comparison": visual_review,
             "passed": bool(
                 validation["passed"]
                 and unique_checks_pass
+                and atmosphere_checks_pass
                 and integration_matrix["passed"]
+                and visual_review["status"]
+                == "completed_by_codex_visual_review"
             ),
         }
-        report_path = build_dir / "chapter1_location_sources_report.json"
         report_path.write_text(
             json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
             encoding="utf-8",
@@ -630,8 +1046,40 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(qa_path)
         print(overlay_path)
         print(seam_path)
+        print(atmosphere_path)
         print(report_path)
         return 0 if report["passed"] else 1
+    except Exception as error:
+        failure = {
+            "schema_version": 2,
+            "generated_at_utc": datetime.now(timezone.utc).isoformat(),
+            "classification": "failed_runtime_render_qa",
+            "automated_validation": validation,
+            "integration_visual_matrix": None,
+            "checkpoint_results": [],
+            "seam_results": [],
+            "gameplay_screenshots": [],
+            "mandatory_references": manifest.get("mandatory_references", ()),
+            "sources": [],
+            "authoring_panels": [],
+            "artifacts": {},
+            "manual_reference_comparison": {
+                "required": True,
+                "status": "blocked_by_runtime_render_failure",
+                "criteria": {},
+                "note": f"{type(error).__name__}: {error}",
+            },
+            "error": f"{type(error).__name__}: {error}",
+            "passed": False,
+        }
+        report_path.write_text(
+            json.dumps(failure, ensure_ascii=False, indent=2, sort_keys=True)
+            + "\n",
+            encoding="utf-8",
+            newline="\n",
+        )
+        print(report_path)
+        return 1
     finally:
         pygame.quit()
 

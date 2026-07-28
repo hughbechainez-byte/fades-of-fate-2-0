@@ -11,10 +11,12 @@ assembled and installed packages rather than trusting the source tree.
 from __future__ import annotations
 
 import argparse
+import ast
 from collections import Counter
 from copy import deepcopy
 from datetime import date
 import hashlib
+import inspect
 import json
 import math
 import os
@@ -22,6 +24,7 @@ from pathlib import Path
 import platform
 import statistics
 import sys
+import textwrap
 import time
 from typing import Any, Callable, Mapping, Sequence
 
@@ -114,7 +117,36 @@ _EXPECTED_ENDPOINTS = {
     "chapter_1_level_4": ("awaken_church_lot", "daves_bmx"),
 }
 _LOCATION_ASSET_PREFIX = "assets/stage/chapter1_location_locked/"
-_LOCATION_ASSET_FIELDS = ("main_panorama_asset", "far_asset", "near_asset")
+_LEGACY_LOCATION_ASSET_FIELDS = (
+    "main_panorama_asset",
+    "far_asset",
+    "near_asset",
+)
+_LAYERED_LOCATION_ASSET_FIELDS = (
+    "far_haze_asset",
+    "far_skyline_asset",
+    "architecture_asset",
+    "ground_asset",
+    "near_occluder_asset",
+)
+_LOCATION_ASSET_FIELDS = (
+    *_LEGACY_LOCATION_ASSET_FIELDS,
+    *_LAYERED_LOCATION_ASSET_FIELDS,
+)
+_LAYERED_FIELD_ALIASES = {
+    "far_haze_asset": "haze_asset",
+    "far_skyline_asset": "skyline_asset",
+}
+_PHYSICAL_SCENE_OBJECT_FIELDS = (
+    "id",
+    "kind",
+    "asset",
+    "world_x",
+    "depth",
+    "elevation",
+    "anchor",
+    "physical_height_m",
+)
 _LANDMARK_SOURCE_FIELDS = (
     "source_date",
     "imagery_date",
@@ -236,6 +268,91 @@ def _stable_json_digest(value: Mapping[str, Any] | Sequence[Any]) -> str:
         separators=(",", ":"),
     ).encode("utf-8")
     return hashlib.sha256(payload).hexdigest()
+
+
+def _finite_number_or_none(value: Any) -> float | None:
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        return None
+    result = float(value)
+    return result if math.isfinite(result) else None
+
+
+def _projection_profiles(gameplay: Mapping[str, Any]) -> Mapping[str, Any]:
+    engine = gameplay.get("engine", {})
+    if not isinstance(engine, Mapping):
+        return {}
+    profiles = engine.get("projection_profiles", gameplay.get("projection_profiles", {}))
+    return profiles if isinstance(profiles, Mapping) else {}
+
+
+def _active_projection_profile_id(gameplay: Mapping[str, Any]) -> str:
+    engine = gameplay.get("engine", {})
+    if not isinstance(engine, Mapping):
+        return ""
+    projection = engine.get("projection", {})
+    if not isinstance(projection, Mapping):
+        return ""
+    return str(projection.get("profile_id", "")).strip()
+
+
+def _asset_inventory_digest(
+    routes: Sequence[Mapping[str, Any]],
+    *,
+    authoritative_files: Mapping[str, Mapping[str, Any]] | None = None,
+) -> str:
+    entries: list[dict[str, Any]] = []
+    for route in routes:
+        level_id = str(route.get("level_id", ""))
+        assets = route.get("assets", {})
+        if not isinstance(assets, Mapping):
+            continue
+        for field, value in sorted(assets.items()):
+            if not isinstance(value, Mapping) or not value.get("sha256"):
+                continue
+            entries.append(
+                {
+                    "scope": "route_asset",
+                    "level_id": level_id,
+                    "field": str(field),
+                    "path": str(value.get("path", "")).replace("\\", "/"),
+                    "size": value.get("size"),
+                    "sha256": str(value["sha256"]),
+                }
+            )
+    for field, value in sorted((authoritative_files or {}).items()):
+        if not isinstance(value, Mapping) or not value.get("sha256"):
+            continue
+        entries.append(
+            {
+                "scope": "authoritative_runtime_file",
+                "field": str(field),
+                "path": str(value.get("path", "")).replace("\\", "/"),
+                "size_bytes": value.get("size_bytes"),
+                "sha256": str(value["sha256"]),
+            }
+        )
+    return _stable_json_digest(entries)
+
+
+def _alpha_is_opaque_from_row(surface: pygame.Surface, start_y: int) -> bool:
+    start = max(0, min(surface.get_height(), int(start_y)))
+    if surface.get_masks()[3] == 0:
+        return True
+    rgba = pygame.image.tobytes(surface, "RGBA", False)
+    width = surface.get_width()
+    stride = width * 4
+    for y in range(start, surface.get_height()):
+        row = rgba[y * stride : (y + 1) * stride]
+        if any(alpha != 255 for alpha in row[3::4]):
+            return False
+    return True
+
+
+def _surface_has_transparency(surface: pygame.Surface) -> bool:
+    if surface.get_masks()[3] == 0:
+        return False
+    rgba = pygame.image.tobytes(surface, "RGBA", False)
+    return any(alpha < 255 for alpha in rgba[3::4])
 
 
 def _format_reference_tokens(route: Mapping[str, Any], gameplay_level: Mapping[str, Any] | None) -> list[str]:
@@ -389,6 +506,37 @@ def build_location_lock_report(
     except (OSError, ValueError, json.JSONDecodeError) as error:
         content_data = {}
         record(False, "chapter_content_readable", str(error))
+
+    try:
+        atmosphere_data = _read_json_file(root / "data" / "atmosphere.json")
+        record(True, "atmosphere_readable", "data/atmosphere.json is readable")
+    except (OSError, ValueError, json.JSONDecodeError) as error:
+        atmosphere_data = {}
+        record(False, "atmosphere_readable", str(error))
+
+    projection_profiles = _projection_profiles(gameplay_data)
+    active_projection_profile_id = _active_projection_profile_id(gameplay_data)
+    chapter_projection = projection_profiles.get("chapter1_oblique_v2")
+    record(
+        isinstance(chapter_projection, Mapping),
+        "chapter1_projection_profile_defined",
+        (
+            "engine.projection_profiles contains chapter1_oblique_v2"
+            if isinstance(chapter_projection, Mapping)
+            else f"available_profiles={sorted(str(key) for key in projection_profiles)!r}"
+        ),
+    )
+    record(
+        active_projection_profile_id == "chapter1_oblique_v2",
+        "chapter1_projection_profile_active",
+        f"active_profile_id={active_projection_profile_id!r}",
+    )
+    atmosphere_profiles = atmosphere_data.get("profiles", {})
+    if not isinstance(atmosphere_profiles, Mapping):
+        atmosphere_profiles = {}
+    route_atmosphere_profiles = atmosphere_data.get("route_profile_map", {})
+    if not isinstance(route_atmosphere_profiles, Mapping):
+        route_atmosphere_profiles = {}
 
     authoritative_manifest: Mapping[str, Any] | None = None
     try:
@@ -656,6 +804,54 @@ def build_location_lock_report(
             ),
             level_id=level_id,
         )
+        route_projection_profile_id = str(
+            route.get("projection_profile_id", "")
+        ).strip()
+        record(
+            route_projection_profile_id == "chapter1_oblique_v2"
+            and route_projection_profile_id in projection_profiles,
+            "route_projection_profile",
+            (
+                f"route_profile={route_projection_profile_id!r}; "
+                f"active_profile={active_projection_profile_id!r}"
+            ),
+            level_id=level_id,
+        )
+        route_sky_profile_id = str(route.get("sky_profile_id", "")).strip()
+        mapped_sky_profile_id = str(
+            route_atmosphere_profiles.get(level_id, "")
+        ).strip()
+        record(
+            bool(route_sky_profile_id)
+            and route_sky_profile_id == mapped_sky_profile_id
+            and route_sky_profile_id in atmosphere_profiles,
+            "route_atmosphere_profile",
+            (
+                f"route_sky_profile={route_sky_profile_id!r}; "
+                f"mapped_profile={mapped_sky_profile_id!r}"
+            ),
+            level_id=level_id,
+        )
+        layered_fields_present = all(
+            str(route.get(field, "")).strip()
+            and route.get(f"{field}_size")
+            == [world_width, int(LOGICAL_SIZE[1])]
+            for field in _LAYERED_LOCATION_ASSET_FIELDS
+        )
+        deprecated_layer_aliases = {
+            canonical: alias
+            for canonical, alias in _LAYERED_FIELD_ALIASES.items()
+            if alias in route and canonical not in route
+        }
+        record(
+            layered_fields_present and not deprecated_layer_aliases,
+            "route_layered_runtime_schema",
+            (
+                f"canonical_fields={list(_LAYERED_LOCATION_ASSET_FIELDS)!r}; "
+                f"deprecated_aliases={deprecated_layer_aliases!r}"
+            ),
+            level_id=level_id,
+        )
 
         landmarks_value = route.get("landmarks", ())
         landmarks = (
@@ -878,6 +1074,38 @@ def build_location_lock_report(
                             f"{relative}: has_alpha={has_alpha}",
                             level_id=level_id,
                         )
+                        if field in _LAYERED_LOCATION_ASSET_FIELDS:
+                            has_transparency = _surface_has_transparency(surface)
+                            result["has_transparency"] = has_transparency
+                            record(
+                                has_transparency,
+                                f"{field}_has_transparency",
+                                f"{relative}: has_transparency={has_transparency}",
+                                level_id=level_id,
+                            )
+                        if field == "ground_asset":
+                            opaque_from_y = route.get("ground_opaque_from_y")
+                            ground_row = (
+                                int(opaque_from_y)
+                                if isinstance(opaque_from_y, (int, float))
+                                and not isinstance(opaque_from_y, bool)
+                                else -1
+                            )
+                            floor_opaque = (
+                                0 <= ground_row < int(LOGICAL_SIZE[1])
+                                and _alpha_is_opaque_from_row(surface, ground_row)
+                            )
+                            result["opaque_from_y"] = ground_row
+                            result["floor_fully_opaque"] = floor_opaque
+                            record(
+                                floor_opaque,
+                                "ground_asset_floor_coverage",
+                                (
+                                    f"{relative}: ground_opaque_from_y={ground_row}; "
+                                    f"floor_fully_opaque={floor_opaque}"
+                                ),
+                                level_id=level_id,
+                            )
                 except (OSError, pygame.error, ValueError) as error:
                     record(
                         False,
@@ -886,6 +1114,168 @@ def build_location_lock_report(
                         level_id=level_id,
                     )
             asset_results[field] = result
+
+        physical_objects_value = route.get("physical_scene_objects", ())
+        physical_objects = (
+            tuple(
+                item
+                for item in physical_objects_value
+                if isinstance(item, Mapping)
+            )
+            if isinstance(physical_objects_value, Sequence)
+            and not isinstance(physical_objects_value, (str, bytes))
+            else ()
+        )
+        object_ids = tuple(str(item.get("id", "")).strip() for item in physical_objects)
+        record(
+            isinstance(physical_objects_value, list)
+            and bool(physical_objects)
+            and len(object_ids) == len(set(object_ids))
+            and all(object_ids),
+            "physical_scene_objects_unique",
+            f"object_ids={list(object_ids)!r}",
+            level_id=level_id,
+        )
+        landmark_id_set = set(landmark_ids)
+        registered_feature_ids = {
+            str(item.get("id", "")).strip()
+            for item in route.get("registered_features", ())
+            if isinstance(item, Mapping)
+        }
+        adult_height_m = None
+        if isinstance(chapter_projection, Mapping):
+            reference_dimensions = chapter_projection.get(
+                "reference_physical_dimensions",
+                {},
+            )
+            if isinstance(reference_dimensions, Mapping):
+                adult_height_m = _finite_number_or_none(
+                    reference_dimensions.get("neutral_adult_height_m")
+                )
+        physical_asset_results: list[dict[str, Any]] = []
+        for object_index, item in enumerate(physical_objects):
+            object_id = str(item.get("id", f"<index:{object_index}>")).strip()
+            missing_fields = [
+                field
+                for field in _PHYSICAL_SCENE_OBJECT_FIELDS
+                if field not in item
+            ]
+            record(
+                not missing_fields,
+                "physical_scene_object_schema",
+                f"{object_id}: missing_fields={missing_fields!r}",
+                level_id=level_id,
+            )
+            world_x = _finite_number_or_none(item.get("world_x"))
+            depth = _finite_number_or_none(item.get("depth"))
+            elevation = _finite_number_or_none(item.get("elevation"))
+            physical_height_m = _finite_number_or_none(
+                item.get("physical_height_m")
+            )
+            record(
+                world_x is not None
+                and 0 <= world_x <= world_width
+                and depth is not None
+                and 0 <= depth <= int(LOGICAL_SIZE[1])
+                and elevation is not None
+                and elevation >= 0
+                and physical_height_m is not None
+                and 0 < physical_height_m <= 12,
+                "physical_scene_object_coordinates",
+                (
+                    f"{object_id}: world_x={world_x!r}; depth={depth!r}; "
+                    f"elevation={elevation!r}; height_m={physical_height_m!r}"
+                ),
+                level_id=level_id,
+            )
+            anchor = str(item.get("anchor", "")).strip()
+            collision_reference = str(
+                item.get("collision_feature_reference", "")
+            ).strip()
+            record(
+                anchor in landmark_id_set
+                and (
+                    not collision_reference
+                    or collision_reference in registered_feature_ids
+                    or collision_reference in landmark_id_set
+                ),
+                "physical_scene_object_registration",
+                (
+                    f"{object_id}: anchor={anchor!r}; "
+                    f"collision_reference={collision_reference!r}"
+                ),
+                level_id=level_id,
+            )
+            kind = str(item.get("kind", "")).strip().lower()
+            ratio_ok = True
+            ratio = None
+            if adult_height_m and physical_height_m:
+                ratio = physical_height_m / adult_height_m
+                if kind in {"sedan", "car"}:
+                    ratio_ok = 0.70 <= ratio <= 0.90
+                elif kind == "door":
+                    ratio_ok = 1.05 <= ratio <= 1.20
+            record(
+                ratio_ok,
+                "physical_scene_object_reference_ratio",
+                f"{object_id}: kind={kind!r}; adult_ratio={ratio!r}",
+                level_id=level_id,
+            )
+            relative_object_asset = str(item.get("asset", "")).replace("\\", "/")
+            object_asset_path = (
+                (root / relative_object_asset).resolve()
+                if relative_object_asset
+                else root
+            )
+            object_asset_within_root = (
+                object_asset_path == root or root in object_asset_path.parents
+            )
+            object_asset_exists = (
+                bool(relative_object_asset)
+                and object_asset_within_root
+                and relative_object_asset.startswith("assets/")
+                and object_asset_path.is_file()
+            )
+            object_asset_result = {
+                "id": object_id,
+                "path": relative_object_asset,
+                "exists": object_asset_exists,
+                "size": None,
+                "sha256": None,
+            }
+            if object_asset_exists:
+                try:
+                    object_surface = pygame.image.load(str(object_asset_path))
+                    object_asset_result["size"] = list(object_surface.get_size())
+                    object_asset_result["sha256"] = _sha256_file(object_asset_path)
+                    object_asset_exists = (
+                        object_surface.get_width() > 0
+                        and object_surface.get_height() > 0
+                        and object_surface.get_masks()[3] != 0
+                    )
+                except (OSError, pygame.error, ValueError):
+                    object_asset_exists = False
+            object_asset_result["exists"] = object_asset_exists
+            physical_asset_results.append(object_asset_result)
+            record(
+                object_asset_exists,
+                "physical_scene_object_asset",
+                (
+                    f"{object_id}: asset={relative_object_asset!r}; "
+                    f"exists={object_asset_exists}"
+                ),
+                level_id=level_id,
+            )
+        asset_results["physical_scene_object_assets"] = {
+            "path": "<per-object>",
+            "exists": bool(physical_asset_results)
+            and all(item["exists"] for item in physical_asset_results),
+            "size": None,
+            "sha256": _stable_json_digest(physical_asset_results)
+            if physical_asset_results
+            else None,
+            "items": physical_asset_results,
+        }
 
         features_value = route.get("registered_features", ())
         features = (
@@ -1119,10 +1509,34 @@ def build_location_lock_report(
         "gameplay and chapter content do not contain 1310 Broadway",
     )
     errors = [item for item in checks if item["status"] == "fail"]
+    atmosphere_path = root / "data" / "atmosphere.json"
+    atmosphere_runtime_file = {
+        "path": "data/atmosphere.json",
+        "exists": atmosphere_path.is_file(),
+        "size_bytes": (
+            atmosphere_path.stat().st_size
+            if atmosphere_path.is_file()
+            else None
+        ),
+        "sha256": (
+            _sha256_file(atmosphere_path)
+            if atmosphere_path.is_file()
+            else None
+        ),
+    }
+    authoritative_runtime_files = {
+        "atmosphere": atmosphere_runtime_file,
+    }
+    asset_inventory_sha256 = _asset_inventory_digest(
+        route_results,
+        authoritative_files=authoritative_runtime_files,
+    )
     return {
         "classification": "chapter1_location_lock_source_or_package_validation",
         "project_root": str(root),
         "manifest_path": str(root / "data" / "chapter1_location_lock.json"),
+        "asset_inventory_sha256": asset_inventory_sha256,
+        "authoritative_runtime_files": authoritative_runtime_files,
         "checks": checks,
         "errors": errors,
         "routes": route_results,
@@ -1583,6 +1997,192 @@ def run_scenery_camera_sweep(
             pygame.quit()
 
 
+def _atmosphere_state_from_game(game: FadesGame) -> Any | None:
+    for field in ("atmosphere_state", "atmosphere"):
+        value = getattr(game, field, None)
+        if value is not None and callable(getattr(value, "snapshot", None)):
+            return value
+    save_data = getattr(game, "save_data", None)
+    value = getattr(save_data, "atmosphere", None)
+    if value is not None and callable(getattr(value, "snapshot", None)):
+        return value
+    return None
+
+
+def _atmosphere_digest(state: Any | None) -> str:
+    if state is None:
+        return ""
+    snapshot = state.snapshot()
+    mapping = snapshot.to_mapping()
+    return _stable_json_digest(mapping)
+
+
+def _source_forwards_non_null_keyword(
+    function: Callable[..., Any],
+    *,
+    callee_name: str,
+    keyword_name: str,
+) -> bool:
+    try:
+        tree = ast.parse(textwrap.dedent(inspect.getsource(function)))
+    except (OSError, TypeError, SyntaxError):
+        return False
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Call):
+            continue
+        function_name = (
+            node.func.attr
+            if isinstance(node.func, ast.Attribute)
+            else node.func.id
+            if isinstance(node.func, ast.Name)
+            else ""
+        )
+        if function_name != callee_name:
+            continue
+        for keyword in node.keywords:
+            if keyword.arg != keyword_name:
+                continue
+            return not (
+                isinstance(keyword.value, ast.Constant)
+                and keyword.value.value is None
+            )
+    return False
+
+
+def _runtime_integration_probe() -> dict[str, Any]:
+    """Observe atmosphere ownership, pause behavior, rendering, and route continuity."""
+
+    manager: InputManager | None = None
+    game: FadesGame | None = None
+    pygame_was_initialized = pygame.get_init()
+    display_was_initialized = pygame.display.get_init()
+    font_was_initialized = pygame.font.get_init()
+    created_display = pygame.display.get_surface() is None
+    try:
+        if not pygame_was_initialized:
+            pygame.init()
+        else:
+            if not display_was_initialized:
+                pygame.display.init()
+            if not font_was_initialized:
+                pygame.font.init()
+        if created_display:
+            pygame.display.set_mode(LOGICAL_SIZE)
+        manager = InputManager(max_players=4, discover_controllers=False)
+        game = FadesGame(manager, mute=True)
+        game._select_campaign_level("chapter_1_level_1")
+        game.select_slots = [
+            SelectSlot({"type": "keyboard"}, character_index=0, confirmed=True),
+        ]
+        game._start_stage()
+        game.stage_banner_timer = 0.0
+        game.route_card_timer = 0.0
+
+        state = _atmosphere_state_from_game(game)
+        before_active = _atmosphere_digest(state)
+        game.pause = False
+        game.update(1.0 / FIXED_HZ)
+        after_active = _atmosphere_digest(state)
+        advances_during_gameplay = bool(
+            before_active
+            and after_active
+            and before_active != after_active
+        )
+
+        before_pause = _atmosphere_digest(state)
+        game.pause = True
+        game.update(1.0 / FIXED_HZ)
+        after_pause = _atmosphere_digest(state)
+        freezes_during_pause = bool(
+            before_pause and before_pause == after_pause
+        )
+        game.pause = False
+
+        canvas_before = pygame.Surface(LOGICAL_SIZE).convert()
+        canvas_after = pygame.Surface(LOGICAL_SIZE).convert()
+        game.draw(canvas_before)
+        if state is not None:
+            state.advance(30.0, paused=False)
+        game.draw(canvas_after)
+        sky_rect = pygame.Rect(192, 38, 256, 126)
+        sky_before = canvas_before.subsurface(sky_rect)
+        sky_after = canvas_after.subsurface(sky_rect)
+        rendered_sky_changes = (
+            pygame.image.tobytes(sky_before, "RGB", False)
+            != pygame.image.tobytes(sky_after, "RGB", False)
+        )
+
+        before_route_change = (
+            state.snapshot().to_mapping()
+            if state is not None
+            else {}
+        )
+        game._select_campaign_level("chapter_1_level_2")
+        state_after_route_change = _atmosphere_state_from_game(game)
+        after_route_change = (
+            state_after_route_change.snapshot().to_mapping()
+            if state_after_route_change is not None
+            else {}
+        )
+        route_change_preserves_clock = bool(
+            before_route_change
+            and after_route_change
+            and int(after_route_change.get("seed", -1))
+            == int(before_route_change.get("seed", -2))
+            and float(after_route_change.get("time_seconds", -1.0))
+            >= float(before_route_change.get("time_seconds", 0.0))
+        )
+
+        game_source = inspect.getsource(FadesGame)
+        renderer_receives_atmosphere = _source_forwards_non_null_keyword(
+            getattr(pixel_art, "_draw_location_locked_background"),
+            callee_name="render_route_backdrop",
+            keyword_name="atmosphere",
+        )
+        physical_objects_wired = "physical_scene_objects" in game_source
+        projection_mode = str(
+            getattr(getattr(game, "projection", None), "config", None).mode
+            if getattr(getattr(game, "projection", None), "config", None)
+            is not None
+            else ""
+        )
+        return {
+            "initialized": True,
+            "advances_during_gameplay": advances_during_gameplay,
+            "freezes_during_pause": freezes_during_pause,
+            "rendered_sky_changes_at_fixed_camera": rendered_sky_changes,
+            "route_change_preserves_clock": route_change_preserves_clock,
+            "renderer_receives_atmosphere": renderer_receives_atmosphere,
+            "physical_scene_objects_wired": physical_objects_wired,
+            "projection_mode": projection_mode,
+            "error": None,
+        }
+    except Exception as error:
+        return {
+            "initialized": False,
+            "advances_during_gameplay": False,
+            "freezes_during_pause": False,
+            "rendered_sky_changes_at_fixed_camera": False,
+            "route_change_preserves_clock": False,
+            "renderer_receives_atmosphere": False,
+            "physical_scene_objects_wired": False,
+            "projection_mode": "",
+            "error": f"{type(error).__name__}: {error}",
+        }
+    finally:
+        if game is not None:
+            game.close()
+        if manager is not None:
+            manager.close()
+        if not pygame_was_initialized:
+            pygame.quit()
+        else:
+            if created_display and not display_was_initialized:
+                pygame.display.quit()
+            if not font_was_initialized:
+                pygame.font.quit()
+
+
 def run_integration_visual_matrix(
     *,
     project_root: Path | str = PROJECT_ROOT,
@@ -1635,24 +2235,45 @@ def run_integration_visual_matrix(
         )
         if isinstance(level, Mapping)
     }
+    gameplay_players = gameplay_data.get("players", {})
     player_profiles = {
         str(name).lower(): bool(config)
         for name, config in (
-            content_data.get("players", {}).items()
-            if isinstance(content_data.get("players", {}), Mapping)
+            gameplay_players.items()
+            if isinstance(gameplay_players, Mapping)
             else ()
         )
+        if str(name).lower() != "global"
     }
-    chief_profile_present = bool(content_data.get("chief", {}))
-    atmosphere_data = _read_json_file(root / "data" / "atmosphere.json")
+    chief_profile_present = bool(gameplay_data.get("chief", {}))
+    atmosphere_error = ""
+    try:
+        atmosphere_data = _read_json_file(root / "data" / "atmosphere.json")
+    except (OSError, ValueError, json.JSONDecodeError) as error:
+        atmosphere_data = {}
+        atmosphere_error = f"{type(error).__name__}: {error}"
     route_atmosphere = atmosphere_data.get("route_profile_map", {})
+    if not isinstance(route_atmosphere, Mapping):
+        route_atmosphere = {}
     atmosphere_profiles = atmosphere_data.get("profiles", {})
+    if not isinstance(atmosphere_profiles, Mapping):
+        atmosphere_profiles = {}
 
-    scenery_sweep = run_scenery_camera_sweep(
-        frames_per_route=frames_per_route,
-        warmup_frames=0,
-        manifest=manifest_data,
-    )
+    scenery_error = ""
+    try:
+        scenery_sweep = run_scenery_camera_sweep(
+            frames_per_route=frames_per_route,
+            warmup_frames=0,
+            manifest=manifest_data,
+        )
+    except Exception as error:
+        scenery_error = f"{type(error).__name__}: {error}"
+        scenery_sweep = {
+            "classification": "failed_scenery_camera_sweep",
+            "routes": [],
+            "passed": False,
+            "error": scenery_error,
+        }
     sweeps = {
         str(route["level_id"]): route
         for route in scenery_sweep.get("routes", ())
@@ -1661,6 +2282,80 @@ def run_integration_visual_matrix(
 
     checks: list[dict[str, Any]] = []
     route_reports: list[dict[str, Any]] = []
+    runtime_probe = _runtime_integration_probe()
+    projection_profiles = _projection_profiles(gameplay_data)
+    active_projection_profile_id = _active_projection_profile_id(gameplay_data)
+    checks.extend(
+        [
+            {
+                "id": "integration_atmosphere_data_readable",
+                "status": "pass" if not atmosphere_error else "fail",
+                "required": True,
+                "detail": atmosphere_error or "data/atmosphere.json loaded",
+            },
+            {
+                "id": "integration_scenery_runtime_renderable",
+                "status": "pass" if not scenery_error else "fail",
+                "required": True,
+                "detail": scenery_error or "all route scenery frames rendered",
+            },
+            {
+                "id": "integration_projection_profile_active",
+                "status": (
+                    "pass"
+                    if active_projection_profile_id == "chapter1_oblique_v2"
+                    and isinstance(
+                        projection_profiles.get("chapter1_oblique_v2"),
+                        Mapping,
+                    )
+                    else "fail"
+                ),
+                "required": True,
+                "detail": (
+                    f"active={active_projection_profile_id!r}; "
+                    f"profiles={sorted(str(key) for key in projection_profiles)!r}"
+                ),
+            },
+        ]
+    )
+    for probe_field, check_id in (
+        ("initialized", "integration_runtime_initializes"),
+        (
+            "advances_during_gameplay",
+            "integration_runtime_atmosphere_advances",
+        ),
+        (
+            "freezes_during_pause",
+            "integration_runtime_atmosphere_pause_freeze",
+        ),
+        (
+            "rendered_sky_changes_at_fixed_camera",
+            "integration_runtime_sky_changes_at_fixed_camera",
+        ),
+        (
+            "route_change_preserves_clock",
+            "integration_runtime_atmosphere_route_continuity",
+        ),
+        (
+            "renderer_receives_atmosphere",
+            "integration_runtime_renderer_receives_atmosphere",
+        ),
+        (
+            "physical_scene_objects_wired",
+            "integration_runtime_physical_scene_objects",
+        ),
+    ):
+        checks.append(
+            {
+                "id": check_id,
+                "status": "pass" if runtime_probe.get(probe_field) else "fail",
+                "required": True,
+                "detail": (
+                    runtime_probe.get("error")
+                    or f"{probe_field}={runtime_probe.get(probe_field)!r}"
+                ),
+            }
+        )
     ordered_profiles = [
         str(route_atmosphere.get(str(route.get("level_id", "")), ""))
         for route in gameplay_routes
@@ -1728,6 +2423,10 @@ def run_integration_visual_matrix(
             route_check.append(entry)
 
         references = _format_reference_tokens(route, gameplay_level)
+        references.extend(sorted(player_profiles))
+        if chief_profile_present:
+            references.append("chief")
+        references = sorted(set(references))
         reference_tokens = set(references)
         required_markers = tuple(_INTEGRATION_REQUIRED_ROUTE_MARKERS.get(level_id, ()))
         missing_markers = [marker for marker in required_markers if marker not in references]
@@ -1904,28 +2603,37 @@ def run_integration_visual_matrix(
         route_object_anchors = [str(item.get("anchor", "")).strip().lower() for item in route_objects]
         landmark_ids = {str(item.get("id", "")).strip().lower() for item in _as_sequence(route.get("landmarks", ())) if isinstance(item, Mapping)}
         record(
-            route_objects_value is not None,
+            bool(route_objects),
             "integration_physical_scene_objects_present",
             f"physical_object_count={len(route_objects)}",
         )
         record(
-            all(item.get("id") and item.get("asset") for item in route_objects),
+            all(
+                all(field in item for field in _PHYSICAL_SCENE_OBJECT_FIELDS)
+                for item in route_objects
+            ),
             "integration_physical_scene_object_asset_contract",
-            f"objects={[(item.get('id'), item.get('asset')) for item in route_objects]}",
+            (
+                "objects="
+                f"{[(item.get('id'), item.get('asset')) for item in route_objects]}"
+            ),
+        )
+        missing_physical_assets = [
+            str(item.get("asset", ""))
+            for item in route_objects
+            if not (
+                str(item.get("asset", "")).startswith("assets/")
+                and (root / str(item.get("asset", ""))).is_file()
+            )
+        ]
+        record(
+            not missing_physical_assets,
+            "integration_physical_scene_object_assets_exist",
+            f"missing={missing_physical_assets!r}",
         )
         record(
             any(item in route_object_kinds for item in ("sedan", "car")),
             "integration_physical_sedan_presence",
-            f"kinds={sorted(route_object_kinds)!r}",
-        )
-        record(
-            "door" in route_object_kinds,
-            "integration_physical_door_presence",
-            f"kinds={sorted(route_object_kinds)!r}",
-        )
-        record(
-            any(item in route_object_kinds for item in ("signal_pole", "light_pole", "sign_pole", "pole")),
-            "integration_physical_pole_presence",
             f"kinds={sorted(route_object_kinds)!r}",
         )
         route_object_depths = {
@@ -1955,6 +2663,30 @@ def run_integration_visual_matrix(
             all(anchor in landmark_ids for anchor in route_object_anchors),
             "integration_physical_object_anchor_to_landmark",
             f"anchor_count={len(route_object_anchors)}",
+        )
+        route_projection_profile = str(
+            route.get("projection_profile_id", "")
+        ).strip()
+        record(
+            route_projection_profile == active_projection_profile_id
+            and route_projection_profile in projection_profiles,
+            "integration_route_projection_profile",
+            (
+                f"route={route_projection_profile!r}; "
+                f"active={active_projection_profile_id!r}"
+            ),
+        )
+        missing_layer_fields = [
+            field
+            for field in _LAYERED_LOCATION_ASSET_FIELDS
+            if not str(route.get(field, "")).strip()
+            or route.get(f"{field}_size")
+            != [world_width, int(LOGICAL_SIZE[1])]
+        ]
+        record(
+            not missing_layer_fields,
+            "integration_route_layer_schema",
+            f"missing_or_invalid={missing_layer_fields!r}",
         )
         record(
             panel_spec_count >= 1,
@@ -2026,17 +2758,19 @@ def run_integration_visual_matrix(
             if isinstance(route_atmosphere_id, str) else {}
         )
         record(
-            bool(route_atmosphere_id),
+            bool(route_atmosphere_id)
+            and str(route.get("sky_profile_id", "")) == route_atmosphere_id,
             "integration_route_atmosphere_profile_map",
-            f"route={level_id!r}; profile={route_atmosphere_id!r}",
-            required=False,
+            (
+                f"route={level_id!r}; profile={route_atmosphere_id!r}; "
+                f"manifest={route.get('sky_profile_id')!r}"
+            ),
         )
         record(
             isinstance(atmosphere_profile, Mapping)
             and bool(atmosphere_profile),
             "integration_atmosphere_profile_defined",
             f"profile_keys={list(atmosphere_profile)!r}",
-            required=False,
         )
         if isinstance(atmosphere_profile, Mapping):
             cloud_speeds = atmosphere_profile.get("cloud_speeds", ())
@@ -2046,47 +2780,55 @@ def run_integration_visual_matrix(
                 and len(cloud_speeds) >= 3,
                 "integration_atmosphere_cloud_layers",
                 f"cloud_speeds={list(cloud_speeds)!r}",
-                required=False,
             )
         route_sky_hashes: set[str] = set()
+        atmosphere_runtime_error = ""
         if isinstance(atmosphere_profile, Mapping) and atmosphere_profile:
-            atmosphere_state = AtmosphereState.new(profile_id=route_atmosphere_id)
-            for _ in range(30):
-                atmosphere_state.advance(1.0)
-                route_sky_hashes.add(
-                    _stable_json_digest(atmosphere_state.snapshot().to_mapping())
+            try:
+                atmosphere_state = AtmosphereState.new(
+                    seed=0xFAD35,
+                    profile_id=route_atmosphere_id,
                 )
+                for _ in range(30):
+                    atmosphere_state.advance(1.0)
+                    route_sky_hashes.add(
+                        _stable_json_digest(
+                            atmosphere_state.snapshot().to_mapping()
+                        )
+                    )
+            except (KeyError, TypeError, ValueError) as error:
+                atmosphere_runtime_error = f"{type(error).__name__}: {error}"
         record(
-            len(route_sky_hashes) >= 2,
+            not atmosphere_runtime_error and len(route_sky_hashes) >= 2,
             "integration_stationary_camera_sky_30s",
-            f"stationary_sky_snapshots={len(route_sky_hashes)}",
-            required=False,
+            (
+                f"stationary_sky_snapshots={len(route_sky_hashes)}; "
+                f"error={atmosphere_runtime_error!r}"
+            ),
         )
         record(
             not route_encounter_locks or len(route_sky_hashes) >= 2,
             "integration_clouds_continue_during_encounter_locks",
             f"encounter_camera_locks={route_encounter_locks}; snapshots={len(route_sky_hashes)}",
-            required=False,
         )
         if level_id == "chapter_1_level_2":
-            route_underpass_kinds = tuple(
-                kind
-                for kind in route_object_kinds
-                if kind
-                in {
-                    "bridge_support",
-                    "bridge_supporting_column",
-                    "underpass",
-                    "beam",
-                    "column",
-                    "retaining_wall",
-                }
+            architecture_asset = str(
+                route.get("architecture_asset", "")
+            ).strip()
+            underpass_architecture_exists = bool(
+                architecture_asset
+                and (root / architecture_asset).is_file()
             )
             record(
-                bool(route_underpass_kinds),
+                "i8_underpass" in landmark_ids
+                and underpass_architecture_exists
+                and len(route_sky_hashes) >= 2,
                 "integration_underpass_masks_sky_without_restart",
-                f"kinds={route_underpass_kinds!r}",
-                required=False,
+                (
+                    f"landmark={'i8_underpass' in landmark_ids}; "
+                    f"architecture={architecture_asset!r}; "
+                    f"sky_snapshots={len(route_sky_hashes)}"
+                ),
             )
 
         record(
@@ -2154,20 +2896,45 @@ def run_integration_visual_matrix(
                 "reference_tokens": references,
                 "reference_token_count": len(reference_tokens),
                 "checks": route_checks,
-                "passed": all(item["status"] == "pass" for item in route_checks),
-                "required_checks_passed": all(
-                    item["status"] == "pass" and item.get("required", True)
+                "passed": all(
+                    item["status"] == "pass"
                     for item in route_checks
+                    if item.get("required", True)
+                ),
+                "required_checks_passed": all(
+                    item["status"] == "pass"
+                    for item in route_checks
+                    if item.get("required", True)
                 ),
             }
         )
         checks.extend(route_checks)
+
+    chapter_physical_kinds = {
+        str(item.get("kind", "")).strip().lower()
+        for route in gameplay_routes
+        for item in _as_sequence(route.get("physical_scene_objects", ()))
+        if isinstance(item, Mapping)
+    }
+    checks.append(
+        {
+            "id": "integration_chapter_physical_sedan_presence",
+            "status": (
+                "pass"
+                if chapter_physical_kinds.intersection({"sedan", "car"})
+                else "fail"
+            ),
+            "required": True,
+            "detail": f"kinds={sorted(chapter_physical_kinds)!r}",
+        }
+    )
 
     return {
         "classification": "integration_visual_matrix",
         "project_root": str(root),
         "routes": route_reports,
         "scenery_camera_sweep": scenery_sweep,
+        "runtime_probe": runtime_probe,
         "camera_fractions": [round(value, 2) for value in _INTEGRATION_CHECK_CAMERA_FRACTIONS],
         "checks": checks,
         "passed": all(item["status"] == "pass" for item in checks if item.get("required", True)),

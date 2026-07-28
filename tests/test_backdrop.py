@@ -9,6 +9,7 @@ import unittest
 import pygame
 
 import src.backdrop as backdrop
+from src.atmosphere import AtmosphereState as RuntimeAtmosphereState
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -51,7 +52,7 @@ class BackdropRendererTests(unittest.TestCase):
         }
         world_width = 800
         main = _color_surface(world_width, (world_width, 360), (200, 10, 20, 255))
-        far = _color_surface(world_width, (world_width, 360), (20, 20, 220, 128))
+        far = _color_surface(world_width, (world_width, 360), (20, 20, 220, 255))
         far_skyline = _color_surface(world_width, (world_width, 360), (0, 0, 0, 0))
         pygame.draw.rect(far_skyline, (60, 200, 80, 255), (0, 280, world_width, 60))
         architecture = pygame.Surface((world_width, 360), pygame.SRCALPHA)
@@ -84,8 +85,26 @@ class BackdropRendererTests(unittest.TestCase):
             loader_identity=id(pygame.image.load),
         )
         self.assertEqual(surface.get_at((250, 80)), pygame.Color(210, 180, 80, 255))  # architecture over haze
-        self.assertEqual(surface.get_at((500, 40)), pygame.Color(20, 20, 220, 128))  # haze over base sky
+        self.assertEqual(surface.get_at((500, 40)), pygame.Color(20, 20, 220, 255))  # haze over base sky
         self.assertEqual(surface.get_at((500, 320)), pygame.Color(200, 0, 140, 255))  # ground last
+
+    def test_fallback_profile_palettes_share_atmosphere_authority(self) -> None:
+        for profile_id in (
+            "chapter_1_sunset",
+            "i8_underpass_dimming",
+            "awaken_finale",
+        ):
+            with self.subTest(profile_id=profile_id):
+                expected = RuntimeAtmosphereState.new(
+                    profile_id=profile_id,
+                ).snapshot().sky_palette
+                self.assertEqual(
+                    backdrop._sky_palette(
+                        {"sky_profile_id": profile_id},
+                        None,
+                    ),
+                    expected,
+                )
 
     def test_static_cache_reuses_across_atmosphere_time(self) -> None:
         route = {"far_parallax": 0.6, "far_max_offset": 64, "near_parallax": 1.0, "near_max_offset": 0}
@@ -137,8 +156,8 @@ class BackdropRendererTests(unittest.TestCase):
         route = {"far_parallax": 0.8, "far_max_offset": 64, "near_parallax": 1.0, "near_max_offset": 0}
         world_width = 900
         main = _color_surface(world_width, (world_width, 360), (25, 25, 25, 255))
-        far = _color_surface(world_width, (world_width, 360), (255, 255, 0, 255))
-        far.fill((255, 255, 0, 255))
+        far = _color_surface(world_width, (world_width, 360), (0, 0, 0, 0))
+        pygame.draw.rect(far, (255, 255, 0, 255), (200, 0, 40, 360))
         layers = {
             "main": main,
             "far": far,
@@ -152,19 +171,150 @@ class BackdropRendererTests(unittest.TestCase):
         backdrop.clear_backdrop_caches()
         first = pygame.Surface((640, 360))
         second = pygame.Surface((640, 360))
-        atmosphere_frozen = {
-            "time_seconds": 0.0,
-            "seed": 31,
-            "cloud_phases": [0.0],
-            "wind": {"speed": 30.0, "direction": 0.0},
-            "transition_progress": 1.0,
-        }
-        atmosphere_moving = atmosphere_frozen.copy()
-        atmosphere_moving["time_seconds"] = 4.0
+        state = RuntimeAtmosphereState.new(
+            seed=31,
+            profile_id="chapter_1_sunset",
+        )
+        atmosphere_frozen = state.snapshot()
+        state.advance(0.75)
+        atmosphere_moving = state.snapshot()
 
         backdrop.render_route_backdrop(first, "test", route, layers, 120, world_width, atmosphere=atmosphere_frozen, loader_identity=id(pygame.image.load))
         backdrop.render_route_backdrop(second, "test", route, layers, 120, world_width, atmosphere=atmosphere_moving, loader_identity=id(pygame.image.load))
         self.assertNotEqual(pygame.image.tobytes(first, "RGB"), pygame.image.tobytes(second, "RGB"))
+
+    def test_declared_haze_bands_move_independently_at_fixed_camera(self) -> None:
+        route = {
+            "far_parallax": 0.2,
+            "far_max_offset": 64,
+            "near_parallax": 1.0,
+            "near_max_offset": 0,
+            "ground_opaque_from_y": 240,
+        }
+        world_width = 900
+        main = _color_surface(world_width, (world_width, 360), (25, 25, 25, 255))
+        haze = _color_surface(world_width, (world_width, 360), (0, 0, 0, 0))
+        band_colors = (
+            (255, 40, 40, 255),
+            (40, 255, 40, 255),
+            (40, 40, 255, 255),
+        )
+        bands = backdrop._haze_band_rects(route, haze)
+        for band, color in zip(bands, band_colors, strict=True):
+            pygame.draw.rect(
+                haze,
+                color,
+                (120, band.y + 3, 24, max(1, band.height - 6)),
+            )
+        layers = {
+            "main": main,
+            "far": haze,
+            "near": None,
+            "far_haze": haze,
+            "far_skyline": None,
+            "architecture": None,
+            "ground": None,
+            "near_occluder": None,
+        }
+        baseline_state = {
+            "time_seconds": 0.0,
+            "seed": 0,
+            "cloud_phases": (0.0, 0.0, 0.0),
+            "wind": {"speed": 1.0, "direction": 0.0},
+            "transition_progress": 1.0,
+            "parallax_factors": (0.2, 0.45, 0.7),
+        }
+        baseline = pygame.Surface((640, 360))
+        backdrop.clear_backdrop_caches()
+        backdrop.render_route_backdrop(
+            baseline,
+            "test",
+            route,
+            layers,
+            120,
+            world_width,
+            atmosphere=baseline_state,
+            loader_identity=id(pygame.image.load),
+        )
+
+        def band_bytes(surface: pygame.Surface, band: pygame.Rect) -> bytes:
+            visible = pygame.Rect(0, band.y, surface.get_width(), band.height)
+            return pygame.image.tobytes(surface.subsurface(visible), "RGB")
+
+        for moving_index in range(len(bands)):
+            phases = [0.0, 0.0, 0.0]
+            phases[moving_index] = 0.1
+            moving_state = dict(baseline_state)
+            moving_state["time_seconds"] = 1.0
+            moving_state["cloud_phases"] = tuple(phases)
+            rendered = pygame.Surface((640, 360))
+            backdrop.render_route_backdrop(
+                rendered,
+                "test",
+                route,
+                layers,
+                120,
+                world_width,
+                atmosphere=moving_state,
+                loader_identity=id(pygame.image.load),
+            )
+            for band_index, band in enumerate(bands):
+                with self.subTest(
+                    moving_band=moving_index,
+                    observed_band=band_index,
+                ):
+                    if band_index == moving_index:
+                        self.assertNotEqual(
+                            band_bytes(rendered, band),
+                            band_bytes(baseline, band),
+                        )
+                    else:
+                        self.assertEqual(
+                            band_bytes(rendered, band),
+                            band_bytes(baseline, band),
+                        )
+
+    def test_60hz_haze_motion_is_slow_and_bounded(self) -> None:
+        route = {
+            "far_parallax": 0.2,
+            "far_max_offset": 64,
+        }
+        state = RuntimeAtmosphereState.new(
+            seed=31,
+            profile_id="chapter_1_sunset",
+        )
+        observed = [set() for _ in range(backdrop.HAZE_BAND_COUNT)]
+        previous: tuple[int, ...] | None = None
+        for _ in range(180):
+            snapshot = state.snapshot()
+            offsets = tuple(
+                backdrop._atmosphere_haze_offset(
+                    route,
+                    snapshot,
+                    camera_x=120,
+                    layer_width=3200,
+                    viewport_width=640,
+                    band_index=band_index,
+                )
+                for band_index in range(backdrop.HAZE_BAND_COUNT)
+            )
+            for band_index, offset in enumerate(offsets):
+                observed[band_index].add(offset)
+            if previous is not None:
+                self.assertLessEqual(
+                    max(abs(current - prior) for current, prior in zip(offsets, previous, strict=True)),
+                    2,
+                )
+            previous = offsets
+            state.advance(1.0 / 60.0)
+
+        for band_index, positions in enumerate(observed):
+            with self.subTest(band_index=band_index):
+                self.assertGreater(len(positions), 1)
+                self.assertLessEqual(
+                    max(positions) - min(positions),
+                    backdrop.HAZE_PHASE_AMPLITUDES[band_index] * 2,
+                )
 
     def test_one_to_one_architecture_and_ground_motion(self) -> None:
         route = {"far_parallax": 0.7, "far_max_offset": 64, "near_parallax": 1.0, "near_max_offset": 0}
@@ -231,8 +381,11 @@ class BackdropRendererTests(unittest.TestCase):
         skyline_end = backdrop._bounded_location_layer_offset(1200, 0.3, 64, world_width, 640)
         skyline_main_start = backdrop._bounded_location_layer_offset(0, 1.0, 0, world_width, 640)
         skyline_main_end = backdrop._bounded_location_layer_offset(1200, 1.0, 0, world_width, 640)
-        self.assertLessEqual(abs(skyline_end - skyline_main_start), 64)
-        self.assertLessEqual(abs(skyline_end - skyline_start), 64)
+        self.assertLessEqual(abs(skyline_end - skyline_main_end), 64)
+        self.assertLessEqual(
+            abs((skyline_end - skyline_main_end) - (skyline_start - skyline_main_start)),
+            64,
+        )
         self.assertNotEqual(skyline_start, skyline_end)
 
         near_start = backdrop._bounded_location_layer_offset(0, 1.08, 96, world_width, 640)

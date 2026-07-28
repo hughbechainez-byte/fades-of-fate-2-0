@@ -16,6 +16,7 @@ from .animation_manifest import (
     action_segment_tick,
     timed_action_tick,
 )
+from .atmosphere import AtmosphereState
 from .audio import AudioManager
 from .chapter_content import compile_level_content, load_chapter_content
 from .combat_engine import (
@@ -230,6 +231,12 @@ class FadesGame:
         self.save_load_result = self.save_repository.load()
         self.save_data: SaveData = self.save_load_result.data
         self.options: GameOptions = self.save_data.options
+        # Keep the live atmosphere mutable without mutating the immutable save
+        # snapshot held by SaveData.  A fresh detached copy is written back at
+        # explicit save points.
+        self.atmosphere = AtmosphereState.from_mapping(
+            self.save_data.atmosphere.to_mapping()
+        )
         self.meta = self.data["meta"]
         self.level_data = active_campaign_level(self.data)
         self.level_id = str(self.level_data["id"])
@@ -241,6 +248,7 @@ class FadesGame:
             self.location_manifest,
         )
         self._validate_location_route_binding()
+        self.atmosphere.set_profile_for_route(self.level_id)
         self.level_is_chapter_finale = bool(self.level_data.get("chapter_finale", False))
         self.level_has_couch = self.level_data.get("boss") == "couch"
         self.development_unlimited_lives = bool(
@@ -445,8 +453,27 @@ class FadesGame:
         """Build the data-driven 2.5D world used by simulation and rendering."""
 
         engine = self.data["engine"]
-        projection = engine["projection"]
-        mode = "oblique" if str(projection.get("mode", "orthographic")).startswith("oblique") else "orthographic"
+        projection_override = engine["projection"]
+        profile_id = str(projection_override.get("profile_id", "")).strip()
+        projection_profiles = engine.get("projection_profiles", {})
+        if profile_id:
+            profile = projection_profiles.get(profile_id)
+            if not isinstance(profile, Mapping):
+                raise ValueError(
+                    f"engine projection profile {profile_id!r} is unavailable"
+                )
+            projection = dict(profile)
+            projection.update(
+                {
+                    key: value
+                    for key, value in projection_override.items()
+                    if key != "profile_id"
+                }
+            )
+        else:
+            projection = dict(projection_override)
+        self._projection_profile_id = profile_id or "inline"
+        mode = str(projection.get("mode", "orthographic"))
         self._projection_depth_origin = float(projection.get("depth_origin", 280.0))
         self.projection = BeatEmUpProjection(ProjectionConfig(
             mode=mode,
@@ -722,6 +749,11 @@ class FadesGame:
         self.elapsed += dt
         self.frame += 1
         self.controller_notice = max(0.0, self.controller_notice - dt)
+        if self.state in {"gameplay", "complete", "epilogue", "interlevel"}:
+            self.atmosphere.advance(
+                dt,
+                paused=self.state == "gameplay" and self.pause,
+            )
         if self.input.controller_count != self._last_controller_count:
             self._last_controller_count = self.input.controller_count
             self.controller_notice = 3.0
@@ -793,6 +825,7 @@ class FadesGame:
             self.location_manifest,
         )
         self._validate_location_route_binding()
+        self.atmosphere.set_profile_for_route(self.level_id)
         self.level_is_chapter_finale = bool(self.level_data.get("chapter_finale", False))
         self.level_has_couch = self.level_data.get("boss") == "couch"
         self.log_breadcrumb(
@@ -808,6 +841,9 @@ class FadesGame:
 
         self.pending_level_id = str(next_level["id"])
         self.interlevel_source_id = self.level_id
+        # Begin the palette handoff during travel so the destination does not
+        # open on several seconds of the prior route's sky.
+        self.atmosphere.set_profile_for_route(self.pending_level_id)
         self.interlevel_travel_panel = location_lock.travel_panel_between(
             self.interlevel_source_id,
             self.pending_level_id,
@@ -844,6 +880,8 @@ class FadesGame:
     def _update_interlevel(self, dt: float) -> None:
         snapshots = self._active_menu_snapshots()
         if any(snapshot.pressed & {"back", "dodge", "pause"} for snapshot in snapshots):
+            if self.interlevel_source_id:
+                self.atmosphere.set_profile_for_route(self.interlevel_source_id)
             self.pending_level_id = None
             self.interlevel_source_id = None
             self.interlevel_travel_panel = None
@@ -3176,6 +3214,12 @@ class FadesGame:
                 run,
                 next_level_id=(str(next_level["id"]) if next_level is not None else None),
             )
+            self.save_data = replace(
+                self.save_data,
+                atmosphere=AtmosphereState.from_mapping(
+                    self.atmosphere.to_mapping()
+                ),
+            )
             if self.persistence_enabled:
                 self.save_repository.save(self.save_data)
                 self.log_breadcrumb(
@@ -4466,12 +4510,14 @@ class FadesGame:
         self._text(surface, self.font_tiny, footer_bottom, (145, 196, 224), (320, 348), center=True)
 
     def _draw_gameplay(self, surface: pygame.Surface) -> None:
+        atmosphere = self.atmosphere.snapshot()
         pixel_art.draw_stage_background(
             surface,
             self._render_camera_x,
             float(self.meta["stage_width"]),
             self._camera_shake_y,
             theme=self.level_theme,
+            atmosphere=atmosphere,
         )
         drawables: list[tuple[float, int, str, str, Any]] = []
         drawables.extend((chief.feet_y, 2, f"chief-{chief.owner.slot}", "chief", chief) for chief in self.chiefs)
@@ -4484,12 +4530,32 @@ class FadesGame:
             (float(prop["depth"]), 1, str(prop["id"]), "prop", prop)
             for prop in self.data["stage_geometry"].get("obstacles", ())
         )
+        drawables.extend(
+            (
+                float(feature["depth"]),
+                1,
+                str(feature["id"]),
+                "scene_object",
+                feature,
+            )
+            for feature in self.location_route.get("physical_scene_objects", ())
+        )
         security_bubbles: list[tuple[float, float, int, int]] = []
         for _, _, _, kind, obj in sorted(drawables, key=lambda item: (item[0], item[1], item[2])):
-            world_x = float(obj["x"]) if kind == "prop" else float(obj.x)
-            world_depth = float(obj["depth"]) if kind == "prop" else float(obj.y)
+            mapping_object = kind in {"prop", "scene_object"}
+            world_x = (
+                float(obj.get("world_x", obj.get("x")))
+                if mapping_object
+                else float(obj.x)
+            )
+            world_depth = float(obj["depth"]) if mapping_object else float(obj.y)
+            elevation = (
+                float(obj.get("elevation", 0.0))
+                if kind == "scene_object"
+                else 0.0
+            )
             projected = self.projection.project(
-                WorldPoint(world_x, world_depth),
+                WorldPoint(world_x, world_depth, elevation),
                 camera_x=self._render_camera_x,
                 camera_depth=self._projection_depth_origin,
                 screen_shake=(0.0, self._camera_shake_y),
@@ -4497,6 +4563,15 @@ class FadesGame:
             x, y = projected.xy
             if kind == "prop":
                 pixel_art.draw_stage_prop(surface, x, y, obj.get("kind", "planter"), self.frame // 4)
+                continue
+            if kind == "scene_object":
+                pixel_art.draw_physical_scene_object(
+                    surface,
+                    x,
+                    y,
+                    obj,
+                    frame=self.frame // 4,
+                )
                 continue
             if kind == "player":
                 action_states = {"light", "heavy", "air_attack", "jump", "hurt", "downed", "super", "dodge", "pet", "ranged", "propane"}
@@ -5682,12 +5757,14 @@ class FadesGame:
         self._text(surface, self.font, "PRESS ENTER / A TO RETURN", (208, 244, 255), (320, 308), center=True)
 
     def _draw_level_complete(self, surface: pygame.Surface) -> None:
+        atmosphere = self.atmosphere.snapshot()
         pixel_art.draw_stage_background(
             surface,
             float(self.data["encounters"][-1].get("camera_x", 2960.0)),
             float(self.meta["stage_width"]),
             0.0,
             theme=self.level_theme,
+            atmosphere=atmosphere,
         )
         shade = pygame.Surface(LOGICAL_SIZE, pygame.SRCALPHA)
         shade.fill((4, 5, 15, 156 if self.victory_frame.show_results else 118))
@@ -5744,6 +5821,7 @@ class FadesGame:
     def _draw_interlevel(self, surface: pygame.Surface) -> None:
         """Render the canonical route card or moving travel bridge."""
 
+        atmosphere = self.atmosphere.snapshot()
         next_level = next(
             (level for level in campaign_levels(self.data) if str(level.get("id")) == self.pending_level_id),
             None,
@@ -5760,7 +5838,12 @@ class FadesGame:
         progress = 1.0 - self.interlevel_timer / max(0.01, self.interlevel_duration)
         moving = str(travel["presentation"]) == "moving_panel"
         if moving:
-            pixel_art.draw_location_travel_panel(surface, travel, progress)
+            pixel_art.draw_location_travel_panel(
+                surface,
+                travel,
+                progress,
+                atmosphere=atmosphere,
+            )
         else:
             pixel_art.draw_stage_background(
                 surface,
@@ -5768,6 +5851,7 @@ class FadesGame:
                 float(self.meta["stage_width"]),
                 0.0,
                 theme=self.level_theme,
+                atmosphere=atmosphere,
             )
         shade = pygame.Surface(LOGICAL_SIZE, pygame.SRCALPHA)
         shade.fill((4, 7, 18, 42 if moving else 194))
@@ -5843,6 +5927,7 @@ class FadesGame:
     def _draw_epilogue(self, surface: pygame.Surface) -> None:
         """Show ordinary route results or the finale-only BMX sunset."""
 
+        atmosphere = self.atmosphere.snapshot()
         if self.level_is_chapter_finale:
             pixel_art.draw_sunset_epilogue(surface, self.epilogue_timer)
         else:
@@ -5851,6 +5936,7 @@ class FadesGame:
                 max(0.0, float(self.meta["stage_width"]) - LOGICAL_SIZE[0]),
                 float(self.meta["stage_width"]),
                 theme=self.level_theme,
+                atmosphere=atmosphere,
             )
         shade = pygame.Surface(LOGICAL_SIZE, pygame.SRCALPHA)
         shade.fill((12, 10, 30, 52 if self.level_is_chapter_finale else 116))
