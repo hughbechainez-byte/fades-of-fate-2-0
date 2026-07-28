@@ -28,8 +28,17 @@ try {
     # Location-lock QA is a packaging prerequisite, including for an explicit
     # -SkipTests rebuild.  It produces the five-checkpoint normal/overlay
     # sheets and rejects manifest, geometry, or source metadata drift.
+    $sourceSceneryReport = Join-Path $projectRoot 'build\chapter1_location_sources_report.json'
     & $python (Join-Path $projectRoot 'tools\Render-Route-Scenery-QA.py')
     if ($LASTEXITCODE -ne 0) { throw 'Chapter 1 scenery QA failed.' }
+    if (-not (Test-Path -LiteralPath $sourceSceneryReport -PathType Leaf)) {
+        throw "Expected scenery QA report was not produced: $sourceSceneryReport"
+    }
+    $sourceRouteWorldlockScreenshot = Join-Path $projectRoot 'build\route_worldlocked_qa.png'
+    if (-not (Test-Path -LiteralPath $sourceRouteWorldlockScreenshot -PathType Leaf)) {
+        throw "Expected route worldlock screenshot was not produced: $sourceRouteWorldlockScreenshot"
+    }
+    $sourceSceneryHash = (Get-FileHash -Algorithm SHA256 -LiteralPath $sourceRouteWorldlockScreenshot).Hash
     $sourceValidationReport = Join-Path $projectRoot 'build\chapter1_validation_build.json'
     & $python (Join-Path $projectRoot 'tools\validate_chapter1.py') --output $sourceValidationReport
     if ($LASTEXITCODE -ne 0) { throw 'Chapter 1 validation or performance gate failed.' }
@@ -162,6 +171,23 @@ try {
         if ($desktopReport.status -ne 'pass') {
             throw "Desktop self-test report did not pass: $desktopReportPath"
         }
+        & $python (Join-Path $projectRoot 'tools\Render-Route-Scenery-QA.py') `
+            --project-root $target
+        if ($LASTEXITCODE -ne 0) {
+            throw "Installed scenery QA failed."
+        }
+        $desktopSceneryReport = Join-Path $target 'build\chapter1_location_sources_report.json'
+        if (-not (Test-Path -LiteralPath $desktopSceneryReport -PathType Leaf)) {
+            throw "Installed scenery QA report missing: $desktopSceneryReport"
+        }
+        $installedSceneryCapture = Join-Path $target 'build\route_worldlocked_qa.png'
+        if (-not (Test-Path -LiteralPath $installedSceneryCapture -PathType Leaf)) {
+            throw "Installed route worldlock screenshot missing: $installedSceneryCapture"
+        }
+        $installedSceneryHash = (Get-FileHash -Algorithm SHA256 -LiteralPath $installedSceneryCapture).Hash
+        if ($sourceSceneryHash -ne $installedSceneryHash) {
+            throw "Installed route worldlock screenshot hash mismatch. Source=$sourceSceneryHash Installed=$installedSceneryHash"
+        }
         $passedDesktopChecks = @(
             $desktopReport.checks |
                 Where-Object { $_.status -eq 'pass' } |
@@ -189,6 +215,8 @@ try {
     Write-Output "PACKAGE=$packageDir"
     Write-Output "SELF_TEST=$reportPath"
     Write-Output "PACKAGE_LOCATION_VALIDATION=$packageLocationReport"
+    Write-Output "SOURCE_SCENERY_REPORT=$sourceSceneryReport"
+    Write-Output "SOURCE_WORLDLOCK_CAPTURE_SHA256=$sourceSceneryHash"
     Write-Output "SOURCE_CHAPTER1_VALIDATION=$sourceValidationReport"
 }
 finally {

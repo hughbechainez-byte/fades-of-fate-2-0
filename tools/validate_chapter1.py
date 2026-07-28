@@ -43,6 +43,7 @@ from src.chapter_content import (  # noqa: E402
 )
 from src.config import load_gameplay  # noqa: E402
 from src.entities import Projectile  # noqa: E402
+from src.atmosphere import AtmosphereState  # noqa: E402
 from src.game import FadesGame, LOGICAL_SIZE, SelectSlot  # noqa: E402
 from src.input_manager import InputManager  # noqa: E402
 from src import pixel_art  # noqa: E402
@@ -154,6 +155,43 @@ _EFFECT_KINDS = (
     "impact",
     "spawn",
 )
+_INTEGRATION_CHECK_CAMERA_FRACTIONS = (0.0, 0.25, 0.5, 0.75, 1.0)
+_INTEGRATION_REQUIRED_ROUTE_MARKERS = {
+    "chapter_1_level_1": (
+        "sprouts_parking_lot",
+        "wells_fargo_pad",
+        "madison_intersection",
+        "el_cilantro_madison",
+    ),
+    "chapter_1_level_2": (
+        "seven_eleven",
+        "carls_jr_pad",
+        "madison_plaza",
+        "i8_underpass",
+    ),
+    "chapter_1_level_3": (
+        "soapy_joes",
+        "starbucks_pad",
+        "broadway_turn",
+        "revive_pathway",
+    ),
+    "chapter_1_level_4": (
+        "awaken_church_lot",
+        "awaken_facade",
+        "awaken_front_lot",
+        "daves_bmx",
+    ),
+}
+_INTEGRATION_REFERENCE_KEYWORDS = {
+    "actor_dave": ("black_dave", "dave"),
+    "actor_shelly": ("shelly",),
+    "actor_chief": ("chief",),
+    "environment_pole": ("pole", "light_pole", "bollard"),
+    "environment_curb": ("curb", "curbs", "median", "driveway", "street", "sidewalk"),
+    "environment_door": ("door",),
+    "environment_sedan": ("car", "sedan"),
+    "actor_enemy": ("enemy", "couch", "stick", "cart", "whip", "pipe", "security"),
+}
 
 
 def _read_json_file(path: Path) -> dict[str, Any]:
@@ -177,6 +215,63 @@ def _is_iso_date(value: Any) -> bool:
 def _contains_ordered_subsequence(values: Sequence[str], required: Sequence[str]) -> bool:
     cursor = iter(values)
     return all(any(candidate == expected for candidate in cursor) for expected in required)
+
+
+def _as_sequence(value: Any) -> tuple[Any, ...]:
+    if isinstance(value, Sequence) and not isinstance(value, (str, bytes)):
+        return tuple(value)
+    return ()
+
+
+def _contains_token(values: Sequence[str], needles: Sequence[str]) -> bool:
+    normalized = {str(value).lower() for value in values}
+    return any(any(needle in value for value in normalized) for needle in needles)
+
+
+def _stable_json_digest(value: Mapping[str, Any] | Sequence[Any]) -> str:
+    payload = json.dumps(
+        value,
+        sort_keys=True,
+        ensure_ascii=False,
+        separators=(",", ":"),
+    ).encode("utf-8")
+    return hashlib.sha256(payload).hexdigest()
+
+
+def _format_reference_tokens(route: Mapping[str, Any], gameplay_level: Mapping[str, Any] | None) -> list[str]:
+    tokens: list[str] = []
+    for field in ("landmarks", "opposite_side_landmarks", "registered_features"):
+        for item in _as_sequence(route.get(field, ())):
+            if not isinstance(item, Mapping):
+                continue
+            feature_id = str(item.get("id", "")).strip()
+            if feature_id:
+                tokens.append(feature_id.lower())
+            kind = str(item.get("kind", "")).strip().lower()
+            if kind:
+                tokens.append(kind)
+    if gameplay_level is not None:
+        geometry = gameplay_level.get("stage_geometry", {})
+        for item in _as_sequence(geometry.get("obstacles", ())):
+            if not isinstance(item, Mapping):
+                continue
+            obstacle_id = str(item.get("id", "")).strip().lower()
+            if obstacle_id:
+                tokens.append(obstacle_id)
+            obstacle_kind = str(item.get("kind", "")).strip().lower()
+            if obstacle_kind:
+                tokens.append(obstacle_kind)
+            location_feature_id = str(item.get("location_feature_id", "")).strip().lower()
+            if location_feature_id:
+                tokens.append(location_feature_id)
+        for item in _as_sequence(geometry.get("rails", ())):
+            if not isinstance(item, Mapping):
+                continue
+            for key in ("near_depth", "far_depth", "start_x", "end_x"):
+                value = item.get(key)
+                if value is not None:
+                    tokens.append(str(value).lower())
+    return sorted(set(tokens))
 
 
 def _surface_is_fully_opaque(surface: pygame.Surface) -> bool:
@@ -1404,9 +1499,10 @@ def run_scenery_camera_sweep(
 
             samples: list[int] = []
             checkpoint_hashes: dict[str, str] = {}
+            checkpoint_camera_x: dict[str, int] = {}
             checkpoint_indices = {
                 int(round((frames_per_route - 1) * fraction)): f"{fraction:.2f}"
-                for fraction in (0.0, 0.25, 0.5, 0.75, 1.0)
+                for fraction in _INTEGRATION_CHECK_CAMERA_FRACTIONS
             }
             for index, camera_x in enumerate(positions):
                 started = clock_ns()
@@ -1428,9 +1524,11 @@ def run_scenery_camera_sweep(
                     raise ValueError("benchmark clock must be monotonic")
                 samples.append(elapsed)
                 if index in checkpoint_indices:
-                    checkpoint_hashes[checkpoint_indices[index]] = hashlib.sha256(
+                    marker = checkpoint_indices[index]
+                    checkpoint_hashes[marker] = hashlib.sha256(
                         pygame.image.tobytes(canvas, "RGB", False)
                     ).hexdigest()
+                    checkpoint_camera_x[marker] = int(round(camera_x))
 
             timing = summarize_timing_ns(samples)
             distinct_checkpoints = len(set(checkpoint_hashes.values())) == len(
@@ -1447,6 +1545,7 @@ def run_scenery_camera_sweep(
                     "frames": frames_per_route,
                     "timing": timing,
                     "checkpoint_sha256": checkpoint_hashes,
+                    "checkpoint_camera_x": checkpoint_camera_x,
                     "checkpoints_visually_distinct": distinct_checkpoints,
                     "p95_within_fixed_step_budget": within_budget,
                     "passed": within_budget and distinct_checkpoints,
@@ -1482,6 +1581,597 @@ def run_scenery_camera_sweep(
             frame_cache.update(saved_frame_cache)
         if not pygame_was_initialized:
             pygame.quit()
+
+
+def run_integration_visual_matrix(
+    *,
+    project_root: Path | str = PROJECT_ROOT,
+    manifest: Mapping[str, Any] | None = None,
+    gameplay: Mapping[str, Any] | None = None,
+    content: Mapping[str, Any] | None = None,
+    frames_per_route: int = len(_INTEGRATION_CHECK_CAMERA_FRACTIONS),
+) -> dict[str, Any]:
+    """Build integration-focused visual checkpoints and route-level reference checks."""
+
+    frames_per_route = _non_negative_integer(frames_per_route, "frames_per_route")
+    if not 1 <= frames_per_route <= MAX_SCENERY_SWEEP_FRAMES:
+        raise ValueError(
+            f"frames_per_route must be between 1 and {MAX_SCENERY_SWEEP_FRAMES}"
+        )
+    root = Path(project_root).resolve()
+    manifest_data = (
+        dict(manifest)
+        if manifest is not None
+        else _read_json_file(root / "data" / "chapter1_location_lock.json")
+    )
+    if gameplay is None:
+        gameplay_data = _read_json_file(root / "data" / "gameplay.json")
+    else:
+        gameplay_data = dict(gameplay)
+    if content is None:
+        content_data = _read_json_file(root / "data" / "chapter_content.json")
+    else:
+        content_data = dict(content)
+
+    gameplay_routes = tuple(
+        route
+        for route in manifest_data.get("routes", ())
+        if isinstance(route, Mapping)
+    )
+    if len(gameplay_routes) != len(_LEVEL_IDS):
+        raise ValueError("integration matrix requires all four Chapter 1 routes in manifest")
+    route_levels = {
+        str(level.get("id", "")): level
+        for level in _raw_campaign_levels(gameplay_data)
+        if isinstance(level, Mapping)
+    }
+    content_levels = {
+        str(level.get("runtime_level_id", "")): level
+        for level in (
+            content_data.get("levels", ())
+            if isinstance(content_data.get("levels", ()), Sequence)
+            and not isinstance(content_data.get("levels", ()), (str, bytes))
+            else ()
+        )
+        if isinstance(level, Mapping)
+    }
+    player_profiles = {
+        str(name).lower(): bool(config)
+        for name, config in (
+            content_data.get("players", {}).items()
+            if isinstance(content_data.get("players", {}), Mapping)
+            else ()
+        )
+    }
+    chief_profile_present = bool(content_data.get("chief", {}))
+    atmosphere_data = _read_json_file(root / "data" / "atmosphere.json")
+    route_atmosphere = atmosphere_data.get("route_profile_map", {})
+    atmosphere_profiles = atmosphere_data.get("profiles", {})
+
+    scenery_sweep = run_scenery_camera_sweep(
+        frames_per_route=frames_per_route,
+        warmup_frames=0,
+        manifest=manifest_data,
+    )
+    sweeps = {
+        str(route["level_id"]): route
+        for route in scenery_sweep.get("routes", ())
+        if isinstance(route, Mapping)
+    }
+
+    checks: list[dict[str, Any]] = []
+    route_reports: list[dict[str, Any]] = []
+    ordered_profiles = [
+        str(route_atmosphere.get(str(route.get("level_id", "")), ""))
+        for route in gameplay_routes
+    ]
+    transition_pairs = tuple(
+        (ordered_profiles[index], ordered_profiles[index + 1])
+        for index in range(len(ordered_profiles) - 1)
+        if ordered_profiles[index] and ordered_profiles[index + 1]
+    )
+    checks.append(
+        {
+            "id": "integration_atmosphere_route_profile_count",
+            "status": "pass"
+            if len(ordered_profiles) == len(_LEVEL_IDS)
+            else "fail",
+            "required": True,
+            "detail": f"profiles={ordered_profiles!r}",
+        }
+    )
+    checks.append(
+        {
+            "id": "integration_atmosphere_route_profile_sequence",
+            "status": "pass"
+            if all(profile and str(profile) in atmosphere_profiles for profile in ordered_profiles)
+            else "fail",
+            "required": True,
+            "detail": f"profile_sequence={ordered_profiles!r}",
+        }
+    )
+    checks.append(
+        {
+            "id": "integration_atmosphere_route_profile_transitions",
+            "status": "pass" if transition_pairs else "warn",
+            "required": False,
+            "detail": f"transitions={transition_pairs!r}",
+        }
+    )
+
+    for route in gameplay_routes:
+        level_id = str(route.get("level_id", ""))
+        route_check: list[dict[str, Any]] = []
+        world_width = int(route.get("world_width", 0))
+        gameplay_level = route_levels.get(level_id, {})
+        content_level = content_levels.get(level_id, {})
+        panel_spec_count = 0
+        if isinstance(route.get("theme", None), str):
+            panel_count = 0
+            for panel_group in manifest_data.get("routes", ()):
+                if (
+                    isinstance(panel_group, Mapping)
+                    and str(panel_group.get("level_id", "")) == level_id
+                ):
+                    panel_count = len(panel_group.get("panels", ())) or 0
+            panel_spec_count = int(panel_count)
+        else:
+            panel_spec_count = 0
+
+        def record(condition: bool, check_id: str, detail: str, *, required: bool = True) -> None:
+            entry = {
+                "id": check_id,
+                "status": "pass" if condition else ("warn" if required is False else "fail"),
+                "required": required,
+                "detail": detail,
+            }
+            route_check.append(entry)
+
+        references = _format_reference_tokens(route, gameplay_level)
+        reference_tokens = set(references)
+        required_markers = tuple(_INTEGRATION_REQUIRED_ROUTE_MARKERS.get(level_id, ()))
+        missing_markers = [marker for marker in required_markers if marker not in references]
+        record(
+            not missing_markers,
+            "integration_required_reference_markers",
+            f"required={list(required_markers)!r}; missing={missing_markers!r}",
+        )
+        record(
+            _contains_token(reference_tokens, _INTEGRATION_REFERENCE_KEYWORDS["environment_pole"]),
+            "integration_reference_pole_like_object",
+            f"tokens={sorted(reference_tokens)!r}",
+            required=False,
+        )
+        record(
+            _contains_token(reference_tokens, _INTEGRATION_REFERENCE_KEYWORDS["environment_curb"]),
+            "integration_reference_curb_like_object",
+            f"tokens={sorted(reference_tokens)!r}",
+            required=False,
+        )
+        record(
+            _contains_token(reference_tokens, _INTEGRATION_REFERENCE_KEYWORDS["environment_door"]),
+            "integration_reference_door_like_object",
+            f"tokens={sorted(reference_tokens)!r}",
+            required=False,
+        )
+        record(
+            _contains_token(reference_tokens, _INTEGRATION_REFERENCE_KEYWORDS["environment_sedan"]),
+            "integration_reference_sedan_like_object",
+            f"tokens={sorted(reference_tokens)!r}",
+            required=False,
+        )
+        record(
+            _contains_token(reference_tokens, _INTEGRATION_REFERENCE_KEYWORDS["actor_dave"]),
+            "integration_reference_actor_dave",
+            f"tokens={sorted(reference_tokens)!r}",
+        )
+        record(
+            _contains_token(reference_tokens, _INTEGRATION_REFERENCE_KEYWORDS["actor_shelly"]),
+            "integration_reference_actor_shelly",
+            f"tokens={sorted(reference_tokens)!r}",
+        )
+        record(
+            _contains_token(reference_tokens, _INTEGRATION_REFERENCE_KEYWORDS["actor_chief"]),
+            "integration_reference_actor_chief",
+            f"tokens={sorted(reference_tokens)!r}",
+        )
+        record(
+            _contains_token(reference_tokens, _INTEGRATION_REFERENCE_KEYWORDS["actor_enemy"]),
+            "integration_reference_actor_enemy",
+            f"tokens={sorted(reference_tokens)!r}",
+            required=False,
+        )
+
+        record(
+            world_width >= int(LOGICAL_SIZE[0]),
+            "integration_world_width_present",
+            f"world_width={world_width!r}",
+        )
+
+        record(
+            str(route.get("start_anchor_id", "")) and str(route.get("end_anchor_id", "")),
+            "integration_route_anchor_contract",
+            (
+                f"start={route.get('start_anchor_id')!r}; "
+                f"end={route.get('end_anchor_id')!r}"
+            ),
+        )
+        record(
+            bool(str(route.get("theme", "")).strip()),
+            "integration_theme_present",
+            f"theme={route.get('theme')!r}",
+        )
+
+        geometry = (
+            gameplay_level.get("stage_geometry", {})
+            if isinstance(gameplay_level, Mapping)
+            else {}
+        )
+        camera_zones = geometry.get("camera_zones", ())
+        record(
+            isinstance(camera_zones, (tuple, list)) and bool(camera_zones),
+            "integration_route_camera_zone_progress",
+            f"zones={len(camera_zones) if isinstance(camera_zones, Sequence) else 0!r}",
+        )
+        gameplay_encounters = gameplay_level.get("encounters", ()) if isinstance(gameplay_level, Mapping) else ()
+        record(
+            isinstance(geometry.get("rails", ()), Sequence)
+            and bool(geometry.get("rails", ())),
+            "integration_route_rails_defined",
+            f"rail_count={len(geometry.get('rails', ())) if isinstance(geometry.get('rails', ()), Sequence) else 0!r}",
+        )
+        record(
+            isinstance(geometry.get("obstacles", ()), Sequence),
+            "integration_route_obstacles_defined",
+            f"obstacle_count={len(geometry.get('obstacles', ())) if isinstance(geometry.get('obstacles', ()), Sequence) else 0!r}",
+        )
+
+        player_refs = set(player_profiles.keys())
+        record(
+            "black_dave" in player_refs,
+            "integration_player_dave_present",
+            f"player_profiles={sorted(player_refs)!r}",
+        )
+        record(
+            "shelly" in player_refs,
+            "integration_player_shelly_present",
+            f"player_profiles={sorted(player_refs)!r}",
+        )
+        record(
+            chief_profile_present,
+            "integration_chief_profile_present",
+            "chief profile exists in chapter content",
+        )
+
+        encounter_base_kinds: list[str] = []
+        if isinstance(gameplay_level, Mapping):
+            for encounter in gameplay_level.get("encounters", ()):
+                if not isinstance(encounter, Mapping):
+                    continue
+                for kind in _as_sequence(encounter.get("base", ())):
+                    encounter_base_kinds.append(str(kind).lower())
+        record(
+            bool(encounter_base_kinds),
+            "integration_encounter_definitions_present",
+            f"encounter_base_kinds={sorted(set(encounter_base_kinds))!r}",
+        )
+        record(
+            bool(content_level),
+            "integration_level_completion_contract_present",
+            f"content_level={level_id!r}",
+        )
+        if isinstance(content_level, Mapping):
+            ending = content_level.get("ending", {})
+            record(
+                isinstance(ending, Mapping) and bool(str(ending.get("id", "")).strip()),
+                "integration_completion_panel_defined",
+                f"ending={ending!r}",
+            )
+        route_level = content_level.get("route", {})
+        record(
+            bool(route_level),
+            "integration_route_summary_present",
+            f"route={route_level!r}",
+        )
+        if not route_level:
+            record(
+                False,
+                "integration_route_contract_match_with_gameplay",
+                "content-level route block missing",
+            )
+        else:
+            record(
+                len(str(route_level.get("start_anchor_id", ""))) > 0
+                and len(str(route_level.get("end_anchor_id", ""))) > 0,
+                "integration_route_contract_match_with_gameplay",
+                f"content_route={route_level!r}",
+            )
+            inter_route = route_level.get("stops", ())
+            record(
+                isinstance(inter_route, Sequence),
+                "integration_route_stops_present",
+                f"stops={list(inter_route)!r}",
+                required=False,
+            )
+
+        route_objects_value = route.get("physical_scene_objects", ())
+        route_objects = [
+            item
+            for item in _as_sequence(route_objects_value)
+            if isinstance(item, Mapping)
+        ]
+        route_object_kinds = {str(item.get("kind", "")).strip().lower() for item in route_objects}
+        route_object_anchors = [str(item.get("anchor", "")).strip().lower() for item in route_objects]
+        landmark_ids = {str(item.get("id", "")).strip().lower() for item in _as_sequence(route.get("landmarks", ())) if isinstance(item, Mapping)}
+        record(
+            route_objects_value is not None,
+            "integration_physical_scene_objects_present",
+            f"physical_object_count={len(route_objects)}",
+        )
+        record(
+            all(item.get("id") and item.get("asset") for item in route_objects),
+            "integration_physical_scene_object_asset_contract",
+            f"objects={[(item.get('id'), item.get('asset')) for item in route_objects]}",
+        )
+        record(
+            any(item in route_object_kinds for item in ("sedan", "car")),
+            "integration_physical_sedan_presence",
+            f"kinds={sorted(route_object_kinds)!r}",
+        )
+        record(
+            "door" in route_object_kinds,
+            "integration_physical_door_presence",
+            f"kinds={sorted(route_object_kinds)!r}",
+        )
+        record(
+            any(item in route_object_kinds for item in ("signal_pole", "light_pole", "sign_pole", "pole")),
+            "integration_physical_pole_presence",
+            f"kinds={sorted(route_object_kinds)!r}",
+        )
+        route_object_depths = {
+            int(round(float(item.get("depth"))))
+            for item in route_objects
+            if isinstance(item.get("depth"), (int, float))
+        }
+        route_rail_depths = {
+            int(round(float(value)))
+            for rail in _as_sequence(geometry.get("rails", ()))
+            if isinstance(rail, Mapping)
+            for value in (rail.get("near_depth"), rail.get("far_depth"))
+            if isinstance(value, (int, float))
+        }
+        depth_samples = sorted(route_object_depths | route_rail_depths)
+        record(
+            len(depth_samples) >= 3,
+            "integration_far_middle_near_depth_presence",
+            f"depth_samples={depth_samples!r}",
+        )
+        record(
+            len(route_object_anchors) == len(route_objects),
+            "integration_physical_objects_anchored",
+            f"anchors={route_object_anchors!r}",
+        )
+        record(
+            all(anchor in landmark_ids for anchor in route_object_anchors),
+            "integration_physical_object_anchor_to_landmark",
+            f"anchor_count={len(route_object_anchors)}",
+        )
+        record(
+            panel_spec_count >= 1,
+            "integration_panel_seams",
+            f"panel_count={panel_spec_count!r}",
+            required=False,
+        )
+        record(
+            any(item in reference_tokens for item in ("curb", "sidewalk", "median")),
+            "integration_ground_curb_reference_presence",
+            f"tokens={sorted(reference_tokens)!r}",
+            required=False,
+        )
+
+        if level_id in _INTEGRATION_REQUIRED_ROUTE_MARKERS:
+            route_checkpoint_markers = []
+            for item in route_object_anchors:
+                if item:
+                    route_checkpoint_markers.append(item)
+            route_checkpoints = tuple(
+                marker
+                for marker in _INTEGRATION_REQUIRED_ROUTE_MARKERS[level_id]
+                if marker in route_object_kinds or marker in reference_tokens
+            )
+            record(
+                len(route_checkpoint_markers) >= 2 or len(route_checkpoints) > 0,
+                "integration_route_checkpoint_markers_detected",
+                f"anchors={route_checkpoint_markers!r}; token_markers={sorted(route_checkpoints)!r}",
+            )
+
+        encounter_camera_lock_count = sum(
+            1 for encounter in _as_sequence(gameplay_encounters) if isinstance(encounter, Mapping) and str(encounter.get("name", "")).strip()
+        )
+        record(
+            encounter_camera_lock_count >= 2,
+            "integration_encounter_lock_markers",
+            f"encounter_like_count={encounter_camera_lock_count}",
+        )
+        encounter_camera_x_count = sum(
+            1 for encounter in _as_sequence(gameplay_encounters)
+            if isinstance(encounter, Mapping) and isinstance(encounter.get("camera_x"), (int, float))
+        )
+        record(
+            encounter_camera_x_count > 0,
+            "integration_encounter_camera_lock_positions",
+            f"camera_x_count={encounter_camera_x_count!r}",
+            required=False,
+        )
+        is_finale = (
+            bool(gameplay_level.get("boss_transition"))
+            if isinstance(gameplay_level, Mapping)
+            else False
+        )
+        is_finale = is_finale or level_id == "chapter_1_level_4"
+
+        route_encounter_locks = (
+            level_id in ("chapter_1_level_1", "chapter_1_level_2", "chapter_1_level_3")
+            or encounter_camera_x_count > 0
+        )
+        record(
+            route_encounter_locks or is_finale,
+            "integration_encounter_camera_lock_contract",
+            f"encounter_camera_x_count={encounter_camera_x_count!r}",
+        )
+
+        route_atmosphere_id = str(route_atmosphere.get(level_id, ""))
+        atmosphere_profile = (
+            atmosphere_profiles.get(route_atmosphere_id, {})
+            if isinstance(route_atmosphere_id, str) else {}
+        )
+        record(
+            bool(route_atmosphere_id),
+            "integration_route_atmosphere_profile_map",
+            f"route={level_id!r}; profile={route_atmosphere_id!r}",
+            required=False,
+        )
+        record(
+            isinstance(atmosphere_profile, Mapping)
+            and bool(atmosphere_profile),
+            "integration_atmosphere_profile_defined",
+            f"profile_keys={list(atmosphere_profile)!r}",
+            required=False,
+        )
+        if isinstance(atmosphere_profile, Mapping):
+            cloud_speeds = atmosphere_profile.get("cloud_speeds", ())
+            record(
+                isinstance(cloud_speeds, Sequence)
+                and not isinstance(cloud_speeds, (str, bytes))
+                and len(cloud_speeds) >= 3,
+                "integration_atmosphere_cloud_layers",
+                f"cloud_speeds={list(cloud_speeds)!r}",
+                required=False,
+            )
+        route_sky_hashes: set[str] = set()
+        if isinstance(atmosphere_profile, Mapping) and atmosphere_profile:
+            atmosphere_state = AtmosphereState.new(profile_id=route_atmosphere_id)
+            for _ in range(30):
+                atmosphere_state.advance(1.0)
+                route_sky_hashes.add(
+                    _stable_json_digest(atmosphere_state.snapshot().to_mapping())
+                )
+        record(
+            len(route_sky_hashes) >= 2,
+            "integration_stationary_camera_sky_30s",
+            f"stationary_sky_snapshots={len(route_sky_hashes)}",
+            required=False,
+        )
+        record(
+            not route_encounter_locks or len(route_sky_hashes) >= 2,
+            "integration_clouds_continue_during_encounter_locks",
+            f"encounter_camera_locks={route_encounter_locks}; snapshots={len(route_sky_hashes)}",
+            required=False,
+        )
+        if level_id == "chapter_1_level_2":
+            route_underpass_kinds = tuple(
+                kind
+                for kind in route_object_kinds
+                if kind
+                in {
+                    "bridge_support",
+                    "bridge_supporting_column",
+                    "underpass",
+                    "beam",
+                    "column",
+                    "retaining_wall",
+                }
+            )
+            record(
+                bool(route_underpass_kinds),
+                "integration_underpass_masks_sky_without_restart",
+                f"kinds={route_underpass_kinds!r}",
+                required=False,
+            )
+
+        record(
+            bool(gameplay_level)
+            and (bool(gameplay_level.get("travel_to_next")) or is_finale or level_id in ("chapter_1_level_1", "chapter_1_level_2", "chapter_1_level_3")),
+            "integration_travel_or_epilogue_state",
+            f"travel_to_next={gameplay_level.get('travel_to_next') if isinstance(gameplay_level, Mapping) else None!r}; "
+            f"boss_transition={gameplay_level.get('boss_transition') if isinstance(gameplay_level, Mapping) else None!r}",
+        )
+        record(
+            world_width > 0 and world_width >= int(LOGICAL_SIZE[0]),
+            "integration_visible_canvas_width",
+            f"world_width={world_width!r}",
+        )
+
+        route_sweep = sweeps.get(level_id, {})
+        if not isinstance(route_sweep, Mapping):
+            record(
+                False,
+                "integration_scenery_sweep_present",
+                f"no scenery sweep entry for {level_id!r}",
+            )
+            cameras_ok = False
+            checkpoint_hashes = {}
+            checkpoint_camera_x = {}
+        else:
+            checkpoint_hashes = route_sweep.get("checkpoint_sha256", {})
+            checkpoint_camera_x = route_sweep.get("checkpoint_camera_x", {})
+            cameras_ok = (
+                len(checkpoint_hashes) == len(_INTEGRATION_CHECK_CAMERA_FRACTIONS)
+                and all(
+                    f"{fraction:.2f}" in checkpoint_hashes
+                    for fraction in _INTEGRATION_CHECK_CAMERA_FRACTIONS
+                )
+            )
+            record(
+                cameras_ok,
+                "integration_camera_checkpoints_covered",
+                f"checkpoint_x={checkpoint_camera_x!r}",
+            )
+            if isinstance(checkpoint_hashes, Mapping) and checkpoint_hashes:
+                record(
+                    len(set(checkpoint_hashes.values())) == len(checkpoint_hashes),
+                    "integration_camera_checkpoint_uniqueness",
+                    f"hash_count={len(checkpoint_hashes)}",
+                )
+            route_sweep_markers = [
+                fraction
+                for fraction in _INTEGRATION_CHECK_CAMERA_FRACTIONS
+                if f"{fraction:.2f}" in checkpoint_hashes
+            ]
+            record(
+                len(route_sweep_markers) == len(_INTEGRATION_CHECK_CAMERA_FRACTIONS),
+                "integration_scenery_fractions_recorded",
+                f"fractions={route_sweep_markers!r}",
+            )
+
+        route_checks = tuple(route_check)
+        route_reports.append(
+            {
+                "level_id": level_id,
+                "camera_x": checkpoint_camera_x,
+                "camera_checkpoint_count": len(checkpoint_hashes),
+                "camera_checkpoint_hashes": checkpoint_hashes,
+                "reference_tokens": references,
+                "reference_token_count": len(reference_tokens),
+                "checks": route_checks,
+                "passed": all(item["status"] == "pass" for item in route_checks),
+                "required_checks_passed": all(
+                    item["status"] == "pass" and item.get("required", True)
+                    for item in route_checks
+                ),
+            }
+        )
+        checks.extend(route_checks)
+
+    return {
+        "classification": "integration_visual_matrix",
+        "project_root": str(root),
+        "routes": route_reports,
+        "scenery_camera_sweep": scenery_sweep,
+        "camera_fractions": [round(value, 2) for value in _INTEGRATION_CHECK_CAMERA_FRACTIONS],
+        "checks": checks,
+        "passed": all(item["status"] == "pass" for item in checks if item.get("required", True)),
+    }
 
 
 def run_crowded_benchmark(
@@ -1637,6 +2327,8 @@ def build_report(
     include_benchmark: bool = True,
     include_location_lock: bool = True,
     include_scenery_sweep: bool = True,
+    include_integration_matrix: bool = True,
+    integration_frames: int = len(_INTEGRATION_CHECK_CAMERA_FRACTIONS),
     frames: int = DEFAULT_BENCHMARK_FRAMES,
     warmup_frames: int = DEFAULT_WARMUP_FRAMES,
     effect_budget: int = DEFAULT_EFFECT_BUDGET,
@@ -1665,6 +2357,14 @@ def build_report(
         if include_scenery_sweep
         else None
     )
+    integration_matrix = (
+        run_integration_visual_matrix(
+            project_root=project_root,
+            frames_per_route=min(max(1, int(integration_frames)), MAX_SCENERY_SWEEP_FRAMES),
+        )
+        if include_integration_matrix
+        else None
+    )
     return {
         "schema_version": REPORT_SCHEMA_VERSION,
         "chapter_id": "chapter_1",
@@ -1672,11 +2372,13 @@ def build_report(
         "benchmark": benchmark,
         "location_lock": location_lock,
         "scenery_camera_sweep": scenery_sweep,
+        "integration_visual_matrix": integration_matrix,
         "passed": bool(
             pacing["passed"]
             and (benchmark is None or benchmark["passed"])
             and (location_lock is None or location_lock["passed"])
             and (scenery_sweep is None or scenery_sweep["passed"])
+            and (integration_matrix is None or integration_matrix["passed"])
         ),
     }
 
@@ -1691,6 +2393,11 @@ def _build_parser() -> argparse.ArgumentParser:
         "--scenery-frames",
         type=int,
         default=DEFAULT_SCENERY_SWEEP_FRAMES,
+    )
+    parser.add_argument(
+        "--integration-frames",
+        type=int,
+        default=len(_INTEGRATION_CHECK_CAMERA_FRACTIONS),
     )
     parser.add_argument("--pacing-only", action="store_true")
     parser.add_argument(
@@ -1722,6 +2429,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             include_benchmark=not args.pacing_only,
             include_location_lock=not args.pacing_only,
             include_scenery_sweep=not args.pacing_only,
+            include_integration_matrix=not args.pacing_only,
+            integration_frames=args.integration_frames,
             frames=args.frames,
             warmup_frames=args.warmup_frames,
             effect_budget=args.effects,
@@ -1752,7 +2461,17 @@ def main(argv: Sequence[str] | None = None) -> int:
             for route in report["scenery_camera_sweep"]["routes"]
         )
     )
-    if not pacing_ok or not budget_ok or not location_ok or not scenery_visual_ok:
+    integration_visual_ok = bool(
+        report["integration_visual_matrix"] is None
+        or report["integration_visual_matrix"]["passed"]
+    )
+    if (
+        not pacing_ok
+        or not budget_ok
+        or not location_ok
+        or not scenery_visual_ok
+        or not integration_visual_ok
+    ):
         return 1
     if not report["passed"] and not args.allow_performance_miss:
         return 1

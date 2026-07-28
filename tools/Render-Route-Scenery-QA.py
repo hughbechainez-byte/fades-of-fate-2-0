@@ -31,6 +31,7 @@ from tools.build_chapter1_location_art import (  # noqa: E402
     cover_crop_geometry,
 )
 from tools.validate_chapter1 import build_location_lock_report  # noqa: E402
+from tools.validate_chapter1 import run_integration_visual_matrix  # noqa: E402
 
 
 CHECKPOINTS = (0.0, 0.25, 0.5, 0.75, 1.0)
@@ -385,6 +386,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     build_dir.mkdir(parents=True, exist_ok=True)
     manifest = _read_json(project_root / "data" / "chapter1_location_lock.json")
     gameplay = _read_json(project_root / "data" / "gameplay.json")
+    content = _read_json(project_root / "data" / "chapter_content.json")
     routes = tuple(
         route for route in manifest.get("routes", ())
         if isinstance(route, Mapping)
@@ -493,6 +495,13 @@ def main(argv: Sequence[str] | None = None) -> int:
         pygame.image.save(seam_sheet, seam_path)
 
         validation = build_location_lock_report(project_root)
+        integration_matrix = run_integration_visual_matrix(
+            project_root=project_root,
+            manifest=manifest,
+            gameplay=gameplay,
+            content=content,
+            frames_per_route=len(CHECKPOINTS),
+        )
         sources: list[dict[str, Any]] = []
         authoring_panels: list[dict[str, Any]] = []
         for route in routes:
@@ -593,6 +602,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             "generated_at_utc": datetime.now(timezone.utc).isoformat(),
             "classification": "automated_location_source_and_render_validation",
             "automated_validation": validation,
+            "integration_visual_matrix": integration_matrix,
             "checkpoint_results": checkpoint_results,
             "seam_results": seam_results,
             "gameplay_screenshots": gameplay_screenshots,
@@ -605,7 +615,11 @@ def main(argv: Sequence[str] | None = None) -> int:
                 "seam_sheet": str(seam_path),
             },
             "manual_reference_comparison": visual_review,
-            "passed": bool(validation["passed"] and unique_checks_pass),
+            "passed": bool(
+                validation["passed"]
+                and unique_checks_pass
+                and integration_matrix["passed"]
+            ),
         }
         report_path = build_dir / "chapter1_location_sources_report.json"
         report_path.write_text(
