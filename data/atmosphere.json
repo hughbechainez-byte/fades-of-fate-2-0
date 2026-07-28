@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "default_profile_id": "chapter_1_sunset",
+  "route_profile_map": {
+    "chapter_1_level_1": "chapter_1_sunset",
+    "chapter_1_level_2": "i8_underpass_dimming",
+    "chapter_1_level_3": "i8_underpass_dimming",
+    "chapter_1_level_4": "awaken_finale"
+  },
+  "profiles": {
+    "chapter_1_sunset": {
+      "palette": ["#f2baa4", "#de875e", "#8f5a46", "#5c3d40"],
+      "wind_direction": 225.0,
+      "wind_speed": 1.2,
+      "cloud_speeds": [0.18, 0.11, 0.06],
+      "parallax_factors": [0.35, 0.62, 1.0],
+      "transition_duration_seconds": 6.0
+    },
+    "i8_underpass_dimming": {
+      "palette": ["#2e2f42", "#3c4757", "#596f78", "#c2d0dd"],
+      "wind_direction": 185.0,
+      "wind_speed": 0.9,
+      "cloud_speeds": [0.14, 0.08, 0.04],
+      "parallax_factors": [0.28, 0.55, 0.9],
+      "transition_duration_seconds": 4.5
+    },
+    "awaken_finale": {
+      "palette": ["#0d0f2a", "#17223d", "#263c68", "#4b6aa4"],
+      "wind_direction": 130.0,
+      "wind_speed": 0.6,
+      "cloud_speeds": [0.1, 0.05, 0.03],
+      "parallax_factors": [0.25, 0.45, 0.8],
+      "transition_duration_seconds": 5.5
+    }
+  }
+}

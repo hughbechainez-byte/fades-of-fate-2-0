@@ -18,8 +18,11 @@ import tempfile
 from types import MappingProxyType
 from typing import Any
 
+from .atmosphere import AtmosphereState
 
-SAVE_SCHEMA_VERSION = 1
+
+SAVE_SCHEMA_VERSION = 2
+SUPPORTED_SAVE_VERSIONS = (1, SAVE_SCHEMA_VERSION)
 DEFAULT_FIRST_LEVEL_ID = "chapter_1_level_1"
 DIFFICULTIES = ("story", "normal", "hard")
 QUALITY_PRESET_NAMES = ("performance", "balanced", "cinematic", "accessible")
@@ -473,16 +476,17 @@ class ProgressionState:
 class SaveData:
     options: GameOptions = field(default_factory=GameOptions)
     progression: ProgressionState = field(default_factory=ProgressionState)
+    atmosphere: AtmosphereState = field(default_factory=AtmosphereState.new)
     schema_version: int = SAVE_SCHEMA_VERSION
 
     def __post_init__(self) -> None:
         version = _non_negative_int(self.schema_version, "schema_version")
-        if version != SAVE_SCHEMA_VERSION:
-            raise ValueError(f"unsupported save schema version: {self.schema_version}")
         if not isinstance(self.options, GameOptions):
             raise ValueError("options must be GameOptions")
         if not isinstance(self.progression, ProgressionState):
             raise ValueError("progression must be ProgressionState")
+        if not isinstance(self.atmosphere, AtmosphereState):
+            raise ValueError("atmosphere must be AtmosphereState")
         object.__setattr__(self, "schema_version", SAVE_SCHEMA_VERSION)
 
     @classmethod
@@ -498,6 +502,11 @@ class SaveData:
         return cls(
             options=GameOptions.from_mapping(values.get("options", {})),
             progression=ProgressionState.from_mapping(values.get("progression", {})),
+            atmosphere=AtmosphereState.from_mapping(
+                values.get("atmosphere", {})
+                if version == SAVE_SCHEMA_VERSION
+                else {}
+            ),
             schema_version=version,
         )
 
@@ -518,6 +527,7 @@ class SaveData:
             "schema_version": self.schema_version,
             "options": self.options.to_dict(),
             "progression": self.progression.to_dict(),
+            "atmosphere": self.atmosphere.to_mapping(),
         }
 
 
@@ -563,7 +573,7 @@ def load_save(path: str | os.PathLike[str], *, default: SaveData | None = None) 
             raw.get("schema_version", SAVE_SCHEMA_VERSION),
             "schema_version",
         )
-        if version != SAVE_SCHEMA_VERSION:
+        if version not in SUPPORTED_SAVE_VERSIONS:
             return LoadResult(
                 fallback,
                 "unsupported_version",

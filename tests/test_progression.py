@@ -13,6 +13,7 @@ from src.progression import (
     DEFAULT_FIRST_LEVEL_ID,
     GameOptions,
     ProgressionState,
+    AtmosphereState,
     QUALITY_PRESETS,
     QUALITY_PRESET_NAMES,
     ReplayStats,
@@ -309,7 +310,10 @@ class SaveRepositoryTests(unittest.TestCase):
                     SaveData(schema_version=invalid_version)  # type: ignore[arg-type]
                 with self.assertRaises(ValueError):
                     SaveData.from_mapping({"schema_version": invalid_version})
-        self.assertEqual(SaveData(schema_version="1").schema_version, SAVE_SCHEMA_VERSION)  # type: ignore[arg-type]
+        self.assertEqual(
+            SaveData(schema_version="1").schema_version,  # type: ignore[arg-type]
+            SAVE_SCHEMA_VERSION,
+        )
 
         with tempfile.TemporaryDirectory() as temporary:
             repository = SaveRepository(Path(temporary) / "save.json")
@@ -317,6 +321,34 @@ class SaveRepositoryTests(unittest.TestCase):
                 repository.save(object())  # type: ignore[arg-type]
             with self.assertRaises(TypeError):
                 repository.load(default=object())  # type: ignore[arg-type]
+
+    def test_old_schema_loads_atmosphere_defaults(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / "save.json"
+            path.write_text(
+                json.dumps(
+                    {
+                        "schema_version": 1,
+                        "options": {
+                            "quality_preset": "balanced",
+                            "difficulty": "normal",
+                        },
+                        "progression": {
+                            "unlocked_level_ids": [DEFAULT_FIRST_LEVEL_ID],
+                            "completed_level_ids": [],
+                            "last_level_id": None,
+                        },
+                    },
+                    ensure_ascii=False,
+                ),
+                encoding="utf-8",
+            )
+
+            loaded = SaveRepository(path).load().data
+
+            self.assertEqual(loaded.schema_version, SAVE_SCHEMA_VERSION)
+            self.assertEqual(loaded.atmosphere.current_profile_id, AtmosphereState.new().current_profile_id)
+            self.assertEqual(loaded.atmosphere.target_profile_id, AtmosphereState.new().target_profile_id)
 
 
 if __name__ == "__main__":
