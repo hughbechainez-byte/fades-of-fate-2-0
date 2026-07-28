@@ -481,6 +481,8 @@ class SaveData:
 
     def __post_init__(self) -> None:
         version = _non_negative_int(self.schema_version, "schema_version")
+        if version not in SUPPORTED_SAVE_VERSIONS:
+            raise ValueError(f"unsupported save schema version: {version}")
         if not isinstance(self.options, GameOptions):
             raise ValueError("options must be GameOptions")
         if not isinstance(self.progression, ProgressionState):
@@ -497,7 +499,7 @@ class SaveData:
             values.get("schema_version", SAVE_SCHEMA_VERSION),
             "schema_version",
         )
-        if version != SAVE_SCHEMA_VERSION:
+        if version not in SUPPORTED_SAVE_VERSIONS:
             raise ValueError(f"unsupported save schema version: {version}")
         return cls(
             options=GameOptions.from_mapping(values.get("options", {})),

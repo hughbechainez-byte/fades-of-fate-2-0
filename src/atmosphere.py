@@ -72,6 +72,18 @@ def _lerp_degrees(a: float, b: float, amount: float) -> float:
     return _wrap_degrees(a + delta * amount)
 
 
+def _hex_color(value: Any, label: str) -> tuple[int, int, int]:
+    if not isinstance(value, str):
+        raise ValueError(f"{label} must be a #RRGGBB color")
+    normalized = value.strip()
+    if len(normalized) != 7 or not normalized.startswith("#"):
+        raise ValueError(f"{label} must be a #RRGGBB color")
+    try:
+        return tuple(int(normalized[index:index + 2], 16) for index in (1, 3, 5))
+    except ValueError as error:
+        raise ValueError(f"{label} must be a #RRGGBB color") from error
+
+
 def _phase_from_seed(seed: int, index: int) -> float:
     state = (seed ^ (index * 2654435761)) & 0xFFFFFFFF
     return round(((state * 1103515245 + 12345) & 0xFFFFFFFF) / 4294967296.0, 6)
@@ -110,7 +122,10 @@ class _AtmosphereProfile:
         self.id = _identifier(profile_id, "profile id")
         if not isinstance(palette, list) or not palette:
             raise ValueError(f"profile '{self.id}' palette must be a non-empty list")
-        self.palette = tuple(palette)
+        self.palette = tuple(
+            _hex_color(value, f"profile '{self.id}' palette[{index}]")
+            for index, value in enumerate(palette)
+        )
         self.wind_direction = _wrap_degrees(_bounded_float(wind_direction, "wind_direction", -3600.0, 3600.0))
         self.wind_speed = _bounded_float(wind_speed, "wind_speed", 0.0, float("inf"))
         if not isinstance(cloud_speeds, list) or len(cloud_speeds) != _CLOUD_PHASE_COUNT:
@@ -176,10 +191,25 @@ def _string_hash(value: str) -> int:
 _PROFILES, _DEFAULT_PROFILE_ID, _ROUTE_PROFILES = _load_data()
 if _DEFAULT_PROFILE_ID not in _PROFILES:
     raise ValueError(f"default profile '{_DEFAULT_PROFILE_ID}' is missing")
+_PALETTE_LENGTH = len(_PROFILES[_DEFAULT_PROFILE_ID].palette)
+for _profile_id, _profile in _PROFILES.items():
+    if len(_profile.palette) != _PALETTE_LENGTH:
+        raise ValueError(
+            f"profile '{_profile_id}' palette must contain {_PALETTE_LENGTH} colors"
+        )
+for _route_id, _route_profile_id in _ROUTE_PROFILES.items():
+    if _route_profile_id not in _PROFILES:
+        raise ValueError(
+            f"route '{_route_id}' references unknown profile '{_route_profile_id}'"
+        )
 
 
 def _get_profile(profile_id: str) -> _AtmosphereProfile:
-    return _PROFILES[_identifier(profile_id, "profile_id")]
+    normalized = _identifier(profile_id, "profile_id")
+    try:
+        return _PROFILES[normalized]
+    except KeyError as error:
+        raise ValueError(f"unknown profile_id '{normalized}'") from error
 
 
 def _clamp01(value: float) -> float:
@@ -209,15 +239,61 @@ class AtmosphereSnapshot:
         object.__setattr__(
             self,
             "cloud_phases",
-            tuple(_wrap_phase(_finite_float(value, "cloud_phase")) for value in self.cloud_phases),
+            tuple(
+                _quantize(_wrap_phase(_finite_float(value, "cloud_phase")))
+                for value in self.cloud_phases
+            ),
         )
-        object.__setattr__(self, "wind_direction", _wrap_degrees(_finite_float(self.wind_direction, "wind_direction")))
-        object.__setattr__(self, "wind_speed", _bounded_float(self.wind_speed, "wind_speed", 0.0, float("inf")))
+        object.__setattr__(
+            self,
+            "wind_direction",
+            _quantize(_wrap_degrees(_finite_float(self.wind_direction, "wind_direction"))),
+        )
+        object.__setattr__(
+            self,
+            "wind_speed",
+            _quantize(_bounded_float(self.wind_speed, "wind_speed", 0.0, float("inf"))),
+        )
         object.__setattr__(self, "current_profile_id", _identifier(self.current_profile_id, "current_profile_id"))
         object.__setattr__(self, "target_profile_id", _identifier(self.target_profile_id, "target_profile_id"))
         _get_profile(self.current_profile_id)
         _get_profile(self.target_profile_id)
-        object.__setattr__(self, "transition_progress", _clamp01(self.transition_progress))
+        object.__setattr__(
+            self,
+            "transition_progress",
+            _quantize(_clamp01(self.transition_progress)),
+        )
+
+    @property
+    def sky_palette(self) -> tuple[tuple[int, int, int], ...]:
+        """Return the currently blended immutable RGB sky palette."""
+
+        current = _get_profile(self.current_profile_id)
+        target = _get_profile(self.target_profile_id)
+        fraction = 1.0 if current.id == target.id else self.transition_progress
+        return tuple(
+            tuple(
+                int(round(_lerp(float(source[channel]), float(destination[channel]), fraction)))
+                for channel in range(3)
+            )
+            for source, destination in zip(current.palette, target.palette, strict=True)
+        )
+
+    @property
+    def parallax_factors(self) -> tuple[float, ...]:
+        """Return the currently blended per-cloud-layer parallax factors."""
+
+        current = _get_profile(self.current_profile_id)
+        target = _get_profile(self.target_profile_id)
+        fraction = 1.0 if current.id == target.id else self.transition_progress
+        return tuple(
+            _quantize(_lerp(source, destination, fraction))
+            for source, destination in zip(
+                current.parallax_factors,
+                target.parallax_factors,
+                strict=True,
+            )
+        )
 
     @classmethod
     def from_mapping(cls, values: Mapping[str, Any] | object) -> AtmosphereSnapshot:
@@ -228,14 +304,17 @@ class AtmosphereSnapshot:
         _get_profile(target)
         if current not in _PROFILES:
             raise ValueError(f"unknown current_profile_id '{current}'")
-        phases = values.get("cloud_phases", [0.0] * _CLOUD_PHASE_COUNT)
+        seed = _non_negative_int(values.get("seed", 0), "seed")
+        phases = values.get("cloud_phases")
+        if phases is None:
+            phases = _seed_profile_seed(seed, current)
         if not isinstance(phases, (tuple, list)):
             raise ValueError("cloud_phases must be an array")
         if len(phases) != _CLOUD_PHASE_COUNT:
             raise ValueError(f"cloud_phases must contain {_CLOUD_PHASE_COUNT} values")
         return cls(
             time_seconds=values.get("time_seconds", 0.0),
-            seed=values.get("seed", 0),
+            seed=seed,
             cloud_phases=tuple(phases),
             wind_direction=values.get("wind_direction", _get_profile(current).wind_direction),
             wind_speed=values.get("wind_speed", _get_profile(current).wind_speed),
@@ -271,13 +350,16 @@ class AtmosphereState:
     transition_progress: float = 1.0
 
     def __post_init__(self) -> None:
-        self.time_seconds = _quantize(_bounded_float(self.time_seconds, "time_seconds", 0.0, float("inf")))
+        self.time_seconds = _bounded_float(self.time_seconds, "time_seconds", 0.0, float("inf"))
         self.seed = _non_negative_int(self.seed, "seed")
         if not self.cloud_phases:
             self.cloud_phases = _seed_profile_seed(self.seed, self.current_profile_id)
         if len(self.cloud_phases) != _CLOUD_PHASE_COUNT:
             raise ValueError(f"cloud_phases must contain {_CLOUD_PHASE_COUNT} values")
-        self.cloud_phases = tuple(_quantize(_wrap_phase(_finite_float(value, "cloud_phase"))) for value in self.cloud_phases)
+        self.cloud_phases = tuple(
+            _wrap_phase(_finite_float(value, "cloud_phase"))
+            for value in self.cloud_phases
+        )
         self.wind_direction = _wrap_degrees(_finite_float(self.wind_direction, "wind_direction"))
         self.wind_speed = _bounded_float(self.wind_speed, "wind_speed", 0.0, float("inf"))
         self.current_profile_id = _identifier(self.current_profile_id, "current_profile_id")
@@ -309,18 +391,39 @@ class AtmosphereState:
     def from_mapping(cls, values: Mapping[str, Any] | object) -> AtmosphereState:
         if not isinstance(values, Mapping):
             raise ValueError("atmosphere must be a mapping")
-        payload = AtmosphereSnapshot.from_mapping(values)
-        state = cls(
-            time_seconds=payload.time_seconds,
-            seed=payload.seed,
-            cloud_phases=payload.cloud_phases,
-            wind_direction=payload.wind_direction,
-            wind_speed=payload.wind_speed,
-            current_profile_id=payload.current_profile_id,
-            target_profile_id=payload.target_profile_id,
-            transition_progress=payload.transition_progress,
+        current = _identifier(
+            values.get("current_profile_id", _DEFAULT_PROFILE_ID),
+            "current_profile_id",
         )
-        return state
+        target = _identifier(
+            values.get("target_profile_id", current),
+            "target_profile_id",
+        )
+        current_profile = _get_profile(current)
+        _get_profile(target)
+        seed = _non_negative_int(values.get("seed", 0), "seed")
+        phases = values.get("cloud_phases")
+        if phases is None:
+            phases = _seed_profile_seed(seed, current)
+        if not isinstance(phases, (tuple, list)):
+            raise ValueError("cloud_phases must be an array")
+        if len(phases) != _CLOUD_PHASE_COUNT:
+            raise ValueError(
+                f"cloud_phases must contain {_CLOUD_PHASE_COUNT} values"
+            )
+        return cls(
+            time_seconds=values.get("time_seconds", 0.0),
+            seed=seed,
+            cloud_phases=tuple(phases),
+            wind_direction=values.get(
+                "wind_direction",
+                current_profile.wind_direction,
+            ),
+            wind_speed=values.get("wind_speed", current_profile.wind_speed),
+            current_profile_id=current,
+            target_profile_id=target,
+            transition_progress=values.get("transition_progress", 1.0),
+        )
 
     @staticmethod
     def _duration_seconds(current: _AtmosphereProfile, target: _AtmosphereProfile) -> float:
@@ -352,8 +455,6 @@ class AtmosphereState:
             self.wind_speed = _get_profile(self.current_profile_id).wind_speed
             return
         self.target_profile_id = target
-        if self.target_profile_id != target:
-            self.target_profile_id = target
         self.transition_progress = 0.0
 
     def set_profile_for_route(self, route_id: str) -> None:
@@ -396,51 +497,106 @@ class AtmosphereState:
             for current, target in zip(current_profile.parallax_factors, target_profile.parallax_factors, strict=False)
         )
 
+    @staticmethod
+    def _integrated_layer_motion(
+        current: _AtmosphereProfile,
+        target: _AtmosphereProfile,
+        layer_index: int,
+        start_fraction: float,
+        end_fraction: float,
+        duration: float,
+    ) -> float:
+        """Integrate one linearly blended layer exactly over a transition."""
+
+        velocity_start = (
+            current.cloud_speeds[layer_index] + current.wind_speed
+        )
+        velocity_delta = (
+            target.cloud_speeds[layer_index]
+            + target.wind_speed
+            - velocity_start
+        )
+        parallax_start = current.parallax_factors[layer_index]
+        parallax_delta = (
+            target.parallax_factors[layer_index] - parallax_start
+        )
+        linear = velocity_start * parallax_delta + velocity_delta * parallax_start
+        quadratic = velocity_delta * parallax_delta
+        return duration * (
+            velocity_start
+            * parallax_start
+            * (end_fraction - start_fraction)
+            + 0.5
+            * linear
+            * (end_fraction * end_fraction - start_fraction * start_fraction)
+            + (quadratic / 3.0)
+            * (
+                end_fraction * end_fraction * end_fraction
+                - start_fraction * start_fraction * start_fraction
+            )
+        )
+
     def advance(self, dt: float, *, paused: bool = False) -> None:
         dt = _bounded_float(dt, "dt", 0.0, float("inf"))
         if paused or dt == 0.0:
             return
         current_profile = _get_profile(self.current_profile_id)
         target_profile = _get_profile(self.target_profile_id)
-        start_fraction = self.transition_progress if self.current_profile_id != self.target_profile_id else 1.0
+        phase_deltas = [0.0] * _CLOUD_PHASE_COUNT
+        remaining_dt = dt
 
         if self.current_profile_id != self.target_profile_id:
             duration = self._duration_seconds(current_profile, target_profile)
-            self.transition_progress = _clamp01(self.transition_progress + dt / duration)
-            if self.transition_progress >= 1.0:
+            start_fraction = self.transition_progress
+            transition_dt = min(
+                remaining_dt,
+                max(0.0, (1.0 - start_fraction) * duration),
+            )
+            end_fraction = min(
+                1.0,
+                start_fraction + transition_dt / duration,
+            )
+            for layer_index in range(_CLOUD_PHASE_COUNT):
+                phase_deltas[layer_index] += self._integrated_layer_motion(
+                    current_profile,
+                    target_profile,
+                    layer_index,
+                    start_fraction,
+                    end_fraction,
+                    duration,
+                )
+            self.transition_progress = end_fraction
+            remaining_dt = max(0.0, remaining_dt - transition_dt)
+
+            if end_fraction >= 1.0:
                 self.current_profile_id = self.target_profile_id
                 current_profile = target_profile
                 self.transition_progress = 1.0
-                target_profile = current_profile
-        end_fraction = self.transition_progress if self.current_profile_id != self.target_profile_id else 1.0
 
-        if self.current_profile_id == self.target_profile_id and start_fraction < 1.0:
-            start_fraction = 1.0
+        active_profile = _get_profile(self.current_profile_id)
+        if remaining_dt:
+            for layer_index in range(_CLOUD_PHASE_COUNT):
+                phase_deltas[layer_index] += remaining_dt * (
+                    active_profile.cloud_speeds[layer_index]
+                    + active_profile.wind_speed
+                ) * active_profile.parallax_factors[layer_index]
 
-        self.wind_direction = self._wind_direction(end_fraction)
-        wind_start = self._wind_speed(start_fraction)
-        wind_end = self._wind_speed(end_fraction)
-        wind_average = _lerp(wind_start, wind_end, 0.5)
-        self.wind_speed = _bounded_float(
-            wind_average,
-            "wind_speed",
-            0.0,
-            float("inf"),
+        if self.current_profile_id == self.target_profile_id:
+            self.wind_direction = active_profile.wind_direction
+            self.wind_speed = active_profile.wind_speed
+        else:
+            self.wind_direction = self._wind_direction(self.transition_progress)
+            self.wind_speed = self._wind_speed(self.transition_progress)
+
+        self.cloud_phases = tuple(
+            _wrap_phase(phase + delta)
+            for phase, delta in zip(
+                self.cloud_phases,
+                phase_deltas,
+                strict=True,
+            )
         )
-        cloud_start = self._cloud_speeds(start_fraction)
-        cloud_end = self._cloud_speeds(end_fraction)
-        parallax = self._parallax(end_fraction)
-        cloud_speed_average = tuple(
-            _lerp(start_speed, end_speed, 0.5)
-            for start_speed, end_speed in zip(cloud_start, cloud_end, strict=False)
-        )
-
-        cloud_phases = []
-        for phase, cloud_speed, layer_scale in zip(self.cloud_phases, cloud_speed_average, parallax, strict=False):
-            cloud_delta = dt * (cloud_speed + wind_average) * layer_scale
-            cloud_phases.append(_quantize(_wrap_phase(phase + cloud_delta)))
-        self.cloud_phases = tuple(cloud_phases)
-        self.time_seconds = _quantize(self.time_seconds + dt)
+        self.time_seconds += dt
 
     def to_mapping(self) -> dict[str, Any]:
         return {

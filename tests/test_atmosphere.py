@@ -52,6 +52,26 @@ class AtmosphereSnapshotTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             AtmosphereState.new().set_target_profile("does-not-exist")
 
+    def test_snapshot_exposes_blended_render_metadata_without_serializing_it(self) -> None:
+        state = AtmosphereState.new(seed=7, profile_id="chapter_1_sunset")
+        state.set_target_profile("i8_underpass_dimming")
+        state.advance(3.0)
+
+        snapshot = state.snapshot()
+
+        self.assertEqual(snapshot.transition_progress, 0.5)
+        self.assertEqual(len(snapshot.sky_palette), 4)
+        self.assertTrue(
+            all(
+                len(color) == 3
+                and all(isinstance(channel, int) and 0 <= channel <= 255 for channel in color)
+                for color in snapshot.sky_palette
+            )
+        )
+        self.assertEqual(snapshot.parallax_factors, (0.315, 0.585, 0.95))
+        self.assertNotIn("sky_palette", snapshot.to_mapping())
+        self.assertNotIn("parallax_factors", snapshot.to_mapping())
+
 
 class AtmosphereStateTests(unittest.TestCase):
     def test_determinism_holds_across_update_partitions(self) -> None:
@@ -64,6 +84,18 @@ class AtmosphereStateTests(unittest.TestCase):
         state_b.advance(0.25)
         state_b.advance(0.25)
         state_b.advance(0.25)
+
+        self.assertEqual(state_a.snapshot(), state_b.snapshot())
+
+    def test_partition_determinism_survives_transition_completion(self) -> None:
+        state_a = AtmosphereState.new(seed=99, profile_id="chapter_1_sunset")
+        state_b = AtmosphereState.new(seed=99, profile_id="chapter_1_sunset")
+        state_a.set_target_profile("awaken_finale")
+        state_b.set_target_profile("awaken_finale")
+
+        state_a.advance(20.0)
+        for _ in range(20):
+            state_b.advance(1.0)
 
         self.assertEqual(state_a.snapshot(), state_b.snapshot())
 
@@ -144,8 +176,10 @@ class AtmosphereSaveTests(unittest.TestCase):
             }
             path.write_text(json.dumps(legacy), encoding="utf-8")
 
-            loaded = SaveRepository(path).load().data
+            result = SaveRepository(path).load()
+            loaded = result.data
 
+            self.assertTrue(result.loaded, result.message)
             self.assertEqual(loaded.atmosphere.current_profile_id, AtmosphereState.new().current_profile_id)
             self.assertEqual(loaded.atmosphere.transition_progress, 1.0)
 

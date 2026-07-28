@@ -304,7 +304,7 @@ class SaveRepositoryTests(unittest.TestCase):
             self.assertEqual(list(path.parent.glob(f".{path.name}.*.tmp")), [])
 
     def test_schema_versions_and_repository_inputs_are_strict(self) -> None:
-        for invalid_version in (True, 1.5, "1.5", -1):
+        for invalid_version in (True, 1.5, "1.5", -1, 99):
             with self.subTest(invalid_version=invalid_version):
                 with self.assertRaises(ValueError):
                     SaveData(schema_version=invalid_version)  # type: ignore[arg-type]
@@ -344,8 +344,10 @@ class SaveRepositoryTests(unittest.TestCase):
                 encoding="utf-8",
             )
 
-            loaded = SaveRepository(path).load().data
+            result = SaveRepository(path).load()
+            loaded = result.data
 
+            self.assertTrue(result.loaded, result.message)
             self.assertEqual(loaded.schema_version, SAVE_SCHEMA_VERSION)
             self.assertEqual(loaded.atmosphere.current_profile_id, AtmosphereState.new().current_profile_id)
             self.assertEqual(loaded.atmosphere.target_profile_id, AtmosphereState.new().target_profile_id)
