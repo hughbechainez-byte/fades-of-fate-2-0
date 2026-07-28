@@ -240,6 +240,64 @@ def _validate_asset(
         raise LocationLockError(f"{label} is unreadable: {relative_asset}") from exc
 
 
+def _validate_physical_scene_objects(
+    route: Mapping[str, Any],
+    route_label: str,
+    world_width: float,
+) -> None:
+    objects = route.get("physical_scene_objects")
+    if objects is None:
+        return
+    if not isinstance(objects, list):
+        raise LocationLockError(f"{route_label}.physical_scene_objects must be a list")
+    for object_index, object_value in enumerate(objects):
+        object_label = f"{route_label}.physical_scene_objects[{object_index}]"
+        feature = _require_mapping(object_value, object_label)
+        _require_text(feature.get("id"), f"{object_label}.id")
+        _require_text(feature.get("kind"), f"{object_label}.kind")
+        world_x = _finite(feature.get("world_x"), f"{object_label}.world_x")
+        if not 0 <= world_x <= world_width:
+            raise LocationLockError(f"{object_label}.world_x must be inside route bounds")
+        if "height" in feature:
+            if _finite(feature.get("height"), f"{object_label}.height") <= 0:
+                raise LocationLockError(f"{object_label}.height must be positive")
+        if "width" in feature:
+            if _finite(feature.get("width"), f"{object_label}.width") <= 0:
+                raise LocationLockError(f"{object_label}.width must be positive")
+
+
+def _validate_ground_coverage(
+    project_root: Path,
+    relative_asset: str,
+    opaque_from_y: int,
+    world_width: int,
+    route_label: str,
+) -> None:
+    try:
+        from PIL import Image
+    except ImportError as exc:  # pragma: no cover - dependency is packaged with the game
+        raise LocationLockError("Pillow is required to validate location-locked art") from exc
+    asset_path = project_root / relative_asset
+    try:
+        with Image.open(asset_path) as image:
+            image = image.convert("RGBA")
+            if image.size != (world_width, LOGICAL_HEIGHT):
+                raise LocationLockError(f"{route_label}.ground_asset_size must equal [{world_width}, {LOGICAL_HEIGHT}]")
+            _, _, _, alpha = image.split()
+            start = max(0, min(LOGICAL_HEIGHT, int(opaque_from_y)))
+            for y in range(start, LOGICAL_HEIGHT):
+                for x in range(world_width):
+                    if alpha.getpixel((x, y)) != 255:
+                        raise LocationLockError(
+                            f"{route_label}.ground_asset must be fully opaque at and below "
+                            f"ground_opaque_from_y={start}"
+                        )
+    except LocationLockError:
+        raise
+    except Exception as exc:
+        raise LocationLockError(f"{route_label}.ground_asset is unreadable: {relative_asset}") from exc
+
+
 def validate_location_lock(
     data: dict[str, Any],
     *,
@@ -319,6 +377,13 @@ def validate_location_lock(
             raise LocationLockError(f"{label}.far_max_offset must be between 0 and 128")
         if not 0 <= _finite(route.get("near_max_offset"), f"{label}.near_max_offset") <= 96:
             raise LocationLockError(f"{label}.near_max_offset must be between 0 and 96")
+        for optional_profile in ("projection_profile_id", "sky_profile_id"):
+            if optional_profile in route:
+                _require_text(route.get(optional_profile), f"{label}.{optional_profile}")
+        if "ground_opaque_from_y" in route:
+            ground_opaque_from_y = int(_finite(route["ground_opaque_from_y"], f"{label}.ground_opaque_from_y"))
+            if not 0 <= ground_opaque_from_y <= LOGICAL_HEIGHT:
+                raise LocationLockError(f"{label}.ground_opaque_from_y must be between 0 and {LOGICAL_HEIGHT}")
 
         landmarks_value = route.get("landmarks")
         if not isinstance(landmarks_value, list):
@@ -406,6 +471,55 @@ def validate_location_lock(
             world_x = _finite(feature.get("world_x"), f"{feature_label}.world_x")
             if not 0 <= world_x <= world_width:
                 raise LocationLockError(f"{feature_label}.world_x must be inside route bounds")
+
+        _validate_physical_scene_objects(route, label, world_width)
+
+        optional_asset_specs = (
+            ("far_haze_asset", "far_haze_asset_size"),
+            ("far_skyline_asset", "far_skyline_asset_size"),
+            ("architecture_asset", "architecture_asset_size"),
+            ("ground_asset", "ground_asset_size"),
+            ("near_occluder_asset", "near_occluder_asset_size"),
+        )
+        for asset_key, size_key in optional_asset_specs:
+            has_asset = asset_key in route
+            has_size = size_key in route
+            if has_asset != has_size:
+                raise LocationLockError(f"{label} must declare {asset_key} and {size_key} together")
+            if not has_asset:
+                continue
+            relative_asset = _require_text(route.get(asset_key), f"{label}.{asset_key}")
+            if "chapter1_location_locked" not in Path(relative_asset).parts:
+                raise LocationLockError(f"{label}.{asset_key} must use location-locked Chapter 1 art")
+            size = route.get(size_key)
+            if not isinstance(size, list) or len(size) != 2:
+                raise LocationLockError(f"{label}.{size_key} must declare [width, height]")
+            expected_size = (int(size[0]), int(size[1]))
+            if expected_size != (world_width, LOGICAL_HEIGHT):
+                raise LocationLockError(
+                    f"{label}.{size_key} must equal [{world_width}, {LOGICAL_HEIGHT}]"
+                )
+            if validate_assets:
+                _validate_asset(
+                    root,
+                    relative_asset,
+                    expected_size,
+                    f"{label}.{asset_key}",
+                    require_opaque=False,
+                    require_alpha=True,
+                )
+            if asset_key == "ground_asset":
+                if "ground_opaque_from_y" not in route:
+                    raise LocationLockError(
+                        f"{label}.ground_opaque_from_y must be set when ground_asset exists"
+                    )
+                _validate_ground_coverage(
+                    root,
+                    relative_asset,
+                    int(_finite(route["ground_opaque_from_y"], f"{label}.ground_opaque_from_y")),
+                    world_width,
+                    label,
+                )
 
         asset_specs = (
             ("main_panorama_asset", "main_panorama_size", True, False),

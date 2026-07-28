@@ -3,6 +3,7 @@ from __future__ import annotations
 from copy import deepcopy
 import json
 from pathlib import Path
+from tempfile import TemporaryDirectory
 import unittest
 
 from src.chapter_content import ChapterContentError, load_chapter_content, validate_chapter_content
@@ -222,6 +223,139 @@ class ChapterOneLocationLockTests(unittest.TestCase):
         )
         self.assertEqual(awaken_bridge["presentation"], "moving_panel")
         self.assertEqual(awaken_bridge["waypoints"][-1]["address"], "950 N 2nd St")
+
+    def test_optional_layer_profile_fields_are_always_optional(self) -> None:
+        valid = deepcopy(self.manifest)
+        valid["routes"][0]["projection_profile_id"] = "legacy-bridge-profile"
+        valid["routes"][0]["sky_profile_id"] = "legacy-sky-profile"
+        validated = validate_location_lock(
+            valid,
+            project_root=ROOT,
+            validate_assets=False,
+        )
+        self.assertIs(validated["schema_version"], 2)
+
+        invalid = deepcopy(self.manifest)
+        invalid["routes"][0]["projection_profile_id"] = 7
+        with self.assertRaisesRegex(LocationLockError, "must be non-empty text"):
+            validate_location_lock(invalid, project_root=ROOT, validate_assets=False)
+
+    def test_layer_asset_pairing_is_required(self) -> None:
+        missing_size = deepcopy(self.manifest)
+        missing_size["routes"][1]["far_skyline_asset"] = "assets/stage/chapter1_location_locked/test_fallback.png"
+        with self.assertRaisesRegex(LocationLockError, "must declare far_skyline_asset and far_skyline_asset_size together"):
+            validate_location_lock(
+                missing_size,
+                project_root=ROOT,
+                validate_assets=False,
+            )
+
+        missing_asset = deepcopy(self.manifest)
+        missing_asset["routes"][1]["far_skyline_asset_size"] = [3200, 360]
+        with self.assertRaisesRegex(LocationLockError, "must declare far_skyline_asset and far_skyline_asset_size together"):
+            validate_location_lock(
+                missing_asset,
+                project_root=ROOT,
+                validate_assets=False,
+            )
+
+    def test_optional_layer_assets_validate_size_and_alpha(self) -> None:
+        from PIL import Image
+
+        with TemporaryDirectory(dir=ROOT) as temp_root:
+            temp_dir = Path(temp_root)
+            route = deepcopy(self.manifest)["routes"][2]
+            world_width = int(route["world_width"])
+            route["near_asset"] = route["far_asset"]
+            route["far_haze_asset"] = route["far_asset"]
+            route["far_skyline_asset"] = route["far_asset"]
+            route["far_skyline_asset_size"] = [world_width, 360]
+            route["far_haze_asset_size"] = [world_width, 360]
+
+            opaque = temp_dir / "not_alpha.png"
+            Image.new("RGB", (world_width, 360), (10, 10, 10)).save(opaque)
+            with_alpha = temp_dir / "with_alpha.png"
+            Image.new("RGBA", (world_width, 360), (10, 10, 10, 128)).save(with_alpha)
+            ground_valid = temp_dir / "ground_valid.png"
+            valid_ground = Image.new("RGBA", (world_width, 360), (12, 12, 12, 0))
+            for x in range(world_width):
+                for y in range(250, 360):
+                    valid_ground.putpixel((x, y), (12, 12, 12, 255))
+            valid_ground.save(ground_valid)
+
+            route["far_skyline_asset"] = str(with_alpha.relative_to(ROOT))
+            route["far_skyline_asset_size"] = [world_width, 360]
+            route["far_haze_asset"] = str(with_alpha.relative_to(ROOT))
+            route["far_haze_asset_size"] = [world_width, 360]
+            route["ground_asset"] = str(ground_valid.relative_to(ROOT))
+            route["ground_asset_size"] = [world_width, 360]
+
+            candidate = deepcopy(self.manifest)
+            candidate["routes"][2] = route
+            route["ground_opaque_from_y"] = 250
+            validate_location_lock(candidate, project_root=ROOT, validate_assets=True)
+
+            route["far_haze_asset"] = str(opaque.relative_to(ROOT))
+            with self.assertRaisesRegex(LocationLockError, "must retain a transparent alpha channel"):
+                validate_location_lock(candidate, project_root=ROOT, validate_assets=True)
+
+    def test_ground_coverage_requires_opaque_floor_at_or_below_threshold(self) -> None:
+        from PIL import Image
+
+        with TemporaryDirectory(dir=ROOT) as temp_root:
+            temp_dir = Path(temp_root)
+            route = deepcopy(self.manifest)["routes"][0]
+            world_width = int(route["world_width"])
+            base = Path(route["far_asset"])
+            valid_ground = temp_dir / "ground_valid.png"
+            invalid_ground = temp_dir / "ground_invalid.png"
+
+            valid = Image.new("RGBA", (world_width, 360), (8, 8, 8, 0))
+            for x in range(world_width):
+                for y in range(160, 360):
+                    valid.putpixel((x, y), (8, 8, 8, 255))
+            valid.save(valid_ground)
+
+            invalid = Image.new("RGBA", (world_width, 360), (8, 8, 8, 0))
+            for x in range(world_width):
+                for y in range(160, 360):
+                    invalid.putpixel((x, y), (8, 8, 8, 255))
+            for x in range(world_width):
+                invalid.putpixel((x, 359), (8, 8, 8, 0))
+            invalid.save(invalid_ground)
+
+            route["ground_asset"] = str(valid_ground.relative_to(ROOT))
+            route["ground_asset_size"] = [world_width, 360]
+            route["ground_opaque_from_y"] = 160
+            route["far_skyline_asset"] = str(base)
+            route["far_skyline_asset_size"] = [world_width, 360]
+
+            candidate = deepcopy(self.manifest)
+            candidate["routes"][0] = route
+            validate_location_lock(candidate, project_root=ROOT, validate_assets=True)
+
+            route["ground_asset"] = str(invalid_ground.relative_to(ROOT))
+            with self.assertRaisesRegex(
+                LocationLockError,
+                "must be fully opaque at and below",
+            ):
+                validate_location_lock(candidate, project_root=ROOT, validate_assets=True)
+
+    def test_physical_scene_objects_require_well_formed_entries(self) -> None:
+        invalid = deepcopy(self.manifest)
+        invalid["routes"][0]["physical_scene_objects"] = (
+            {"id": "bad_object", "kind": "lamp_post"},
+        )
+        with self.assertRaisesRegex(
+            LocationLockError,
+            "physical_scene_objects must be a list",
+        ):
+            validate_location_lock(invalid, project_root=ROOT, validate_assets=False)
+
+        malformed = deepcopy(self.manifest)
+        malformed["routes"][1]["physical_scene_objects"] = [{"id": "bad", "kind": "box", "world_x": "N/A", "height": -1}]
+        with self.assertRaisesRegex(LocationLockError, "physical_scene_objects\\[0\\].world_x"):
+            validate_location_lock(malformed, project_root=ROOT, validate_assets=False)
 
     def test_production_mapping_never_references_old_generic_stage_art(self) -> None:
         raw = json.dumps(self.manifest).lower()

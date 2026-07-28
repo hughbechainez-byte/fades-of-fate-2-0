@@ -517,14 +517,15 @@ class PixelArtTests(unittest.TestCase):
                 layers = pixel_art._location_art_layers(theme)
                 self.assertIs(layers, pixel_art._location_art_layers(theme))
                 self.assertIs(pixel_art._LOCATION_ART_CACHE[theme], layers)
-                self.assertEqual(set(layers), {"main", "far", "near"})
-                self.assertTrue(all(layer is not None for layer in layers.values()))
-                for layer in layers.values():
-                    assert layer is not None
-                    self.assertEqual(layer.get_size(), (stage_width, DESIGN_HEIGHT))
+                for required_key in ("main", "far", "near", "far_haze", "near_occluder"):
+                    self.assertIn(required_key, layers)
+                    self.assertIsNotNone(layers[required_key])
+                    self.assertEqual(layers[required_key].get_size(), (stage_width, DESIGN_HEIGHT))
                 self.assertIsNone(layers["main"].get_alpha())
                 self.assertTrue(layers["far"].get_masks()[3])
                 self.assertTrue(layers["near"].get_masks()[3])
+                self.assertTrue(layers["far_haze"].get_masks()[3])
+                self.assertTrue(layers["near_occluder"].get_masks()[3])
                 self.assertIs(
                     pixel_art._STAGE_ROUTE_PANORAMA_CACHE[
                         ("location-lock", theme, stage_width, DESIGN_HEIGHT)

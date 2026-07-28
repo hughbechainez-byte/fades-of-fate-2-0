@@ -26,10 +26,12 @@ import pygame
 try:  # resource_path also understands one-file executable extraction roots.
     from .config import resource_path
     from . import location_lock, sprite_atlas
+    from . import backdrop
 except ImportError:  # pragma: no cover - supports direct module experiments.
     def resource_path(relative: str) -> Path:
         return Path(__file__).resolve().parents[1] / relative
     import location_lock  # type: ignore[no-redef]
+    import backdrop  # type: ignore[no-redef]
     sprite_atlas = None  # type: ignore[assignment]
 
 
@@ -1651,6 +1653,7 @@ def _chapter_one_stage_layer_offsets(surface: pygame.Surface, cx: float, theme: 
         layer_width,
         width,
     )
+    sky_x = far_x
     near_x = _bounded_location_layer_offset(
         cx,
         float(route["near_parallax"]),
@@ -1663,6 +1666,9 @@ def _chapter_one_stage_layer_offsets(surface: pygame.Surface, cx: float, theme: 
         "main": main_x,
         "mid": main_x,
         "ground": main_x,
+        "architecture": main_x,
+        "skyline": sky_x,
+        "near_occluder": near_x,
         "near": near_x,
     }
 
@@ -1812,9 +1818,16 @@ def _load_location_art_asset(
     route: Mapping[str, Any],
     asset_field: str,
     *,
+    required: bool = True,
     opaque: bool,
-) -> pygame.Surface:
+) -> pygame.Surface | None:
+    if not required and asset_field not in route:
+        return None
+    if asset_field not in route:
+        raise LocationArtError(f"{route['theme']} missing required route field {asset_field!r}")
     relative = str(route[asset_field])
+    if not relative:
+        raise LocationArtError(f"{route['theme']} {asset_field} must be a non-empty path")
     expected = (int(route["world_width"]), DESIGN_HEIGHT)
     path = resource_path(relative)
     try:
@@ -1834,7 +1847,7 @@ def _load_location_art_asset(
             raise LocationArtError(f"{route['theme']} main panorama must be fully opaque")
         image = image.convert() if pygame.display.get_surface() is not None else image.copy()
     else:
-        if not has_pixel_alpha:
+        if required and not has_pixel_alpha:
             raise LocationArtError(
                 f"{route['theme']} {asset_field} must retain transparent alpha"
             )
@@ -1843,7 +1856,7 @@ def _load_location_art_asset(
 
 
 def _location_art_layers(theme: str) -> dict[str, pygame.Surface | None]:
-    """Load and retain one main/far/near surface set for a Chapter 1 route."""
+    """Load and retain one layered backdrop surface set for a Chapter 1 route."""
 
     key = _theme_key(theme)
     cached = _LOCATION_ART_CACHE.get(key)
@@ -1858,13 +1871,51 @@ def _location_art_layers(theme: str) -> dict[str, pygame.Surface | None]:
     if route is None:
         raise LocationArtError(f"no location-locked route exists for theme {theme!r}")
     main = _load_location_art_asset(route, "main_panorama_asset", opaque=True)
+    far = _load_location_art_asset(route, "far_asset", opaque=False)
+    near = _load_location_art_asset(route, "near_asset", opaque=False)
+
+    far_haze = _load_location_art_asset(
+        route,
+        "far_haze_asset",
+        required=False,
+        opaque=False,
+    )
+    far_skyline = _load_location_art_asset(
+        route,
+        "far_skyline_asset",
+        required=False,
+        opaque=False,
+    )
+    architecture = _load_location_art_asset(
+        route,
+        "architecture_asset",
+        required=False,
+        opaque=False,
+    )
+    ground = _load_location_art_asset(
+        route,
+        "ground_asset",
+        required=False,
+        opaque=False,
+    )
+    near_occluder = _load_location_art_asset(
+        route,
+        "near_occluder_asset",
+        required=False,
+        opaque=False,
+    )
+
+    # Legacy field compatibility: keep old route keys and provide aliases for
+    # the compositing runtime.
     layers = {
-        # The treatment is applied after strict size/alpha validation and
-        # before this route set enters either cache.  Far and near retain their
-        # manifest-owned transparent pixels and are never color-graded here.
         "main": _location_locked_depth_treatment(main, key),
-        "far": _load_location_art_asset(route, "far_asset", opaque=False),
-        "near": _load_location_art_asset(route, "near_asset", opaque=False),
+        "far": far,
+        "near": near,
+        "far_haze": far_haze or far,
+        "far_skyline": far_skyline,
+        "architecture": architecture,
+        "ground": ground,
+        "near_occluder": near_occluder or near,
     }
     _LOCATION_ART_CACHE[key] = layers
     _STAGE_ROUTE_PANORAMA_CACHE[
@@ -1912,22 +1963,16 @@ def _draw_location_locked_background(
             f"{theme} runtime width disagrees with chapter1_location_lock.json"
         )
     layers = _location_art_layers(theme)
-    main = layers["main"]
-    if main is None:  # pragma: no cover - strict loader never caches this.
-        raise LocationArtError(f"{theme} has no opaque main panorama")
-    surface.blit(main, (-_i(cx), 0))
-    far = layers["far"]
-    if far is not None:
-        far_x = _bounded_location_layer_offset(
-            cx,
-            float(route["far_parallax"]),
-            float(route["far_max_offset"]),
-            far.get_width(),
-            surface.get_width(),
-        )
-        # The main panorama is the opaque safety foundation.  The far plate is
-        # alpha-only distant atmosphere and therefore cannot expose a gap.
-        surface.blit(far, (far_x, 0))
+    backdrop.render_route_backdrop(
+        surface,
+        theme=theme,
+        route=route,
+        layers=layers,
+        camera_x=cx,
+        world_width=world_width,
+        atmosphere=None,
+        loader_identity=id(pygame.image.load),
+    )
 
 
 def _draw_chapter_one_stage_panel(surface: pygame.Surface, cx: float, world_width: int, theme: str) -> bool:
@@ -2504,6 +2549,7 @@ def _stage_background_frame_key(
         int(height),
         int(world_width),
         round(float(camera_x), 6),
+        id(pygame.image.load),
         id(_chapter_one_route_panorama),
         id(_location_art_layers),
         id(_draw_location_locked_background),
