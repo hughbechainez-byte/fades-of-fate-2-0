@@ -12,6 +12,10 @@ from .config import resource_path
 
 _ATMO_DATA = resource_path("data/atmosphere.json")
 _CLOUD_PHASE_COUNT = 3
+# Cloud speeds are authored in logical pixels per second.  The persistent
+# phase is normalized against one seamless haze tile so it can be serialized
+# compactly without turning values such as 1.2 into full texture cycles.
+CLOUD_CYCLE_PIXELS = 800.0
 
 
 def _finite_float(value: Any, label: str) -> float:
@@ -569,7 +573,7 @@ class AtmosphereState:
                     start_fraction,
                     end_fraction,
                     duration,
-                )
+                ) / CLOUD_CYCLE_PIXELS
             self.transition_progress = end_fraction
             remaining_dt = max(0.0, remaining_dt - transition_dt)
 
@@ -584,7 +588,7 @@ class AtmosphereState:
                 phase_deltas[layer_index] += remaining_dt * (
                     active_profile.cloud_speeds[layer_index]
                     + active_profile.wind_speed
-                ) * active_profile.parallax_factors[layer_index]
+                ) * active_profile.parallax_factors[layer_index] / CLOUD_CYCLE_PIXELS
 
         if self.current_profile_id == self.target_profile_id:
             self.wind_direction = active_profile.wind_direction
@@ -617,6 +621,7 @@ class AtmosphereState:
 
 
 __all__ = [
+    "CLOUD_CYCLE_PIXELS",
     "AtmosphereState",
     "AtmosphereSnapshot",
 ]

@@ -13,6 +13,7 @@ os.environ.setdefault("PYGAME_HIDE_SUPPORT_PROMPT", "1")
 
 import pygame
 
+from src import atmosphere, backdrop
 from tools import build_chapter1_location_art as art
 
 
@@ -119,6 +120,80 @@ class ChapterOneArtGeneratorTests(unittest.TestCase):
                     )
                 )
                 self.assertTrue(all(alpha == 0 for alpha in haze_alpha))
+
+    def test_haze_assets_repeat_on_the_runtime_cloud_cycle(self) -> None:
+        self.assertEqual(
+            art.HAZE_REPEAT_WIDTH,
+            backdrop.HAZE_REPEAT_WIDTH,
+        )
+        self.assertEqual(
+            art.HAZE_REPEAT_WIDTH,
+            int(atmosphere.CLOUD_CYCLE_PIXELS),
+        )
+        for route in self.manifest["routes"]:
+            haze = art._build_layered_assets(route)["haze"]
+            self.assertEqual(haze.get_width() % art.HAZE_REPEAT_WIDTH, 0)
+            first_tile = pygame.image.tobytes(
+                haze.subsurface(
+                    pygame.Rect(
+                        0,
+                        0,
+                        art.HAZE_REPEAT_WIDTH,
+                        haze.get_height(),
+                    )
+                ),
+                "RGBA",
+                False,
+            )
+            for tile_x in range(
+                art.HAZE_REPEAT_WIDTH,
+                haze.get_width(),
+                art.HAZE_REPEAT_WIDTH,
+            ):
+                with self.subTest(theme=route["theme"], tile_x=tile_x):
+                    self.assertEqual(
+                        pygame.image.tobytes(
+                            haze.subsurface(
+                                pygame.Rect(
+                                    tile_x,
+                                    0,
+                                    art.HAZE_REPEAT_WIDTH,
+                                    haze.get_height(),
+                                )
+                            ),
+                            "RGBA",
+                            False,
+                        ),
+                        first_tile,
+                    )
+
+    def test_layered_architecture_retains_masked_authored_detail_and_ground_support(
+        self,
+    ) -> None:
+        for route in self.manifest["routes"]:
+            layers = art._build_layered_assets(route)
+            architecture = layers["architecture"]
+            ground = layers["ground"]
+            ground_row = int(route["ground_opaque_from_y"])
+            sampled_colors = {
+                tuple(architecture.get_at((x, y))[:3])
+                for x in range(0, architecture.get_width(), 8)
+                for y in range(32, ground_row, 4)
+                if architecture.get_at((x, y)).a
+            }
+            with self.subTest(theme=route["theme"]):
+                self.assertGreater(
+                    len(sampled_colors),
+                    128,
+                    "masked source detail must not regress to flat facade blocks",
+                )
+                for feature in route["physical_scene_objects"]:
+                    contact = (
+                        int(round(float(feature["world_x"]))),
+                        int(round(float(feature["depth"]))),
+                    )
+                    self.assertGreaterEqual(contact[1], ground_row)
+                    self.assertEqual(ground.get_at(contact).a, 255)
 
     def test_panel_anchor_bands_exactly_cover_manifest_order(self) -> None:
         for route in self.manifest["routes"]:

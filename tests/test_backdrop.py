@@ -176,7 +176,7 @@ class BackdropRendererTests(unittest.TestCase):
             profile_id="chapter_1_sunset",
         )
         atmosphere_frozen = state.snapshot()
-        state.advance(0.75)
+        state.advance(3.0)
         atmosphere_moving = state.snapshot()
 
         backdrop.render_route_backdrop(first, "test", route, layers, 120, world_width, atmosphere=atmosphere_frozen, loader_identity=id(pygame.image.load))
@@ -274,7 +274,7 @@ class BackdropRendererTests(unittest.TestCase):
                             band_bytes(baseline, band),
                         )
 
-    def test_60hz_haze_motion_is_slow_and_bounded(self) -> None:
+    def test_60hz_haze_motion_is_slow_monotonic_and_seamless(self) -> None:
         route = {
             "far_parallax": 0.2,
             "far_max_offset": 64,
@@ -301,10 +301,13 @@ class BackdropRendererTests(unittest.TestCase):
             for band_index, offset in enumerate(offsets):
                 observed[band_index].add(offset)
             if previous is not None:
-                self.assertLessEqual(
-                    max(abs(current - prior) for current, prior in zip(offsets, previous, strict=True)),
-                    2,
-                )
+                for current, prior in zip(offsets, previous, strict=True):
+                    wrapped_step = min(
+                        abs(current - prior),
+                        abs(current - prior - backdrop.HAZE_REPEAT_WIDTH),
+                        abs(current - prior + backdrop.HAZE_REPEAT_WIDTH),
+                    )
+                    self.assertLessEqual(wrapped_step, 2)
             previous = offsets
             state.advance(1.0 / 60.0)
 
@@ -313,7 +316,7 @@ class BackdropRendererTests(unittest.TestCase):
                 self.assertGreater(len(positions), 1)
                 self.assertLessEqual(
                     max(positions) - min(positions),
-                    backdrop.HAZE_PHASE_AMPLITUDES[band_index] * 2,
+                    backdrop.HAZE_REPEAT_WIDTH,
                 )
 
     def test_one_to_one_architecture_and_ground_motion(self) -> None:

@@ -270,6 +270,10 @@ def _validate_physical_scene_objects(
         raise LocationLockError(
             f"{route_label}.physical_scene_objects require gameplay collision obstacles"
         )
+    ground_contact_y = _finite(
+        route.get("ground_opaque_from_y"),
+        f"{route_label}.ground_opaque_from_y",
+    )
     object_ids: set[str] = set()
     for object_index, object_value in enumerate(objects):
         object_label = f"{route_label}.physical_scene_objects[{object_index}]"
@@ -365,7 +369,7 @@ def _validate_physical_scene_objects(
                 f"{PHYSICAL_SCENE_OBJECT_RAIL_MARGIN:g}px outside the walkable rail "
                 "or reference an enclosing collision_obstacle_id"
             )
-        _finite(feature.get("elevation"), f"{object_label}.elevation")
+        elevation = _finite(feature.get("elevation"), f"{object_label}.elevation")
         anchor = _require_text(feature.get("anchor"), f"{object_label}.anchor")
         if anchor not in landmark_ids:
             raise LocationLockError(f"{object_label}.anchor must reference a route landmark")
@@ -403,6 +407,17 @@ def _validate_physical_scene_objects(
             raise LocationLockError(
                 f"{object_label}.physical_height_m must be a calibrated sedan height"
             )
+        if kind == "sedan":
+            if abs(elevation) > 1e-6:
+                raise LocationLockError(
+                    f"{object_label}.elevation must be zero for a grounded sedan"
+                )
+            ground_inset = depth - ground_contact_y
+            if ground_inset < 0.0:
+                raise LocationLockError(
+                    f"{object_label}.depth must project into the visible ground contact band "
+                    f"at or below {ground_contact_y:g}"
+                )
 
 
 @lru_cache(maxsize=8)

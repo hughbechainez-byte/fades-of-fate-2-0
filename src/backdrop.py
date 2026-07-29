@@ -8,10 +8,12 @@ import math
 
 import pygame
 
+from .atmosphere import CLOUD_CYCLE_PIXELS
+
 
 BACKDROP_RENDER_CACHE_LIMIT = 16
 HAZE_BAND_COUNT = 3
-HAZE_PHASE_AMPLITUDES = (12, 10, 8)
+HAZE_REPEAT_WIDTH = int(CLOUD_CYCLE_PIXELS)
 
 _PROFILE_PALETTE_CACHE: dict[str, tuple[tuple[int, int, int], ...]] = {}
 
@@ -306,9 +308,9 @@ def _atmosphere_haze_offset(
     """Resolve one independently phased atmosphere plane.
 
     ``AtmosphereState.advance`` integrates the profile's declared cloud speed
-    and parallax factor into each normalized cloud phase.  Convert that phase
-    to a small cyclic pixel drift instead of treating it as a full 3200px
-    texture cycle; that keeps 60 Hz motion slow, bounded, and seamless.
+    and parallax factor into each normalized cloud phase.  Convert the phase
+    linearly across the authored seamless haze tile.  This keeps motion slow
+    and monotonic; wrapping one full tile is visually continuous.
     """
 
     factors = _state_value(atmosphere, "parallax_factors", ())
@@ -330,10 +332,7 @@ def _atmosphere_haze_offset(
     _, direction = _read_wind(atmosphere)
     horizontal_wind = math.cos(math.radians(direction))
     direction_sign = -1 if horizontal_wind < 0.0 else 1
-    amplitude = HAZE_PHASE_AMPLITUDES[
-        min(band_index, len(HAZE_PHASE_AMPLITUDES) - 1)
-    ]
-    phase_pixels = _i(math.sin(phase * math.tau) * amplitude)
+    phase_pixels = _i(phase * HAZE_REPEAT_WIDTH)
     return base_x + direction_sign * phase_pixels
 
 

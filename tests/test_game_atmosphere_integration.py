@@ -143,7 +143,7 @@ class GameAtmosphereIntegrationTests(unittest.TestCase):
         expected_profiles = {
             "chapter_1_level_1": "chapter_1_sunset",
             "chapter_1_level_2": "i8_underpass_dimming",
-            "chapter_1_level_3": "i8_underpass_dimming",
+            "chapter_1_level_3": "broadway_blue_hour",
             "chapter_1_level_4": "awaken_finale",
         }
 

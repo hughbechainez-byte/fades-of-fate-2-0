@@ -2984,6 +2984,14 @@ def draw_physical_scene_object(
 
     del frame  # Reserved for future animated physical props.
     sprite = _physical_scene_object_sprite(feature)
+    _shadow(
+        surface,
+        x,
+        y,
+        max(18, int(round(sprite.get_width() * 0.78))),
+        max(5, min(9, sprite.get_height() // 11)),
+        elevation=float(feature.get("elevation", 0.0)),
+    )
     rect = sprite.get_rect(midbottom=(_i(x), _i(y)))
     surface.blit(sprite, rect)
     return rect

@@ -264,7 +264,16 @@ class ChapterOneLocationValidationTests(unittest.TestCase):
                         for item in placements
                     )
                 )
-                if any(item["visible"] for item in placements):
+                self.assertTrue(
+                    all(item["ground_contact_valid"] for item in placements)
+                )
+                self.assertTrue(
+                    all(
+                        item["ground_contact_gap_px"] >= 0
+                        for item in placements
+                    )
+                )
+                if any(item["substantially_visible"] for item in placements):
                     visible_checkpoints.append(fraction)
             with self.subTest(level_id=route["level_id"]):
                 self.assertGreater(len(visible_checkpoints), 0)
@@ -348,11 +357,19 @@ class ChapterOneLocationValidationTests(unittest.TestCase):
                     module._sky_region_sha256(steady_frame),
                     module._sky_region_sha256(animated_frame),
                 )
+                changed_fraction = module._changed_pixel_fraction(
+                    steady_frame,
+                    animated_frame,
+                    module._sky_region_rect(steady_frame),
+                )
+                self.assertGreaterEqual(changed_fraction, 0.01)
+                self.assertLessEqual(changed_fraction, 0.15)
 
         script = script_path.read_text(encoding="utf-8-sig")
         self.assertIn('"atmosphere_phase_results"', script)
         self.assertIn('"fixed_camera_phase_hashes_distinct"', script)
         self.assertIn('"sky_region_sha256"', script)
+        self.assertIn('"sky_motion_visibly_persistent"', script)
 
     def test_scenery_sweep_rejects_too_few_or_too_many_frames(self) -> None:
         for frame_count in (0, 4, 241):

@@ -194,6 +194,12 @@ def _draw_physical_scene_objects(
             projected.y,
             feature,
         )
+        ground_row = int(route.get("ground_opaque_from_y", 0))
+        ground_contact_gap = projected.pixel_xy[1] - ground_row
+        clipped = rect.clip(frame.get_rect())
+        visible_fraction = (
+            clipped.width * clipped.height / max(1, rect.width * rect.height)
+        )
         placements.append(
             {
                 "id": str(feature.get("id", "")),
@@ -206,7 +212,12 @@ def _draw_physical_scene_objects(
                 "bottom_center_matches_projection": (
                     rect.midbottom == projected.pixel_xy
                 ),
-                "visible": rect.colliderect(frame.get_rect()),
+                "ground_opaque_from_y": ground_row,
+                "ground_contact_gap_px": ground_contact_gap,
+                "ground_contact_valid": ground_contact_gap >= 0,
+                "visible_fraction": round(visible_fraction, 4),
+                "visible": visible_fraction > 0.0,
+                "substantially_visible": visible_fraction >= 0.6,
             }
         )
     return tuple(placements)
@@ -225,12 +236,35 @@ def _atmosphere_snapshot_metadata(
 def _sky_region_sha256(frame: pygame.Surface) -> str:
     """Hash sky pixels below the label but above the calibrated roof line."""
 
-    sky_region = frame.subsurface(
-        pygame.Rect(0, 24, frame.get_width(), min(48, frame.get_height() - 24))
-    )
+    sky_region = frame.subsurface(_sky_region_rect(frame))
     return hashlib.sha256(
         pygame.image.tobytes(sky_region, "RGB", False)
     ).hexdigest()
+
+
+def _sky_region_rect(frame: pygame.Surface) -> pygame.Rect:
+    return pygame.Rect(
+        0,
+        24,
+        frame.get_width(),
+        min(48, frame.get_height() - 24),
+    )
+
+
+def _changed_pixel_fraction(
+    first: pygame.Surface,
+    second: pygame.Surface,
+    rect: pygame.Rect,
+) -> float:
+    """Return the exact RGB change fraction inside a shared test region."""
+
+    first_bytes = pygame.image.tobytes(first.subsurface(rect), "RGB", False)
+    second_bytes = pygame.image.tobytes(second.subsurface(rect), "RGB", False)
+    changed = sum(
+        first_bytes[index:index + 3] != second_bytes[index:index + 3]
+        for index in range(0, len(first_bytes), 3)
+    )
+    return changed / max(1, rect.width * rect.height)
 
 
 def _build_route_atmosphere_samples(
@@ -689,6 +723,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             max_camera = max(0, world_width - width)
             route_hashes: list[str] = []
             route_visible_physical_checkpoints: list[float] = []
+            route_physical_ground_checks: list[bool] = []
+            route_physical_anchor_checks: list[bool] = []
             for column, fraction in enumerate(CHECKPOINTS):
                 camera_x = int(round(max_camera * fraction))
                 frame, physical_scene_objects = _render_checkpoint(
@@ -701,7 +737,18 @@ def main(argv: Sequence[str] | None = None) -> int:
                     steady_atmosphere,
                     steady_label,
                 )
-                if any(item["visible"] for item in physical_scene_objects):
+                route_physical_ground_checks.extend(
+                    bool(item["ground_contact_valid"])
+                    for item in physical_scene_objects
+                )
+                route_physical_anchor_checks.extend(
+                    bool(item["bottom_center_matches_projection"])
+                    for item in physical_scene_objects
+                )
+                if any(
+                    item["substantially_visible"]
+                    for item in physical_scene_objects
+                ):
                     route_visible_physical_checkpoints.append(fraction)
                 frame_hash = hashlib.sha256(
                     pygame.image.tobytes(frame, "RGB", False)
@@ -746,6 +793,14 @@ def main(argv: Sequence[str] | None = None) -> int:
                     "physical_scene_objects_visible_at_checkpoint": bool(
                         route_visible_physical_checkpoints
                     ),
+                    "physical_scene_objects_grounded": bool(
+                        route_physical_ground_checks
+                    )
+                    and all(route_physical_ground_checks),
+                    "physical_scene_object_anchors_valid": bool(
+                        route_physical_anchor_checks
+                    )
+                    and all(route_physical_anchor_checks),
                 }
             )
             seam_world_x = 0
@@ -837,6 +892,11 @@ def main(argv: Sequence[str] | None = None) -> int:
             ).hexdigest()
             steady_sky_hash = _sky_region_sha256(steady_phase_frame)
             animated_sky_hash = _sky_region_sha256(animated_phase_frame)
+            sky_region_changed_fraction = _changed_pixel_fraction(
+                steady_phase_frame,
+                animated_phase_frame,
+                _sky_region_rect(steady_phase_frame),
+            )
             atmosphere_sheet.blit(steady_phase_frame, (0, row * height))
             atmosphere_sheet.blit(animated_phase_frame, (width, row * height))
             atmosphere_phase_results.append(
@@ -870,6 +930,13 @@ def main(argv: Sequence[str] | None = None) -> int:
                     },
                     "fixed_camera_phase_hashes_distinct": (
                         steady_sky_hash != animated_sky_hash
+                    ),
+                    "sky_region_changed_fraction": round(
+                        sky_region_changed_fraction,
+                        6,
+                    ),
+                    "sky_motion_visibly_persistent": (
+                        0.01 <= sky_region_changed_fraction <= 0.15
                     ),
                 }
             )
@@ -958,10 +1025,13 @@ def main(argv: Sequence[str] | None = None) -> int:
         unique_checks_pass = all(
             item.get("checkpoint_hashes_unique", True)
             and item.get("physical_scene_objects_visible_at_checkpoint", True)
+            and item.get("physical_scene_objects_grounded", True)
+            and item.get("physical_scene_object_anchors_valid", True)
             for item in checkpoint_results
         )
         atmosphere_checks_pass = all(
             item["fixed_camera_phase_hashes_distinct"]
+            and item["sky_motion_visibly_persistent"]
             and item["steady"]["current_profile_id"]
             == item["mapped_profile_id"]
             and item["steady"]["target_profile_id"]

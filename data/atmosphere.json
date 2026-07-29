@@ -4,7 +4,7 @@
   "route_profile_map": {
     "chapter_1_level_1": "chapter_1_sunset",
     "chapter_1_level_2": "i8_underpass_dimming",
-    "chapter_1_level_3": "i8_underpass_dimming",
+    "chapter_1_level_3": "broadway_blue_hour",
     "chapter_1_level_4": "awaken_finale"
   },
   "profiles": {
@@ -23,6 +23,14 @@
       "cloud_speeds": [0.14, 0.08, 0.04],
       "parallax_factors": [0.28, 0.55, 0.9],
       "transition_duration_seconds": 4.5
+    },
+    "broadway_blue_hour": {
+      "palette": ["#171a33", "#29304e", "#59677b", "#d2876f"],
+      "wind_direction": 168.0,
+      "wind_speed": 0.75,
+      "cloud_speeds": [0.12, 0.07, 0.035],
+      "parallax_factors": [0.3, 0.58, 0.92],
+      "transition_duration_seconds": 5.0
     },
     "awaken_finale": {
       "palette": ["#0d0f2a", "#17223d", "#263c68", "#4b6aa4"],

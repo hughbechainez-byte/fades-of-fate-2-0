@@ -598,7 +598,7 @@ class PixelArtTests(unittest.TestCase):
                 self.assertGreater(max(sampled_luma) - min(sampled_luma), 180)
 
     def test_chapter_one_authored_routes_do_not_spawn_tiny_vehicle_overlays(self) -> None:
-        """Vehicles belong to authored art only; no tiny code cars may float over it."""
+        """Legacy tiny traffic helpers stay disabled beside calibrated physical cars."""
 
         for theme, stage_width in pixel_art._CHAPTER_ONE_THEME_ROUTE_WIDTHS.items():
             surface = pygame.Surface((DESIGN_WIDTH, DESIGN_HEIGHT))
@@ -639,6 +639,40 @@ class PixelArtTests(unittest.TestCase):
         self.assertEqual(sprite.get_height(), expected)
         self.assertGreaterEqual(sprite.get_height() / dave.height, 0.70)
         self.assertLessEqual(sprite.get_height() / dave.height, 0.90)
+
+    def test_physical_sedan_has_two_level_wheel_contacts_and_a_shadow(self) -> None:
+        route = pixel_art._location_route("sprouts_el_cilantro")
+        self.assertIsNotNone(route)
+        feature = route["physical_scene_objects"][0]
+        sprite = pixel_art._physical_scene_object_sprite(feature)
+        contact_x = [
+            x
+            for x in range(sprite.get_width())
+            if any(
+                sprite.get_at((x, y)).a > 16
+                for y in range(max(0, sprite.get_height() - 4), sprite.get_height())
+            )
+        ]
+        groups: list[list[int]] = []
+        for x in contact_x:
+            if not groups or x > groups[-1][1] + 1:
+                groups.append([x, x])
+            else:
+                groups[-1][1] = x
+        substantial_groups = [
+            group for group in groups if group[1] - group[0] + 1 >= 4
+        ]
+        self.assertGreaterEqual(len(substantial_groups), 2)
+
+        surface = pygame.Surface((DESIGN_WIDTH, DESIGN_HEIGHT), pygame.SRCALPHA)
+        rect = pixel_art.draw_physical_scene_object(
+            surface,
+            320,
+            220,
+            feature,
+        )
+        self.assertEqual(rect.midbottom, (320, 220))
+        self.assertGreater(surface.get_at((320, 222)).a, 0)
 
     def test_ambient_planes_move_independently_at_pixel_aligned_rates(self) -> None:
         first = {plane: pixel_art._ambient_plane_offset(400, plane) for plane in ("far", "mid", "world")}

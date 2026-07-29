@@ -267,6 +267,7 @@ class ChapterOneLocationLockTests(unittest.TestCase):
         with TemporaryDirectory(dir=locked_art_root) as temp_root:
             temp_dir = Path(temp_root)
             route = deepcopy(self.manifest)["routes"][2]
+            route["physical_scene_objects"] = []
             world_width = int(route["world_width"])
             route["near_asset"] = route["far_asset"]
             route["far_haze_asset"] = route["far_asset"]
@@ -397,6 +398,34 @@ class ChapterOneLocationLockTests(unittest.TestCase):
         ):
             validate_location_lock(
                 dangling_collision,
+                project_root=ROOT,
+                validate_assets=False,
+            )
+
+    def test_physical_sedans_must_reach_the_visible_ground_contact_band(self) -> None:
+        floating = deepcopy(self.manifest)
+        route = floating["routes"][0]
+        route["physical_scene_objects"][0]["depth"] = (
+            route["ground_opaque_from_y"] - 1
+        )
+        with self.assertRaisesRegex(
+            LocationLockError,
+            "visible ground contact band",
+        ):
+            validate_location_lock(
+                floating,
+                project_root=ROOT,
+                validate_assets=False,
+            )
+
+        elevated = deepcopy(self.manifest)
+        elevated["routes"][0]["physical_scene_objects"][0]["elevation"] = 1
+        with self.assertRaisesRegex(
+            LocationLockError,
+            "elevation must be zero",
+        ):
+            validate_location_lock(
+                elevated,
                 project_root=ROOT,
                 validate_assets=False,
             )
