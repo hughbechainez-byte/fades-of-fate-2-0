@@ -6,6 +6,49 @@ The researched animation audit, real-world corridor inventory, and canonical Cha
 
 Every project task must verify the persistent requirements in [ToDoList.md](ToDoList.md) unless the user explicitly waives them.
 
+## Agent and developer sync contract (mandatory)
+
+**Source of truth:** `https://github.com/hughbechainez-byte/the-fades-of-fate` branch `main`.
+
+Any agent or worker (local Windows machine, Grok, Codex, CI, or remote session) must keep local and online trees synchronized. Do not treat a sandbox checkout, a previous chat, or an unpushed desktop folder as authoritative.
+
+### Before starting work
+
+1. Pull the newest `main` (or fetch and hard-reset only if the user explicitly allows discarding local drift).
+2. Inspect the latest commit SHA on `origin/main` and the latest **Windows Build and Validate** Actions run for that SHA.
+3. Read this section, `ToDoList.md`, and any task-specific notes in the knowledge base.
+
+### While working
+
+1. Prefer targeted commits on `main` (or a short-lived branch that is merged and deleted promptly).
+2. Code, data JSON, tools, tests, and workflow YAML are edited in-repo and pushed so every other agent can pull them.
+3. **Large binary Chapter 1 panoramas** (`assets/stage/chapter1_location_locked/ch1_l*_main_v2.png` and matching far/near) are produced only by the local bake tool. Non-display agents must change the bake source/tooling, push that code, and leave an explicit handoff for a local agent to run:
+
+```powershell
+git pull origin main
+.\tools\rebake-and-commit.ps1 -Commit
+git push origin main
+```
+
+4. Full desktop packaging remains local: `tools\Build-Windows.ps1` (PyInstaller + Desktop install). CI does **not** ship the `.exe`; it validates the same gates the package script uses before packaging.
+
+### After finishing work
+
+1. Commit and **push to `origin/main`** (or open a PR that is merged before handoff).
+2. Confirm the push triggered **Windows Build and Validate** and that the run is green for the new SHA.
+3. Report: commit SHA, GitHub URL, CI run URL/status, whether panorama rebake is still outstanding, and any local-only package step remaining.
+
+### Bidirectional rule
+
+| Direction | Required action |
+|---|---|
+| Online → local | `git pull origin main` (or clone) before continuing |
+| Local → online | `git push origin main` after every completed change set |
+| Tooling-only (no display) → local art | Push bake-tool changes; local agent runs `rebake-and-commit.ps1 -Commit` then pushes PNGs |
+| Local art → online | Rebake commits the PNGs; push so CI and other agents see identical assets |
+
+If local and `origin/main` diverge, stop and reconcile before further feature work. Silent dual trees are a defect.
+
 The demo contains two selectable adult heroes and two blacked-out **COMING SOON** roster cards:
 
 - **Black Dave:** slim, lean and muscular; backward black cap and matching tank top; small gold-trim rectangular glasses; diamond studs; fists that ignite for ten seconds after six fast attack presses (+20% damage); a finite-ammo lane-shot BB gun; Bluetooth-speaker shockwave super.
