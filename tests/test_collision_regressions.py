@@ -102,7 +102,7 @@ class CollisionRegressionTests(unittest.TestCase):
         self.assertEqual(hits, 1)
         self.assertLess(target.health, target.max_health)
 
-    def test_player_punch_resolves_one_nearest_front_target_not_a_crowd(self) -> None:
+    def test_player_punch_hits_two_nearest_front_targets_not_rear_targets(self) -> None:
         self.dave.x, self.dave.y, self.dave.facing = 280.0, 270.0, 1
         move = self.game.data["moves"]["light_combo"][1]
         self.dave.combo_step = 1
@@ -113,9 +113,9 @@ class CollisionRegressionTests(unittest.TestCase):
 
         hits = self.game.player_attack(self.dave, move, "light", already_hit=set())
 
-        self.assertEqual(hits, 1)
+        self.assertEqual(hits, 2)
         self.assertLess(nearest.health, nearest.max_health)
-        self.assertEqual(side.health, side.max_health)
+        self.assertLess(side.health, side.max_health)
         self.assertEqual(rear.health, rear.max_health)
 
     def test_player_attack_sweep_catches_an_enemy_that_crossed_the_fist_lane(self) -> None:
@@ -156,7 +156,7 @@ class CollisionRegressionTests(unittest.TestCase):
         self.assertEqual(hits, 1)
         self.assertLess(target.health, target.max_health)
 
-    def test_single_target_cap_applies_to_the_whole_attack_execution(self) -> None:
+    def test_two_target_cap_applies_to_the_whole_attack_execution(self) -> None:
         self.shelly.state = "eliminated"
         move = self.game.data["moves"]["light_combo"][0]
         first = self.enemy(120, self.dave.x + 25.0, self.dave.y)
@@ -168,8 +168,11 @@ class CollisionRegressionTests(unittest.TestCase):
             self.dave.update(InputSnapshot(), self.game, 1.0 / 60.0)
 
         damaged = [enemy for enemy in (first, second) if enemy.health < enemy.max_health]
-        self.assertEqual(len(damaged), 1)
-        self.assertEqual(self.dave.attack_hit_ids, {("enemy", first.enemy_id)})
+        self.assertEqual(len(damaged), 2)
+        self.assertEqual(
+            self.dave.attack_hit_ids,
+            {("enemy", first.enemy_id), ("enemy", second.enemy_id)},
+        )
 
     def test_fourth_combo_strike_is_a_deterministic_two_target_finisher(self) -> None:
         self.shelly.state = "eliminated"
@@ -424,8 +427,9 @@ class CollisionRegressionTests(unittest.TestCase):
     def test_attack_lifetime_cap_produces_a_detailed_target_cap_report(self) -> None:
         self.game.debug = True
         prior = self.enemy(141, self.dave.x + 20.0, self.dave.y)
+        prior_two = self.enemy(144, self.dave.x + 22.0, self.dave.y)
         waiting = self.enemy(142, self.dave.x + 24.0, self.dave.y)
-        self.game.enemies = [prior, waiting]
+        self.game.enemies = [prior, prior_two, waiting]
         move = self.game.data["moves"]["light_combo"][0]
         before = waiting.health
 
@@ -433,7 +437,7 @@ class CollisionRegressionTests(unittest.TestCase):
             self.dave,
             move,
             "light",
-            already_hit={("enemy", prior.enemy_id)},
+            already_hit={("enemy", prior.enemy_id), ("enemy", prior_two.enemy_id)},
             play_whiff=False,
         )
 
