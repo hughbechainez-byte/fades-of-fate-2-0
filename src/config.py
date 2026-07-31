@@ -414,6 +414,7 @@ def _validate_combat_move(move: Any, label: str) -> None:
         "reach_forgiveness",
         "depth_forgiveness",
         "elevation_forgiveness",
+        "temporal_forgiveness",
         "lane_assist",
         "aim_range_bonus",
         "lunge",
@@ -699,6 +700,8 @@ def validate_gameplay(
         "player_attack_aim_range_bonus",
         "player_attack_lane_assist",
         "player_attack_depth_tolerance",
+        "player_attack_elevation_forgiveness",
+        "player_attack_temporal_forgiveness",
         "player_attack_rear_tolerance",
         "enemy_attack_rear_tolerance",
     ):

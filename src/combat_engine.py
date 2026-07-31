@@ -266,6 +266,8 @@ class HitBox:
     half_width: float = 18.0
     half_depth: float = 8.0
     height: float = 42.0
+    elevation_tolerance: float = 0.0
+    temporal_forgiveness: float = 0.0
     damage: float = 1.0
     stun: float = 0.1
     knockback_x: float = 0.0
@@ -317,6 +319,8 @@ class HitBox:
             "facing_x",
             "rear_tolerance",
             "rehit_delay",
+            "elevation_tolerance",
+            "temporal_forgiveness",
         ):
             object.__setattr__(self, name, _finite(getattr(self, name), name))
         object.__setattr__(self, "half_width", _positive(self.half_width, "half_width"))
@@ -334,6 +338,10 @@ class HitBox:
         ):
             if getattr(self, name) < 0.0:
                 raise ValueError(f"{name} must be non-negative")
+        if self.elevation_tolerance < 0.0:
+            raise ValueError("elevation_tolerance must be non-negative")
+        if self.temporal_forgiveness < 0.0:
+            raise ValueError("temporal_forgiveness must be non-negative")
         object.__setattr__(self, "required_tags", frozenset(self.required_tags))
         object.__setattr__(self, "blocked_tags", frozenset(self.blocked_tags))
         if self.max_targets is not None and self.max_targets <= 0:
@@ -373,6 +381,14 @@ class HitBox:
     @property
     def top_elevation(self) -> float:
         return self.elevation + self.height
+
+    @property
+    def tolerant_bottom_elevation(self) -> float:
+        return self.elevation - self.elevation_tolerance
+
+    @property
+    def tolerant_top_elevation(self) -> float:
+        return self.top_elevation + self.elevation_tolerance
 
     @property
     def sweep_start(self) -> tuple[float, float]:
@@ -1037,17 +1053,38 @@ class AttackQueryReport:
         return tuple(evaluation for evaluation in self.evaluations if not evaluation.accepted)
 
 
-def _axis_sweep_interval(relative_start: float, relative_delta: float, half_extent: float) -> tuple[float, float] | None:
+def _motion_scaled_time_forgiveness(
+    relative_delta: float,
+    half_extent: float,
+    forgiveness: float,
+) -> float:
+    if forgiveness <= 0.0 or half_extent <= 0.0:
+        return 0.0
+    motion_scale = min(1.0, abs(relative_delta) / (abs(half_extent) + EPSILON))
+    return forgiveness * motion_scale
+
+
+def _axis_sweep_interval(
+    relative_start: float,
+    relative_delta: float,
+    half_extent: float,
+    temporal_forgiveness: float = 0.0,
+) -> tuple[float, float] | None:
     """Return the fixed-sample interval where one relative axis overlaps."""
 
     if abs(relative_delta) <= EPSILON:
         if relative_start < -half_extent - EPSILON or relative_start > half_extent + EPSILON:
             return None
         return 0.0, 1.0
+    forgiveness = _motion_scaled_time_forgiveness(
+        relative_delta,
+        half_extent,
+        temporal_forgiveness,
+    )
     first = (-half_extent - relative_start) / relative_delta
     second = (half_extent - relative_start) / relative_delta
-    entry = max(0.0, min(first, second))
-    exit_time = min(1.0, max(first, second))
+    entry = max(0.0, min(first, second) - forgiveness)
+    exit_time = min(1.0, max(first, second) + forgiveness)
     if entry > exit_time + EPSILON:
         return None
     return entry, exit_time
@@ -1067,11 +1104,13 @@ def _attack_planar_intervals(
         relative_x,
         relative_delta_x,
         hitbox.half_width + hurtbox.half_width,
+        hitbox.temporal_forgiveness,
     )
     depth = _axis_sweep_interval(
         relative_depth,
         relative_delta_depth,
         hitbox.half_depth + hitbox.depth_tolerance + hurtbox.half_depth,
+        hitbox.temporal_forgiveness,
     )
     return horizontal, depth
 
@@ -1152,8 +1191,8 @@ def _attack_evaluation_gaps(hitbox: HitBox, hurtbox: HurtBox) -> tuple[float, fl
             hurt_swept.max_depth,
         ),
         _interval_gap(
-            hitbox.elevation,
-            hitbox.top_elevation,
+            hitbox.tolerant_bottom_elevation,
+            hitbox.tolerant_top_elevation,
             hurtbox.elevation,
             hurtbox.top_elevation,
         ),
@@ -1250,8 +1289,8 @@ def _attack_rejection(
     if planar_rejection is not None:
         return planar_rejection, frozenset(), frozenset(), 0.0
     if not _vertical_overlap(
-        hitbox.elevation,
-        hitbox.top_elevation,
+        hitbox.tolerant_bottom_elevation,
+        hitbox.tolerant_top_elevation,
         hurtbox.elevation,
         hurtbox.top_elevation,
         touching=True,

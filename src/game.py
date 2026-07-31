@@ -3760,6 +3760,15 @@ class FadesGame:
         heavy_impact = attack_kind == "heavy" or bool(move.get("knockdown", False))
         hitstop = float(physics["heavy_hitstop"] if heavy_impact else physics["light_hitstop"])
         shake = 5.2 if finisher else 4.2 if heavy_impact else 2.4 + player.combo_step * 0.35
+        move_elevation_forgiveness = float(move.get("elevation_forgiveness", 0.0))
+        move_temporal_forgiveness = float(move.get("temporal_forgiveness", 0.0))
+        global_elevation_forgiveness = float(
+            physics.get("player_attack_elevation_forgiveness", 0.0)
+        )
+        elevation_tolerance = move_elevation_forgiveness + global_elevation_forgiveness
+        temporal_tolerance = move_temporal_forgiveness + float(
+            physics.get("player_attack_temporal_forgiveness", 0.0)
+        )
         hit_memory = already_hit if already_hit is not None else set()
         counts = hit_counts if hit_counts is not None else {}
         times = last_hit_times if last_hit_times is not None else {}
@@ -3783,9 +3792,7 @@ class FadesGame:
             attack_depth,
             elevation=max(
                 0.0,
-                player.z
-                - (8.0 if attack_kind == "air_attack" else 0.0)
-                - float(move.get("elevation_forgiveness", 0.0)),
+                player.z - (8.0 if attack_kind == "air_attack" else 0.0),
             ),
             half_width=range_x * 0.5 + 5.0,
             half_depth=max(
@@ -3799,8 +3806,9 @@ class FadesGame:
                 )
             ),
             height=(34.0 if attack_kind == "air_attack" else 46.0)
-            * sampled["height_scale"]
-            + float(move.get("elevation_forgiveness", 0.0)),
+            * sampled["height_scale"],
+            elevation_tolerance=elevation_tolerance,
+            temporal_forgiveness=temporal_tolerance,
             damage=float(move["damage"]) * player.fist_damage_multiplier(),
             stun=float(move["hitstun"]),
             knockback_x=player.facing * float(move["knockback"]),

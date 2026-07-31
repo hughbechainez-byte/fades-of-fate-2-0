@@ -299,6 +299,8 @@
                                    "player_attack_aim_range_bonus":  10,
                                    "player_attack_lane_assist":  9,
                                    "player_attack_depth_tolerance":  6,
+                                   "player_attack_elevation_forgiveness":  2.0,
+                                   "player_attack_temporal_forgiveness":  0.09,
                                    "player_attack_max_targets":  1,
                                    "player_attack_rear_tolerance":  3,
                                    "enemy_attack_max_targets":  1,

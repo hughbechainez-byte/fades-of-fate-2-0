@@ -213,6 +213,50 @@ class AttackQueryTests(unittest.TestCase):
         attack = HitBox("low", "dave", "heroes", 0.0, 0.0, elevation=0.0, height=30.0)
         self.assertEqual(query_attack(attack, [high_target]), ())
 
+    def test_vertical_tolerance_allows_actor_slightly_out_of_primary_vertical_overlap(self) -> None:
+        high_target = HurtBox("high", "enemy", 0.0, 0.0, elevation=31.0, height=20.0)
+        attack = HitBox(
+            "low",
+            "dave",
+            "heroes",
+            0.0,
+            0.0,
+            elevation=0.0,
+            height=30.0,
+            elevation_tolerance=2.0,
+        )
+        self.assertEqual([result.target_id for result in query_attack(attack, [high_target])], ["high"])
+
+    def test_temporal_forgiveness_catches_slightly_late_sweep_overlap(self) -> None:
+        target = HurtBox("near-late", "enemy", 9.05, 0.0, half_width=2.0, half_depth=2.0)
+        attack = HitBox(
+            "late-hit",
+            "dave",
+            "heroes",
+            5.0,
+            0.0,
+            half_width=2.0,
+            half_depth=2.0,
+            sweep_from_x=0.0,
+            sweep_from_depth=0.0,
+        )
+
+        self.assertEqual(query_attack(attack, [target]), ())
+
+        forgiving_attack = HitBox(
+            "late-hit",
+            "dave",
+            "heroes",
+            5.0,
+            0.0,
+            half_width=2.0,
+            half_depth=2.0,
+            sweep_from_x=0.0,
+            sweep_from_depth=0.0,
+            temporal_forgiveness=0.03,
+        )
+        self.assertEqual([result.target_id for result in query_attack(forgiving_attack, [target])], ["near-late"])
+
     def test_results_are_deterministic_nearest_first_and_hash_matches_list(self) -> None:
         targets = [
             HurtBox("tie-b", "enemy", 4.0, 3.0, half_width=1.0, half_depth=1.0),
