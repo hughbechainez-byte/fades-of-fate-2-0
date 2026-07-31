@@ -61,12 +61,12 @@ class CombatSystemsTests(unittest.TestCase):
         self.game._draw_effects(canvas)
         self.assertGreater(pygame.mask.from_surface(canvas).count(), 400)
 
-    def test_combo_follow_through_resolves_one_clear_front_target(self) -> None:
+    def test_combo_follow_through_hits_two_clear_front_targets_across_depth(self) -> None:
         self.dave.x, self.dave.y, self.dave.facing = 300.0, 270.0, 1
         move = self.game.data["moves"]["light_combo"][1]
         front = self.enemy(820, self.dave.x + 34.0, self.dave.y)
         rear = self.enemy(821, self.dave.x - 31.0, self.dave.y)
-        side = self.enemy(822, self.dave.x, self.dave.y + 39.0)
+        side = self.enemy(822, self.dave.x + 12.0, self.dave.y + 39.0)
         far = self.enemy(823, self.dave.x + float(move["combo_radius"]) + 35.0, self.dave.y)
         self.game.enemies = [front, rear, side, far]
         self.dave.combo_step = 1
@@ -74,9 +74,10 @@ class CombatSystemsTests(unittest.TestCase):
 
         hits = self.game.player_attack(self.dave, move, "light", already_hit=set())
 
-        self.assertEqual(hits, 1)
+        self.assertEqual(hits, 2)
         self.assertLess(front.health, front.max_health)
-        self.assertTrue(all(enemy.health == enemy.max_health for enemy in (rear, side, far)))
+        self.assertLess(side.health, side.max_health)
+        self.assertTrue(all(enemy.health == enemy.max_health for enemy in (rear, far)))
         self.assertIn("fist", {effect.kind for effect in self.game.effects})
 
     def test_focused_wave_caps_queue_and_scales_spawned_enemies_tougher(self) -> None:
