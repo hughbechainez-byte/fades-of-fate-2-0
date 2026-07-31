@@ -3724,7 +3724,11 @@ class FadesGame:
         aim_bonus = float(
             move.get("aim_range_bonus", physics.get("player_attack_aim_range_bonus", 0.0))
         )
-        assist_reach = max(0.0, range_x + aim_bonus) + max(0.0, lunge)
+        # Aim forgiveness is real strike reach, not only a prefilter.  Keeping
+        # acquisition and contact on one envelope prevents assisted targets
+        # from being selected and then rejected by the narrower hitbox.
+        range_x = max(0.0, range_x + aim_bonus)
+        assist_reach = range_x + max(0.0, lunge)
         assist_depth = lane_assist + float(
             physics.get("player_attack_depth_tolerance", 0.0)
         ) + depth_forgiveness

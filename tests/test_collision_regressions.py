@@ -195,7 +195,7 @@ class CollisionRegressionTests(unittest.TestCase):
         self.game.enemies = [rear, second, first]
         self.dave.combo_step = 3
         move = self.dave._light_move()
-        self.assertEqual(move["max_targets"], 2)
+        self.assertEqual(move["max_targets"], 3)
         self.dave.set_state("light", self.dave._move_total(move))
 
         for _ in range(20):
@@ -206,6 +206,21 @@ class CollisionRegressionTests(unittest.TestCase):
         self.assertEqual(rear.health, rear.max_health)
         self.assertEqual(first.state, "down")
         self.assertEqual(second.state, "down")
+
+    def test_heavy_attack_hits_three_spread_front_targets_at_forgiving_range(self) -> None:
+        self.dave.x, self.dave.y, self.dave.facing = 280.0, 270.0, 1
+        move = self.game.data["moves"]["heavy"]
+        upper = self.enemy(1250, self.dave.x + 35.0, self.dave.y - 26.0)
+        center = self.enemy(1251, self.dave.x + 48.0, self.dave.y)
+        lower = self.enemy(1252, self.dave.x + 58.0, self.dave.y + 26.0)
+        outside = self.enemy(1253, self.dave.x + 90.0, self.dave.y)
+        self.game.enemies = [outside, lower, center, upper]
+
+        hits = self.game.player_attack(self.dave, move, "heavy", already_hit=set())
+
+        self.assertEqual(hits, 3)
+        self.assertTrue(all(enemy.health < enemy.max_health for enemy in (upper, center, lower)))
+        self.assertEqual(outside.health, outside.max_health)
 
     def test_downed_and_wakeup_invulnerable_targets_reject_normal_strikes(self) -> None:
         self.shelly.state = "eliminated"
