@@ -1,0 +1,14 @@
+{
+  "content_revision": 1,
+  "content_version": "0.14.0-chapter-one-production",
+  "files": [],
+  "generated_utc": "2026-07-31T00:00:00+00:00",
+  "minimum_game_version": "0.14.0-chapter-one-production",
+  "pack": {
+    "asset": "fades-of-fate-content-pack.zip",
+    "sha256": "",
+    "size": 0
+  },
+  "schema_version": 1,
+  "source_commit": "local-bootstrap"
+}

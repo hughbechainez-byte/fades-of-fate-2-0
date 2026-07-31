@@ -18,10 +18,44 @@ from .location_lock import (
 
 GAME_NAME = "The Fades of Fate"
 LOGICAL_SIZE = (640, 360)
+CONTENT_ROOT_ENV = "FADES_OF_FATE_CONTENT_ROOT"
+CONTENT_MANIFEST_PATH = "data/content-manifest.json"
 
 
 class ConfigError(ValueError):
     """Raised when editable gameplay data violates the engine contract."""
+
+
+def content_root() -> Path:
+    """Return the writable game-content root used for synchronized updates."""
+    candidates: list[Path] = []
+    override = os.environ.get(CONTENT_ROOT_ENV)
+    if override:
+        candidates.append(Path(override).expanduser())
+
+    if os.name == "nt":
+        local_data_root = os.environ.get("LOCALAPPDATA") or os.environ.get("APPDATA")
+        if local_data_root:
+            candidates.append(
+                Path(local_data_root) / "The Fades of Fate" / "content"
+            )
+    else:
+        local_data_root = os.environ.get("XDG_DATA_HOME")
+        if local_data_root:
+            candidates.append(Path(local_data_root) / "the-fades-of-fate" / "content")
+        else:
+            candidates.append(
+                Path.home() / ".local" / "share" / "the-fades-of-fate" / "content"
+            )
+
+    for candidate in candidates:
+        try:
+            candidate.mkdir(parents=True, exist_ok=True)
+            return candidate.resolve()
+        except OSError:
+            continue
+
+    return executable_root().resolve()
 
 
 def executable_root() -> Path:
@@ -36,11 +70,13 @@ def bundled_root() -> Path:
 
 
 def resource_path(relative: str | os.PathLike[str]) -> Path:
-    """Prefer an external override beside the executable, then bundled data."""
+    """Prefer synchronized content first, then executable data, then bundled data."""
     relative_path = Path(relative)
-    external = executable_root() / relative_path
-    if external.exists():
-        return external
+    content_root_path = content_root()
+    for root in (content_root_path, executable_root()):
+        candidate = root / relative_path
+        if candidate.exists():
+            return candidate
     return bundled_root() / relative_path
 
 

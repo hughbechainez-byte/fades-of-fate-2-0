@@ -118,6 +118,16 @@ The title and roster use the supplied Friday Activities KLICKAUD instrumental, p
 
 Authored animation atlases live in `assets\sprites`; transparent replacement PNGs with the same grid and dimensions are picked up automatically. `tools\build_sprite_atlas.py` normalizes newly generated transparent sheets into those runtime grids.
 
+## Android content + release workflow
+
+`tools/build_content_release.py` creates:
+- `dist/content/fades-of-fate-content-pack.zip` with all `assets/` and `data/` payload;
+- `dist/content/fades-of-fate-content-manifest.json` with revision + pack hash metadata.
+
+The game checks the GitHub release feed on startup (`--content-feed`) and applies a newer content pack into `FADES_OF_FATE_CONTENT_ROOT` automatically, so PC and Android consume the same content snapshot.
+
+`.github/workflows/android-apk-release.yml` builds the APK through Buildozer and uploads both the APK and content feed assets on tag pushes.
+
 Restart the game after changing the JSON. Keep a backup before large edits.
 
 ### Turn any music file into the stage track

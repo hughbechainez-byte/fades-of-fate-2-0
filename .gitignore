@@ -3,6 +3,10 @@ build/
 dist/
 logs/
 tmp/
+android/.buildozer/
+android/bin/
+android/.gradle/
+.buildozer/
 __pycache__/
 *.py[cod]
 *.log

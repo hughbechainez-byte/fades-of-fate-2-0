@@ -104,6 +104,27 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--mute", action="store_true", help="disable music and sound")
     parser.add_argument("--windowed", action="store_true", help="start in a resizable 1280x720 window")
     parser.add_argument("--ko-preview", action="store_true", help="render the first hero as the KO engine preview")
+    parser.add_argument(
+        "--skip-content-update",
+        action="store_true",
+        help="skip all startup content feed checks",
+    )
+    parser.add_argument(
+        "--content-root",
+        default=None,
+        help="override where updated content is written",
+    )
+    parser.add_argument(
+        "--content-feed",
+        default=None,
+        help="release feed URL for content pack discovery",
+    )
+    parser.add_argument(
+        "--content-update-timeout",
+        type=float,
+        default=6.0,
+        help="network timeout in seconds for content-update operations",
+    )
     return parser.parse_args()
 
 
@@ -120,10 +141,42 @@ def _run() -> int:
 
     from src.config import GAME_NAME, executable_root
     from src.game import FadesGame
+    from src.content_update import (
+        ContentUpdateError,
+        apply_content_update_if_available,
+    )
     from src.input_manager import InputManager
     from src.logger import breadcrumb, capture_exception, initialize_logging, shutdown_logging
 
+    update_result = None
+    if not args.self_test and not args.skip_content_update:
+        try:
+            update_result = apply_content_update_if_available(
+                content_root_override=args.content_root,
+                game_version=FadesGame.VERSION,
+                feed_url=args.content_feed,
+                timeout_seconds=args.content_update_timeout,
+            )
+        except ContentUpdateError as exc:
+            update_result = {
+                "status": "failed",
+                "updated": False,
+                "content_root": os.path.expanduser(
+                    args.content_root or os.environ.get("FADES_OF_FATE_CONTENT_ROOT", "")
+                    or ""
+                ),
+                "local_revision": 0,
+                "remote_revision": 0,
+                "manifest_path": "",
+                "reason": str(exc),
+            }
+
     initialize_logging(FadesGame.VERSION)
+    if update_result:
+        breadcrumb("content_update", **(
+            update_result.as_dict() if hasattr(update_result, "as_dict") else update_result
+        ))
+
     pygame.mixer.pre_init(44_100, -16, 2, 512)
     pygame.init()
     pygame.joystick.init()

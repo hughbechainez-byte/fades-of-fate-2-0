@@ -1,0 +1,23 @@
+[app]
+title = The Fades of Fate
+package.name = thefadesoffate
+package.domain = com.hughbechainezbyte.thefadesoffate
+source.dir = ..
+source.include_exts = py,png,jpg,jpeg,wav,ogg,mp3,json,txt
+source.include_patterns = src/**/*.py,assets/**/*,data/**/*
+source.exclude_patterns = .git, .venv, .github, build, dist, logs, tmp, .mypy_cache, tests
+version = 0.14.0
+requirements = python3,pygame==2.5.2
+orientation = landscape
+fullscreen = 1
+android.permissions = INTERNET, WRITE_EXTERNAL_STORAGE
+android.api = 30
+android.minapi = 21
+android.ndk = 25b
+android.accept_sdk_license = True
+android.allow_skip_permissions = True
+android.gradle_dependencies = 
+android.arch = arm64-v8a
+
+[buildozer]
+log_level = 2

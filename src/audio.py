@@ -20,6 +20,7 @@ import weakref
 import wave
 from typing import Any, Optional
 
+from .config import content_root
 
 try:
     from .logger import breadcrumb
@@ -111,6 +112,8 @@ def _assets_directory() -> Path:
         return Path(override).expanduser().resolve()
 
     candidates: list[Path] = []
+    content_root_path = content_root()
+    candidates.append(content_root_path / "assets" / "audio")
     bundle_root = getattr(sys, "_MEIPASS", None)
     if getattr(sys, "frozen", False):
         candidates.append(Path(sys.executable).resolve().parent / "assets" / "audio")
