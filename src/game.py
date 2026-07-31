@@ -3720,20 +3720,40 @@ class FadesGame:
             move.get("lane_assist", physics.get("player_attack_lane_assist", 0.0))
         )
         lunge = float(move.get("lunge", 0.0))
+        depth_forgiveness = float(move.get("depth_forgiveness", 0.0))
         aim_bonus = float(
             move.get("aim_range_bonus", physics.get("player_attack_aim_range_bonus", 0.0))
         )
         assist_reach = max(0.0, range_x + aim_bonus) + max(0.0, lunge)
-        rear_tolerance = float(physics.get("player_attack_rear_tolerance", 0.0))
+        assist_depth = lane_assist + float(
+            physics.get("player_attack_depth_tolerance", 0.0)
+        ) + depth_forgiveness
+        rear_tolerance = float(
+            move.get("rear_tolerance", physics.get("player_attack_rear_tolerance", 0.0))
+        )
+
+        def _in_player_front_arc(candidate: Enemy) -> bool:
+            if player.facing == 0:
+                return True
+            sample_x = candidate.hitbox_sweep_x
+            if sample_x is None:
+                sample_x = candidate.x
+            half_width, _, _, _ = self._actor_extents(candidate)
+            for x in (sample_x, candidate.x):
+                forward_edge = x + (half_width if player.facing > 0 else -half_width)
+                if (forward_edge - player.x) * player.facing >= -rear_tolerance:
+                    return True
+            return False
+
         assist_candidates = [
             enemy
             for enemy in self.enemies
             if enemy.targetable
             and enemy.state != "down"
             and enemy.wake_invulnerable <= 0.0
-            and (enemy.x - player.x) * player.facing >= -rear_tolerance
+            and _in_player_front_arc(enemy)
             and abs(enemy.x - player.x) <= assist_reach
-            and abs(enemy.y - player.y) <= range_depth + lane_assist
+            and abs(enemy.y - player.y) <= range_depth + assist_depth
         ]
         assisted = min(
             assist_candidates,
@@ -3810,7 +3830,6 @@ class FadesGame:
             height=(34.0 if attack_kind == "air_attack" else 46.0)
             * sampled["height_scale"],
             elevation_tolerance=elevation_tolerance,
-            temporal_forgiveness=temporal_tolerance,
             damage=float(move["damage"]) * player.fist_damage_multiplier(),
             stun=float(move["hitstun"]),
             knockback_x=player.facing * float(move["knockback"]),
@@ -3833,6 +3852,7 @@ class FadesGame:
             front_origin_x=player.x,
             front_origin_depth=player.y,
             rear_tolerance=rear_tolerance,
+            temporal_forgiveness=temporal_tolerance,
         )
         player.attack_sweep_x = attack_x
         player.attack_sweep_y = attack_depth

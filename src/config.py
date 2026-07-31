@@ -418,6 +418,7 @@ def _validate_combat_move(move: Any, label: str) -> None:
         "lane_assist",
         "aim_range_bonus",
         "lunge",
+        "rear_tolerance",
     ):
         if field in move and _finite_number(move[field], f"{label}.{field}") < 0.0:
             raise ConfigError(f"{label}.{field} must be non-negative")

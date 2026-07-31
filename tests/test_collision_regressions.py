@@ -78,6 +78,30 @@ class CollisionRegressionTests(unittest.TestCase):
         self.assertEqual(hits, 1)
         self.assertLess(target.health, target.max_health)
 
+    def test_player_attack_hits_when_target_is_slightly_behind_but_crossed_forward(self) -> None:
+        self.dave.x, self.dave.y, self.dave.facing = 260.0, 270.0, 1
+        move = self.game.data["moves"]["light_combo"][1]
+        target = self.enemy(102, self.dave.x - 10.0, self.dave.y)
+        target.hitbox_sweep_x = self.dave.x + 14.0
+        target.hitbox_sweep_y = self.dave.y
+        self.game.enemies = [target]
+
+        hits = self.game.player_attack(self.dave, move, "light", already_hit=set())
+
+        self.assertEqual(hits, 1)
+        self.assertLess(target.health, target.max_health)
+
+    def test_player_attack_connects_with_small_depth_mismatch(self) -> None:
+        self.dave.x, self.dave.y, self.dave.facing = 260.0, 270.0, 1
+        move = self.game.data["moves"]["light_combo"][0]
+        target = self.enemy(103, self.dave.x + 24.0, self.dave.y + 20.0)
+        self.game.enemies = [target]
+
+        hits = self.game.player_attack(self.dave, move, "light", already_hit=set())
+
+        self.assertEqual(hits, 1)
+        self.assertLess(target.health, target.max_health)
+
     def test_player_punch_resolves_one_nearest_front_target_not_a_crowd(self) -> None:
         self.dave.x, self.dave.y, self.dave.facing = 280.0, 270.0, 1
         move = self.game.data["moves"]["light_combo"][1]
