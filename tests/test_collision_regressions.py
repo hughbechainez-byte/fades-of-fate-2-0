@@ -109,6 +109,29 @@ class CollisionRegressionTests(unittest.TestCase):
         self.assertEqual(hits, 1)
         self.assertLess(target.health, target.max_health)
 
+    def test_player_lunge_lane_assist_reaches_slightly_out_of_base_range(self) -> None:
+        self.dave.x, self.dave.y, self.dave.facing = 260.0, 270.0, 1
+        move = self.game.data["moves"]["heavy"]
+        physics = self.game.data["engine"]["physics"]
+        sampled = self.game._sample_move_hitbox(move, 0.0)
+        base_reach = (
+            float(move["range_x"])
+            + float(physics.get("player_attack_reach_bonus", 0.0))
+            + float(move.get("reach_forgiveness", 0.0))
+        ) * sampled["reach_scale"]
+        assist_range = base_reach + float(physics.get("player_attack_aim_range_bonus", 0.0))
+        target = self.enemy(
+            109,
+            self.dave.x + assist_range + float(move["lunge"]) - 0.5,
+            self.dave.y,
+        )
+        self.game.enemies = [target]
+
+        hits = self.game.player_attack(self.dave, move, "heavy", already_hit=set())
+
+        self.assertEqual(hits, 1)
+        self.assertLess(target.health, target.max_health)
+
     def test_single_target_cap_applies_to_the_whole_attack_execution(self) -> None:
         self.shelly.state = "eliminated"
         move = self.game.data["moves"]["light_combo"][0]

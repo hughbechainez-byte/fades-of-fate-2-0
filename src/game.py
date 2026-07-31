@@ -3719,9 +3719,11 @@ class FadesGame:
         lane_assist = float(
             move.get("lane_assist", physics.get("player_attack_lane_assist", 0.0))
         )
+        lunge = float(move.get("lunge", 0.0))
         aim_bonus = float(
             move.get("aim_range_bonus", physics.get("player_attack_aim_range_bonus", 0.0))
         )
+        assist_reach = max(0.0, range_x + aim_bonus) + max(0.0, lunge)
         rear_tolerance = float(physics.get("player_attack_rear_tolerance", 0.0))
         assist_candidates = [
             enemy
@@ -3730,7 +3732,7 @@ class FadesGame:
             and enemy.state != "down"
             and enemy.wake_invulnerable <= 0.0
             and (enemy.x - player.x) * player.facing >= -rear_tolerance
-            and abs(enemy.x - player.x) <= range_x + aim_bonus
+            and abs(enemy.x - player.x) <= assist_reach
             and abs(enemy.y - player.y) <= range_depth + lane_assist
         ]
         assisted = min(
@@ -3745,7 +3747,7 @@ class FadesGame:
         if assisted is not None:
             if play_whiff:
                 lunge = min(
-                    float(move.get("lunge", 0.0)),
+                    lunge,
                     max(0.0, abs(assisted.x - player.x) - 18.0),
                 )
                 if lunge > 0.0:
