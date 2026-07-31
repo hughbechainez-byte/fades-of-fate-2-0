@@ -102,6 +102,19 @@ class CollisionRegressionTests(unittest.TestCase):
         self.assertEqual(hits, 1)
         self.assertLess(target.health, target.max_health)
 
+    def test_player_attack_centers_depth_assist_across_two_nearby_targets(self) -> None:
+        self.dave.x, self.dave.y, self.dave.facing = 260.0, 270.0, 1
+        move = self.game.data["moves"]["light_combo"][0]
+        upper = self.enemy(104, self.dave.x + 25.0, self.dave.y - 28.0)
+        lower = self.enemy(110, self.dave.x + 27.0, self.dave.y + 28.0)
+        self.game.enemies = [lower, upper]
+
+        hits = self.game.player_attack(self.dave, move, "light", already_hit=set())
+
+        self.assertEqual(hits, 2)
+        self.assertLess(upper.health, upper.max_health)
+        self.assertLess(lower.health, lower.max_health)
+
     def test_player_punch_hits_two_nearest_front_targets_not_rear_targets(self) -> None:
         self.dave.x, self.dave.y, self.dave.facing = 280.0, 270.0, 1
         move = self.game.data["moves"]["light_combo"][1]

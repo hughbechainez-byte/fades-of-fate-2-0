@@ -3731,6 +3731,10 @@ class FadesGame:
         rear_tolerance = float(
             move.get("rear_tolerance", physics.get("player_attack_rear_tolerance", 0.0))
         )
+        max_targets = max(
+            1,
+            int(move.get("max_targets", physics.get("player_attack_max_targets", 1))),
+        )
 
         def _in_player_front_arc(candidate: Enemy) -> bool:
             if player.facing == 0:
@@ -3755,16 +3759,16 @@ class FadesGame:
             and abs(enemy.x - player.x) <= assist_reach
             and abs(enemy.y - player.y) <= range_depth + assist_depth
         ]
-        assisted = min(
+        assisted_group = sorted(
             assist_candidates,
             key=lambda enemy: (
                 abs(enemy.x - player.x) + abs(enemy.y - player.y) * 1.5,
                 abs(enemy.y - player.y),
                 enemy.enemy_id,
             ),
-            default=None,
-        )
-        if assisted is not None:
+        )[:max_targets]
+        if assisted_group:
+            assisted = assisted_group[0]
             if play_whiff:
                 lunge = min(
                     lunge,
@@ -3772,7 +3776,8 @@ class FadesGame:
                 )
                 if lunge > 0.0:
                     player._move_world(self, player.facing * lunge, 0.0)
-            attack_depth += clamp(assisted.y - player.y, -lane_assist, lane_assist)
+            group_depth = sum(enemy.y for enemy in assisted_group) / len(assisted_group)
+            attack_depth += clamp(group_depth - player.y, -lane_assist, lane_assist)
         attack_x = (
             player.x
             + player.facing * (range_x * 0.5 - 5.0 + sampled["offset_x"])
@@ -3794,10 +3799,6 @@ class FadesGame:
         hit_memory = already_hit if already_hit is not None else set()
         counts = hit_counts if hit_counts is not None else {}
         times = last_hit_times if last_hit_times is not None else {}
-        max_targets = max(
-            1,
-            int(move.get("max_targets", physics.get("player_attack_max_targets", 1))),
-        )
         remaining_targets = max_targets - len(hit_memory)
         max_hits_per_target = max(1, int(move.get("max_hits_per_target", 1)))
         attack = HitBox(
@@ -3821,11 +3822,9 @@ class FadesGame:
                 2.0,
                 range_depth - float(physics["enemy_radius_depth"]),
             ),
-            depth_tolerance=float(
-                move.get(
-                    "depth_forgiveness",
-                    physics.get("player_attack_depth_tolerance", 0.0),
-                )
+            depth_tolerance=(
+                float(physics.get("player_attack_depth_tolerance", 0.0))
+                + depth_forgiveness
             ),
             height=(34.0 if attack_kind == "air_attack" else 46.0)
             * sampled["height_scale"],
