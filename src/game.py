@@ -205,7 +205,7 @@ class AudioAdapter:
 
 
 class FadesGame:
-    VERSION = "0.15.0-visual-overhaul-4.9"
+    VERSION = "0.15.0-visual-overhaul-4.10"
 
     def __init__(self, input_manager: InputManager, *, mute: bool = False) -> None:
         self.data = load_gameplay()

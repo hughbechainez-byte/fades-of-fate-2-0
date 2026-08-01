@@ -3879,6 +3879,42 @@ def _draw_motion_echo(
     _blit_grounded(surface, echo, x - direction * offset, y, z, facing, bottom)
 
 
+def _draw_action_ribbon(
+    surface: pygame.Surface,
+    x: float,
+    y: float,
+    z: float,
+    facing: object,
+    state: str,
+    bottom: int,
+    frame: int,
+) -> None:
+    """Draw two restrained timing ribbons behind fast authored action cels."""
+
+    specs = {
+        "attack_1": (18, 38, (255, 190, 102)),
+        "attack_2": (24, 44, (255, 220, 125)),
+        "attack_3": (30, 51, (255, 239, 169)),
+        "heavy": (28, 48, (255, 171, 91)),
+        "air_attack": (26, 44, (154, 235, 255)),
+        "dodge": (22, 36, (122, 220, 242)),
+        "super": (34, 56, (255, 239, 151)),
+    }
+    spec = specs.get(state)
+    if spec is None:
+        return
+    reach, lift, color = spec
+    direction = _face_sign(facing)
+    anchor_y = _i(y - z) - int(bottom) + lift
+    phase = int(frame) % 4
+    for index in range(2):
+        offset = phase * 2 + index * 5
+        start = (_i(x) - direction * (reach - offset), anchor_y + index * 5)
+        end = (_i(x) - direction * (reach + 14 - offset), anchor_y + 8 + index * 5)
+        pygame.draw.line(surface, (51, 36, 43), start, end, 4)
+        pygame.draw.line(surface, color, start, end, 1)
+
+
 def draw_player(
     surface: pygame.Surface,
     x: float,
@@ -3936,6 +3972,7 @@ def draw_player(
             state_name,
             accent,
         )
+        _draw_action_ribbon(surface, x, y, z, facing, state_name, authored.get_height() - 4, int(frame))
         _draw_motion_echo(surface, rendered, x, y, z, facing, authored.get_height() - 4, state_name, int(frame))
         return _blit_grounded(
             surface,
@@ -3974,6 +4011,7 @@ def draw_player(
         state_name,
         accent,
     )
+    _draw_action_ribbon(surface, x, y, z, facing, state_name, 90, int(frame))
     _draw_motion_echo(surface, rendered, x, y, z, facing, 90, state_name, int(frame))
     return _blit_grounded(surface, rendered, x, y, z, facing, 90)
 
