@@ -1210,6 +1210,15 @@ class PixelArtTests(unittest.TestCase):
             pygame.image.tobytes(planter_late, "RGBA"),
             "scenery foliage should carry deterministic wind motion and glints",
         )
+        dumpster_zero = pygame.Surface((180, 140), pygame.SRCALPHA)
+        dumpster_late = pygame.Surface((180, 140), pygame.SRCALPHA)
+        pixel_art.draw_stage_prop(dumpster_zero, 90, 120, "dumpster", frame=0)
+        pixel_art.draw_stage_prop(dumpster_late, 90, 120, "dumpster", frame=4)
+        self.assertNotEqual(
+            pygame.image.tobytes(dumpster_zero, "RGBA"),
+            pygame.image.tobytes(dumpster_late, "RGBA"),
+            "scenery metal should carry deterministic moving glints",
+        )
 
     def test_charged_player_states_add_a_rim_without_changing_silhouette(self) -> None:
         authored = sprite_atlas.player_frame("black_dave", "super", 4)

@@ -3325,6 +3325,10 @@ def draw_stage_prop(
         pygame.draw.rect(sprite, outline, (66, 58, 13, 8))
         pygame.draw.rect(sprite, (89, 92, 91), (21, 60, 7, 5))
         pygame.draw.rect(sprite, (89, 92, 91), (69, 60, 7, 5))
+        glint_x = 18 + (int(frame) * 4) % 52
+        pygame.draw.rect(sprite, (181, 211, 180), (glint_x, 27, 6, 2))
+        if int(frame) % 6 in {2, 3}:
+            pygame.draw.rect(sprite, (226, 193, 100), (51, 34, 3, 2))
         bottom = 66
     elif prop == "cart_return":
         # Green-roofed Sprouts lot corral with nested carts and wheel detail.
