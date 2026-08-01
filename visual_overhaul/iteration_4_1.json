@@ -20,12 +20,12 @@
     "content_pack_bytes": 113676083,
     "android_local_build": "unavailable: Buildozer/WSL not installed",
     "android_device_qa": "unavailable: adb reported no devices",
-    "online_android_attempt": "pending workflow 30680796484",
+    "online_android_attempt": "workflow 30680796484 completed successfully",
     "online_android_fix": "android/buildozer.spec includes main.py explicitly, omits empty Gradle dependencies, and excludes tools; Gradle heap capped at 4096m",
-    "online_android_workflow": "in_progress: run 30680796484",
-    "online_release": "pending workflow 30680796484",
-    "online_apk": "pending workflow 30680796484",
-    "online_content_pack": "pending workflow 30680796484"
+    "online_android_workflow": "success: run 30680796484",
+    "online_release": "https://github.com/hughbechainez-byte/the-fades-of-fate/releases/tag/v0.15.0-visual-overhaul-4.5",
+    "online_apk": "thefadesoffate-0.15.0-arm64-v8a-debug.apk sha256:78a795bd80fd1e71dfbbe067786b3c251a5f4e8fa64037b15390dbae92e642c1",
+    "online_content_pack": "fades-of-fate-content-pack.zip sha256:b198c583228220b63f865274cdf32a61d84ac835de5010e59660dcadb8d77f51"
   },
   "artifacts": {
     "windows_dist": "dist/The Fades of Fate",
