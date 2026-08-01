@@ -1268,6 +1268,13 @@ class PixelArtTests(unittest.TestCase):
             "BB projectiles should carry a readable moving casing glint",
         )
 
+    def test_dust_impacts_add_a_phase_driven_ground_arc(self) -> None:
+        early = pygame.Surface((120, 100), pygame.SRCALPHA)
+        late = pygame.Surface((120, 100), pygame.SRCALPHA)
+        draw_effect(early, 60, 50, kind="dust", frame=0, radius=18)
+        draw_effect(late, 60, 50, kind="dust", frame=4, radius=18)
+        self.assertNotEqual(pygame.image.tobytes(early, "RGBA"), pygame.image.tobytes(late, "RGBA"))
+
     def test_ko_preview_is_opt_in_and_never_replaces_dave_in_normal_play(self) -> None:
         normal_canvas = pygame.Surface((400, 240), pygame.SRCALPHA)
         preview_canvas = pygame.Surface((400, 240), pygame.SRCALPHA)

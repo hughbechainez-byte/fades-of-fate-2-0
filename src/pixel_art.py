@@ -5038,6 +5038,10 @@ def draw_effect(
             pygame.draw.rect(surface, base if color else dust_colors[index], piece)
             pygame.draw.rect(surface, _shade(base if color else dust_colors[index], 28), (piece.x + 1, piece.y, max(1, piece.w - 2), 2))
             pieces.append(piece)
+        ring = pygame.Rect(cx - spread - 5, cy - max(4, spread // 2), max(12, spread * 2 + 10), max(8, spread))
+        pygame.draw.arc(surface, (54, 47, 48), ring, 0.1, math.pi - 0.1, 3)
+        pygame.draw.arc(surface, base if color else (205, 174, 130), ring.inflate(-3, -2), 0.15, math.pi - 0.15, 1)
+        pieces.append(ring)
         return pieces[0].unionall(pieces[1:])
 
     if effect in {"chief_super", "claw", "slash", "dog_slash"}:
