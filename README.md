@@ -126,7 +126,9 @@ Authored animation atlases live in `assets\sprites`; transparent replacement PNG
 
 The game checks the GitHub release feed on startup (`--content-feed`) and applies a newer content pack into `FADES_OF_FATE_CONTENT_ROOT` automatically, so PC and Android consume the same content snapshot.
 
-`.github/workflows/android-apk-release.yml` builds the APK through Buildozer and uploads both the APK and content feed assets on tag pushes.
+`.github/workflows/android-apk-release.yml` builds the APK through Buildozer and uploads both the APK and content feed assets on tag pushes. `.github/workflows/windows-desktop-release.yml` builds and validates the PyInstaller package on a Windows runner, archives the complete onedir package, and uploads `The-Fades-of-Fate-<tag>-Windows-x64.zip` to the same GitHub Release.
+
+To publish a PC update, update the game version metadata, commit and push `main`, then create and push a matching `v*` tag. Every such tag now receives the Windows ZIP automatically; extract it and launch `The Fades of Fate.exe`. The ZIP is required because the executable depends on its bundled `_internal`, `assets`, and `data` folders.
 
 Restart the game after changing the JSON. Keep a backup before large edits.
 
