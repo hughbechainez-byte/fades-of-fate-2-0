@@ -1227,6 +1227,17 @@ class PixelArtTests(unittest.TestCase):
             "character material sheen should travel across the authored cel",
         )
 
+    def test_hit_sparks_emit_deterministic_trailing_shards(self) -> None:
+        early = pygame.Surface((120, 100), pygame.SRCALPHA)
+        late = pygame.Surface((120, 100), pygame.SRCALPHA)
+        draw_effect(early, 60, 50, kind="hit", frame=0, radius=12)
+        draw_effect(late, 60, 50, kind="hit", frame=4, radius=12)
+        self.assertNotEqual(
+            pygame.image.tobytes(early, "RGBA"),
+            pygame.image.tobytes(late, "RGBA"),
+            "hit sparks should carry readable phase-driven shard motion",
+        )
+
     def test_ko_preview_is_opt_in_and_never_replaces_dave_in_normal_play(self) -> None:
         normal_canvas = pygame.Surface((400, 240), pygame.SRCALPHA)
         preview_canvas = pygame.Surface((400, 240), pygame.SRCALPHA)

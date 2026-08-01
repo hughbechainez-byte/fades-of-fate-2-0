@@ -5027,8 +5027,13 @@ def draw_effect(
     inner = [(cx, cy - r // 2), (cx + r // 2, cy), (cx, cy + r // 2), (cx - r // 2, cy)]
     pygame.draw.polygon(surface, (255, 248, 189), inner)
     pygame.draw.rect(surface, (255, 255, 239), (cx - 3, cy - 3, 6, 6))
-    for dx, dy, shard_color in ((-r - 7, -5, (255, 118, 57)), (r + 5, -8, (255, 226, 98)), (-r // 2, r + 7, (255, 182, 65)), (r // 2, r + 4, (255, 244, 171))):
-        pygame.draw.rect(surface, shard_color, (cx + dx, cy + dy, 4, 3))
+    drift = (phase % 5) - 2
+    for index, (dx, dy, shard_color) in enumerate(((-r - 7, -5, (255, 118, 57)), (r + 5, -8, (255, 226, 98)), (-r // 2, r + 7, (255, 182, 65)), (r // 2, r + 4, (255, 244, 171)))):
+        shard_x = cx + dx + drift * (1 if index % 2 == 0 else -1)
+        shard_y = cy + dy + (phase // 2 if index in {1, 3} else 0)
+        pygame.draw.rect(surface, shard_color, (shard_x, shard_y, 4, 3))
+        if phase >= 2:
+            pygame.draw.rect(surface, (255, 247, 195), (shard_x + 1, shard_y - 2, 2, 1))
     return rect.inflate(18, 18)
 
 
