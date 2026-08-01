@@ -1191,6 +1191,16 @@ class PixelArtTests(unittest.TestCase):
             "cart wheels and metal glint should animate without changing prop bounds",
         )
 
+        planter_zero = pygame.Surface((180, 140), pygame.SRCALPHA)
+        planter_late = pygame.Surface((180, 140), pygame.SRCALPHA)
+        pixel_art.draw_stage_prop(planter_zero, 90, 120, "planter", frame=0)
+        pixel_art.draw_stage_prop(planter_late, 90, 120, "planter", frame=4)
+        self.assertNotEqual(
+            pygame.image.tobytes(planter_zero, "RGBA"),
+            pygame.image.tobytes(planter_late, "RGBA"),
+            "scenery foliage should carry deterministic wind motion and glints",
+        )
+
     def test_charged_player_states_add_a_rim_without_changing_silhouette(self) -> None:
         authored = sprite_atlas.player_frame("black_dave", "super", 4)
         base = pixel_art._material_lit_sprite(authored, "dave")

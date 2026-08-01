@@ -3382,9 +3382,12 @@ def draw_stage_prop(
         pygame.draw.rect(sprite, (141, 132, 119), (17, 42, 62, 5))
         pygame.draw.rect(sprite, (64, 50, 43), (18, 34, 61, 8))
         for root_x, color in ((28, (62, 111, 71)), (49, (74, 129, 82)), (68, (53, 98, 66))):
-            pygame.draw.polygon(sprite, outline, [(root_x, 38), (root_x - 14, 15), (root_x - 4, 35), (root_x, 8), (root_x + 5, 34), (root_x + 16, 14), (root_x + 7, 39)])
-            pygame.draw.polygon(sprite, color, [(root_x, 37), (root_x - 10, 18), (root_x - 3, 34), (root_x, 12), (root_x + 4, 34), (root_x + 12, 18), (root_x + 6, 38)])
-            pygame.draw.rect(sprite, _shade(color, 34), (root_x, 17, 2, 16))
+            sway = ((int(frame) + root_x // 7) % 6) - 2
+            pygame.draw.polygon(sprite, outline, [(root_x, 38), (root_x - 14 + sway, 15), (root_x - 4, 35), (root_x + sway, 8), (root_x + 5, 34), (root_x + 16 + sway, 14), (root_x + 7, 39)])
+            pygame.draw.polygon(sprite, color, [(root_x, 37), (root_x - 10 + sway, 18), (root_x - 3, 34), (root_x + sway, 12), (root_x + 4, 34), (root_x + 12 + sway, 18), (root_x + 6, 38)])
+            pygame.draw.rect(sprite, _shade(color, 34), (root_x + sway // 2, 17, 2, 16))
+            if (int(frame) + root_x) % 7 == 0:
+                pygame.draw.rect(sprite, (191, 222, 142), (root_x + 4 + sway, 18, 3, 2))
         bottom = 66
 
     return _blit_grounded(surface, _material_lit_sprite(sprite, "painted_metal", cache=False), x, y, 0.0, 1, bottom)
