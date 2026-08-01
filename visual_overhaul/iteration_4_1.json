@@ -1,18 +1,18 @@
 {
-  "iteration": "4.1",
-  "title": "Directional layered combat feedback",
-  "source_commit": "03479fc",
-  "game_version": "0.15.0-visual-overhaul-4.1",
+  "iteration": "4.2",
+  "title": "Directional motion echoes for authored combat cels",
+  "source_commit": "pending",
+  "game_version": "0.15.0-visual-overhaul-4.2",
   "content_revision": 2,
   "sections": {
-    "animation": "baseline preserved; authored floor remains 91 clips / 828 rooted poses",
-    "character_art": "Jerry atlas alpha-hole repair integrated",
+    "animation": "complete for this iteration: restrained direction-aware afterimages on attack, heavy, dodge, aerial, and super cels",
+    "character_art": "material-lit authored silhouettes preserved; motion echo is drawn below the current cel",
     "scenery": "baseline preserved and revalidated",
     "combat_effects": "complete for this iteration: directional sparks, streaks, rings, dust, alpha compositing, density budget",
     "props": "baseline preserved"
   },
   "verification": {
-    "unit_and_integration_tests": "422 passed",
+    "unit_and_integration_tests": "423 passed",
     "source_self_test": "pass",
     "package_self_test": "pass",
     "desktop_exe_sha256": "BF79E388339CF54A45F4B045EDCA38F266F49559961D8C95613A10238EAF4F4E",

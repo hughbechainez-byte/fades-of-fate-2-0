@@ -3745,6 +3745,41 @@ def _draw_shelly(sprite: pygame.Surface, state: str, frame: int, accent: tuple[i
         pygame.draw.rect(sprite, (255, 103, 76), (center - 22, 18 + crouch, 3, 7))
 
 
+def _draw_motion_echo(
+    surface: pygame.Surface,
+    sprite: pygame.Surface,
+    x: float,
+    y: float,
+    z: float,
+    facing: object,
+    bottom: int,
+    state: str,
+    frame: int,
+) -> None:
+    """Leave one low-alpha directional cel behind high-speed player poses."""
+
+    profiles = {
+        "attack_1": (3, 42),
+        "attack_2": (4, 50),
+        "attack_3": (5, 58),
+        "heavy": (5, 54),
+        "air_attack": (4, 46),
+        "dodge": (4, 52),
+        "super": (5, 48),
+    }
+    spec = profiles.get(state)
+    if spec is None:
+        return
+    offset, alpha = spec
+    # Alternate the strength by cel so the echo breathes instead of reading
+    # as a static duplicate when a pose holds for multiple ticks.
+    alpha = max(18, min(76, alpha + (6 if frame % 2 else -4)))
+    echo = sprite.copy()
+    echo.set_alpha(alpha)
+    direction = _face_sign(facing)
+    _blit_grounded(surface, echo, x - direction * offset, y, z, facing, bottom)
+
+
 def draw_player(
     surface: pygame.Surface,
     x: float,
@@ -3758,7 +3793,12 @@ def draw_player(
     *,
     hit_flash: float = 0.0,
 ) -> pygame.Rect:
-    """Draw Black Dave or Shelly as a large, arcade-readable pixel sprite."""
+    """Draw Black Dave or Shelly as a large, arcade-readable pixel sprite.
+
+    Fast authored cels get one restrained, direction-aware afterimage.  It is
+    drawn beneath the current cel so the silhouette stays readable while
+    attacks, dodges and aerial strikes carry visible momentum.
+    """
 
     name = str(character or "black_dave").strip().lower().replace(" ", "_").replace("-", "_")
     state_name = _state_name(state)
@@ -3789,6 +3829,7 @@ def draw_player(
         )
         profile = "dave" if name in {"black_dave", "dave", "blackdave"} else "shelly"
         rendered = _hit_flash_sprite(_material_lit_sprite(authored, profile), hit_flash)
+        _draw_motion_echo(surface, rendered, x, y, z, facing, authored.get_height() - 4, state_name, int(frame))
         return _blit_grounded(
             surface,
             rendered,
@@ -3818,6 +3859,7 @@ def draw_player(
         hit_flash,
         cache=False,
     )
+    _draw_motion_echo(surface, rendered, x, y, z, facing, 90, state_name, int(frame))
     return _blit_grounded(surface, rendered, x, y, z, facing, 90)
 
 
