@@ -1203,6 +1203,20 @@ class PixelArtTests(unittest.TestCase):
             "super state should carry a deliberate cool rim while preserving authored geometry",
         )
 
+    def test_character_material_sheen_moves_without_changing_silhouette(self) -> None:
+        authored = sprite_atlas.player_frame("shelly", "walk", 4)
+        base = pixel_art._material_lit_sprite(authored, "shelly")
+        early = pixel_art._character_sheen_sprite(base, "shelly", 0)
+        late = pixel_art._character_sheen_sprite(base, "shelly", 3)
+
+        self.assertEqual(pygame.mask.from_surface(base).count(), pygame.mask.from_surface(early).count())
+        self.assertEqual(pygame.mask.from_surface(base).count(), pygame.mask.from_surface(late).count())
+        self.assertNotEqual(
+            pygame.image.tobytes(early, "RGB"),
+            pygame.image.tobytes(late, "RGB"),
+            "character material sheen should travel across the authored cel",
+        )
+
     def test_ko_preview_is_opt_in_and_never_replaces_dave_in_normal_play(self) -> None:
         normal_canvas = pygame.Surface((400, 240), pygame.SRCALPHA)
         preview_canvas = pygame.Surface((400, 240), pygame.SRCALPHA)
