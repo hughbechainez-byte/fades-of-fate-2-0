@@ -21,7 +21,7 @@
     "android_local_build": "unavailable: Buildozer/WSL not installed",
     "android_device_qa": "unavailable: adb reported no devices",
     "online_android_attempt": "failed before APK creation: Buildozer did not copy root main.py",
-    "online_android_fix": "android/buildozer.spec now includes main.py explicitly"
+    "online_android_fix": "android/buildozer.spec now includes main.py explicitly and omits empty Gradle dependencies"
   },
   "artifacts": {
     "windows_dist": "dist/The Fades of Fate",

@@ -18,7 +18,6 @@ android.minapi = 21
 android.ndk = 25b
 android.accept_sdk_license = True
 android.allow_skip_permissions = True
-android.gradle_dependencies = 
 android.arch = arm64-v8a
 
 [buildozer]
