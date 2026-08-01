@@ -28,14 +28,27 @@
       "4.9": "success: 30681314400",
       "4.10": "success: 30681446197",
       "4.11": "success: 30681569888",
-      "4.12": "in_progress: 30681679076",
-      "4.13": "in_progress: 30681770593",
-      "4.14": "in_progress: 30681872843",
-      "4.15": "in_progress: 30681968739"
+      "4.12": "success: 30681679076",
+      "4.13": "success: 30681770593",
+      "4.14": "success: 30681872843",
+      "4.15": "success: 30681968739"
     },
-    "verified_online_release": "v0.15.0-visual-overhaul-4.5",
-    "verified_online_apk_sha256": "78a795bd80fd1e71dfbbe067786b3c251a5f4e8fa64037b15390dbae92e642c1",
-    "verified_online_content_pack_sha256": "b198c583228220b63f865274cdf32a61d84ac835de5010e59660dcadb8d77f51"
+    "online_release_assets": {
+      "4.5": "apk=78a795bd80fd1e71dfbbe067786b3c251a5f4e8fa64037b15390dbae92e642c1; pack=b198c583228220b63f865274cdf32a61d84ac835de5010e59660dcadb8d77f51",
+      "4.6": "apk=3774b9dad295b9c80319acfa57927744c3cefbbe72706dc39ae6e206fe9a8377; pack=a9bc15475c65fbdf23c3c2650e23655160b2b2206909657671e6873b898519f9",
+      "4.7": "apk=94d6f30c2fd12707a91bd7830d5ee81a810874ec9d7443443a8f3d10b9446854; pack=f7a6a0a92cb7aaf2788f2d3edc1b6c1b120ad1f935ddfc134dcfce33a8e2a446",
+      "4.8": "apk=f993780a9b304647ad43b5eacf7d7e166a8ced5f9b61edc87437cfc88dc97535; pack=db885350af5712d82a5163f437c27781757c0450bec167f5cce5260df850b29a",
+      "4.9": "apk=192cf031c1007376d46cabc4edc2f1a0bf47284c8d2057688cf91a1ee8e83dd1; pack=e376d89062b634086cd42000a2c88d3d9848e9be0d0bbe820701b5e3fb1dde3f",
+      "4.10": "apk=2ae113eaa85710a2db0ff9f3877a0f4abb516e8b2c486f83b7555aa915ead674; pack=70562f686a161e8610f461888cb5ae0d254e10799fd600c81db96e2a2ab094f8",
+      "4.11": "apk=c6ba592a98857517011ba7ff82ff7b92402a9c75656ce1e37c272acb9ff05fa5; pack=f847e3d5a60cf2557fb6f0eb838cc1d0683d4298603156dca3dbbe5aa4af9912",
+      "4.12": "apk=56649d328ab34bd24d075c3876c814bc3b0ddece68b60644f64207b81fb40c2c; pack=fea9580c57ac9d5753b581e89724fa21092fc76a92d81a7e0a96fc7aa056116d",
+      "4.13": "apk=2906365e0cb8eb109edc1a2cf8bf2fd10a1b980bc1ba6e87d82659de074861d1; pack=c28fec4f6d1fd1162d12205bd4ef9f9dec7d6eaa084e370d8c5bf2a122607144",
+      "4.14": "apk=a02e2cbc6851d206856ec3135ea7439f19f8b24faa1ff97447ab4821f170fcc0; pack=dc43b1da4cb1be37db692ddadc01daf44d52e43d9eaee165ef794781ffc3aa3c",
+      "4.15": "apk=a19506e2cf67b8636982d370d6e0c4c024511301afd73e6f5efe30723f903447; pack=f520d225bd6fba5d22ed03e5754a131042542f25977951e75d7dab50228de56d"
+    },
+    "latest_online_release": "https://github.com/hughbechainez-byte/the-fades-of-fate/releases/tag/v0.15.0-visual-overhaul-4.15",
+    "latest_online_apk_sha256": "a19506e2cf67b8636982d370d6e0c4c024511301afd73e6f5efe30723f903447",
+    "latest_online_content_pack_sha256": "f520d225bd6fba5d22ed03e5754a131042542f25977951e75d7dab50228de56d"
   },
   "artifacts": {
     "windows_dist": "dist/The Fades of Fate",
@@ -43,6 +56,7 @@
     "self_test_report": "dist/The Fades of Fate/build/self_test_report.json",
     "content_release": "dist/content",
     "gameplay_capture": "visual_overhaul/iteration_4_5_gameplay.png",
+    "latest_gameplay_capture": "visual_overhaul/iteration_4_15_gameplay.png",
     "material_qa_capture": "build/material_shading_qa.png"
   },
   "release_history": [
@@ -62,5 +76,5 @@
     {"iteration": "4.14", "focus": "character_art", "tag": "v0.15.0-visual-overhaul-4.14", "source_commit": "72ca6db", "workflow": 30681872843},
     {"iteration": "4.15", "focus": "animation", "tag": "v0.15.0-visual-overhaul-4.15", "source_commit": "82df09d", "workflow": 30681968739}
   ],
-  "next": "Verify the remaining Android releases and capture exact APK/content-feed digests; device QA remains pending until adb target is available."
+  "next": "Complete: all five sections have three release-backed iterations; device QA remains explicitly pending until an adb target is available."
 }
