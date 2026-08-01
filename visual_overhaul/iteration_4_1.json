@@ -22,10 +22,10 @@
     "android_device_qa": "unavailable: adb reported no devices",
     "online_android_attempt": "initial attempts failed on missing main.py, then empty Gradle module, then runner cancellation",
     "online_android_fix": "android/buildozer.spec includes main.py explicitly, omits empty Gradle dependencies, and excludes tools; Gradle heap capped at 4096m",
-    "online_android_workflow": "prior 4.3 success: run 30679513182; 4.4 pending",
-    "online_release": "prior verified: https://github.com/hughbechainez-byte/the-fades-of-fate/releases/tag/v0.15.0-visual-overhaul-4.3",
-    "online_apk": "prior 4.3 APK sha256:6d75d389c9e1c8bff476b8c98e539b38eabd7e18ab99693afb0f55ba28c0f952",
-    "online_content_pack": "4.4 pending"
+    "online_android_workflow": "success: run 30680145437",
+    "online_release": "https://github.com/hughbechainez-byte/the-fades-of-fate/releases/tag/v0.15.0-visual-overhaul-4.4",
+    "online_apk": "thefadesoffate-0.15.0-arm64-v8a-debug.apk sha256:acda6e4a2d7286fa0842f2799128a3354cb8e9b238727c9d37afe6a3e52bc487",
+    "online_content_pack": "fades-of-fate-content-pack.zip sha256:9e7ed226ef41d06b304ab0d9010dd7c039b57863934a04046a6f57c792798752"
   },
   "artifacts": {
     "windows_dist": "dist/The Fades of Fate",
