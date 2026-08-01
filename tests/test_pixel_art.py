@@ -1177,6 +1177,18 @@ class PixelArtTests(unittest.TestCase):
             "cart wheels and metal glint should animate without changing prop bounds",
         )
 
+    def test_charged_player_states_add_a_rim_without_changing_silhouette(self) -> None:
+        authored = sprite_atlas.player_frame("black_dave", "super", 4)
+        base = pixel_art._material_lit_sprite(authored, "dave")
+        charged = pixel_art._state_rim_sprite(base, "super", (217, 72, 64))
+
+        self.assertEqual(pygame.mask.from_surface(base).count(), pygame.mask.from_surface(charged).count())
+        self.assertNotEqual(
+            pygame.image.tobytes(base, "RGB"),
+            pygame.image.tobytes(charged, "RGB"),
+            "super state should carry a deliberate cool rim while preserving authored geometry",
+        )
+
     def test_ko_preview_is_opt_in_and_never_replaces_dave_in_normal_play(self) -> None:
         normal_canvas = pygame.Surface((400, 240), pygame.SRCALPHA)
         preview_canvas = pygame.Surface((400, 240), pygame.SRCALPHA)

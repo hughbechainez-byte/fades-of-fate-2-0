@@ -530,6 +530,47 @@ def _hit_flash_sprite(
     return flashed
 
 
+_STATE_RIM_CACHE: dict[tuple[int, str], tuple[pygame.Surface, pygame.Surface]] = {}
+
+
+def _state_rim_sprite(
+    sprite: pygame.Surface,
+    state: str,
+    accent: Sequence[int],
+) -> pygame.Surface:
+    """Add a restrained colored rim to charged character states."""
+
+    state_name = str(state)
+    rim_colors = {
+        "super": (86, 219, 255),
+        "special": (255, 190, 80),
+        "propane": (255, 119, 63),
+    }
+    color = rim_colors.get(state_name)
+    if color is None:
+        return sprite
+    key = (id(sprite), state_name)
+    cached = _STATE_RIM_CACHE.get(key)
+    if cached is not None and cached[0] is sprite:
+        return cached[1]
+    bounds = sprite.get_bounding_rect(min_alpha=1)
+    if not bounds.w or not bounds.h:
+        return sprite
+    mask = pygame.mask.from_surface(sprite)
+    inset = pygame.Mask(sprite.get_size())
+    inset.draw(mask, (-1, -1))
+    rim = mask.copy()
+    rim.erase(inset, (0, 0))
+    tint = tuple(min(255, max(0, int(channel))) for channel in color)
+    lit = sprite.copy()
+    layer = rim.to_surface(setcolor=(*tint, 255), unsetcolor=(0, 0, 0, 255))
+    strength = 0.22 if state_name != "super" else 0.28
+    layer.fill((255, 255, 255, round(255 * strength)), special_flags=pygame.BLEND_RGBA_MULT)
+    lit.blit(layer, (0, 0), special_flags=pygame.BLEND_RGB_ADD)
+    _STATE_RIM_CACHE[key] = (sprite, lit)
+    return lit
+
+
 _SECURITY_UNIFORM_CACHE: dict[tuple[int, str], tuple[pygame.Surface, pygame.Surface]] = {}
 
 
@@ -3839,7 +3880,11 @@ def draw_player(
             elevation=z,
         )
         profile = "dave" if name in {"black_dave", "dave", "blackdave"} else "shelly"
-        rendered = _hit_flash_sprite(_material_lit_sprite(authored, profile), hit_flash)
+        rendered = _state_rim_sprite(
+            _hit_flash_sprite(_material_lit_sprite(authored, profile), hit_flash),
+            state_name,
+            accent,
+        )
         _draw_motion_echo(surface, rendered, x, y, z, facing, authored.get_height() - 4, state_name, int(frame))
         return _blit_grounded(
             surface,
@@ -3865,10 +3910,14 @@ def draw_player(
     else:
         _draw_dave(sprite, state_name, int(frame), accent)
     profile = "shelly" if name in {"shelly", "shellie"} else "dave"
-    rendered = _hit_flash_sprite(
-        _material_lit_sprite(sprite, profile, cache=False),
-        hit_flash,
-        cache=False,
+    rendered = _state_rim_sprite(
+        _hit_flash_sprite(
+            _material_lit_sprite(sprite, profile, cache=False),
+            hit_flash,
+            cache=False,
+        ),
+        state_name,
+        accent,
     )
     _draw_motion_echo(surface, rendered, x, y, z, facing, 90, state_name, int(frame))
     return _blit_grounded(surface, rendered, x, y, z, facing, 90)
