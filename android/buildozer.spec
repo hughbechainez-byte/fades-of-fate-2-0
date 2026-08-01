@@ -7,7 +7,7 @@ source.include_exts = py,png,jpg,jpeg,wav,ogg,mp3,json,txt
 source.include_patterns = src/**/*.py,assets/**/*,data/**/*
 source.exclude_patterns = .git, .venv, .github, build, dist, logs, tmp, .mypy_cache, tests
 version = 0.14.0
-requirements = python3,pygame==2.5.2
+requirements = python3,cython==0.29.36,pygame==2.5.2
 orientation = landscape
 fullscreen = 1
 android.permissions = INTERNET, WRITE_EXTERNAL_STORAGE
