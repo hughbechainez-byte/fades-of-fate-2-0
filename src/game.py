@@ -118,6 +118,9 @@ COUCH_DOPE_OFFER_TAUNT = "I'LL GIVE YOU DOPE IF YOU BEAT THEM UP!"
 def _default_save_path() -> Path:
     """Return a user-writable save location outside the packaged game tree."""
 
+    android_private = os.environ.get("ANDROID_PRIVATE") or os.environ.get("ANDROID_ARGUMENT")
+    if android_private:
+        return Path(android_private).expanduser() / "the-fades-of-fate" / "chapter1_save.json"
     base = os.environ.get("LOCALAPPDATA") or os.environ.get("APPDATA")
     if not base:
         base = str(Path.home() / "AppData" / "Local")
@@ -205,7 +208,7 @@ class AudioAdapter:
 
 
 class FadesGame:
-    VERSION = "0.15.0-visual-overhaul-4.15"
+    VERSION = "0.15.1-motorola-startup-fix"
 
     def __init__(self, input_manager: InputManager, *, mute: bool = False) -> None:
         self.data = load_gameplay()

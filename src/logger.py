@@ -67,6 +67,9 @@ def _packaged_base() -> Path:
 
 
 def _user_log_directory() -> Path:
+    android_private = os.environ.get("ANDROID_PRIVATE") or os.environ.get("ANDROID_ARGUMENT")
+    if android_private:
+        return Path(android_private).expanduser() / APP_SLUG / "logs"
     if os.name == "nt":
         local = os.environ.get("LOCALAPPDATA") or os.environ.get("APPDATA")
         base = Path(local) if local else Path.home() / "AppData" / "Local"

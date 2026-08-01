@@ -22,6 +22,55 @@ CONTENT_ROOT_ENV = "FADES_OF_FATE_CONTENT_ROOT"
 CONTENT_MANIFEST_PATH = "data/content-manifest.json"
 
 
+def is_android_runtime() -> bool:
+    """Return whether the process is running inside python-for-android."""
+
+    return bool(
+        os.environ.get("ANDROID_ARGUMENT")
+        or os.environ.get("ANDROID_PRIVATE")
+        or os.environ.get("ANDROID_ROOT")
+        or sys.platform.startswith("android")
+    )
+
+
+def _is_writable_directory(path: Path) -> bool:
+    """Create and probe a directory without allowing storage errors to escape."""
+
+    try:
+        path.mkdir(parents=True, exist_ok=True)
+        probe = path / ".fades-write-test"
+        probe.write_bytes(b"")
+        probe.unlink()
+        return True
+    except OSError:
+        return False
+
+
+def android_private_root() -> Path | None:
+    """Return a writable python-for-android private directory when available."""
+
+    if not is_android_runtime():
+        return None
+    candidates: list[Path] = []
+    for name in ("ANDROID_PRIVATE", "ANDROID_ARGUMENT", "HOME"):
+        value = os.environ.get(name, "").strip()
+        if value:
+            candidates.append(Path(value).expanduser())
+    try:
+        candidates.append(Path.home())
+    except RuntimeError:
+        pass
+    seen: set[str] = set()
+    for candidate in candidates:
+        key = os.path.normcase(os.path.abspath(candidate))
+        if key in seen:
+            continue
+        seen.add(key)
+        if _is_writable_directory(candidate):
+            return candidate.resolve()
+    return None
+
+
 class ConfigError(ValueError):
     """Raised when editable gameplay data violates the engine contract."""
 
@@ -32,6 +81,10 @@ def content_root() -> Path:
     override = os.environ.get(CONTENT_ROOT_ENV)
     if override:
         candidates.append(Path(override).expanduser())
+
+    private_root = android_private_root()
+    if private_root is not None:
+        candidates.append(private_root / "the-fades-of-fate" / "content")
 
     if os.name == "nt":
         local_data_root = os.environ.get("LOCALAPPDATA") or os.environ.get("APPDATA")

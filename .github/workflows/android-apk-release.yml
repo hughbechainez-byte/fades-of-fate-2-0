@@ -31,6 +31,10 @@ jobs:
         run: |
           python tools/build_content_release.py --output-dir dist/content --content-revision "${{ github.run_number }}"
 
+      - name: Embed the matching content baseline in the APK
+        run: |
+          cp dist/content/fades-of-fate-content-manifest.json data/content-manifest.json
+
       - name: Upload content feed artifact
         uses: actions/upload-artifact@v4
         with:

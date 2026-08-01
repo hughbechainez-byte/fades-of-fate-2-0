@@ -14,7 +14,7 @@ if __package__ in {None, ""}:
 
 # Pointer translation is used by the live loop below, so this needs module
 # scope rather than the local imports inside _run().
-from src.config import LOGICAL_SIZE
+from src.config import LOGICAL_SIZE, is_android_runtime
 
 
 def letterbox_viewport(
@@ -157,7 +157,7 @@ def _run() -> int:
                 feed_url=args.content_feed,
                 timeout_seconds=args.content_update_timeout,
             )
-        except ContentUpdateError as exc:
+        except Exception as exc:
             update_result = {
                 "status": "failed",
                 "updated": False,
@@ -168,7 +168,7 @@ def _run() -> int:
                 "local_revision": 0,
                 "remote_revision": 0,
                 "manifest_path": "",
-                "reason": str(exc),
+                "reason": f"{type(exc).__name__}: {exc}",
             }
 
     initialize_logging(FadesGame.VERSION)
@@ -196,21 +196,32 @@ def _run() -> int:
             pygame.quit()
             shutdown_logging()
 
+    android_runtime = is_android_runtime()
     pygame.display.set_caption(GAME_NAME)
-    icon_path = executable_root() / "assets" / "fades_of_fate_key_art.png"
-    if icon_path.is_file():
-        try:
-            icon = pygame.image.load(str(icon_path))
-            pygame.display.set_icon(icon)
-        except pygame.error:
-            pass
+    if not android_runtime:
+        icon_path = executable_root() / "assets" / "fades_of_fate_key_art.png"
+        if icon_path.is_file():
+            try:
+                icon = pygame.image.load(str(icon_path))
+                pygame.display.set_icon(icon)
+            except pygame.error:
+                pass
 
     flags = pygame.RESIZABLE | pygame.DOUBLEBUF
     windowed_size = (1280, 720)
-    try:
-        window = pygame.display.set_mode(windowed_size, flags, vsync=1)
-    except TypeError:
-        window = pygame.display.set_mode(windowed_size, flags)
+    if android_runtime:
+        # SDL's Android video backend owns the surface. Desktop resize/vsync
+        # flags can fail before the first frame on some Motorola builds.
+        try:
+            window = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+        except pygame.error:
+            window = pygame.display.set_mode(LOGICAL_SIZE)
+        windowed_size = window.get_size()
+    else:
+        try:
+            window = pygame.display.set_mode(windowed_size, flags, vsync=1)
+        except TypeError:
+            window = pygame.display.set_mode(windowed_size, flags)
     logical = pygame.Surface(LOGICAL_SIZE)
     clock = pygame.time.Clock()
     manager = InputManager(max_players=4, deadzone=0.22, discover_controllers=True)
@@ -230,7 +241,7 @@ def _run() -> int:
             frame_seconds = min(clock.tick(120) / 1000.0, 0.10)
             events = pygame.event.get()
             for event in events:
-                if event.type == pygame.KEYDOWN and event.key == pygame.K_F11:
+                if not android_runtime and event.type == pygame.KEYDOWN and event.key == pygame.K_F11:
                     fullscreen = not fullscreen
                     if fullscreen:
                         window = pygame.display.set_mode((0, 0), pygame.FULLSCREEN | pygame.DOUBLEBUF)
