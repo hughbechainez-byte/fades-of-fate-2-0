@@ -19,7 +19,9 @@
     "content_pack_sha256": "359E98AD065001C6D1F70A7BEFA2D301B8F4F4DA0732784363A22593DA361F43",
     "content_pack_bytes": 113676085,
     "android_local_build": "unavailable: Buildozer/WSL not installed",
-    "android_device_qa": "unavailable: adb reported no devices"
+    "android_device_qa": "unavailable: adb reported no devices",
+    "online_android_attempt": "failed before APK creation: Buildozer did not copy root main.py",
+    "online_android_fix": "android/buildozer.spec now includes main.py explicitly"
   },
   "artifacts": {
     "windows_dist": "dist/The Fades of Fate",
