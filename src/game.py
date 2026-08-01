@@ -5546,11 +5546,31 @@ class FadesGame:
             contact_line = f"CONTACT X={contact.contact_x:.1f} D={contact.contact_depth:.1f}"
         else:
             contact_line = "CONTACT X=-- D=--"
+        try:
+            stage_debug = pixel_art.stage_world_debug_snapshot(
+                self.location_route["theme"],
+                self._render_camera_x,
+                LOGICAL_SIZE[0],
+            )
+            active_chunks = ",".join(stage_debug["active_chunk_ids"]) or "NONE"
+            chunk_line = (
+                f"CHUNKS {stage_debug['active_chunk_count']}/{stage_debug['total_chunk_count']} "
+                f"ACTIVE={active_chunks}"
+            )
+            layer_line = "LAYERS " + " ".join(
+                f"{name}={offset}"
+                for name, offset in stage_debug["layer_offsets"].items()
+            )
+        except (KeyError, RuntimeError, ValueError) as exc:
+            chunk_line = f"CHUNKS ERROR {type(exc).__name__}"
+            layer_line = "LAYERS unavailable"
         lines = [
             f"DEBUG  FRAME {self.frame}  ENGINE {self.VERSION}",
             f"CAM {self.camera_x:.1f} GATE {self.active_gate} LOCK {self.camera.encounter_locked}",
             f"ZONE {(self._last_camera_view.zone_name if self._last_camera_view else None)} HITSTOP {self.hitstop_remaining:.3f}",
             f"ROUTE {self.location_route['theme']} W={int(self.location_route['world_width'])}",
+            chunk_line,
+            layer_line,
             f"ENEMIES {len(self.enemies)} QUEUED {len(self.spawn_queue)} TOKENS {self.attack_tokens_used}",
             (
                 f"P{player.slot + 1} {player.state}:{phase} CF={int(player.state_clock * 60):02d} "

@@ -27,12 +27,14 @@ try:  # resource_path also understands one-file executable extraction roots.
     from .config import resource_path
     from . import location_lock, sprite_atlas
     from . import backdrop
+    from .stage_world import StageLayerPiece, StageWorld, StageWorldError
 except ImportError:  # pragma: no cover - supports direct module experiments.
     def resource_path(relative: str) -> Path:
         return Path(__file__).resolve().parents[1] / relative
     import location_lock  # type: ignore[no-redef]
     import backdrop  # type: ignore[no-redef]
     sprite_atlas = None  # type: ignore[assignment]
+    from stage_world import StageLayerPiece, StageWorld, StageWorldError  # type: ignore[no-redef]
 
 
 DESIGN_WIDTH = 640
@@ -52,6 +54,7 @@ __all__ = [
     "LocationArtError",
     "draw_stage_background",
     "draw_stage_foreground",
+    "stage_world_debug_snapshot",
     "draw_physical_scene_object",
     "draw_location_travel_panel",
     "draw_stage_prop",
@@ -87,6 +90,9 @@ GOLD = (242, 185, 48)
 # The lightweight Mapping adapters preserve the private inspection surface used
 # by QA tools without reintroducing a second renderer-owned coordinate table.
 _LOCATION_LOCK_CACHE: Mapping[str, Any] | None = None
+_STAGE_WORLD_CACHE: dict[str, StageWorld] = {}
+_STAGE_WORLD_SURFACE_CACHE: dict[tuple[str, str, int, int], pygame.Surface] = {}
+_STAGE_WORLD_GLOBAL_SURFACE_CACHE: dict[tuple[str, str], pygame.Surface] = {}
 
 
 def _location_manifest() -> Mapping[str, Any]:
@@ -109,6 +115,103 @@ def _location_routes_by_theme() -> dict[str, Mapping[str, Any]]:
 
 def _location_route(theme: object) -> Mapping[str, Any] | None:
     return _location_routes_by_theme().get(_theme_key(theme))
+
+
+def _stage_world(theme: str) -> StageWorld:
+    """Load one validated chunk topology without loading a route panorama."""
+
+    key = _theme_key(theme)
+    cached = _STAGE_WORLD_CACHE.get(key)
+    if cached is not None:
+        return cached
+    route = _location_route(key)
+    if route is None:
+        raise LocationArtError(f"no location-locked route exists for theme {key!r}")
+    try:
+        world = StageWorld.load_for_route(key, route)
+    except (OSError, ValueError, TypeError, StageWorldError) as exc:
+        raise LocationArtError(f"{key} chunked stage manifest is invalid: {exc}") from exc
+    _STAGE_WORLD_CACHE[key] = world
+    return world
+
+
+def _stage_world_surface(
+    theme: str,
+    piece: StageLayerPiece,
+) -> pygame.Surface:
+    key = (str(theme), piece.asset, int(piece.width), int(piece.height))
+    cached = _STAGE_WORLD_SURFACE_CACHE.get(key)
+    if cached is not None:
+        return cached
+    try:
+        image = pygame.image.load(str(resource_path(piece.asset)))
+    except (OSError, pygame.error) as exc:
+        raise LocationArtError(
+            f"{theme} chunk layer is missing or unreadable: {piece.asset}"
+        ) from exc
+    if image.get_size() != (piece.width, piece.height):
+        raise LocationArtError(
+            f"{theme} chunk layer {piece.asset} must be "
+            f"{piece.width}x{piece.height}, got {image.get_size()}"
+        )
+    surface = image.convert_alpha() if pygame.display.get_surface() is not None else image.copy()
+    _STAGE_WORLD_SURFACE_CACHE[key] = surface
+    return surface
+
+
+def _stage_world_global_surface(theme: str, layer: str) -> pygame.Surface:
+    key = (str(theme), str(layer))
+    cached = _STAGE_WORLD_GLOBAL_SURFACE_CACHE.get(key)
+    if cached is not None:
+        return cached
+    world = _stage_world(theme)
+    asset = world.global_layers.get(layer)
+    if asset is None:
+        raise LocationArtError(f"{theme} chunked stage has no global {layer} layer")
+    try:
+        image = pygame.image.load(str(resource_path(asset)))
+    except (OSError, pygame.error) as exc:
+        raise LocationArtError(
+            f"{theme} global stage layer is missing or unreadable: {asset}"
+        ) from exc
+    if image.get_height() != DESIGN_HEIGHT or image.get_width() <= 0:
+        raise LocationArtError(
+            f"{theme} global stage layer {asset} must have height {DESIGN_HEIGHT}"
+        )
+    surface = image.convert_alpha() if pygame.display.get_surface() is not None else image.copy()
+    _STAGE_WORLD_GLOBAL_SURFACE_CACHE[key] = surface
+    return surface
+
+
+def _draw_stage_world_layer(
+    surface: pygame.Surface,
+    world: StageWorld,
+    camera_x: float,
+    layer: str,
+    *,
+    vertical_offset: int = 0,
+) -> None:
+    """Cull and draw one layer's independently authored world pieces."""
+
+    offset = world.layer_offset(layer, camera_x, surface.get_width())
+    for piece in world.visible_layer_pieces(
+        layer,
+        camera_x,
+        surface.get_width(),
+        margin=world.cull_margin + abs(float(world.layer_max_offsets.get(layer, 0.0))),
+    ):
+        image = _stage_world_surface(world.theme, piece)
+        surface.blit(image, (piece.world_x + offset, vertical_offset))
+
+
+def stage_world_debug_snapshot(
+    theme: str,
+    camera_x: float,
+    viewport_width: int = DESIGN_WIDTH,
+) -> dict[str, Any]:
+    """Expose chunk/layer/anchor state for the in-game debug overlay and QA."""
+
+    return _stage_world(theme).debug_snapshot(camera_x, viewport_width)
 
 
 class _ManifestFieldMap(Mapping[str, Any]):
@@ -1965,17 +2068,23 @@ def _draw_location_locked_background(
         raise LocationArtError(
             f"{theme} runtime width disagrees with chapter1_location_lock.json"
         )
-    layers = _location_art_layers(theme)
-    backdrop.render_route_backdrop(
+    world = _stage_world(theme)
+    haze = _stage_world_global_surface(theme, "far_haze")
+    # Keep the existing atmosphere compositor as the single authority for
+    # profile sky and moving haze.  Skyline, architecture, and ground are
+    # now chunked world pieces and are drawn only when near the camera.
+    backdrop._draw_opaque_sky(surface, route, atmosphere)
+    backdrop._apply_dynamic_atmosphere(
         surface,
-        theme=theme,
-        route=route,
-        layers=layers,
+        route,
+        {"far_haze": haze},
         camera_x=cx,
-        world_width=world_width,
         atmosphere=atmosphere,
-        loader_identity=id(pygame.image.load),
+        width=surface.get_width(),
     )
+    _draw_stage_world_layer(surface, world, cx, "far_skyline")
+    _draw_stage_world_layer(surface, world, cx, "architecture")
+    _draw_stage_world_layer(surface, world, cx, "ground")
 
 
 def _draw_chapter_one_stage_panel(surface: pygame.Surface, cx: float, world_width: int, theme: str) -> bool:
@@ -2423,13 +2532,7 @@ def _chapter_one_near_layer_offset(surface: pygame.Surface, cx: float, theme: st
     route = _location_route(theme)
     if route is None:
         raise LocationArtError(f"no location-locked route exists for theme {theme!r}")
-    return _bounded_location_layer_offset(
-        cx,
-        float(route["near_parallax"]),
-        float(route["near_max_offset"]),
-        int(route["world_width"]),
-        surface.get_width(),
-    )
+    return _stage_world(theme).layer_offset("near_occluder", cx, surface.get_width())
 
 
 def _draw_chapter_one_near_layer(
@@ -2443,12 +2546,14 @@ def _draw_chapter_one_near_layer(
     route = _location_route(theme)
     if route is None:
         return False
-    layers = _location_art_layers(theme)
-    layer = layers.get("near_occluder") or layers.get("near")
-    if layer is None:
-        return True
-    x = _chapter_one_near_layer_offset(surface, cx, theme)
-    surface.blit(layer, (x, vertical_offset))
+    world = _stage_world(theme)
+    _draw_stage_world_layer(
+        surface,
+        world,
+        cx,
+        "near_occluder",
+        vertical_offset=vertical_offset,
+    )
     return True
 
 
@@ -2556,6 +2661,8 @@ def _stage_background_frame_key(
         id(pygame.image.load),
         id(_chapter_one_route_panorama),
         id(_location_art_layers),
+        id(_stage_world),
+        id(_stage_world_surface),
         id(_draw_location_locked_background),
     )
 

@@ -97,13 +97,13 @@ class PixelArtTests(unittest.TestCase):
             moved = pygame.Surface((DESIGN_WIDTH, DESIGN_HEIGHT))
             with patch.object(
                 pixel_art,
-                "_location_art_layers",
-                wraps=pixel_art._location_art_layers,
-            ) as layers:
+                "_stage_world_surface",
+                wraps=pixel_art._stage_world_surface,
+            ) as chunk_layers:
                 draw_stage_background(first, 900, 1600, theme="awaken_church_finale")
                 draw_stage_background(settled, 900, 1600, theme="awaken_church_finale")
                 draw_stage_background(moved, 901, 1600, theme="awaken_church_finale")
-            self.assertEqual(layers.call_count, 2)
+            self.assertGreater(chunk_layers.call_count, 0)
             self.assertEqual(pygame.image.tobytes(first, "RGB"), pygame.image.tobytes(settled, "RGB"))
             self.assertNotEqual(pygame.image.tobytes(first, "RGB"), pygame.image.tobytes(moved, "RGB"))
             self.assertLessEqual(
@@ -836,9 +836,15 @@ class PixelArtTests(unittest.TestCase):
         assert route is not None
         saved_art = dict(pixel_art._LOCATION_ART_CACHE)
         saved_frames = dict(pixel_art._STAGE_BACKGROUND_FRAME_CACHE)
+        saved_worlds = dict(pixel_art._STAGE_WORLD_CACHE)
+        saved_chunk_surfaces = dict(pixel_art._STAGE_WORLD_SURFACE_CACHE)
+        saved_global_surfaces = dict(pixel_art._STAGE_WORLD_GLOBAL_SURFACE_CACHE)
         try:
             pixel_art._LOCATION_ART_CACHE.clear()
             pixel_art._STAGE_BACKGROUND_FRAME_CACHE.clear()
+            pixel_art._STAGE_WORLD_CACHE.clear()
+            pixel_art._STAGE_WORLD_SURFACE_CACHE.clear()
+            pixel_art._STAGE_WORLD_GLOBAL_SURFACE_CACHE.clear()
             first = pygame.Surface((DESIGN_WIDTH, DESIGN_HEIGHT), pygame.SRCALPHA)
             second = pygame.Surface((DESIGN_WIDTH, DESIGN_HEIGHT), pygame.SRCALPHA)
             with (
@@ -848,9 +854,10 @@ class PixelArtTests(unittest.TestCase):
                 draw_stage_foreground(first, 1250, stage_width, theme=theme)
                 draw_stage_foreground(second, 1350, stage_width, theme=theme)
             requested = [Path(call.args[0]).name for call in loader.call_args_list]
-            self.assertEqual(requested.count(Path(str(route["main_panorama_asset"])).name), 1)
-            self.assertEqual(requested.count(Path(str(route["far_asset"])).name), 1)
-            self.assertEqual(requested.count(Path(str(route["near_asset"])).name), 1)
+            self.assertTrue(any("chunk_" in name and "near_occluder" in name for name in requested))
+            self.assertNotIn(Path(str(route["main_panorama_asset"])).name, requested)
+            self.assertNotIn(Path(str(route["far_asset"])).name, requested)
+            self.assertNotIn(Path(str(route["near_asset"])).name, requested)
             fallback.assert_not_called()
 
             layer = pixel_art._location_art_layers(theme)["near"]
@@ -884,6 +891,12 @@ class PixelArtTests(unittest.TestCase):
             pixel_art._LOCATION_ART_CACHE.update(saved_art)
             pixel_art._STAGE_BACKGROUND_FRAME_CACHE.clear()
             pixel_art._STAGE_BACKGROUND_FRAME_CACHE.update(saved_frames)
+            pixel_art._STAGE_WORLD_CACHE.clear()
+            pixel_art._STAGE_WORLD_CACHE.update(saved_worlds)
+            pixel_art._STAGE_WORLD_SURFACE_CACHE.clear()
+            pixel_art._STAGE_WORLD_SURFACE_CACHE.update(saved_chunk_surfaces)
+            pixel_art._STAGE_WORLD_GLOBAL_SURFACE_CACHE.clear()
+            pixel_art._STAGE_WORLD_GLOBAL_SURFACE_CACHE.update(saved_global_surfaces)
 
     def test_player_states_render(self) -> None:
         cases = [

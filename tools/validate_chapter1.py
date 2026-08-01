@@ -51,6 +51,7 @@ from src.game import FadesGame, LOGICAL_SIZE, SelectSlot  # noqa: E402
 from src.input_manager import InputManager  # noqa: E402
 from src import pixel_art  # noqa: E402
 from src import location_lock  # noqa: E402
+from src.stage_world import StageWorld, StageWorldError  # noqa: E402
 
 
 REPORT_SCHEMA_VERSION = 2
@@ -653,6 +654,24 @@ def build_location_lock_report(
         f"route_ids={list(route_ids)!r}",
     )
 
+    stage_chunks_data: Mapping[str, Any] | None = None
+    try:
+        loaded_stage_chunks = _read_json_file(root / "data" / "stage_chunks.json")
+        stage_chunks_data = loaded_stage_chunks
+        record(
+            loaded_stage_chunks.get("schema_version") == 1,
+            "stage_chunk_manifest_schema",
+            f"schema_version={loaded_stage_chunks.get('schema_version')!r}",
+        )
+    except (OSError, ValueError, json.JSONDecodeError) as error:
+        record(False, "stage_chunk_manifest_readable", str(error))
+    else:
+        record(
+            True,
+            "stage_chunk_manifest_readable",
+            "data/stage_chunks.json is readable",
+        )
+
     raw_gameplay_levels = {
         str(level.get("id", "")): level
         for level in _raw_campaign_levels(gameplay_data)
@@ -1115,6 +1134,124 @@ def build_location_lock_report(
                     )
             asset_results[field] = result
 
+        stage_chunk_results: dict[str, Any] = {}
+        if stage_chunks_data is None:
+            record(
+                False,
+                "stage_chunk_route_validation",
+                "skipped because data/stage_chunks.json could not be read",
+                level_id=level_id,
+            )
+        else:
+            try:
+                stage_world = StageWorld.from_route(route, stage_chunks_data)
+            except (StageWorldError, TypeError, ValueError) as error:
+                record(
+                    False,
+                    "stage_chunk_route_validation",
+                    str(error),
+                    level_id=level_id,
+                )
+            else:
+                record(
+                    True,
+                    "stage_chunk_route_validation",
+                    (
+                        f"chunks={len(stage_world.chunks)}; "
+                        f"world_width={stage_world.world_width}; "
+                        "main layers remain world-locked"
+                    ),
+                    level_id=level_id,
+                )
+                stage_chunk_results["chunk_count"] = len(stage_world.chunks)
+                stage_chunk_results["asset_count"] = 0
+                for chunk in stage_world.chunks:
+                    for piece in chunk.layer_pieces:
+                        relative = piece.asset
+                        asset_path = (root / relative).resolve()
+                        within_root = asset_path == root or root in asset_path.parents
+                        exists = within_root and asset_path.is_file()
+                        asset_key = f"stage_chunk.{chunk.chunk_id}.{piece.layer}"
+                        record(
+                            exists,
+                            "stage_chunk_asset_path",
+                            f"{asset_key}={relative!r}; exists={exists}",
+                            level_id=level_id,
+                        )
+                        result = {
+                            "path": relative,
+                            "exists": exists,
+                            "size": None,
+                            "sha256": None,
+                            "has_alpha": None,
+                        }
+                        if exists:
+                            try:
+                                chunk_surface = pygame.image.load(str(asset_path))
+                                result["size"] = list(chunk_surface.get_size())
+                                result["sha256"] = _sha256_file(asset_path)
+                                result["has_alpha"] = bool(chunk_surface.get_masks()[3])
+                                record(
+                                    chunk_surface.get_size() == (piece.width, piece.height),
+                                    "stage_chunk_asset_dimensions",
+                                    (
+                                        f"{asset_key}: expected={(piece.width, piece.height)!r}; "
+                                        f"actual={chunk_surface.get_size()!r}"
+                                    ),
+                                    level_id=level_id,
+                                )
+                                record(
+                                    bool(result["has_alpha"]),
+                                    "stage_chunk_asset_has_alpha",
+                                    f"{asset_key}: has_alpha={result['has_alpha']}",
+                                    level_id=level_id,
+                                )
+                            except (OSError, pygame.error, ValueError) as error:
+                                record(
+                                    False,
+                                    "stage_chunk_asset_readable",
+                                    f"{asset_key}: {error}",
+                                    level_id=level_id,
+                                )
+                        asset_results[asset_key] = result
+                        stage_chunk_results["asset_count"] += 1
+                for global_layer, relative in stage_world.global_layers.items():
+                    asset_path = (root / relative).resolve()
+                    within_root = asset_path == root or root in asset_path.parents
+                    exists = within_root and asset_path.is_file()
+                    asset_key = f"stage_global.{global_layer}"
+                    record(
+                        exists,
+                        "stage_global_asset_path",
+                        f"{asset_key}={relative!r}; exists={exists}",
+                        level_id=level_id,
+                    )
+                    result = {
+                        "path": relative,
+                        "exists": exists,
+                        "size": None,
+                        "sha256": None,
+                    }
+                    if exists:
+                        try:
+                            global_surface = pygame.image.load(str(asset_path))
+                            result["size"] = list(global_surface.get_size())
+                            result["sha256"] = _sha256_file(asset_path)
+                            record(
+                                global_surface.get_height() == int(LOGICAL_SIZE[1]),
+                                "stage_global_asset_dimensions",
+                                f"{asset_key}: size={global_surface.get_size()!r}",
+                                level_id=level_id,
+                            )
+                        except (OSError, pygame.error, ValueError) as error:
+                            record(
+                                False,
+                                "stage_global_asset_readable",
+                                f"{asset_key}: {error}",
+                                level_id=level_id,
+                            )
+                    asset_results[asset_key] = result
+
         physical_objects_value = route.get("physical_scene_objects", ())
         physical_objects = (
             tuple(
@@ -1494,6 +1631,7 @@ def build_location_lock_report(
                 "opposite_side_landmark_count": len(opposite),
                 "registered_feature_count": len(features),
                 "assets": asset_results,
+                "stage_chunks": stage_chunk_results,
                 "passed": all(item["status"] == "pass" for item in route_slice),
             }
         )
@@ -2136,7 +2274,7 @@ def _runtime_integration_probe() -> dict[str, Any]:
         game_source = inspect.getsource(FadesGame)
         renderer_receives_atmosphere = _source_forwards_non_null_keyword(
             getattr(pixel_art, "_draw_location_locked_background"),
-            callee_name="render_route_backdrop",
+            callee_name="_apply_dynamic_atmosphere",
             keyword_name="atmosphere",
         )
         physical_objects_wired = "physical_scene_objects" in game_source
@@ -2212,6 +2350,7 @@ def run_integration_visual_matrix(
         content_data = _read_json_file(root / "data" / "chapter_content.json")
     else:
         content_data = dict(content)
+    stage_chunk_data = _read_json_file(root / "data" / "stage_chunks.json")
 
     gameplay_routes = tuple(
         route
@@ -2401,16 +2540,11 @@ def run_integration_visual_matrix(
         gameplay_level = route_levels.get(level_id, {})
         content_level = content_levels.get(level_id, {})
         panel_spec_count = 0
-        if isinstance(route.get("theme", None), str):
-            panel_count = 0
-            for panel_group in manifest_data.get("routes", ()):
-                if (
-                    isinstance(panel_group, Mapping)
-                    and str(panel_group.get("level_id", "")) == level_id
-                ):
-                    panel_count = len(panel_group.get("panels", ())) or 0
-            panel_spec_count = int(panel_count)
-        else:
+        stage_world: StageWorld | None = None
+        try:
+            stage_world = StageWorld.from_route(route, stage_chunk_data)
+            panel_spec_count = len(stage_world.chunks)
+        except (StageWorldError, TypeError, ValueError):
             panel_spec_count = 0
 
         def record(condition: bool, check_id: str, detail: str, *, required: bool = True) -> None:
@@ -2689,10 +2823,25 @@ def run_integration_visual_matrix(
             f"missing_or_invalid={missing_layer_fields!r}",
         )
         record(
-            panel_spec_count >= 1,
+            panel_spec_count >= 2,
             "integration_panel_seams",
             f"panel_count={panel_spec_count!r}",
             required=False,
+        )
+        record(
+            stage_world is not None
+            and all(
+                chunk.landmark_ids
+                and chunk.seam_anchor
+                and chunk.collision_ids is not None
+                and chunk.spawn_markers is not None
+                for chunk in stage_world.chunks
+            ),
+            "integration_chunk_ownership",
+            (
+                f"chunks={panel_spec_count!r}; "
+                "each chunk owns landmarks, collisions, spawns, and seam metadata"
+            ),
         )
         record(
             any(item in reference_tokens for item in ("curb", "sidewalk", "median")),

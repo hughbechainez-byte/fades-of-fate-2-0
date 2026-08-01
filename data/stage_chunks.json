@@ -1,0 +1,989 @@
+{
+  "schema_version": 1,
+  "description": "Panel-backed world chunks for location-locked Chapter 1 routes.",
+  "routes": [
+    {
+      "theme": "sprouts_el_cilantro",
+      "level_id": "chapter_1_level_1",
+      "world_width": 3200,
+      "chunk_overlap": 24,
+      "global_layers": {
+        "far_haze": "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/atmosphere_haze_tile_v1.png"
+      },
+      "chunks": [
+        {
+          "id": "sprouts_el_cilantro_chunk_00",
+          "world_x": 0,
+          "width": 800,
+          "source_panel": "art_source/chapter1_location_locked/source_panels/l1_p1_sprouts_v3_source.png",
+          "landmark_ids": [
+            "sprouts_parking_lot"
+          ],
+          "collision_ids": [
+            "sprouts_cart_return"
+          ],
+          "physical_scene_object_ids": [],
+          "spawn_markers": [
+            {
+              "id": "encounter_0_encounter_trigger",
+              "kind": "encounter_trigger",
+              "world_x": 430.0,
+              "encounter_index": 0,
+              "name": "Sprouts Parking Lot"
+            },
+            {
+              "id": "encounter_0_camera_lock",
+              "kind": "camera_lock",
+              "world_x": 350.0,
+              "encounter_index": 0,
+              "name": "Sprouts Parking Lot"
+            }
+          ],
+          "foreground_layers": [
+            "near_occluder"
+          ],
+          "seam_anchor": "structural_handoff",
+          "layers": {
+            "far_skyline": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_00_far_skyline_v1.png",
+              "world_x": 0,
+              "width": 824,
+              "height": 360,
+              "source_layer": "skyline"
+            },
+            "architecture": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_00_architecture_v1.png",
+              "world_x": 0,
+              "width": 824,
+              "height": 360,
+              "source_layer": "architecture"
+            },
+            "ground": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_00_ground_v1.png",
+              "world_x": 0,
+              "width": 824,
+              "height": 360,
+              "source_layer": "ground"
+            },
+            "near_occluder": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_00_near_occluder_v1.png",
+              "world_x": 0,
+              "width": 824,
+              "height": 360,
+              "source_layer": "near_occluder"
+            }
+          }
+        },
+        {
+          "id": "sprouts_el_cilantro_chunk_01",
+          "world_x": 800,
+          "width": 800,
+          "source_panel": "art_source/chapter1_location_locked/source_panels/l1_p2_wells_walmart_v3_source.png",
+          "landmark_ids": [
+            "wells_fargo_pad",
+            "walmart_neighborhood_market"
+          ],
+          "collision_ids": [
+            "wells_driveway_sign"
+          ],
+          "physical_scene_object_ids": [
+            "l1_sprouts_sedan_parked"
+          ],
+          "spawn_markers": [
+            {
+              "id": "encounter_0_encounter_gate",
+              "kind": "encounter_gate",
+              "world_x": 1010.0,
+              "encounter_index": 0,
+              "name": "Sprouts Parking Lot"
+            },
+            {
+              "id": "encounter_1_encounter_trigger",
+              "kind": "encounter_trigger",
+              "world_x": 1370.0,
+              "encounter_index": 1,
+              "name": "Town & Country"
+            },
+            {
+              "id": "encounter_1_camera_lock",
+              "kind": "camera_lock",
+              "world_x": 1300.0,
+              "encounter_index": 1,
+              "name": "Town & Country"
+            }
+          ],
+          "foreground_layers": [
+            "near_occluder"
+          ],
+          "seam_anchor": "structural_handoff",
+          "layers": {
+            "far_skyline": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_01_far_skyline_v1.png",
+              "world_x": 776,
+              "width": 848,
+              "height": 360,
+              "source_layer": "skyline"
+            },
+            "architecture": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_01_architecture_v1.png",
+              "world_x": 776,
+              "width": 848,
+              "height": 360,
+              "source_layer": "architecture"
+            },
+            "ground": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_01_ground_v1.png",
+              "world_x": 776,
+              "width": 848,
+              "height": 360,
+              "source_layer": "ground"
+            },
+            "near_occluder": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_01_near_occluder_v1.png",
+              "world_x": 776,
+              "width": 848,
+              "height": 360,
+              "source_layer": "near_occluder"
+            }
+          }
+        },
+        {
+          "id": "sprouts_el_cilantro_chunk_02",
+          "world_x": 1600,
+          "width": 800,
+          "source_panel": "art_source/chapter1_location_locked/source_panels/l1_p3_town_country_v3_source.png",
+          "landmark_ids": [
+            "town_country"
+          ],
+          "collision_ids": [
+            "town_country_planter"
+          ],
+          "physical_scene_object_ids": [],
+          "spawn_markers": [
+            {
+              "id": "encounter_1_encounter_gate",
+              "kind": "encounter_gate",
+              "world_x": 2050.0,
+              "encounter_index": 1,
+              "name": "Town & Country"
+            }
+          ],
+          "foreground_layers": [
+            "near_occluder"
+          ],
+          "seam_anchor": "structural_handoff",
+          "layers": {
+            "far_skyline": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_02_far_skyline_v1.png",
+              "world_x": 1576,
+              "width": 848,
+              "height": 360,
+              "source_layer": "skyline"
+            },
+            "architecture": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_02_architecture_v1.png",
+              "world_x": 1576,
+              "width": 848,
+              "height": 360,
+              "source_layer": "architecture"
+            },
+            "ground": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_02_ground_v1.png",
+              "world_x": 1576,
+              "width": 848,
+              "height": 360,
+              "source_layer": "ground"
+            },
+            "near_occluder": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_02_near_occluder_v1.png",
+              "world_x": 1576,
+              "width": 848,
+              "height": 360,
+              "source_layer": "near_occluder"
+            }
+          }
+        },
+        {
+          "id": "sprouts_el_cilantro_chunk_03",
+          "world_x": 2400,
+          "width": 800,
+          "source_panel": "art_source/chapter1_location_locked/source_panels/l1_p4_madison_el_cilantro_v3_source.png",
+          "landmark_ids": [
+            "goodwill_frontage",
+            "madison_intersection",
+            "el_cilantro_madison"
+          ],
+          "collision_ids": [
+            "madison_road_barrier"
+          ],
+          "physical_scene_object_ids": [],
+          "spawn_markers": [
+            {
+              "id": "encounter_2_encounter_trigger",
+              "kind": "encounter_trigger",
+              "world_x": 2460.0,
+              "encounter_index": 2,
+              "name": "El Cilantro at Madison"
+            },
+            {
+              "id": "encounter_2_encounter_gate",
+              "kind": "encounter_gate",
+              "world_x": 3130.0,
+              "encounter_index": 2,
+              "name": "El Cilantro at Madison"
+            },
+            {
+              "id": "encounter_2_camera_lock",
+              "kind": "camera_lock",
+              "world_x": 2420.0,
+              "encounter_index": 2,
+              "name": "El Cilantro at Madison"
+            }
+          ],
+          "foreground_layers": [
+            "near_occluder"
+          ],
+          "seam_anchor": "route_end",
+          "layers": {
+            "far_skyline": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_03_far_skyline_v1.png",
+              "world_x": 2376,
+              "width": 824,
+              "height": 360,
+              "source_layer": "skyline"
+            },
+            "architecture": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_03_architecture_v1.png",
+              "world_x": 2376,
+              "width": 824,
+              "height": 360,
+              "source_layer": "architecture"
+            },
+            "ground": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_03_ground_v1.png",
+              "world_x": 2376,
+              "width": 824,
+              "height": 360,
+              "source_layer": "ground"
+            },
+            "near_occluder": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_03_near_occluder_v1.png",
+              "world_x": 2376,
+              "width": 824,
+              "height": 360,
+              "source_layer": "near_occluder"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "theme": "seven_eleven_underpass",
+      "level_id": "chapter_1_level_2",
+      "world_width": 3200,
+      "chunk_overlap": 24,
+      "global_layers": {
+        "far_haze": "assets/stage/chapter1_location_locked/chunks/seven_eleven_underpass/atmosphere_haze_tile_v1.png"
+      },
+      "chunks": [
+        {
+          "id": "seven_eleven_underpass_chunk_00",
+          "world_x": 0,
+          "width": 800,
+          "source_panel": "art_source/chapter1_location_locked/source_panels/l2_p1_7eleven_carls_v3_source.png",
+          "landmark_ids": [
+            "seven_eleven",
+            "carls_jr_pad"
+          ],
+          "collision_ids": [
+            "seven_canopy_island"
+          ],
+          "physical_scene_object_ids": [
+            "l2_seven_eleven_crew_car"
+          ],
+          "spawn_markers": [
+            {
+              "id": "encounter_0_encounter_trigger",
+              "kind": "encounter_trigger",
+              "world_x": 400.0,
+              "encounter_index": 0,
+              "name": "7-Eleven Pad"
+            },
+            {
+              "id": "encounter_0_camera_lock",
+              "kind": "camera_lock",
+              "world_x": 300.0,
+              "encounter_index": 0,
+              "name": "7-Eleven Pad"
+            }
+          ],
+          "foreground_layers": [
+            "near_occluder"
+          ],
+          "seam_anchor": "structural_handoff",
+          "layers": {
+            "far_skyline": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/seven_eleven_underpass/chunk_00_far_skyline_v1.png",
+              "world_x": 0,
+              "width": 824,
+              "height": 360,
+              "source_layer": "skyline"
+            },
+            "architecture": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/seven_eleven_underpass/chunk_00_architecture_v1.png",
+              "world_x": 0,
+              "width": 824,
+              "height": 360,
+              "source_layer": "architecture"
+            },
+            "ground": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/seven_eleven_underpass/chunk_00_ground_v1.png",
+              "world_x": 0,
+              "width": 824,
+              "height": 360,
+              "source_layer": "ground"
+            },
+            "near_occluder": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/seven_eleven_underpass/chunk_00_near_occluder_v1.png",
+              "world_x": 0,
+              "width": 824,
+              "height": 360,
+              "source_layer": "near_occluder"
+            }
+          }
+        },
+        {
+          "id": "seven_eleven_underpass_chunk_01",
+          "world_x": 800,
+          "width": 800,
+          "source_panel": "art_source/chapter1_location_locked/source_panels/l2_p2_madison_plaza_bank_v3_source.png",
+          "landmark_ids": [
+            "madison_plaza",
+            "former_union_bank"
+          ],
+          "collision_ids": [
+            "madison_plaza_planter"
+          ],
+          "physical_scene_object_ids": [],
+          "spawn_markers": [
+            {
+              "id": "encounter_0_encounter_gate",
+              "kind": "encounter_gate",
+              "world_x": 970.0,
+              "encounter_index": 0,
+              "name": "7-Eleven Pad"
+            },
+            {
+              "id": "encounter_1_encounter_trigger",
+              "kind": "encounter_trigger",
+              "world_x": 1260.0,
+              "encounter_index": 1,
+              "name": "Madison Plaza"
+            },
+            {
+              "id": "encounter_1_camera_lock",
+              "kind": "camera_lock",
+              "world_x": 1180.0,
+              "encounter_index": 1,
+              "name": "Madison Plaza"
+            }
+          ],
+          "foreground_layers": [
+            "near_occluder"
+          ],
+          "seam_anchor": "structural_handoff",
+          "layers": {
+            "far_skyline": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/seven_eleven_underpass/chunk_01_far_skyline_v1.png",
+              "world_x": 776,
+              "width": 848,
+              "height": 360,
+              "source_layer": "skyline"
+            },
+            "architecture": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/seven_eleven_underpass/chunk_01_architecture_v1.png",
+              "world_x": 776,
+              "width": 848,
+              "height": 360,
+              "source_layer": "architecture"
+            },
+            "ground": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/seven_eleven_underpass/chunk_01_ground_v1.png",
+              "world_x": 776,
+              "width": 848,
+              "height": 360,
+              "source_layer": "ground"
+            },
+            "near_occluder": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/seven_eleven_underpass/chunk_01_near_occluder_v1.png",
+              "world_x": 776,
+              "width": 848,
+              "height": 360,
+              "source_layer": "near_occluder"
+            }
+          }
+        },
+        {
+          "id": "seven_eleven_underpass_chunk_02",
+          "world_x": 1600,
+          "width": 800,
+          "source_panel": "art_source/chapter1_location_locked/source_panels/l2_p3_valvoline_freeway_v3_source.png",
+          "landmark_ids": [
+            "valvoline"
+          ],
+          "collision_ids": [
+            "union_driveway_bollards",
+            "lube_bay_bollards"
+          ],
+          "physical_scene_object_ids": [],
+          "spawn_markers": [
+            {
+              "id": "encounter_1_encounter_gate",
+              "kind": "encounter_gate",
+              "world_x": 1950.0,
+              "encounter_index": 1,
+              "name": "Madison Plaza"
+            },
+            {
+              "id": "encounter_2_encounter_trigger",
+              "kind": "encounter_trigger",
+              "world_x": 2260.0,
+              "encounter_index": 2,
+              "name": "I-8 Underpass"
+            },
+            {
+              "id": "encounter_2_camera_lock",
+              "kind": "camera_lock",
+              "world_x": 2240.0,
+              "encounter_index": 2,
+              "name": "I-8 Underpass"
+            }
+          ],
+          "foreground_layers": [
+            "near_occluder"
+          ],
+          "seam_anchor": "structural_handoff",
+          "layers": {
+            "far_skyline": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/seven_eleven_underpass/chunk_02_far_skyline_v1.png",
+              "world_x": 1576,
+              "width": 848,
+              "height": 360,
+              "source_layer": "skyline"
+            },
+            "architecture": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/seven_eleven_underpass/chunk_02_architecture_v1.png",
+              "world_x": 1576,
+              "width": 848,
+              "height": 360,
+              "source_layer": "architecture"
+            },
+            "ground": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/seven_eleven_underpass/chunk_02_ground_v1.png",
+              "world_x": 1576,
+              "width": 848,
+              "height": 360,
+              "source_layer": "ground"
+            },
+            "near_occluder": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/seven_eleven_underpass/chunk_02_near_occluder_v1.png",
+              "world_x": 1576,
+              "width": 848,
+              "height": 360,
+              "source_layer": "near_occluder"
+            }
+          }
+        },
+        {
+          "id": "seven_eleven_underpass_chunk_03",
+          "world_x": 2400,
+          "width": 800,
+          "source_panel": "art_source/chapter1_location_locked/source_panels/l2_p4_i8_underpass_v3_source.png",
+          "landmark_ids": [
+            "freeway_approach",
+            "i8_underpass"
+          ],
+          "collision_ids": [
+            "i8_support_column"
+          ],
+          "physical_scene_object_ids": [],
+          "spawn_markers": [
+            {
+              "id": "encounter_2_encounter_gate",
+              "kind": "encounter_gate",
+              "world_x": 3120.0,
+              "encounter_index": 2,
+              "name": "I-8 Underpass"
+            }
+          ],
+          "foreground_layers": [
+            "near_occluder"
+          ],
+          "seam_anchor": "route_end",
+          "layers": {
+            "far_skyline": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/seven_eleven_underpass/chunk_03_far_skyline_v1.png",
+              "world_x": 2376,
+              "width": 824,
+              "height": 360,
+              "source_layer": "skyline"
+            },
+            "architecture": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/seven_eleven_underpass/chunk_03_architecture_v1.png",
+              "world_x": 2376,
+              "width": 824,
+              "height": 360,
+              "source_layer": "architecture"
+            },
+            "ground": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/seven_eleven_underpass/chunk_03_ground_v1.png",
+              "world_x": 2376,
+              "width": 824,
+              "height": 360,
+              "source_layer": "ground"
+            },
+            "near_occluder": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/seven_eleven_underpass/chunk_03_near_occluder_v1.png",
+              "world_x": 2376,
+              "width": 824,
+              "height": 360,
+              "source_layer": "near_occluder"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "theme": "soapy_joes_revive",
+      "level_id": "chapter_1_level_3",
+      "world_width": 3200,
+      "chunk_overlap": 24,
+      "global_layers": {
+        "far_haze": "assets/stage/chapter1_location_locked/chunks/soapy_joes_revive/atmosphere_haze_tile_v1.png"
+      },
+      "chunks": [
+        {
+          "id": "soapy_joes_revive_chunk_00",
+          "world_x": 0,
+          "width": 800,
+          "source_panel": "art_source/chapter1_location_locked/source_panels/l3_p1_soapy_v3_source.png",
+          "landmark_ids": [
+            "soapy_joes",
+            "starbucks_pad"
+          ],
+          "collision_ids": [
+            "soapy_vacuum_post",
+            "starcups_drive_lane"
+          ],
+          "physical_scene_object_ids": [],
+          "spawn_markers": [
+            {
+              "id": "encounter_0_encounter_trigger",
+              "kind": "encounter_trigger",
+              "world_x": 410.0,
+              "encounter_index": 0,
+              "name": "Soapy Joe's Front Lot"
+            },
+            {
+              "id": "encounter_0_camera_lock",
+              "kind": "camera_lock",
+              "world_x": 300.0,
+              "encounter_index": 0,
+              "name": "Soapy Joe's Front Lot"
+            }
+          ],
+          "foreground_layers": [
+            "near_occluder"
+          ],
+          "seam_anchor": "structural_handoff",
+          "layers": {
+            "far_skyline": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/soapy_joes_revive/chunk_00_far_skyline_v1.png",
+              "world_x": 0,
+              "width": 824,
+              "height": 360,
+              "source_layer": "skyline"
+            },
+            "architecture": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/soapy_joes_revive/chunk_00_architecture_v1.png",
+              "world_x": 0,
+              "width": 824,
+              "height": 360,
+              "source_layer": "architecture"
+            },
+            "ground": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/soapy_joes_revive/chunk_00_ground_v1.png",
+              "world_x": 0,
+              "width": 824,
+              "height": 360,
+              "source_layer": "ground"
+            },
+            "near_occluder": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/soapy_joes_revive/chunk_00_near_occluder_v1.png",
+              "world_x": 0,
+              "width": 824,
+              "height": 360,
+              "source_layer": "near_occluder"
+            }
+          }
+        },
+        {
+          "id": "soapy_joes_revive_chunk_01",
+          "world_x": 800,
+          "width": 800,
+          "source_panel": "art_source/chapter1_location_locked/source_panels/l3_p2_starbucks_marechiaro_v3_source.png",
+          "landmark_ids": [
+            "marechiaro",
+            "carls_boot_leather"
+          ],
+          "collision_ids": [
+            "marechiaro_planter"
+          ],
+          "physical_scene_object_ids": [],
+          "spawn_markers": [
+            {
+              "id": "encounter_0_encounter_gate",
+              "kind": "encounter_gate",
+              "world_x": 990.0,
+              "encounter_index": 0,
+              "name": "Soapy Joe's Front Lot"
+            },
+            {
+              "id": "encounter_1_encounter_trigger",
+              "kind": "encounter_trigger",
+              "world_x": 1230.0,
+              "encounter_index": 1,
+              "name": "Broadway Turn"
+            },
+            {
+              "id": "encounter_1_camera_lock",
+              "kind": "camera_lock",
+              "world_x": 1170.0,
+              "encounter_index": 1,
+              "name": "Broadway Turn"
+            }
+          ],
+          "foreground_layers": [
+            "near_occluder"
+          ],
+          "seam_anchor": "structural_handoff",
+          "layers": {
+            "far_skyline": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/soapy_joes_revive/chunk_01_far_skyline_v1.png",
+              "world_x": 776,
+              "width": 848,
+              "height": 360,
+              "source_layer": "skyline"
+            },
+            "architecture": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/soapy_joes_revive/chunk_01_architecture_v1.png",
+              "world_x": 776,
+              "width": 848,
+              "height": 360,
+              "source_layer": "architecture"
+            },
+            "ground": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/soapy_joes_revive/chunk_01_ground_v1.png",
+              "world_x": 776,
+              "width": 848,
+              "height": 360,
+              "source_layer": "ground"
+            },
+            "near_occluder": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/soapy_joes_revive/chunk_01_near_occluder_v1.png",
+              "world_x": 776,
+              "width": 848,
+              "height": 360,
+              "source_layer": "near_occluder"
+            }
+          }
+        },
+        {
+          "id": "soapy_joes_revive_chunk_02",
+          "world_x": 1600,
+          "width": 800,
+          "source_panel": "art_source/chapter1_location_locked/source_panels/l3_p3_boot_cvs_v3_source.png",
+          "landmark_ids": [
+            "cvs_broadway_corner",
+            "broadway_turn"
+          ],
+          "collision_ids": [
+            "broadway_median"
+          ],
+          "physical_scene_object_ids": [
+            "l3_broadway_sedan_parked"
+          ],
+          "spawn_markers": [
+            {
+              "id": "encounter_1_encounter_gate",
+              "kind": "encounter_gate",
+              "world_x": 1950.0,
+              "encounter_index": 1,
+              "name": "Broadway Turn"
+            },
+            {
+              "id": "encounter_2_encounter_trigger",
+              "kind": "encounter_trigger",
+              "world_x": 2240.0,
+              "encounter_index": 2,
+              "name": "Revive Approach"
+            },
+            {
+              "id": "encounter_2_camera_lock",
+              "kind": "camera_lock",
+              "world_x": 2230.0,
+              "encounter_index": 2,
+              "name": "Revive Approach"
+            }
+          ],
+          "foreground_layers": [
+            "near_occluder"
+          ],
+          "seam_anchor": "structural_handoff",
+          "layers": {
+            "far_skyline": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/soapy_joes_revive/chunk_02_far_skyline_v1.png",
+              "world_x": 1576,
+              "width": 848,
+              "height": 360,
+              "source_layer": "skyline"
+            },
+            "architecture": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/soapy_joes_revive/chunk_02_architecture_v1.png",
+              "world_x": 1576,
+              "width": 848,
+              "height": 360,
+              "source_layer": "architecture"
+            },
+            "ground": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/soapy_joes_revive/chunk_02_ground_v1.png",
+              "world_x": 1576,
+              "width": 848,
+              "height": 360,
+              "source_layer": "ground"
+            },
+            "near_occluder": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/soapy_joes_revive/chunk_02_near_occluder_v1.png",
+              "world_x": 1576,
+              "width": 848,
+              "height": 360,
+              "source_layer": "near_occluder"
+            }
+          }
+        },
+        {
+          "id": "soapy_joes_revive_chunk_03",
+          "world_x": 2400,
+          "width": 800,
+          "source_panel": "art_source/chapter1_location_locked/source_panels/l3_p4_broadway_revive_v3_source.png",
+          "landmark_ids": [
+            "revive_pathway"
+          ],
+          "collision_ids": [
+            "revive_entry_planter"
+          ],
+          "physical_scene_object_ids": [],
+          "spawn_markers": [
+            {
+              "id": "encounter_2_encounter_gate",
+              "kind": "encounter_gate",
+              "world_x": 3115.0,
+              "encounter_index": 2,
+              "name": "Revive Approach"
+            }
+          ],
+          "foreground_layers": [
+            "near_occluder"
+          ],
+          "seam_anchor": "route_end",
+          "layers": {
+            "far_skyline": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/soapy_joes_revive/chunk_03_far_skyline_v1.png",
+              "world_x": 2376,
+              "width": 824,
+              "height": 360,
+              "source_layer": "skyline"
+            },
+            "architecture": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/soapy_joes_revive/chunk_03_architecture_v1.png",
+              "world_x": 2376,
+              "width": 824,
+              "height": 360,
+              "source_layer": "architecture"
+            },
+            "ground": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/soapy_joes_revive/chunk_03_ground_v1.png",
+              "world_x": 2376,
+              "width": 824,
+              "height": 360,
+              "source_layer": "ground"
+            },
+            "near_occluder": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/soapy_joes_revive/chunk_03_near_occluder_v1.png",
+              "world_x": 2376,
+              "width": 824,
+              "height": 360,
+              "source_layer": "near_occluder"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "theme": "awaken_church_finale",
+      "level_id": "chapter_1_level_4",
+      "world_width": 1600,
+      "chunk_overlap": 24,
+      "global_layers": {
+        "far_haze": "assets/stage/chapter1_location_locked/chunks/awaken_church_finale/atmosphere_haze_tile_v1.png"
+      },
+      "chunks": [
+        {
+          "id": "awaken_church_finale_chunk_00",
+          "world_x": 0,
+          "width": 800,
+          "source_panel": "art_source/chapter1_location_locked/source_panels/l4_p1_awaken_lot_v3_source.png",
+          "landmark_ids": [
+            "awaken_church_lot",
+            "awaken_facade"
+          ],
+          "collision_ids": [
+            "awaken_entry_planter",
+            "awaken_light_pole"
+          ],
+          "physical_scene_object_ids": [
+            "l4_awaken_sunday_car"
+          ],
+          "spawn_markers": [
+            {
+              "id": "encounter_0_encounter_trigger",
+              "kind": "encounter_trigger",
+              "world_x": 350.0,
+              "encounter_index": 0,
+              "name": "Awaken Lot Intercept"
+            },
+            {
+              "id": "encounter_0_camera_lock",
+              "kind": "camera_lock",
+              "world_x": 300.0,
+              "encounter_index": 0,
+              "name": "Awaken Lot Intercept"
+            }
+          ],
+          "foreground_layers": [
+            "near_occluder"
+          ],
+          "seam_anchor": "structural_handoff",
+          "layers": {
+            "far_skyline": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/awaken_church_finale/chunk_00_far_skyline_v1.png",
+              "world_x": 0,
+              "width": 824,
+              "height": 360,
+              "source_layer": "skyline"
+            },
+            "architecture": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/awaken_church_finale/chunk_00_architecture_v1.png",
+              "world_x": 0,
+              "width": 824,
+              "height": 360,
+              "source_layer": "architecture"
+            },
+            "ground": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/awaken_church_finale/chunk_00_ground_v1.png",
+              "world_x": 0,
+              "width": 824,
+              "height": 360,
+              "source_layer": "ground"
+            },
+            "near_occluder": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/awaken_church_finale/chunk_00_near_occluder_v1.png",
+              "world_x": 0,
+              "width": 824,
+              "height": 360,
+              "source_layer": "near_occluder"
+            }
+          }
+        },
+        {
+          "id": "awaken_church_finale_chunk_01",
+          "world_x": 800,
+          "width": 800,
+          "source_panel": "art_source/chapter1_location_locked/source_panels/l4_p2_daves_bmx_v3_source.png",
+          "landmark_ids": [
+            "awaken_front_lot",
+            "daves_bmx"
+          ],
+          "collision_ids": [
+            "front_lot_median"
+          ],
+          "physical_scene_object_ids": [],
+          "spawn_markers": [
+            {
+              "id": "encounter_0_encounter_gate",
+              "kind": "encounter_gate",
+              "world_x": 900.0,
+              "encounter_index": 0,
+              "name": "Awaken Lot Intercept"
+            },
+            {
+              "id": "encounter_1_encounter_trigger",
+              "kind": "encounter_trigger",
+              "world_x": 1050.0,
+              "encounter_index": 1,
+              "name": "Couch at Awaken"
+            },
+            {
+              "id": "encounter_1_encounter_gate",
+              "kind": "encounter_gate",
+              "world_x": 1530.0,
+              "encounter_index": 1,
+              "name": "Couch at Awaken"
+            },
+            {
+              "id": "encounter_1_camera_lock",
+              "kind": "camera_lock",
+              "world_x": 960.0,
+              "encounter_index": 1,
+              "name": "Couch at Awaken"
+            }
+          ],
+          "foreground_layers": [
+            "near_occluder"
+          ],
+          "seam_anchor": "route_end",
+          "layers": {
+            "far_skyline": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/awaken_church_finale/chunk_01_far_skyline_v1.png",
+              "world_x": 776,
+              "width": 824,
+              "height": 360,
+              "source_layer": "skyline"
+            },
+            "architecture": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/awaken_church_finale/chunk_01_architecture_v1.png",
+              "world_x": 776,
+              "width": 824,
+              "height": 360,
+              "source_layer": "architecture"
+            },
+            "ground": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/awaken_church_finale/chunk_01_ground_v1.png",
+              "world_x": 776,
+              "width": 824,
+              "height": 360,
+              "source_layer": "ground"
+            },
+            "near_occluder": {
+              "asset": "assets/stage/chapter1_location_locked/chunks/awaken_church_finale/chunk_01_near_occluder_v1.png",
+              "world_x": 776,
+              "width": 824,
+              "height": 360,
+              "source_layer": "near_occluder"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

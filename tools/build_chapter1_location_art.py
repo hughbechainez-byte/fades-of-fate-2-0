@@ -34,6 +34,14 @@ LAYER_FIELDS = (
     "ground",
     "near_occluder",
 )
+CHUNK_LAYER_FIELDS = (
+    ("skyline", "far_skyline"),
+    ("architecture", "architecture"),
+    ("ground", "ground"),
+    ("near_occluder", "near_occluder"),
+)
+CHUNK_OVERLAP = 24
+CHUNK_MANIFEST_SCHEMA_VERSION = 1
 ORTHOGRAPHIC_GROUND_SOURCE = (
     ROOT
     / "art_source"
@@ -1091,6 +1099,183 @@ def _save(surface: pygame.Surface, relative_asset: str) -> None:
     pygame.image.save(surface, str(path))
 
 
+def _route_gameplay_level(
+    gameplay: Mapping[str, Any],
+    route: Mapping[str, Any],
+) -> Mapping[str, Any] | None:
+    """Find the matching playable level without duplicating route geometry."""
+
+    campaign = gameplay.get("campaign", {})
+    for chapter in campaign.get("chapters", ()):
+        for level in chapter.get("levels", ()):
+            if isinstance(level, Mapping) and str(level.get("id")) == str(route.get("level_id")):
+                return level
+    return None
+
+
+def _stage_chunk_specs(route: Mapping[str, Any]) -> tuple[dict[str, Any], ...]:
+    """Return panel-backed contiguous chunks for one location-locked route."""
+
+    theme = str(route["theme"])
+    specs = PANEL_SPECS.get(theme)
+    if specs is None:
+        raise ValueError(f"unsupported Chapter 1 route theme: {theme}")
+    cursor = 0
+    chunks: list[dict[str, Any]] = []
+    for index, spec in enumerate(specs):
+        chunks.append(
+            {
+                "id": f"{theme}_chunk_{index:02d}",
+                "world_x": cursor,
+                "width": int(spec.width),
+                "source_panel": spec.source,
+                "landmark_ids": list(spec.anchor_ids),
+                "seam_anchor": "structural_handoff" if index + 1 < len(specs) else "route_end",
+            }
+        )
+        cursor += int(spec.width)
+    if cursor != int(route["world_width"]):
+        raise ValueError(f"{theme} panel chunks cover {cursor}, expected {route['world_width']}")
+    return tuple(chunks)
+
+
+def _in_chunk(world_x: float, start: int, end: int, *, last: bool) -> bool:
+    value = float(world_x)
+    return start <= value <= end if last else start <= value < end
+
+
+def _build_stage_chunk_record(
+    route: Mapping[str, Any],
+    gameplay_level: Mapping[str, Any] | None,
+) -> dict[str, Any]:
+    """Build the runtime chunk contract from authored route/gameplay data."""
+
+    theme = str(route["theme"])
+    route_width = int(route["world_width"])
+    chunk_specs = _stage_chunk_specs(route)
+    obstacles = tuple((gameplay_level or {}).get("stage_geometry", {}).get("obstacles", ()))
+    encounters = tuple((gameplay_level or {}).get("encounters", ()))
+    physical_objects = tuple(route.get("physical_scene_objects", ()))
+    chunk_records: list[dict[str, Any]] = []
+    for index, spec in enumerate(chunk_specs):
+        start = int(spec["world_x"])
+        end = start + int(spec["width"])
+        last = index + 1 == len(chunk_specs)
+        chunk_dir = Path("assets/stage/chapter1_location_locked/chunks") / theme
+        layers: dict[str, dict[str, Any]] = {}
+        for source_layer, runtime_layer in CHUNK_LAYER_FIELDS:
+            left = max(0, start - CHUNK_OVERLAP)
+            right = min(route_width, end + CHUNK_OVERLAP)
+            layers[runtime_layer] = {
+                "asset": (chunk_dir / f"chunk_{index:02d}_{runtime_layer}_v1.png").as_posix(),
+                "world_x": left,
+                "width": right - left,
+                "height": HEIGHT,
+                "source_layer": source_layer,
+            }
+
+        marker_list: list[dict[str, Any]] = []
+        for encounter_index, encounter in enumerate(encounters):
+            if not isinstance(encounter, Mapping):
+                continue
+            for marker_kind, field in (
+                ("encounter_trigger", "trigger_x"),
+                ("encounter_gate", "gate_x"),
+                ("camera_lock", "camera_x"),
+            ):
+                if field not in encounter or not _in_chunk(
+                    float(encounter[field]),
+                    start,
+                    end,
+                    last=last,
+                ):
+                    continue
+                marker_list.append(
+                    {
+                        "id": f"encounter_{encounter_index}_{marker_kind}",
+                        "kind": marker_kind,
+                        "world_x": float(encounter[field]),
+                        "encounter_index": encounter_index,
+                        "name": str(encounter.get("name", "")),
+                    }
+                )
+
+        chunk_records.append(
+            {
+                "id": spec["id"],
+                "world_x": start,
+                "width": int(spec["width"]),
+                "source_panel": spec["source_panel"],
+                "landmark_ids": list(spec["landmark_ids"]),
+                "collision_ids": [
+                    str(item.get("id", ""))
+                    for item in obstacles
+                    if isinstance(item, Mapping)
+                    and _in_chunk(float(item.get("x", 0.0)), start, end, last=last)
+                ],
+                "physical_scene_object_ids": [
+                    str(item.get("id", ""))
+                    for item in physical_objects
+                    if isinstance(item, Mapping)
+                    and _in_chunk(float(item.get("world_x", 0.0)), start, end, last=last)
+                ],
+                "spawn_markers": marker_list,
+                "foreground_layers": ["near_occluder"],
+                "seam_anchor": spec["seam_anchor"],
+                "layers": layers,
+            }
+        )
+
+    return {
+        "theme": theme,
+        "level_id": str(route["level_id"]),
+        "world_width": route_width,
+        "chunk_overlap": CHUNK_OVERLAP,
+        "global_layers": {
+            "far_haze": (
+                Path("assets/stage/chapter1_location_locked/chunks")
+                / theme
+                / "atmosphere_haze_tile_v1.png"
+            ).as_posix()
+        },
+        "chunks": chunk_records,
+    }
+
+
+def _save_stage_chunk_assets(
+    route: Mapping[str, Any],
+    layers: Mapping[str, pygame.Surface],
+) -> None:
+    """Bake cullable pieces from the authored panel-aligned layer surfaces."""
+
+    theme = str(route["theme"])
+    route_width = int(route["world_width"])
+    chunk_specs = _stage_chunk_specs(route)
+    chunk_dir = Path("assets/stage/chapter1_location_locked/chunks") / theme
+    haze = layers["haze"]
+    haze_width = min(HAZE_REPEAT_WIDTH, haze.get_width())
+    _save(
+        haze.subsurface(pygame.Rect(0, 0, haze_width, HEIGHT)).copy(),
+        (chunk_dir / "atmosphere_haze_tile_v1.png").as_posix(),
+    )
+    for index, spec in enumerate(chunk_specs):
+        start = int(spec["world_x"])
+        end = start + int(spec["width"])
+        left = max(0, start - CHUNK_OVERLAP)
+        right = min(route_width, end + CHUNK_OVERLAP)
+        source_rect = pygame.Rect(left, 0, right - left, HEIGHT)
+        for source_layer, runtime_layer in CHUNK_LAYER_FIELDS:
+            source = layers[source_layer]
+            if source.get_width() != route_width:
+                raise ValueError(
+                    f"{theme} {source_layer} layer width {source.get_width()} != {route_width}"
+                )
+            _save(
+                source.subsurface(source_rect).copy(),
+                (chunk_dir / f"chunk_{index:02d}_{runtime_layer}_v1.png").as_posix(),
+            )
+
+
 def _save_layered_assets(
     route: Mapping[str, Any],
     detail_source: pygame.Surface | None = None,
@@ -1105,23 +1290,51 @@ def main() -> None:
     pygame.init()
     pygame.display.set_mode((1, 1))
     manifest = json.loads(
-        (ROOT / "data" / "chapter1_location_lock.json").read_text(encoding="utf-8")
+        (ROOT / "data" / "chapter1_location_lock.json").read_text(encoding="utf-8-sig")
+    )
+    gameplay = json.loads(
+        (ROOT / "data" / "gameplay.json").read_text(encoding="utf-8-sig")
     )
     routes: Iterable[Mapping[str, Any]] = manifest["routes"]
+    chunk_routes: list[dict[str, Any]] = []
     for route in routes:
         detail_surface = _build_panorama_layers(route)
         main_surface = detail_surface.copy()
         _draw_natural_signs(main_surface, route)
         far_surface = _draw_far(route)
         near_surface = _draw_near(route)
-        _save_layered_assets(route, detail_surface)
+        layered_assets = _build_layered_assets(route, detail_surface)
+        _save_stage_chunk_assets(route, layered_assets)
+        for item in LAYER_FIELDS:
+            layer_name = item[0] if isinstance(item, tuple) else item
+            _save(layered_assets[layer_name], str(_layer_asset_path(route, layer_name)))
         _save(main_surface, str(route["main_panorama_asset"]))
         _save(far_surface, str(route["far_asset"]))
         _save(near_surface, str(route["near_asset"]))
+        chunk_routes.append(
+            _build_stage_chunk_record(
+                route,
+                _route_gameplay_level(gameplay, route),
+            )
+        )
         print(
             f"{route['level_id']}: main={main_surface.get_size()} "
-            f"far={far_surface.get_size()} near={near_surface.get_size()}"
+            f"far={far_surface.get_size()} near={near_surface.get_size()} "
+            f"chunks={len(chunk_routes[-1]['chunks'])}"
         )
+    (ROOT / "data" / "stage_chunks.json").write_text(
+        json.dumps(
+            {
+                "schema_version": CHUNK_MANIFEST_SCHEMA_VERSION,
+                "description": "Panel-backed world chunks for location-locked Chapter 1 routes.",
+                "routes": chunk_routes,
+            },
+            ensure_ascii=False,
+            indent=2,
+        )
+        + "\n",
+        encoding="utf-8",
+    )
     pygame.quit()
 
 
