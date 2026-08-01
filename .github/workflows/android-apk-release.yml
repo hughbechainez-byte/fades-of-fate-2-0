@@ -15,6 +15,7 @@ jobs:
     env:
       ANDROID_HOME: /usr/local/lib/android/sdk
       JAVA_HOME: /usr/lib/jvm/temurin-17-jdk-amd64
+      GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx4096m -Dfile.encoding=UTF-8"
     steps:
       - name: Checkout source
         uses: actions/checkout@v4

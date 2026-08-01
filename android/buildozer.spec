@@ -5,6 +5,7 @@ package.domain = com.hughbechainezbyte.thefadesoffate
 source.dir = ..
 source.include_exts = py,png,jpg,jpeg,wav,ogg,mp3,json,txt
 source.include_patterns = main.py,src/**/*.py,assets/**/*,data/**/*
+source.exclude_dirs = .git, .venv, .github, build, dist, logs, tmp, .mypy_cache, tests, tools
 source.exclude_patterns = .git, .venv, .github, build, dist, logs, tmp, .mypy_cache, tests
 version = 0.15.0
 requirements = python3,cython==0.29.36,pygame==2.5.2
