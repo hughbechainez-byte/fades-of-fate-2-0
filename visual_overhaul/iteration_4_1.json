@@ -1,31 +1,31 @@
 {
-  "iteration": "4.4",
-  "title": "Charged character-state rim lighting",
-  "source_commit": "de5c7a6",
-  "game_version": "0.15.0-visual-overhaul-4.4",
-  "content_revision": 5,
+  "iteration": "4.5",
+  "title": "Animated droppable pickup presentation",
+  "source_commit": "c4ab632",
+  "game_version": "0.15.0-visual-overhaul-4.5",
+  "content_revision": 6,
   "sections": {
     "animation": "prior 4.2 pass preserved; authored floor remains 91 clips / 828 rooted poses",
-    "character_art": "complete for this iteration: super, special, and propane cels receive a localized state-colored rim without silhouette changes",
+    "character_art": "prior 4.4 pass preserved; super, special, and propane cels retain localized state-colored rims",
     "scenery": "prior 4.3 pass preserved; cart-return wheel spokes and metal glint remain active",
-    "combat_effects": "complete for this iteration: directional sparks, streaks, rings, dust, alpha compositing, density budget",
-    "props": "baseline preserved"
+    "combat_effects": "prior 4.1 pass preserved: directional sparks, streaks, rings, dust, alpha compositing, density budget",
+    "props": "complete for this iteration: BB ammo and Super Butane pickups receive deterministic moving glints, plus collect bursts with type-colored star cores"
   },
   "verification": {
-    "unit_and_integration_tests": "425 passed",
+    "unit_and_integration_tests": "426 passed",
     "source_self_test": "pass",
     "package_self_test": "pass",
-    "desktop_exe_sha256": "18DB81D7EAA4D201254127F13A18475A712615234030028EC0CFCDFA3C92E369",
-    "content_pack_sha256": "8A8E821BFAB5DE63CE0CA0E4D41E6ABE5565BAA071A442E62F09F92ECEAEC99C",
+    "desktop_exe_sha256": "A2B75F021CA10BBEC6E5756FFD3244E55BA0B78B1A488A62ACE117E6C338E4BC",
+    "content_pack_sha256": "810DDA440DAE503D949B9C260D498E58108BF63BDD7E065F8A1B7C1FAC8CBA1B",
     "content_pack_bytes": 113676083,
     "android_local_build": "unavailable: Buildozer/WSL not installed",
     "android_device_qa": "unavailable: adb reported no devices",
-    "online_android_attempt": "initial attempts failed on missing main.py, then empty Gradle module, then runner cancellation",
+    "online_android_attempt": "pending workflow 30680796484",
     "online_android_fix": "android/buildozer.spec includes main.py explicitly, omits empty Gradle dependencies, and excludes tools; Gradle heap capped at 4096m",
-    "online_android_workflow": "success: run 30680145437",
-    "online_release": "https://github.com/hughbechainez-byte/the-fades-of-fate/releases/tag/v0.15.0-visual-overhaul-4.4",
-    "online_apk": "thefadesoffate-0.15.0-arm64-v8a-debug.apk sha256:acda6e4a2d7286fa0842f2799128a3354cb8e9b238727c9d37afe6a3e52bc487",
-    "online_content_pack": "fades-of-fate-content-pack.zip sha256:9e7ed226ef41d06b304ab0d9010dd7c039b57863934a04046a6f57c792798752"
+    "online_android_workflow": "in_progress: run 30680796484",
+    "online_release": "pending workflow 30680796484",
+    "online_apk": "pending workflow 30680796484",
+    "online_content_pack": "pending workflow 30680796484"
   },
   "artifacts": {
     "windows_dist": "dist/The Fades of Fate",
@@ -33,5 +33,17 @@
     "self_test_report": "dist/The Fades of Fate/build/self_test_report.json",
     "content_release": "dist/content"
   },
-  "next": "Continue with the next independent visual-overhaul iteration; device QA remains pending until adb target is available."
+  "visual_evidence": {
+    "current_gameplay_capture": "visual_overhaul/iteration_4_5_gameplay.png",
+    "material_qa_capture": "build/material_shading_qa.png",
+    "android_device_qa": "unavailable: adb reported no devices"
+  },
+  "release_history": [
+    {"iteration": "4.1", "focus": "combat_effects", "tag": "v0.15.0-visual-overhaul-4.1", "source_commit": "03479fc"},
+    {"iteration": "4.2", "focus": "animation", "tag": "v0.15.0-visual-overhaul-4.2", "source_commit": "5f3bc75"},
+    {"iteration": "4.3", "focus": "scenery", "tag": "v0.15.0-visual-overhaul-4.3", "source_commit": "411fe13"},
+    {"iteration": "4.4", "focus": "character_art", "tag": "v0.15.0-visual-overhaul-4.4", "source_commit": "de5c7a6"},
+    {"iteration": "4.5", "focus": "props", "tag": "v0.15.0-visual-overhaul-4.5", "source_commit": "c4ab632"}
+  ],
+  "next": "Continue independent visual-overhaul iterations until animation, character_art, scenery, combat_effects, and props each have three complete release-backed passes; device QA remains pending until adb target is available."
 }
