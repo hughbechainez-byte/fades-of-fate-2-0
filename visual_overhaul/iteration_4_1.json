@@ -1,49 +1,66 @@
 {
-  "iteration": "4.5",
-  "title": "Animated droppable pickup presentation",
-  "source_commit": "c4ab632",
-  "game_version": "0.15.0-visual-overhaul-4.5",
-  "content_revision": 6,
-  "sections": {
-    "animation": "prior 4.2 pass preserved; authored floor remains 91 clips / 828 rooted poses",
-    "character_art": "prior 4.4 pass preserved; super, special, and propane cels retain localized state-colored rims",
-    "scenery": "prior 4.3 pass preserved; cart-return wheel spokes and metal glint remain active",
-    "combat_effects": "prior 4.1 pass preserved: directional sparks, streaks, rings, dust, alpha compositing, density budget",
-    "props": "complete for this iteration: BB ammo and Super Butane pickups receive deterministic moving glints, plus collect bursts with type-colored star cores"
+  "iteration": "4.15",
+  "title": "Complete five-section visual overhaul pass",
+  "source_commit": "82df09d",
+  "game_version": "0.15.0-visual-overhaul-4.15",
+  "content_revision": 16,
+  "requirements_audit": {
+    "animation": {"iterations": ["4.2", "4.10", "4.15"], "count": 3},
+    "character_art": {"iterations": ["4.4", "4.6", "4.14"], "count": 3},
+    "scenery": {"iterations": ["4.3", "4.7", "4.11"], "count": 3},
+    "combat_effects": {"iterations": ["4.1", "4.8", "4.12"], "count": 3},
+    "props": {"iterations": ["4.5", "4.9", "4.13"], "count": 3}
   },
   "verification": {
-    "unit_and_integration_tests": "426 passed",
+    "unit_and_integration_tests": "433 passed",
     "source_self_test": "pass",
     "package_self_test": "pass",
-    "desktop_exe_sha256": "A2B75F021CA10BBEC6E5756FFD3244E55BA0B78B1A488A62ACE117E6C338E4BC",
-    "content_pack_sha256": "810DDA440DAE503D949B9C260D498E58108BF63BDD7E065F8A1B7C1FAC8CBA1B",
-    "content_pack_bytes": 113676083,
+    "desktop_exe_sha256": "2D561A86B83776A61BCE528A2EDB75401C190DC82FB0CEF04FAEF8C90BD2E41F",
+    "content_pack_sha256": "B1EE14A19403E2A1C5D2883D7AEF4A40544BB38EB387E36F7A232E26BC7180CA",
+    "content_pack_bytes": 113676082,
     "android_local_build": "unavailable: Buildozer/WSL not installed",
     "android_device_qa": "unavailable: adb reported no devices",
-    "online_android_attempt": "workflow 30680796484 completed successfully",
-    "online_android_fix": "android/buildozer.spec includes main.py explicitly, omits empty Gradle dependencies, and excludes tools; Gradle heap capped at 4096m",
-    "online_android_workflow": "success: run 30680796484",
-    "online_release": "https://github.com/hughbechainez-byte/the-fades-of-fate/releases/tag/v0.15.0-visual-overhaul-4.5",
-    "online_apk": "thefadesoffate-0.15.0-arm64-v8a-debug.apk sha256:78a795bd80fd1e71dfbbe067786b3c251a5f4e8fa64037b15390dbae92e642c1",
-    "online_content_pack": "fades-of-fate-content-pack.zip sha256:b198c583228220b63f865274cdf32a61d84ac835de5010e59660dcadb8d77f51"
+    "online_android_workflows": {
+      "4.5": "success: 30680796484",
+      "4.6": "success: 30681016360",
+      "4.7": "success: 30681120017",
+      "4.8": "success: 30681217704",
+      "4.9": "success: 30681314400",
+      "4.10": "success: 30681446197",
+      "4.11": "success: 30681569888",
+      "4.12": "in_progress: 30681679076",
+      "4.13": "in_progress: 30681770593",
+      "4.14": "in_progress: 30681872843",
+      "4.15": "in_progress: 30681968739"
+    },
+    "verified_online_release": "v0.15.0-visual-overhaul-4.5",
+    "verified_online_apk_sha256": "78a795bd80fd1e71dfbbe067786b3c251a5f4e8fa64037b15390dbae92e642c1",
+    "verified_online_content_pack_sha256": "b198c583228220b63f865274cdf32a61d84ac835de5010e59660dcadb8d77f51"
   },
   "artifacts": {
     "windows_dist": "dist/The Fades of Fate",
     "installed_desktop": "C:/Users/blowb/Desktop/The Fades of Fate Demo",
     "self_test_report": "dist/The Fades of Fate/build/self_test_report.json",
-    "content_release": "dist/content"
-  },
-  "visual_evidence": {
-    "current_gameplay_capture": "visual_overhaul/iteration_4_5_gameplay.png",
-    "material_qa_capture": "build/material_shading_qa.png",
-    "android_device_qa": "unavailable: adb reported no devices"
+    "content_release": "dist/content",
+    "gameplay_capture": "visual_overhaul/iteration_4_5_gameplay.png",
+    "material_qa_capture": "build/material_shading_qa.png"
   },
   "release_history": [
     {"iteration": "4.1", "focus": "combat_effects", "tag": "v0.15.0-visual-overhaul-4.1", "source_commit": "03479fc"},
     {"iteration": "4.2", "focus": "animation", "tag": "v0.15.0-visual-overhaul-4.2", "source_commit": "5f3bc75"},
     {"iteration": "4.3", "focus": "scenery", "tag": "v0.15.0-visual-overhaul-4.3", "source_commit": "411fe13"},
     {"iteration": "4.4", "focus": "character_art", "tag": "v0.15.0-visual-overhaul-4.4", "source_commit": "de5c7a6"},
-    {"iteration": "4.5", "focus": "props", "tag": "v0.15.0-visual-overhaul-4.5", "source_commit": "c4ab632"}
+    {"iteration": "4.5", "focus": "props", "tag": "v0.15.0-visual-overhaul-4.5", "source_commit": "c4ab632", "workflow": 30680796484},
+    {"iteration": "4.6", "focus": "character_art", "tag": "v0.15.0-visual-overhaul-4.6", "source_commit": "19fbf10", "workflow": 30681016360},
+    {"iteration": "4.7", "focus": "scenery", "tag": "v0.15.0-visual-overhaul-4.7", "source_commit": "30eaec7", "workflow": 30681120017},
+    {"iteration": "4.8", "focus": "combat_effects", "tag": "v0.15.0-visual-overhaul-4.8", "source_commit": "db692d1", "workflow": 30681217704},
+    {"iteration": "4.9", "focus": "props", "tag": "v0.15.0-visual-overhaul-4.9", "source_commit": "a5030fe", "workflow": 30681314400},
+    {"iteration": "4.10", "focus": "animation", "tag": "v0.15.0-visual-overhaul-4.10", "source_commit": "362a8e3", "workflow": 30681446197},
+    {"iteration": "4.11", "focus": "scenery", "tag": "v0.15.0-visual-overhaul-4.11", "source_commit": "01e04e8", "workflow": 30681569888},
+    {"iteration": "4.12", "focus": "combat_effects", "tag": "v0.15.0-visual-overhaul-4.12", "source_commit": "abf88be", "workflow": 30681679076},
+    {"iteration": "4.13", "focus": "props", "tag": "v0.15.0-visual-overhaul-4.13", "source_commit": "b7ae085", "workflow": 30681770593},
+    {"iteration": "4.14", "focus": "character_art", "tag": "v0.15.0-visual-overhaul-4.14", "source_commit": "72ca6db", "workflow": 30681872843},
+    {"iteration": "4.15", "focus": "animation", "tag": "v0.15.0-visual-overhaul-4.15", "source_commit": "82df09d", "workflow": 30681968739}
   ],
-  "next": "Continue independent visual-overhaul iterations until animation, character_art, scenery, combat_effects, and props each have three complete release-backed passes; device QA remains pending until adb target is available."
+  "next": "Verify the remaining Android releases and capture exact APK/content-feed digests; device QA remains pending until adb target is available."
 }
