@@ -1219,6 +1219,15 @@ class PixelArtTests(unittest.TestCase):
             pygame.image.tobytes(dumpster_late, "RGBA"),
             "scenery metal should carry deterministic moving glints",
         )
+        bollard_zero = pygame.Surface((180, 140), pygame.SRCALPHA)
+        bollard_late = pygame.Surface((180, 140), pygame.SRCALPHA)
+        pixel_art.draw_stage_prop(bollard_zero, 90, 120, "bollards", frame=0)
+        pixel_art.draw_stage_prop(bollard_late, 90, 120, "bollards", frame=3)
+        self.assertNotEqual(
+            pygame.image.tobytes(bollard_zero, "RGBA"),
+            pygame.image.tobytes(bollard_late, "RGBA"),
+            "street props should carry deterministic reflector motion",
+        )
 
     def test_charged_player_states_add_a_rim_without_changing_silhouette(self) -> None:
         authored = sprite_atlas.player_frame("black_dave", "super", 4)

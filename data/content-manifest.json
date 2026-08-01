@@ -1,9 +1,9 @@
 {
-  "content_revision": 13,
-  "content_version": "0.15.0-visual-overhaul-4.12",
+  "content_revision": 14,
+  "content_version": "0.15.0-visual-overhaul-4.13",
   "files": [],
   "generated_utc": "2026-07-31T00:00:00+00:00",
-  "minimum_game_version": "0.15.0-visual-overhaul-4.12",
+  "minimum_game_version": "0.15.0-visual-overhaul-4.13",
   "pack": {
     "asset": "fades-of-fate-content-pack.zip",
     "sha256": "",

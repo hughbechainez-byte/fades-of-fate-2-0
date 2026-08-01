@@ -3378,6 +3378,8 @@ def draw_stage_prop(
             pygame.draw.rect(sprite, (188, 151, 48), (px - 2, 29, 8, 31))
             pygame.draw.rect(sprite, (244, 218, 113), (px - 2, 36, 8, 5))
             pygame.draw.rect(sprite, (107, 78, 38), (px - 7, 61, 18, 5))
+            reflector_y = 31 + ((int(frame) + px) % 5)
+            pygame.draw.rect(sprite, (255, 246, 174), (px - 2, reflector_y, 8, 2))
         bottom = 66
     else:
         # Concrete planter with several hard-edged succulent clusters.
