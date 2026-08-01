@@ -1189,6 +1189,17 @@ class PixelArtTests(unittest.TestCase):
         self.assertNotEqual(pygame.image.tobytes(early, "RGBA"), pygame.image.tobytes(late, "RGBA"))
         self.assertEqual(pygame.mask.from_surface(idle).count(), 0)
 
+    def test_locomotion_footfall_ticks_are_phase_locked(self) -> None:
+        early = pygame.Surface((180, 120), pygame.SRCALPHA)
+        late = pygame.Surface((180, 120), pygame.SRCALPHA)
+        idle = pygame.Surface((180, 120), pygame.SRCALPHA)
+        pixel_art._draw_footfall_ticks(early, 90, 100, 0, 1, "walk", 1)
+        pixel_art._draw_footfall_ticks(late, 90, 100, 0, 1, "walk", 9)
+        pixel_art._draw_footfall_ticks(idle, 90, 100, 0, 1, "idle", 1)
+        self.assertGreater(pygame.mask.from_surface(early).count(), 0)
+        self.assertEqual(pygame.image.tobytes(early, "RGBA"), pygame.image.tobytes(late, "RGBA"))
+        self.assertEqual(pygame.mask.from_surface(idle).count(), 0)
+
     def test_cart_return_props_have_deterministic_micro_motion(self) -> None:
         frame_zero = pygame.Surface((180, 140), pygame.SRCALPHA)
         frame_one = pygame.Surface((180, 140), pygame.SRCALPHA)

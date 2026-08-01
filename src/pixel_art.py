@@ -3959,6 +3959,33 @@ def _draw_action_ribbon(
         pygame.draw.line(surface, color, start, end, 1)
 
 
+def _draw_footfall_ticks(
+    surface: pygame.Surface,
+    x: float,
+    y: float,
+    z: float,
+    facing: object,
+    state: str,
+    frame: int,
+) -> None:
+    """Punctuate locomotion cels with short, phase-locked contact marks."""
+
+    if state not in {"walk", "run", "move", "jog"}:
+        return
+    phase = int(frame) % 8
+    if phase not in {1, 2, 5, 6}:
+        return
+    direction = _face_sign(facing)
+    ground_y = _i(y - z) + 2
+    lead = 13 if phase in {2, 6} else 9
+    rear = -11 if phase in {2, 6} else -7
+    color = (175, 157, 123) if phase in {2, 6} else (113, 103, 94)
+    for offset, length in ((lead, 7), (rear, 5)):
+        start_x = _i(x) + direction * offset
+        pygame.draw.line(surface, (49, 43, 46), (start_x - length // 2, ground_y), (start_x + length // 2, ground_y), 3)
+        pygame.draw.line(surface, color, (start_x - length // 2, ground_y - 1), (start_x + length // 2, ground_y - 1), 1)
+
+
 def draw_player(
     surface: pygame.Surface,
     x: float,
@@ -4020,6 +4047,7 @@ def draw_player(
             state_name,
             accent,
         )
+        _draw_footfall_ticks(surface, x, y, z, facing, state_name, int(frame))
         _draw_action_ribbon(surface, x, y, z, facing, state_name, authored.get_height() - 4, int(frame))
         _draw_motion_echo(surface, rendered, x, y, z, facing, authored.get_height() - 4, state_name, int(frame))
         return _blit_grounded(
@@ -4063,6 +4091,7 @@ def draw_player(
         state_name,
         accent,
     )
+    _draw_footfall_ticks(surface, x, y, z, facing, state_name, int(frame))
     _draw_action_ribbon(surface, x, y, z, facing, state_name, 90, int(frame))
     _draw_motion_echo(surface, rendered, x, y, z, facing, 90, state_name, int(frame))
     return _blit_grounded(surface, rendered, x, y, z, facing, 90)
