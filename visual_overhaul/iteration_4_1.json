@@ -1,0 +1,31 @@
+{
+  "iteration": "4.1",
+  "title": "Directional layered combat feedback",
+  "source_commit": "03479fc",
+  "game_version": "0.15.0-visual-overhaul-4.1",
+  "content_revision": 2,
+  "sections": {
+    "animation": "baseline preserved; authored floor remains 91 clips / 828 rooted poses",
+    "character_art": "Jerry atlas alpha-hole repair integrated",
+    "scenery": "baseline preserved and revalidated",
+    "combat_effects": "complete for this iteration: directional sparks, streaks, rings, dust, alpha compositing, density budget",
+    "props": "baseline preserved"
+  },
+  "verification": {
+    "unit_and_integration_tests": "422 passed",
+    "source_self_test": "pass",
+    "package_self_test": "pass",
+    "desktop_exe_sha256": "EC499DA528FC9C7C9BD134F112F65166391B480640EF91DCD8B035B4904657D7",
+    "content_pack_sha256": "359E98AD065001C6D1F70A7BEFA2D301B8F4F4DA0732784363A22593DA361F43",
+    "content_pack_bytes": 113676085,
+    "android_local_build": "unavailable: Buildozer/WSL not installed",
+    "android_device_qa": "unavailable: adb reported no devices"
+  },
+  "artifacts": {
+    "windows_dist": "dist/The Fades of Fate",
+    "installed_desktop": "C:/Users/blowb/Desktop/The Fades of Fate Demo",
+    "self_test_report": "dist/The Fades of Fate/build/self_test_report.json",
+    "content_release": "dist/content"
+  },
+  "next": "Continue with the next independent visual-overhaul iteration after online Android workflow verification."
+}
