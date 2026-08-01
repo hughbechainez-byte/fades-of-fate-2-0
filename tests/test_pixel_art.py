@@ -1238,6 +1238,17 @@ class PixelArtTests(unittest.TestCase):
             "hit sparks should carry readable phase-driven shard motion",
         )
 
+    def test_bb_projectile_has_phase_driven_casing_glint(self) -> None:
+        early = pygame.Surface((120, 100), pygame.SRCALPHA)
+        late = pygame.Surface((120, 100), pygame.SRCALPHA)
+        draw_projectile(early, 60, 50, kind="bb", frame=0)
+        draw_projectile(late, 60, 50, kind="bb", frame=3)
+        self.assertNotEqual(
+            pygame.image.tobytes(early, "RGBA"),
+            pygame.image.tobytes(late, "RGBA"),
+            "BB projectiles should carry a readable moving casing glint",
+        )
+
     def test_ko_preview_is_opt_in_and_never_replaces_dave_in_normal_play(self) -> None:
         normal_canvas = pygame.Surface((400, 240), pygame.SRCALPHA)
         preview_canvas = pygame.Surface((400, 240), pygame.SRCALPHA)

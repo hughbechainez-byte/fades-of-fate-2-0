@@ -4626,6 +4626,9 @@ def draw_projectile(
         pygame.draw.rect(surface, (24, 39, 48), (px - 3, py - 3, 6, 6))
         pygame.draw.rect(surface, (157, 224, 241), (px - 2, py - 2, 4, 4))
         pygame.draw.rect(surface, (248, 255, 255), (px, py - 2, 2, 2))
+        casing_x = px - direction * (7 + phase)
+        casing_y = py + ((phase + 1) % 3) - 1
+        pygame.draw.rect(surface, (245, 208, 91), (casing_x, casing_y, 2, 2))
         return pygame.Rect(min(px - 4, trail_end), py - 4, abs(px - trail_end) + 8, 8)
     if projectile in {"flame", "torch", "fire"}:
         outer = [(px - direction * 4, py), (px + direction * 7, py - 8), (px + direction * 25, py - 3), (px + direction * 31, py), (px + direction * 22, py + 6), (px + direction * 7, py + 8)]
