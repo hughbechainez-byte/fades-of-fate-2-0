@@ -8,6 +8,8 @@ source.include_patterns = src/**/*.py,assets/**/*,data/**/*
 source.exclude_patterns = .git, .venv, .github, build, dist, logs, tmp, .mypy_cache, tests
 version = 0.14.0
 requirements = python3,cython==0.29.36,pygame==2.5.2
+p4a.branch = master
+p4a.commit = 957a3e5f8c270f7aa648ba185e5a68c1077a798d
 orientation = landscape
 fullscreen = 1
 android.permissions = INTERNET, WRITE_EXTERNAL_STORAGE
