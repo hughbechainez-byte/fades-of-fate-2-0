@@ -1,9 +1,9 @@
 {
   "iteration": "4.2",
   "title": "Directional motion echoes for authored combat cels",
-  "source_commit": "pending",
+  "source_commit": "5f3bc75",
   "game_version": "0.15.0-visual-overhaul-4.2",
-  "content_revision": 2,
+  "content_revision": 3,
   "sections": {
     "animation": "complete for this iteration: restrained direction-aware afterimages on attack, heavy, dodge, aerial, and super cels",
     "character_art": "material-lit authored silhouettes preserved; motion echo is drawn below the current cel",
@@ -15,17 +15,17 @@
     "unit_and_integration_tests": "423 passed",
     "source_self_test": "pass",
     "package_self_test": "pass",
-    "desktop_exe_sha256": "BF79E388339CF54A45F4B045EDCA38F266F49559961D8C95613A10238EAF4F4E",
-    "content_pack_sha256": "359E98AD065001C6D1F70A7BEFA2D301B8F4F4DA0732784363A22593DA361F43",
-    "content_pack_bytes": 113676085,
+    "desktop_exe_sha256": "9C5AE018A9E35D02E03EAEF87124C9B69DDA1F159E256FA7E5F4CB858FBCE733",
+    "content_pack_sha256": "EB8B710230852D14697805475A5A3D1E275BA0212BF7CA71848ADE1EB10CE42C",
+    "content_pack_bytes": 113676083,
     "android_local_build": "unavailable: Buildozer/WSL not installed",
     "android_device_qa": "unavailable: adb reported no devices",
     "online_android_attempt": "initial attempts failed on missing main.py, then empty Gradle module, then runner cancellation",
     "online_android_fix": "android/buildozer.spec includes main.py explicitly, omits empty Gradle dependencies, and excludes tools; Gradle heap capped at 4096m",
-    "online_android_workflow": "success: run 30677940652",
-    "online_release": "https://github.com/hughbechainez-byte/the-fades-of-fate/releases/tag/v0.15.0-android-3",
-    "online_apk": "thefadesoffate-0.15.0-arm64-v8a-debug.apk sha256:aae6b02dc2ec776a095e6e8a392a93b665b895b77d204b3c98bea38a3d679a4e",
-    "online_content_pack": "fades-of-fate-content-pack.zip sha256:1c7e9216cb13730f90815f72ddf3c494581f0c57d11d08016117ca8c51a508ed"
+    "online_android_workflow": "4.1 success: run 30677940652; 4.2 pending",
+    "online_release": "prior verified: https://github.com/hughbechainez-byte/the-fades-of-fate/releases/tag/v0.15.0-android-3",
+    "online_apk": "prior verified 4.1 APK sha256:aae6b02dc2ec776a095e6e8a392a93b665b895b77d204b3c98bea38a3d679a4e",
+    "online_content_pack": "4.2 local sha256:EB8B710230852D14697805475A5A3D1E275BA0212BF7CA71848ADE1EB10CE42C"
   },
   "artifacts": {
     "windows_dist": "dist/The Fades of Fate",
