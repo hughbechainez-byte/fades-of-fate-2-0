@@ -1,7 +1,7 @@
 {
   "iteration": "4.2",
   "title": "Directional motion echoes for authored combat cels",
-  "source_commit": "5f3bc75",
+  "source_commit": "cc3ab7b",
   "game_version": "0.15.0-visual-overhaul-4.2",
   "content_revision": 3,
   "sections": {
@@ -22,10 +22,10 @@
     "android_device_qa": "unavailable: adb reported no devices",
     "online_android_attempt": "initial attempts failed on missing main.py, then empty Gradle module, then runner cancellation",
     "online_android_fix": "android/buildozer.spec includes main.py explicitly, omits empty Gradle dependencies, and excludes tools; Gradle heap capped at 4096m",
-    "online_android_workflow": "4.1 success: run 30677940652; 4.2 pending",
-    "online_release": "prior verified: https://github.com/hughbechainez-byte/the-fades-of-fate/releases/tag/v0.15.0-android-3",
-    "online_apk": "prior verified 4.1 APK sha256:aae6b02dc2ec776a095e6e8a392a93b665b895b77d204b3c98bea38a3d679a4e",
-    "online_content_pack": "4.2 local sha256:EB8B710230852D14697805475A5A3D1E275BA0212BF7CA71848ADE1EB10CE42C"
+    "online_android_workflow": "success: run 30678844811",
+    "online_release": "https://github.com/hughbechainez-byte/the-fades-of-fate/releases/tag/v0.15.0-visual-overhaul-4.2",
+    "online_apk": "thefadesoffate-0.15.0-arm64-v8a-debug.apk sha256:37f73c12eb93a288dc2b7cda9aa4460d343670be81c6ccca5fe630d1e327b595",
+    "online_content_pack": "fades-of-fate-content-pack.zip sha256:b58ae9ea440e31047bdd2d5026e8176d60fc210433f92901b7c47d549a007859"
   },
   "artifacts": {
     "windows_dist": "dist/The Fades of Fate",
