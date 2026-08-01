@@ -1,7 +1,7 @@
 {
   "iteration": "4.3",
   "title": "Living scenery props with deterministic micro-motion",
-  "source_commit": "411fe13",
+  "source_commit": "ac5c844",
   "game_version": "0.15.0-visual-overhaul-4.3",
   "content_revision": 4,
   "sections": {
@@ -22,10 +22,10 @@
     "android_device_qa": "unavailable: adb reported no devices",
     "online_android_attempt": "initial attempts failed on missing main.py, then empty Gradle module, then runner cancellation",
     "online_android_fix": "android/buildozer.spec includes main.py explicitly, omits empty Gradle dependencies, and excludes tools; Gradle heap capped at 4096m",
-    "online_android_workflow": "prior 4.2 success: run 30678844811; 4.3 pending",
-    "online_release": "prior verified: https://github.com/hughbechainez-byte/the-fades-of-fate/releases/tag/v0.15.0-visual-overhaul-4.2",
-    "online_apk": "prior 4.2 APK sha256:37f73c12eb93a288dc2b7cda9aa4460d343670be81c6ccca5fe630d1e327b595",
-    "online_content_pack": "4.3 pending"
+    "online_android_workflow": "success: run 30679513182",
+    "online_release": "https://github.com/hughbechainez-byte/the-fades-of-fate/releases/tag/v0.15.0-visual-overhaul-4.3",
+    "online_apk": "thefadesoffate-0.15.0-arm64-v8a-debug.apk sha256:6d75d389c9e1c8bff476b8c98e539b38eabd7e18ab99693afb0f55ba28c0f952",
+    "online_content_pack": "fades-of-fate-content-pack.zip sha256:cc43f6b4a917e324f428297b84732b6f3e629c265482d993f61e20bea0287964"
   },
   "artifacts": {
     "windows_dist": "dist/The Fades of Fate",
