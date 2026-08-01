@@ -1165,6 +1165,18 @@ class PixelArtTests(unittest.TestCase):
             "high-speed authored cels should leave a readable trailing silhouette",
         )
 
+    def test_cart_return_props_have_deterministic_micro_motion(self) -> None:
+        frame_zero = pygame.Surface((180, 140), pygame.SRCALPHA)
+        frame_one = pygame.Surface((180, 140), pygame.SRCALPHA)
+        pixel_art.draw_stage_prop(frame_zero, 90, 120, "cart_return", frame=0)
+        pixel_art.draw_stage_prop(frame_one, 90, 120, "cart_return", frame=1)
+
+        self.assertNotEqual(
+            pygame.image.tobytes(frame_zero, "RGBA"),
+            pygame.image.tobytes(frame_one, "RGBA"),
+            "cart wheels and metal glint should animate without changing prop bounds",
+        )
+
     def test_ko_preview_is_opt_in_and_never_replaces_dave_in_normal_play(self) -> None:
         normal_canvas = pygame.Surface((400, 240), pygame.SRCALPHA)
         preview_canvas = pygame.Surface((400, 240), pygame.SRCALPHA)

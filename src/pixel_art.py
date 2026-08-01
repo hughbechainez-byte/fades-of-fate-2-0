@@ -3256,6 +3256,17 @@ def draw_stage_prop(
             for wheel_x in (cart_x + 9, cart_x + 23):
                 pygame.draw.ellipse(sprite, outline, (wheel_x - 3, 57, 7, 7))
                 pygame.draw.rect(sprite, (121, 131, 130), (wheel_x - 1, 59, 3, 3))
+                spoke_phase = (int(frame) + index) % 4
+                spoke = ((0, -2), (2, 0), (0, 2), (-2, 0))[spoke_phase]
+                pygame.draw.line(
+                    sprite,
+                    (221, 231, 221),
+                    (wheel_x, 60),
+                    (wheel_x + spoke[0], 60 + spoke[1]),
+                    1,
+                )
+        glint_x = 14 + (int(frame) * 5) % 60
+        pygame.draw.rect(sprite, (225, 240, 225), (glint_x, 20, 5, 2))
         bottom = 66
     elif prop in {"barrier", "road_barrier"}:
         # Bright construction barrier doubles as a readable arena rail.
