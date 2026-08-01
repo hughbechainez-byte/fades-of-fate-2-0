@@ -1056,8 +1056,24 @@ class Enemy:
             self.burn_time = max(self.burn_time, 2.2)
             self.burn_tick = 0.35
         impact_color = (255, 128, 48) if burn else ((255, 239, 142) if knockdown else (255, 231, 92))
-        game.add_effect("hit", self.x, self.y - 35, color=impact_color, radius=20 if knockdown else 15, duration=0.18)
-        game.add_effect("impact", self.x, self.y - 35, color=impact_color, radius=24 if knockdown else 18, duration=0.20)
+        game.add_effect(
+            "hit",
+            self.x,
+            self.y - 35,
+            color=impact_color,
+            radius=20 if knockdown else 15,
+            duration=0.18,
+            direction=direction,
+        )
+        game.add_effect(
+            "impact",
+            self.x,
+            self.y - 35,
+            color=impact_color,
+            radius=24 if knockdown else 18,
+            duration=0.20,
+            direction=direction,
+        )
         game.add_effect("text", self.x, self.y - 57, text=f"-{int(round(applied_amount))}", color=impact_color, duration=0.48)
         game.audio.play("heavy" if knockdown else "hit")
         game.audio.play("enemy_downed" if self.health <= 0.0 else "enemy_grunt")
@@ -1703,6 +1719,18 @@ class Effect:
     world_space: bool = True
     projected: bool = False
     elevation: float = 0.0
+    vx: float = 0.0
+    vy: float = 0.0
+    gravity: float = 0.0
+    drag: float = 0.0
+    rotation: float = 0.0
+    angular_velocity: float = 0.0
+    scale_start: float = 1.0
+    scale_end: float = 1.0
+    alpha_start: int = 255
+    alpha_end: int = 0
+    layer: int = 0
+    direction: float = 1.0
 
     @property
     def alive(self) -> bool:
@@ -1710,9 +1738,25 @@ class Effect:
 
     def update(self, dt: float) -> None:
         self.age += dt
+        self.x += self.vx * dt
+        self.y += self.vy * dt
+        self.vy += self.gravity * dt
+        if self.drag > 0.0:
+            damping = max(0.0, 1.0 - self.drag * dt)
+            self.vx *= damping
+            self.vy *= damping
+        self.rotation += self.angular_velocity * dt
         if self.kind == "text":
             self.y -= 15.0 * dt
 
     @property
     def progress(self) -> float:
         return clamp(self.age / max(0.001, self.duration), 0.0, 1.0)
+
+    @property
+    def visual_scale(self) -> float:
+        return self.scale_start + (self.scale_end - self.scale_start) * self.progress
+
+    @property
+    def visual_alpha(self) -> int:
+        return max(0, min(255, round(self.alpha_start + (self.alpha_end - self.alpha_start) * self.progress)))

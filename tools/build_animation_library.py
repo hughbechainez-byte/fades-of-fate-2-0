@@ -566,9 +566,42 @@ def _split_jerry_reference(path: Path) -> list[Image.Image]:
             bounds = matte.getbbox()
             if bounds is None:
                 raise ValueError(f"Jerry reference pose {len(frames)} contains no extractable art")
+            # The leather is intentionally near-black.  A brightness/chroma
+            # matte can therefore punch transparent holes through the coat.
+            # Only transparency connected to the cell edge is background;
+            # enclosed transparent islands are dark material and must remain.
+            matte = _fill_enclosed_alpha_holes(matte)
             frame.putalpha(matte)
             frames.append(frame.crop(bounds))
     return frames
+
+
+def _fill_enclosed_alpha_holes(alpha: Image.Image) -> Image.Image:
+    """Make enclosed matte holes opaque while retaining exterior transparency."""
+
+    width, height = alpha.size
+    values = list(alpha.get_flattened_data())
+    visited = bytearray(width * height)
+    stack: list[tuple[int, int]] = []
+    for x in range(width):
+        stack.extend(((x, 0), (x, height - 1)))
+    for y in range(height):
+        stack.extend(((0, y), (width - 1, y)))
+    while stack:
+        x, y = stack.pop()
+        index = y * width + x
+        if visited[index] or values[index] >= 8:
+            continue
+        visited[index] = 1
+        for nx, ny in ((x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)):
+            if 0 <= nx < width and 0 <= ny < height:
+                stack.append((nx, ny))
+    for index, value in enumerate(values):
+        if value < 8 and not visited[index]:
+            values[index] = 255
+    result = Image.new("L", alpha.size)
+    result.putdata(values)
+    return result
 
 
 def _sprite_crop(source: Image.Image) -> Image.Image:

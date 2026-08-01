@@ -205,7 +205,7 @@ class AudioAdapter:
 
 
 class FadesGame:
-    VERSION = "0.14.0-chapter-one-production"
+    VERSION = "0.15.0-visual-overhaul-4.1"
 
     def __init__(self, input_manager: InputManager, *, mute: bool = False) -> None:
         self.data = load_gameplay()
@@ -3895,6 +3895,34 @@ class FadesGame:
         )
         combo_radius = float(move.get("combo_radius", 0.0))
         follow_through = attack_kind == "light" and player.combo_step > 0
+        if play_whiff:
+            # Every hero gets a readable authored-motion accent at the actual
+            # attack presentation frame.  Previously only Dave's fist path
+            # emitted a trail, so successful visual work was easy to miss when
+            # playing Shelly or when a strike did not connect.
+            accent = (
+                (255, 137, 191) if player.character == "shelly"
+                else (108, 226, 255)
+            )
+            trail_length = 24.0 if attack_kind == "light" else 34.0
+            self.add_effect(
+                "streak",
+                player.x + player.facing * trail_length,
+                player.y - (24.0 + player.z),
+                color=accent,
+                radius=10.0 if attack_kind == "light" else 15.0,
+                duration=0.13 if attack_kind == "light" else 0.18,
+                vx=player.facing * (55.0 if attack_kind == "light" else 78.0),
+                vy=-8.0,
+                drag=4.0,
+                scale_start=0.65,
+                scale_end=1.35,
+                alpha_start=210,
+                alpha_end=0,
+                direction=player.facing,
+                projected=True,
+                elevation=player.z + 28.0,
+            )
         if player.character == "black_dave" and play_whiff:
             fist_cfg = self.data["players"]["black_dave"].get("fist_effects", {})
             trail_x = player.x + player.facing * (range_x * 0.72)
@@ -4424,13 +4452,43 @@ class FadesGame:
         # Gameplay text, telegraphs, and pickup feedback are never culled.
         # Decorative particles share a strict density-scaled ceiling so the
         # cinematic preset cannot grow unbounded in four-player crowds.
-        decorative = {"ember", "flame", "flame_burst", "flame_trail_left", "flame_trail_right", "scorch", "hit", "impact"}
+        decorative = {"ember", "flame", "flame_burst", "flame_trail_left", "flame_trail_right", "scorch", "hit", "impact", "spark", "streak", "dust", "ring"}
         if kind in decorative:
             budget = max(24, int(112 * self.options.particle_density))
             current = sum(1 for effect in self.effects if effect.kind in decorative)
             if current >= budget:
                 return
+        expanded = bool(kwargs.pop("_expanded", False))
         self.effects.append(Effect(kind, x, y, **kwargs))
+        # One centralized response stack keeps combat call sites meaningful
+        # while giving different hit categories distinct, restrained accents.
+        if (
+            kind == "hit"
+            and not expanded
+            and self.options.particle_density >= 0.75
+            and float(kwargs.get("duration", 0.35)) < 1.0
+        ):
+            color = kwargs.get("color", (255, 255, 255))
+            direction = -1.0 if float(kwargs.get("direction", 1.0)) < 0.0 else 1.0
+            radius = float(kwargs.get("radius", 14.0))
+            strength = clamp(radius / 18.0, 0.7, 1.8)
+            for index, angle in enumerate((-0.75, -0.25, 0.25, 0.75)):
+                speed = (42.0 + index * 7.0) * strength
+                self.add_effect(
+                    "spark", x, y, color=color, radius=3.0 + strength,
+                    duration=0.16 + index * 0.012, vx=direction * math.cos(angle) * speed,
+                    vy=math.sin(angle) * speed - 18.0, gravity=90.0, drag=2.5,
+                    scale_start=1.2, scale_end=0.35, alpha_start=235, alpha_end=0,
+                    direction=direction,
+                    _expanded=True,
+                )
+            self.add_effect("ring", x, y, color=color, radius=radius * 0.72,
+                            duration=0.14, scale_start=0.55, scale_end=1.25,
+                            alpha_start=180, alpha_end=0, _expanded=True)
+            self.add_effect("dust", x, y + 8.0, color=(205, 171, 137), radius=radius * 0.55,
+                            duration=0.24, vx=8.0 * direction, vy=-10.0,
+                            gravity=24.0, drag=3.0, scale_start=0.6, scale_end=1.5,
+                            alpha_start=120, alpha_end=0, direction=direction, _expanded=True)
 
     def _update_dave_flame_visuals(self, dt: float) -> None:
         """Advance visual-only ignition attached to enemies still in the scene."""
@@ -5198,6 +5256,10 @@ class FadesGame:
         self._text(surface, self.font_tiny, "ESC / B / START  CANCEL", (255, 214, 113), (320, 274), center=True)
 
     def _draw_effects(self, surface: pygame.Surface) -> None:
+        # The logical gameplay canvas is normally an RGB surface.  Keep the
+        # new fading particles on one RGBA overlay so alpha ramps remain real
+        # compositing instead of being silently discarded by pygame.draw.
+        particle_overlay = pygame.Surface(LOGICAL_SIZE, pygame.SRCALPHA)
         for effect in self.effects:
             if effect.projected:
                 point = self.projection.project(
@@ -5274,6 +5336,26 @@ class FadesGame:
                     color=effect.color,
                     radius=max(12, int(effect.radius)),
                 )
+            elif effect.kind in {"spark", "streak", "dust", "ring"}:
+                scale = effect.visual_scale
+                alpha = effect.visual_alpha
+                tint = (*effect.color, alpha)
+                if effect.kind == "ring":
+                    radius = max(2, int(effect.radius * scale))
+                    pygame.draw.ellipse(particle_overlay, tint, (int(x-radius), int(y-radius*0.42), radius*2, max(2, int(radius*0.84))), 2)
+                elif effect.kind == "dust":
+                    radius = max(2, int(effect.radius * scale))
+                    pygame.draw.ellipse(particle_overlay, tint, (int(x-radius), int(y-radius*0.35), radius*2, max(2, int(radius*0.7))))
+                else:
+                    length = max(3, int(effect.radius * (1.0 + abs(effect.vx + effect.vy) / 90.0) * scale))
+                    direction = -1.0 if effect.direction < 0.0 else 1.0
+                    pygame.draw.line(
+                        particle_overlay,
+                        tint,
+                        (int(x - direction * length), int(y + length * 0.35)),
+                        (int(x + direction * length), int(y - length * 0.35)),
+                        2,
+                    )
             elif effect.kind.startswith("flame_trail_"):
                 pixel_art.draw_effect(
                     surface,
@@ -5347,6 +5429,7 @@ class FadesGame:
                 pygame.draw.ellipse(surface, effect.color, (int(x - radius), int(y - radius * 0.5), radius * 2, max(2, radius)), 2)
             elif effect.kind == "text":
                 self._text(surface, self.font_small, effect.text, effect.color, (int(x), int(y)), center=True)
+        surface.blit(particle_overlay, (0, 0))
 
     @staticmethod
     def _compact_hud_rects(player_count: int, scale: float = 1.0) -> tuple[pygame.Rect, ...]:

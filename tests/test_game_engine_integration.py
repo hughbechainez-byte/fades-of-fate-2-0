@@ -9,7 +9,7 @@ os.environ.setdefault("PYGAME_HIDE_SUPPORT_PROMPT", "1")
 
 import pygame
 
-from src.entities import Enemy
+from src.entities import Effect, Enemy
 from src.game import FadesGame, SelectSlot
 from src.input_manager import InputManager
 from src.world_engine import WorldPoint
@@ -124,6 +124,53 @@ class GameplayEngineIntegrationTests(unittest.TestCase):
         surface = pygame.Surface((640, 360), pygame.SRCALPHA)
         self.game._draw_effects(surface)
         self.assertGreater(pygame.mask.from_surface(surface).count(), 80)
+
+    def test_effect_motion_scale_and_alpha_are_deterministic(self) -> None:
+        effect = Effect(
+            "spark",
+            10.0,
+            20.0,
+            duration=0.5,
+            vx=40.0,
+            vy=-12.0,
+            gravity=80.0,
+            drag=2.0,
+            scale_start=0.5,
+            scale_end=1.5,
+            alpha_start=240,
+            alpha_end=0,
+        )
+
+        effect.update(0.1)
+
+        self.assertAlmostEqual(effect.x, 14.0)
+        self.assertAlmostEqual(effect.y, 18.8)
+        self.assertAlmostEqual(effect.vy, -3.2)
+        self.assertAlmostEqual(effect.visual_scale, 0.7)
+        self.assertEqual(effect.visual_alpha, 192)
+
+    def test_hit_response_uses_attack_direction_and_density_budget(self) -> None:
+        self.game.effects.clear()
+        self.game.add_effect(
+            "hit",
+            260.0,
+            220.0,
+            color=(255, 220, 80),
+            radius=18.0,
+            duration=0.18,
+            direction=-1.0,
+        )
+
+        sparks = [effect for effect in self.game.effects if effect.kind == "spark"]
+        dust = next(effect for effect in self.game.effects if effect.kind == "dust")
+        self.assertEqual(len(sparks), 4)
+        self.assertTrue(all(effect.vx < 0.0 for effect in sparks))
+        self.assertLess(dust.vx, 0.0)
+
+        self.game.options = self.game.options.with_overrides(particle_density=0.55)
+        self.game.effects.clear()
+        self.game.add_effect("hit", 260.0, 220.0, duration=0.18)
+        self.assertEqual([effect.kind for effect in self.game.effects], ["hit"])
 
 
 if __name__ == "__main__":
