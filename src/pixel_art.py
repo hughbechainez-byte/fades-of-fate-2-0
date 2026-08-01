@@ -615,6 +615,44 @@ def _character_sheen_sprite(
     return lit
 
 
+_CHARACTER_EMBLEM_CACHE: dict[tuple[int, str, int], tuple[pygame.Surface, pygame.Surface]] = {}
+
+
+def _character_emblem_sprite(
+    sprite: pygame.Surface,
+    profile: str,
+    frame: int,
+) -> pygame.Surface:
+    """Add a tiny masked identity marker to the character's torso plane."""
+
+    profile_name = str(profile)
+    phase = int(frame) % 4
+    key = (id(sprite), profile_name, phase)
+    cached = _CHARACTER_EMBLEM_CACHE.get(key)
+    if cached is not None and cached[0] is sprite:
+        return cached[1]
+    bounds = sprite.get_bounding_rect(min_alpha=1)
+    if not bounds.w or not bounds.h:
+        return sprite
+    marker_x = bounds.left + max(2, int(bounds.w * 0.58))
+    marker_y = bounds.top + max(4, int(bounds.h * 0.47))
+    emblem = pygame.Surface(sprite.get_size(), pygame.SRCALPHA)
+    border = (35, 27, 38, 220)
+    fill = (219, 71, 73, 220) if profile_name == "dave" else (202, 75, 139, 210)
+    pygame.draw.rect(emblem, border, (marker_x - 3, marker_y - 2, 7, 6))
+    pygame.draw.rect(emblem, fill, (marker_x - 2, marker_y - 1, 5, 4))
+    pygame.draw.rect(emblem, (255, 236, 177, 210), (marker_x - 1 + phase % 2, marker_y, 2, 2))
+    mask = pygame.mask.from_surface(sprite)
+    alpha = mask.to_surface(setcolor=(255, 255, 255, 255), unsetcolor=(0, 0, 0, 0))
+    emblem.blit(alpha, (0, 0), special_flags=pygame.BLEND_RGBA_MULT)
+    lit = sprite.copy()
+    lit.blit(emblem, (0, 0))
+    _CHARACTER_EMBLEM_CACHE[key] = (sprite, lit)
+    while len(_CHARACTER_EMBLEM_CACHE) > 512:
+        _CHARACTER_EMBLEM_CACHE.pop(next(iter(_CHARACTER_EMBLEM_CACHE)))
+    return lit
+
+
 _SECURITY_UNIFORM_CACHE: dict[tuple[int, str], tuple[pygame.Surface, pygame.Surface]] = {}
 
 
@@ -3971,7 +4009,11 @@ def draw_player(
         profile = "dave" if name in {"black_dave", "dave", "blackdave"} else "shelly"
         rendered = _state_rim_sprite(
             _character_sheen_sprite(
-                _hit_flash_sprite(_material_lit_sprite(authored, profile), hit_flash),
+                _character_emblem_sprite(
+                    _hit_flash_sprite(_material_lit_sprite(authored, profile), hit_flash),
+                    profile,
+                    int(frame),
+                ),
                 profile,
                 int(frame),
             ),
@@ -4006,10 +4048,14 @@ def draw_player(
     profile = "shelly" if name in {"shelly", "shellie"} else "dave"
     rendered = _state_rim_sprite(
         _character_sheen_sprite(
-            _hit_flash_sprite(
-                _material_lit_sprite(sprite, profile, cache=False),
-                hit_flash,
-                cache=False,
+            _character_emblem_sprite(
+                _hit_flash_sprite(
+                    _material_lit_sprite(sprite, profile, cache=False),
+                    hit_flash,
+                    cache=False,
+                ),
+                profile,
+                int(frame),
             ),
             profile,
             int(frame),

@@ -1255,6 +1255,15 @@ class PixelArtTests(unittest.TestCase):
             "character material sheen should travel across the authored cel",
         )
 
+    def test_character_identity_emblem_is_masked_and_profile_colored(self) -> None:
+        authored = sprite_atlas.player_frame("black_dave", "idle", 4)
+        base = pixel_art._material_lit_sprite(authored, "dave")
+        dave = pixel_art._character_emblem_sprite(base, "dave", 0)
+        shelly = pixel_art._character_emblem_sprite(base, "shelly", 0)
+        self.assertEqual(pygame.mask.from_surface(base).count(), pygame.mask.from_surface(dave).count())
+        self.assertEqual(pygame.mask.from_surface(base).count(), pygame.mask.from_surface(shelly).count())
+        self.assertNotEqual(pygame.image.tobytes(dave, "RGB"), pygame.image.tobytes(shelly, "RGB"))
+
     def test_hit_sparks_emit_deterministic_trailing_shards(self) -> None:
         early = pygame.Surface((120, 100), pygame.SRCALPHA)
         late = pygame.Surface((120, 100), pygame.SRCALPHA)
