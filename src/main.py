@@ -128,6 +128,32 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
+def initialize_pygame(android_runtime: bool) -> None:
+    """Initialize only the SDL modules that are safe for the target platform."""
+
+    import pygame
+
+    if not android_runtime:
+        pygame.mixer.pre_init(44_100, -16, 2, 512)
+        pygame.init()
+        try:
+            pygame.joystick.init()
+        except pygame.error:
+            pass
+        return
+
+    # On some Motorola builds, pygame.init() asks SDL to open the audio
+    # backend before the app has a usable audio device and Python exits from
+    # the python-for-android bootstrap screen. AudioManager initializes the
+    # mixer later inside its own failure-tolerant boundary.
+    pygame.display.init()
+    pygame.font.init()
+    try:
+        pygame.joystick.init()
+    except pygame.error:
+        pass
+
+
 def _run() -> int:
     args = parse_args()
     os.environ.setdefault("PYGAME_HIDE_SUPPORT_PROMPT", "1")
@@ -177,9 +203,8 @@ def _run() -> int:
             update_result.as_dict() if hasattr(update_result, "as_dict") else update_result
         ))
 
-    pygame.mixer.pre_init(44_100, -16, 2, 512)
-    pygame.init()
-    pygame.joystick.init()
+    android_runtime = is_android_runtime()
+    initialize_pygame(android_runtime)
 
     if args.self_test:
         from src.self_test import run_foundation_self_test
@@ -196,7 +221,6 @@ def _run() -> int:
             pygame.quit()
             shutdown_logging()
 
-    android_runtime = is_android_runtime()
     pygame.display.set_caption(GAME_NAME)
     if not android_runtime:
         icon_path = executable_root() / "assets" / "fades_of_fate_key_art.png"

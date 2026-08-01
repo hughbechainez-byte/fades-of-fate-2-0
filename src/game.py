@@ -208,7 +208,7 @@ class AudioAdapter:
 
 
 class FadesGame:
-    VERSION = "0.15.1-motorola-startup-fix"
+    VERSION = "0.15.2-motorola-bootstrap-fix"
 
     def __init__(self, input_manager: InputManager, *, mute: bool = False) -> None:
         self.data = load_gameplay()
