@@ -159,6 +159,7 @@ class BBGunTests(unittest.TestCase):
         pickup.update(self.game, 1.0 / 60.0)
         self.assertTrue(pickup.spent)
         self.assertEqual(self.dave.bb_ammo, maximum)
+        self.assertTrue(any(effect.kind == "pickup" for effect in self.game.effects))
 
     def test_cpu_dave_fires_only_when_aligned_at_sensible_range(self) -> None:
         self.game.select_slots = [

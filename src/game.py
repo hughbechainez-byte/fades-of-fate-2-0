@@ -205,7 +205,7 @@ class AudioAdapter:
 
 
 class FadesGame:
-    VERSION = "0.15.0-visual-overhaul-4.4"
+    VERSION = "0.15.0-visual-overhaul-4.5"
 
     def __init__(self, input_manager: InputManager, *, mute: bool = False) -> None:
         self.data = load_gameplay()
@@ -2350,6 +2350,7 @@ class FadesGame:
         before = collector.bb_ammo
         collector.bb_ammo = min(maximum, collector.bb_ammo + max(0, pickup.amount))
         pickup.spent = True
+        self.add_effect("pickup", pickup.x, pickup.y - 14.0, color=(111, 255, 190), radius=10, duration=0.28)
         self.add_effect("text", collector.x, collector.y - 54, text=f"BB +{collector.bb_ammo - before}", color=(129, 232, 255), duration=0.65)
         self.audio.play("pickup")
         self.log_breadcrumb(
@@ -2434,6 +2435,7 @@ class FadesGame:
         collector.super_butane_meter = min(maximum, collector.super_butane_meter + max(0.0, pickup.amount))
         pickup.spent = True
         gained = collector.super_butane_meter - before
+        self.add_effect("pickup", pickup.x, pickup.y - 18.0, color=(255, 149, 84), radius=13, duration=0.32)
         self.add_effect("text", collector.x, collector.y - 54, text=f"BUTANE +{int(round(gained))}", color=(255, 182, 76), duration=0.65)
         self.audio.play("pickup")
         self.log_breadcrumb(

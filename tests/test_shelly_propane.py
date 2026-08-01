@@ -118,6 +118,7 @@ class ShellyPropaneTests(unittest.TestCase):
         pickup.update(self.game, 1.0 / 60.0)
         self.assertTrue(pickup.spent)
         self.assertEqual(self.shelly.super_butane_meter, maximum)
+        self.assertTrue(any(effect.kind == "pickup" for effect in self.game.effects))
 
     def test_shelly_super_meter_fills_faster_and_cpu_calls_chief_at_range(self) -> None:
         self.assertEqual(self.shelly.gain_super(10.0), 17.0)

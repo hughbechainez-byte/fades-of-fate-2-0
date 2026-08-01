@@ -1086,6 +1086,20 @@ class PixelArtTests(unittest.TestCase):
                 self.assertGreater(max(lumas), 172, "rim or material specular must remain present")
                 self.assertGreater(max(lumas) - min(lumas), 95)
 
+    def test_pickups_have_deterministic_moving_specular_glints(self) -> None:
+        for kind in ("bb_ammo", "super_butane"):
+            early = pygame.Surface((96, 96), pygame.SRCALPHA)
+            late = pygame.Surface((96, 96), pygame.SRCALPHA)
+            draw_pickup(early, 48, 70, kind=kind, frame=0)
+            draw_pickup(late, 48, 70, kind=kind, frame=8)
+            with self.subTest(kind=kind):
+                self.assertNotEqual(pygame.image.tostring(early, "RGBA"), pygame.image.tostring(late, "RGBA"))
+
+        canvas = pygame.Surface((96, 96), pygame.SRCALPHA)
+        rect = draw_effect(canvas, 48, 48, kind="pickup", frame=3, color=(111, 255, 190), radius=10)
+        self.assertGreater(rect.w, 0)
+        self.assertGreaterEqual(len({tuple(canvas.get_at((x, y))) for y in range(96) for x in range(96) if canvas.get_at((x, y)).a}), 3)
+
     def test_material_shading_qa_covers_actors_items_projectiles_and_effects(self) -> None:
         output = PROJECT_ROOT / "build" / "material_shading_qa.png"
         output.parent.mkdir(parents=True, exist_ok=True)

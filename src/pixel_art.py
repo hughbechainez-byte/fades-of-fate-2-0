@@ -4652,6 +4652,9 @@ def draw_pickup(
         pygame.draw.rect(surface, (233, 244, 238), (px - 1, rect.y - 7, 2, 2))
         pygame.draw.polygon(surface, (255, 199, 67), [(px, rect.y + 7), (px - 4, rect.y + 14), (px, rect.y + 12), (px + 3, rect.y + 17), (px + 5, rect.y + 9)])
         pygame.draw.rect(surface, (255, 242, 167), (px - 1, rect.y + 11, 2, 4))
+        glint_phase = (int(frame) // 2) % 7
+        glint_x = rect.x + 2 + min(rect.w - 5, glint_phase * 2)
+        pygame.draw.rect(surface, (255, 246, 213), (glint_x, rect.y + 4, 2, 5))
         return shadow.union(rect.inflate(4, 9))
     if pickup not in {"bb_ammo", "bb", "ammo"}:
         rect = pygame.Rect(px - 9, py - 15 - bob, 18, 14)
@@ -4660,6 +4663,9 @@ def draw_pickup(
         pygame.draw.rect(surface, (112, 139, 151), (rect.x + 2, rect.y + 2, rect.w - 5, 4))
         pygame.draw.rect(surface, (38, 48, 58), (rect.right - 5, rect.y + 3, 4, rect.h - 4))
         pygame.draw.rect(surface, (209, 227, 225), (rect.x + 3, rect.y + 3, 3, 2))
+        glint_phase = (int(frame) // 2) % 8
+        glint_x = rect.x + 3 + min(rect.w - 7, glint_phase * 2)
+        pygame.draw.rect(surface, (247, 255, 246), (glint_x, rect.y + 3, 2, 2))
         return shadow.union(rect.inflate(4, 4))
 
     rect = pygame.Rect(px - 12, py - 17 - bob, 24, 15)
@@ -4672,6 +4678,9 @@ def draw_pickup(
     pygame.draw.rect(surface, (238, 249, 245), (rect.x + 7, rect.y + 7, 3, 3))
     pygame.draw.rect(surface, (238, 249, 245), (rect.x + 14, rect.y + 7, 3, 3))
     pygame.draw.rect(surface, (255, 215, 76), (rect.centerx - 2, rect.y - 2, 4, 3))
+    glint_phase = (int(frame) // 2) % 8
+    glint_x = rect.x + 4 + min(rect.w - 8, glint_phase * 2)
+    pygame.draw.rect(surface, (241, 255, 255), (glint_x, rect.y + 3, 2, 2))
     return shadow.union(rect.inflate(0, 2))
 
 
@@ -4691,6 +4700,23 @@ def draw_effect(
     effect = str(kind or "hit").strip().lower().replace("-", "_").replace(" ", "_")
     base = _rgb(color, (255, 218, 91))
     phase = max(0, int(frame))
+
+    if effect in {"pickup", "pickup_collect"}:
+        radius = max(7, min(int(radius) + phase * 3, 28))
+        points = []
+        for index in range(8):
+            angle = index * math.tau / 8.0
+            length = radius if index % 2 == 0 else max(4, radius // 2)
+            points.append((cx + int(math.cos(angle) * length), cy + int(math.sin(angle) * length * 0.7)))
+        rect = pygame.draw.lines(surface, (31, 53, 54), True, points, 4)
+        pygame.draw.lines(surface, base, True, points, 2)
+        pygame.draw.rect(surface, (246, 255, 220), (cx - 2, cy - 2, 5, 5))
+        for index in range(4):
+            angle = index * math.tau / 4.0 + 0.2
+            sx = cx + int(math.cos(angle) * (radius + 4))
+            sy = cy + int(math.sin(angle) * (radius * 0.65 + 4))
+            pygame.draw.rect(surface, base, (sx - 1, sy - 1, 3, 3))
+        return rect.inflate(8, 8)
 
     if effect in {"shockwave", "speaker", "sonic"}:
         r = max(5, min(int(radius) * 3, 7 + phase * 5))
