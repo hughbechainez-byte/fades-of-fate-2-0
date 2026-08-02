@@ -27,10 +27,16 @@ class AndroidPackagingTests(unittest.TestCase):
 
         self.assertIn("p4a.local_recipes = ./recipes", spec)
         self.assertIn("include-android-simd-sources.patch", recipe)
+        self.assertLess(
+            recipe.index("self.apply_patches(arch)"),
+            recipe.index('open("buildconfig/Setup.Android.SDL2.in"'),
+        )
         self.assertIn("src_c/simd_blitters_sse2.c", patch)
         self.assertIn("src_c/simd_blitters_avx2.c", patch)
         self.assertIn("android-ndk-r25b/toolchains/llvm", workflow)
-        self.assertIn("test -x \"$LLVM_READELF\"", workflow)
+        self.assertIn("*_python_bundle__arm64-v8a*/pygame/surface.so", workflow)
+        self.assertIn("test ! -x \"$LLVM_READELF\"", workflow)
+        self.assertIn("if: always()", workflow)
 
 
 if __name__ == "__main__":

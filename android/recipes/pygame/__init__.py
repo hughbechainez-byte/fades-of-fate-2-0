@@ -26,6 +26,11 @@ class Pygame2Recipe(CompiledComponentsPythonRecipe):
 
     def prebuild_arch(self, arch):
         super().prebuild_arch(arch)
+        # This pinned python-for-android revision normally applies recipe
+        # patches *after* prebuild_arch returns.  Pygame's Android recipe
+        # renders its final ``Setup`` file here, so apply the source-list patch
+        # first or the generated extension silently omits both SIMD objects.
+        self.apply_patches(arch)
         with current_directory(self.get_build_dir(arch.arch)):
             with open("buildconfig/Setup.Android.SDL2.in", encoding="utf-8") as setup_source:
                 setup_template = setup_source.read()
