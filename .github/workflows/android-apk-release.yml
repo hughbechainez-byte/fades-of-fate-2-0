@@ -80,6 +80,17 @@ jobs:
           cd android
           buildozer -v android debug
 
+      - name: Reject unresolved Pygame ARM64 SIMD symbols
+        run: |
+          SURFACE_SO="$(find android/.buildozer/android -path '*/arm64-v8a/pygame/surface.so' -print -quit)"
+          LLVM_READELF="$(find "$ANDROID_HOME/ndk" -path '*/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-readelf' -print -quit)"
+          test -n "$SURFACE_SO"
+          test -n "$LLVM_READELF"
+          if "$LLVM_READELF" --dyn-syms --wide "$SURFACE_SO" | grep -E 'UND.*(alphablit_alpha_sse2|blit_blend_.*_(sse2|avx2)|premul_surf_color_by_alpha_sse2|pg_has_avx2)'; then
+            echo "Pygame surface.so contains unresolved SIMD symbols"
+            exit 1
+          fi
+
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
