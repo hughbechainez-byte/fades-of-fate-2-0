@@ -1,7 +1,7 @@
 # Canonical Build and Content Flow
 
 Status: resolved beginning with the 0.15.3 background-detail release and retained
-by the 0.15.4 background-life iteration. This file is
+through the 0.15.5 canonical visual-overhaul polish release. This file is
 the authority for Chapter 1 source ownership, generation, packaging, runtime
 resolution, evidence, and release gates.
 

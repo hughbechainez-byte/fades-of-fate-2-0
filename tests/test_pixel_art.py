@@ -117,6 +117,34 @@ class PixelArtTests(unittest.TestCase):
             pixel_art._STAGE_BACKGROUND_FRAME_BUILDING.clear()
             pixel_art._STAGE_BACKGROUND_FRAME_BUILDING.update(saved_building)
 
+    def test_location_background_composites_ground_depth_and_final_lighting(self) -> None:
+        surface = pygame.Surface((DESIGN_WIDTH, DESIGN_HEIGHT))
+        with (
+            patch.object(
+                pixel_art,
+                "_draw_gameplay_ground_plane",
+                wraps=pixel_art._draw_gameplay_ground_plane,
+            ) as ground,
+            patch.object(
+                pixel_art,
+                "_draw_world_lighting",
+                wraps=pixel_art._draw_world_lighting,
+            ) as lighting,
+        ):
+            pixel_art._draw_location_locked_background(
+                surface,
+                800,
+                3200,
+                "sprouts_el_cilantro",
+                atmosphere={"time_seconds": 2.0},
+            )
+        ground.assert_called_once()
+        lighting.assert_called_once()
+        self.assertLessEqual(
+            len(pixel_art._WORLD_LIGHTING_CACHE),
+            pixel_art._WORLD_LIGHTING_CACHE_LIMIT,
+        )
+
     def test_chapter_one_route_themes_are_distinct_and_world_anchored(self) -> None:
         """Each campaign level has a readable, camera-locked streetscape."""
 

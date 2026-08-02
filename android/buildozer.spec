@@ -7,7 +7,7 @@ source.include_exts = py,png,jpg,jpeg,wav,ogg,mp3,json,txt
 source.include_patterns = main.py,src/**/*.py,assets/**/*,data/**/*,build_provenance.json
 source.exclude_dirs = .git, .venv, .github, build, dist, logs, tmp, .mypy_cache, tests, tools
 source.exclude_patterns = .git, .venv, .github, build, dist, logs, tmp, .mypy_cache, tests
-version = 0.15.4
+version = 0.15.5
 requirements = python3,cython==0.29.36,pygame==2.5.2
 p4a.branch = master
 p4a.commit = 957a3e5f8c270f7aa648ba185e5a68c1077a798d

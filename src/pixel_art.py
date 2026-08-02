@@ -364,6 +364,8 @@ _BACKGROUND_CACHE_HIT_THEMES: set[str] = set()
 _TRAVEL_PANEL_CACHE: dict[tuple[object, ...], pygame.Surface] = {}
 _PHYSICAL_SCENE_OBJECT_CACHE: dict[tuple[object, ...], pygame.Surface] = {}
 _AMBIENT_OVERLAY_CACHE: dict[tuple[int, int, str], pygame.Surface] = {}
+_WORLD_LIGHTING_CACHE_LIMIT = 16
+_WORLD_LIGHTING_CACHE: OrderedDict[tuple[object, ...], pygame.Surface] = OrderedDict()
 
 # A camera can remain settled for much longer than the actors/effects rendered
 # above it.  Cache the fully composited opaque foundation at those exact
@@ -2225,18 +2227,20 @@ def _draw_location_locked_background(
         atmosphere=atmosphere,
         loader_identity=id(pygame.image.load),
     )
-    # Iteration 2 keeps the recovered authored panorama authoritative while
-    # adding bounded, transparent life on three independently moving planes.
+    # Final composition keeps the recovered authored panorama authoritative,
+    # then layers depth activity around a perspective-registered ground pass.
     # Physical cars and fighters are drawn later by the game in depth order.
-    for plane in ("far", "mid", "world"):
-        _draw_chapter_one_ambient_plane(
-            surface,
-            cx,
-            world_width,
-            theme,
-            plane,
-            atmosphere=atmosphere,
-        )
+    _draw_chapter_one_ambient_plane(
+        surface, cx, world_width, theme, "far", atmosphere=atmosphere
+    )
+    _draw_chapter_one_ambient_plane(
+        surface, cx, world_width, theme, "mid", atmosphere=atmosphere
+    )
+    _draw_gameplay_ground_plane(surface, cx, world_width, theme)
+    _draw_chapter_one_ambient_plane(
+        surface, cx, world_width, theme, "world", atmosphere=atmosphere
+    )
+    _draw_world_lighting(surface, cx, world_width, theme)
 
 
 def _draw_chapter_one_stage_panel(surface: pygame.Surface, cx: float, world_width: int, theme: str) -> bool:
@@ -2311,6 +2315,12 @@ def _draw_world_lighting(surface: pygame.Surface, cx: float, world_width: int, t
     """Add transparent, world-locked light pools without repainting scenery."""
 
     width, height = surface.get_size()
+    cache_key = (theme, width, height, int(world_width), round(float(cx), 6))
+    overlay = _WORLD_LIGHTING_CACHE.get(cache_key)
+    if overlay is not None:
+        _WORLD_LIGHTING_CACHE.move_to_end(cache_key)
+        surface.blit(overlay, (0, 0))
+        return
     overlay = pygame.Surface((width, height), pygame.SRCALPHA)
     scale = _theme_route_scale(theme, world_width) if theme in _CHAPTER_ONE_THEME_ROUTE_WIDTHS else world_width / CANONICAL_STAGE_WIDTH
     specs = _THEME_LIGHT_POOLS.get(
@@ -2342,6 +2352,10 @@ def _draw_world_lighting(surface: pygame.Surface, cx: float, world_width: int, t
     for inset, alpha in ((0, 34), (12, 22), (26, 12)):
         pygame.draw.polygon(overlay, (12, 16, 29, alpha), [(0, height), (0, height - 31 - inset), (94 + inset, height)])
         pygame.draw.polygon(overlay, (12, 16, 29, alpha), [(width, height), (width, height - 31 - inset), (width - 94 - inset, height)])
+    _WORLD_LIGHTING_CACHE[cache_key] = overlay
+    _WORLD_LIGHTING_CACHE.move_to_end(cache_key)
+    while len(_WORLD_LIGHTING_CACHE) > _WORLD_LIGHTING_CACHE_LIMIT:
+        _WORLD_LIGHTING_CACHE.popitem(last=False)
     surface.blit(overlay, (0, 0))
 
 
@@ -2367,8 +2381,12 @@ def _draw_gameplay_ground_plane(surface: pygame.Surface, cx: float, world_width:
     first_dash = int(cx // dash_step) * dash_step - dash_step
     for world_x in range(first_dash, _i(cx) + width + dash_step, dash_step):
         sx = _layer_screen_x(world_x, cx)
-        pygame.draw.polygon(overlay, (232, 205, 128, 78), [(sx, 334), (sx + 62, 334), (sx + 70, 338), (sx - 4, 338)])
-        pygame.draw.line(overlay, (255, 231, 165, 46), (sx + 7, 335), (sx + 43, 335), 1)
+        pygame.draw.polygon(
+            overlay,
+            (183, 166, 128, 38),
+            [(sx, 334), (sx + 62, 334), (sx + 70, 338), (sx - 4, 338)],
+        )
+        pygame.draw.line(overlay, (238, 218, 174, 22), (sx + 7, 335), (sx + 43, 335), 1)
     surface.blit(overlay, (0, 0))
 
 
@@ -3418,6 +3436,18 @@ def draw_physical_scene_object(
         elevation=float(feature.get("elevation", 0.0)),
     )
     rect = sprite.get_rect(midbottom=(_i(x), _i(y)))
+    # Two compact tire contacts stop a parked car from hovering above the
+    # painted apron while retaining the broader soft shadow beneath its body.
+    contact_width = max(7, sprite.get_width() // 15)
+    for center_x in (
+        rect.centerx - sprite.get_width() * 3 // 10,
+        rect.centerx + sprite.get_width() * 3 // 10,
+    ):
+        pygame.draw.ellipse(
+            surface,
+            (7, 10, 16),
+            (center_x - contact_width // 2, rect.bottom - 2, contact_width, 4),
+        )
     surface.blit(sprite, rect)
     return rect
 
