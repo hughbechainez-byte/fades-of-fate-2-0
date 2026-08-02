@@ -608,7 +608,11 @@ def _character_sheen_sprite(
     alpha = mask.to_surface(setcolor=(255, 255, 255, 255), unsetcolor=(0, 0, 0, 0))
     sheen.blit(alpha, (0, 0), special_flags=pygame.BLEND_RGBA_MULT)
     lit = sprite.copy()
-    lit.blit(sheen, (0, 0), special_flags=pygame.BLEND_RGB_ADD)
+    # The sheen carries a deliberately low alpha.  RGB-only additive blits
+    # ignore that alpha on Pygame's RGB canvas and turn the traveling highlight
+    # into a solid white slash; ordinary RGBA compositing preserves the soft
+    # material glint while keeping the authored silhouette intact.
+    lit.blit(sheen, (0, 0))
     _CHARACTER_SHEEN_CACHE[key] = (sprite, lit)
     while len(_CHARACTER_SHEEN_CACHE) > 512:
         _CHARACTER_SHEEN_CACHE.pop(next(iter(_CHARACTER_SHEEN_CACHE)))
@@ -3968,22 +3972,77 @@ def _draw_footfall_ticks(
     state: str,
     frame: int,
 ) -> None:
-    """Punctuate locomotion cels with short, phase-locked contact marks."""
+    """Punctuate the twelve-pose gait at the two real heel contacts."""
 
     if state not in {"walk", "run", "move", "jog"}:
         return
-    phase = int(frame) % 8
-    if phase not in {1, 2, 5, 6}:
+    # Hero walk clips hold each authored key for two 30 Hz ticks.  The old
+    # eight-tick loop fired three decorative footfalls per stride and made the
+    # marks disagree with the actual left/right heel strikes.  Keep the
+    # effect phase-locked to the manifest's twelve-pose gait instead.
+    phase = int(frame) % 24
+    if phase not in {0, 1, 12, 13}:
         return
     direction = _face_sign(facing)
     ground_y = _i(y - z) + 2
-    lead = 13 if phase in {2, 6} else 9
-    rear = -11 if phase in {2, 6} else -7
-    color = (175, 157, 123) if phase in {2, 6} else (113, 103, 94)
-    for offset, length in ((lead, 7), (rear, 5)):
+    contact = phase in {0, 12}
+    lead = 12 if contact else 8
+    rear = -10 if contact else -6
+    color = (188, 170, 132) if contact else (124, 111, 101)
+    for offset, length in ((lead, 7 if contact else 5), (rear, 5 if contact else 4)):
         start_x = _i(x) + direction * offset
-        pygame.draw.line(surface, (49, 43, 46), (start_x - length // 2, ground_y), (start_x + length // 2, ground_y), 3)
-        pygame.draw.line(surface, color, (start_x - length // 2, ground_y - 1), (start_x + length // 2, ground_y - 1), 1)
+        pygame.draw.line(
+            surface,
+            (49, 43, 46),
+            (start_x - length // 2, ground_y),
+            (start_x + length // 2, ground_y),
+            3,
+        )
+        pygame.draw.line(
+            surface,
+            color,
+            (start_x - length // 2, ground_y - 1),
+            (start_x + length // 2, ground_y - 1),
+            1,
+        )
+
+
+def _walk_bob(frame: int) -> int:
+    """Return a one-pixel weight arc without moving the grounded shadow."""
+
+    # Heel strike, compression, passing, and toe-off form a gentle arc.  It is
+    # intentionally integer-only so the pixel silhouette never gets blurred.
+    return (0, 0, -1, -1, -2, -1, 0, 0, -1, -1, -2, -1)[(int(frame) // 2) % 12]
+
+
+def _draw_stride_accents(
+    surface: pygame.Surface,
+    x: float,
+    y: float,
+    z: float,
+    facing: object,
+    state: str,
+    frame: int,
+) -> None:
+    """Add a tiny contact puff and passing sweep to make stride beats readable."""
+
+    if state not in {"walk", "run", "move", "jog"}:
+        return
+    phase = int(frame) % 24
+    direction = _face_sign(facing)
+    ground_y = _i(y - z) + 2
+    if phase in {0, 12}:
+        # Two-pixel dust puffs arrive on contact, then disappear before the
+        # next authored key; this supports both heroes without obscuring feet.
+        side = direction if phase == 0 else -direction
+        cx = _i(x) + side * 11
+        pygame.draw.line(surface, (110, 94, 90), (cx - 4, ground_y - 1), (cx - 1, ground_y - 3), 1)
+        pygame.draw.line(surface, (177, 145, 112), (cx + 1, ground_y - 1), (cx + 5, ground_y - 4), 1)
+    elif phase in {6, 18}:
+        # Passing phase: a short low sweep implies the leg is moving through
+        # the lane while keeping the authored body silhouette untouched.
+        cx = _i(x) - direction * 7
+        pygame.draw.line(surface, (77, 71, 75), (cx - direction * 5, ground_y), (cx + direction * 4, ground_y), 1)
 
 
 def draw_player(
@@ -4048,13 +4107,15 @@ def draw_player(
             accent,
         )
         _draw_footfall_ticks(surface, x, y, z, facing, state_name, int(frame))
+        _draw_stride_accents(surface, x, y, z, facing, state_name, int(frame))
         _draw_action_ribbon(surface, x, y, z, facing, state_name, authored.get_height() - 4, int(frame))
         _draw_motion_echo(surface, rendered, x, y, z, facing, authored.get_height() - 4, state_name, int(frame))
+        draw_y = y - _walk_bob(int(frame)) if state_name in {"walk", "run", "move", "jog"} else y
         return _blit_grounded(
             surface,
             rendered,
             x,
-            y,
+            draw_y,
             z,
             facing,
             authored.get_height() - 4,
@@ -4092,9 +4153,11 @@ def draw_player(
         accent,
     )
     _draw_footfall_ticks(surface, x, y, z, facing, state_name, int(frame))
+    _draw_stride_accents(surface, x, y, z, facing, state_name, int(frame))
     _draw_action_ribbon(surface, x, y, z, facing, state_name, 90, int(frame))
     _draw_motion_echo(surface, rendered, x, y, z, facing, 90, state_name, int(frame))
-    return _blit_grounded(surface, rendered, x, y, z, facing, 90)
+    draw_y = y - _walk_bob(int(frame)) if state_name in {"walk", "run", "move", "jog"} else y
+    return _blit_grounded(surface, rendered, x, draw_y, z, facing, 90)
 
 
 def draw_fist_flames(

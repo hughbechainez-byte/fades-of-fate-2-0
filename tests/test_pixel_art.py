@@ -1194,11 +1194,38 @@ class PixelArtTests(unittest.TestCase):
         late = pygame.Surface((180, 120), pygame.SRCALPHA)
         idle = pygame.Surface((180, 120), pygame.SRCALPHA)
         pixel_art._draw_footfall_ticks(early, 90, 100, 0, 1, "walk", 1)
-        pixel_art._draw_footfall_ticks(late, 90, 100, 0, 1, "walk", 9)
+        pixel_art._draw_footfall_ticks(late, 90, 100, 0, 1, "walk", 13)
         pixel_art._draw_footfall_ticks(idle, 90, 100, 0, 1, "idle", 1)
         self.assertGreater(pygame.mask.from_surface(early).count(), 0)
         self.assertEqual(pygame.image.tobytes(early, "RGBA"), pygame.image.tobytes(late, "RGBA"))
         self.assertEqual(pygame.mask.from_surface(idle).count(), 0)
+
+    def test_hero_stride_accents_follow_real_contact_and_passing_beats(self) -> None:
+        contact = pygame.Surface((180, 120), pygame.SRCALPHA)
+        passing = pygame.Surface((180, 120), pygame.SRCALPHA)
+        pixel_art._draw_stride_accents(contact, 90, 100, 0, 1, "walk", 0)
+        pixel_art._draw_stride_accents(passing, 90, 100, 0, 1, "walk", 6)
+        self.assertNotEqual(
+            pygame.image.tobytes(contact, "RGBA"),
+            pygame.image.tobytes(passing, "RGBA"),
+            "stride accents should distinguish heel contact from passing",
+        )
+
+    def test_hero_stride_accents_mirror_with_facing(self) -> None:
+        right = pygame.Surface((180, 120), pygame.SRCALPHA)
+        left = pygame.Surface((180, 120), pygame.SRCALPHA)
+        pixel_art._draw_stride_accents(right, 90, 100, 0, 1, "walk", 0)
+        pixel_art._draw_stride_accents(left, 90, 100, 0, -1, "walk", 0)
+        self.assertNotEqual(
+            pygame.image.tobytes(right, "RGBA"),
+            pygame.image.tobytes(left, "RGBA"),
+            "contact effects must travel with the facing direction",
+        )
+
+    def test_hero_stride_bob_is_integer_and_periodic(self) -> None:
+        self.assertEqual(pixel_art._walk_bob(0), pixel_art._walk_bob(24))
+        self.assertEqual(pixel_art._walk_bob(8), -2)
+        self.assertEqual(pixel_art._walk_bob(16), -1)
 
     def test_cart_return_props_have_deterministic_micro_motion(self) -> None:
         frame_zero = pygame.Surface((180, 140), pygame.SRCALPHA)
