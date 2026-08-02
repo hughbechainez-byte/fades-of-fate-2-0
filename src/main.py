@@ -98,6 +98,67 @@ def logical_mouse_events(events: Sequence[object], window_size: Sequence[int]) -
     return translated
 
 
+def _draw_app_update_prompt(surface: object, latest_version: str, error: str | None = None) -> None:
+    """Draw a small title-screen update gate without entering gameplay."""
+
+    import pygame
+
+    if not isinstance(surface, pygame.Surface):
+        return
+    overlay = pygame.Surface(surface.get_size(), pygame.SRCALPHA)
+    overlay.fill((5, 8, 22, 232))
+    surface.blit(overlay, (0, 0))
+    title_font = pygame.font.Font(None, 30)
+    body_font = pygame.font.Font(None, 21)
+    small_font = pygame.font.Font(None, 17)
+    title = title_font.render("UPDATE AVAILABLE", True, (255, 218, 76))
+    body = body_font.render(f"Download version {latest_version} now?", True, (239, 245, 255))
+    hint = small_font.render("ENTER / A: UPDATE     ESC / B: CONTINUE", True, (151, 191, 220))
+    surface.blit(title, title.get_rect(center=(320, 112)))
+    surface.blit(body, body.get_rect(center=(320, 148)))
+    yes_rect = pygame.Rect(140, 186, 150, 38)
+    no_rect = pygame.Rect(350, 186, 150, 38)
+    pygame.draw.rect(surface, (27, 118, 93), yes_rect, border_radius=5)
+    pygame.draw.rect(surface, (75, 83, 112), no_rect, border_radius=5)
+    yes = body_font.render("UPDATE", True, (255, 255, 255))
+    no = body_font.render("CONTINUE", True, (255, 255, 255))
+    surface.blit(yes, yes.get_rect(center=yes_rect.center))
+    surface.blit(no, no.get_rect(center=no_rect.center))
+    surface.blit(hint, hint.get_rect(center=(320, 254)))
+    if error:
+        error_text = small_font.render(f"Update failed; continuing is safe: {error[:70]}", True, (255, 145, 145))
+        surface.blit(error_text, error_text.get_rect(center=(320, 282)))
+
+
+def _app_update_prompt_action(event: object) -> str | None:
+    """Return ``accept`` or ``decline`` for title-screen update input."""
+
+    import pygame
+
+    if event.type == pygame.KEYDOWN:
+        if event.key in {pygame.K_RETURN, pygame.K_KP_ENTER, pygame.K_y}:
+            return "accept"
+        if event.key in {pygame.K_ESCAPE, pygame.K_n}:
+            return "decline"
+    if event.type == pygame.MOUSEBUTTONDOWN and getattr(event, "button", 0) == 1:
+        point = getattr(event, "pos", (0, 0))
+        if pygame.Rect(140, 186, 150, 38).collidepoint(point):
+            return "accept"
+        if pygame.Rect(350, 186, 150, 38).collidepoint(point):
+            return "decline"
+    if event.type == getattr(pygame, "JOYBUTTONDOWN", -1):
+        if getattr(event, "button", -1) == 0:
+            return "accept"
+        if getattr(event, "button", -1) == 1:
+            return "decline"
+    if event.type == getattr(pygame, "CONTROLLERBUTTONDOWN", -1):
+        if getattr(event, "button", -1) == getattr(pygame, "CONTROLLER_BUTTON_A", -2):
+            return "accept"
+        if getattr(event, "button", -1) == getattr(pygame, "CONTROLLER_BUTTON_B", -2):
+            return "decline"
+    return None
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="The Fades of Fate foundation demo")
     parser.add_argument("--self-test", action="store_true", help="run the hardware-free foundation QA suite and exit")
@@ -108,6 +169,16 @@ def parse_args() -> argparse.Namespace:
         "--skip-content-update",
         action="store_true",
         help="skip all startup content feed checks",
+    )
+    parser.add_argument(
+        "--skip-app-update",
+        action="store_true",
+        help="skip the Windows application update check",
+    )
+    parser.add_argument(
+        "--auto-update",
+        action="store_true",
+        help="apply a verified Windows application update without prompting",
     )
     parser.add_argument(
         "--content-root",
@@ -124,6 +195,17 @@ def parse_args() -> argparse.Namespace:
         type=float,
         default=6.0,
         help="network timeout in seconds for content-update operations",
+    )
+    parser.add_argument(
+        "--app-update-feed",
+        default=None,
+        help="latest-release API URL used for Windows application updates",
+    )
+    parser.add_argument(
+        "--app-update-timeout",
+        type=float,
+        default=6.0,
+        help="network timeout in seconds for application-update checks",
     )
     return parser.parse_args()
 
@@ -166,6 +248,12 @@ def _run() -> int:
     import pygame
 
     from src.config import GAME_NAME, executable_root
+    from src.app_update import (
+        AppUpdateError,
+        AppUpdateResult,
+        check_app_update,
+        spawn_windows_updater,
+    )
     from src.game import FadesGame
     from src.content_update import (
         ContentUpdateError,
@@ -197,11 +285,50 @@ def _run() -> int:
                 "reason": f"{type(exc).__name__}: {exc}",
             }
 
+    app_update_result: AppUpdateResult | None = None
+    if (
+        not args.self_test
+        and not args.skip_app_update
+        and not is_android_runtime()
+        and os.name == "nt"
+        and getattr(sys, "frozen", False)
+    ):
+        try:
+            app_update_result = check_app_update(
+                FadesGame.VERSION,
+                feed_url=args.app_update_feed
+                or os.environ.get("FADES_OF_FATE_APP_UPDATE_FEED", ""),
+                timeout_seconds=args.app_update_timeout,
+            )
+        except Exception as exc:
+            app_update_result = AppUpdateResult(
+                "failed", False, FadesGame.VERSION, FadesGame.VERSION, reason=f"{type(exc).__name__}: {exc}"
+            )
+        if args.auto_update and app_update_result.available and app_update_result.manifest is not None:
+            try:
+                spawn_windows_updater(
+                    app_update_result.manifest,
+                    executable_root=executable_root(),
+                    executable_path=Path(sys.executable),
+                )
+                return 0
+            except AppUpdateError as exc:
+                app_update_result = AppUpdateResult(
+                    "failed",
+                    False,
+                    FadesGame.VERSION,
+                    app_update_result.latest_version,
+                    manifest=app_update_result.manifest,
+                    reason=str(exc),
+                )
+
     initialize_logging(FadesGame.VERSION)
     if update_result:
         breadcrumb("content_update", **(
             update_result.as_dict() if hasattr(update_result, "as_dict") else update_result
         ))
+    if app_update_result:
+        breadcrumb("app_update_check", **app_update_result.as_dict())
 
     android_runtime = is_android_runtime()
     initialize_pygame(android_runtime)
@@ -259,12 +386,48 @@ def _run() -> int:
     presentation: pygame.Surface | None = None
     presentation_size = (0, 0)
     breadcrumb("main_loop_started", display=window.get_size(), controllers=manager.connected_controllers)
+    app_update_prompt = (
+        app_update_result
+        if app_update_result is not None and app_update_result.available and app_update_result.manifest is not None
+        else None
+    )
+    app_update_error: str | None = None
 
     try:
         while game.running:
             frame_seconds = min(clock.tick(120) / 1000.0, 0.10)
             events = pygame.event.get()
-            for event in events:
+            game_events = events
+            if app_update_prompt is not None:
+                game_events = []
+                for event in events:
+                    if event.type == pygame.QUIT:
+                        game.running = False
+                        app_update_prompt = None
+                        continue
+                    action = _app_update_prompt_action(event)
+                    if action == "decline":
+                        app_update_prompt = None
+                        breadcrumb("app_update_declined")
+                    elif action == "accept" and app_update_prompt is not None:
+                        try:
+                            spawn_windows_updater(
+                                app_update_prompt.manifest,
+                                executable_root=executable_root(),
+                                executable_path=Path(sys.executable),
+                            )
+                            breadcrumb(
+                                "app_update_accepted",
+                                version=app_update_prompt.latest_version,
+                            )
+                            game.running = False
+                            app_update_prompt = None
+                        except AppUpdateError as exc:
+                            app_update_error = str(exc)
+                            breadcrumb("app_update_handoff_failed", reason=app_update_error)
+                if not game.running:
+                    continue
+            for event in game_events:
                 if not android_runtime and event.type == pygame.KEYDOWN and event.key == pygame.K_F11:
                     fullscreen = not fullscreen
                     if fullscreen:
@@ -278,8 +441,8 @@ def _run() -> int:
                     pygame.image.save(logical, screenshot_path)
                     breadcrumb("screenshot_saved", path=str(screenshot_path), state=game.state)
 
-            manager.process_events(events)
-            game.handle_events(logical_mouse_events(events, window.get_size()))
+            manager.process_events(game_events)
+            game.handle_events(logical_mouse_events(game_events, window.get_size()))
             accumulator += frame_seconds
             steps = 0
             while accumulator >= fixed_step and steps < 5:
@@ -295,6 +458,8 @@ def _run() -> int:
                 breadcrumb("frame_catchup_capped", frame_seconds=frame_seconds)
 
             game.draw(logical)
+            if app_update_prompt is not None and app_update_prompt.manifest is not None:
+                _draw_app_update_prompt(logical, app_update_prompt.latest_version, app_update_error)
             window.fill((0, 0, 0))
             viewport_x, viewport_y, viewport_width, viewport_height = (
                 letterbox_viewport(LOGICAL_SIZE, window.get_size())

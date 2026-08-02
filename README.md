@@ -128,6 +128,8 @@ The game checks the GitHub release feed on startup (`--content-feed`) and applie
 
 `.github/workflows/android-apk-release.yml` builds the APK through Buildozer and uploads both the APK and content feed assets on tag pushes. `.github/workflows/windows-desktop-release.yml` builds and validates the PyInstaller package on a Windows runner, archives the complete onedir package, and uploads `The-Fades-of-Fate-<tag>-Windows-x64.zip` to the same GitHub Release.
 
+The Windows build also checks the latest release's `fades-of-fate-app-manifest.json` when it opens. If a newer verified package is available, the title screen asks before updating; `--auto-update` applies it without prompting. The update helper downloads only the HTTPS GitHub package named by the manifest, verifies its size and SHA-256, waits for the game to exit, swaps in the complete onedir package, and relaunches it. Network or validation failures leave the current game usable.
+
 To publish a PC update, update the game version metadata, commit and push `main`, then create and push a matching `v*` tag. Every such tag now receives the Windows ZIP automatically; extract it and launch `The Fades of Fate.exe`. The ZIP is required because the executable depends on its bundled `_internal`, `assets`, and `data` folders.
 
 Restart the game after changing the JSON. Keep a backup before large edits.

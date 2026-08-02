@@ -60,12 +60,20 @@ jobs:
           }
           Compress-Archive -Path (Join-Path $packageDir '*') -DestinationPath $archive -CompressionLevel Optimal -Force
 
+      - name: Build application update manifest
+        run: |
+          python tools/build_app_update_manifest.py `
+            --release-tag "$env:RELEASE_TAG" `
+            --package "$env:WINDOWS_ARCHIVE" `
+            --package-url "https://github.com/${{ github.repository }}/releases/download/$env:RELEASE_TAG/$(Split-Path -Leaf $env:WINDOWS_ARCHIVE)"
+
       - name: Upload workflow artifact
         uses: actions/upload-artifact@v4
         with:
           name: fades-of-fate-windows-${{ env.RELEASE_TAG }}
           path: |
             ${{ env.WINDOWS_ARCHIVE }}
+            dist/fades-of-fate-app-manifest.json
             dist/The Fades of Fate/build/self_test_report.json
             build/chapter1_validation_build.json
           if-no-files-found: error
@@ -74,7 +82,9 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.RELEASE_TAG }}
-          files: ${{ env.WINDOWS_ARCHIVE }}
+          files: |
+            ${{ env.WINDOWS_ARCHIVE }}
+            dist/fades-of-fate-app-manifest.json
           fail_on_unmatched_files: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
