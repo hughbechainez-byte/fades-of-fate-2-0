@@ -6,10 +6,20 @@ from unittest import mock
 
 import pygame
 
+from src import input_manager
 from src.main import initialize_pygame
 
 
 class AndroidBootstrapTests(unittest.TestCase):
+    def test_android_input_skips_incompatible_sdl2_controller_package(self) -> None:
+        with mock.patch.object(
+            input_manager, "is_android_runtime", return_value=True
+        ), mock.patch.object(input_manager, "import_module") as import_module:
+            controller = input_manager._load_sdl2_controller()
+
+        self.assertIsNone(controller)
+        import_module.assert_not_called()
+
     def test_android_initialization_does_not_call_global_pygame_init_or_mixer(self) -> None:
         with mock.patch.object(pygame, "init") as init, mock.patch.object(
             pygame.mixer, "pre_init"

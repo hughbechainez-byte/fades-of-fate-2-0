@@ -8,15 +8,34 @@ complete controller path without requiring physical hardware.
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
+from importlib import import_module
 from math import hypot
 from typing import Any, Iterable, Mapping, Sequence
 
 import pygame
 
-try:  # pygame-ce ships this module, but keeping the fallback makes packaging safe.
-    from pygame._sdl2 import controller as sdl2_controller
-except (ImportError, pygame.error):  # pragma: no cover - installation fallback
-    sdl2_controller = None
+from .config import is_android_runtime
+
+
+def _load_sdl2_controller() -> Any | None:
+    """Load the mapped-controller API only on runtimes where it is safe.
+
+    Pygame 2.5.2's python-for-Android build imports ``pygame._sdl2.video`` as
+    part of the package initializer.  That module expects a desktop SSE2
+    alpha-blit symbol which is not exported by the arm64 surface library, so
+    merely importing the controller helper terminates Android startup.  The
+    regular ``pygame.joystick`` path below remains available on Android.
+    """
+
+    if is_android_runtime():
+        return None
+    try:
+        return import_module("pygame._sdl2.controller")
+    except (ImportError, pygame.error):  # pragma: no cover - installation fallback
+        return None
+
+
+sdl2_controller = _load_sdl2_controller()
 
 
 ActionSet = frozenset[str]
