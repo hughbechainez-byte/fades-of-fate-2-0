@@ -4,6 +4,8 @@ Use this as the standing project-wide instruction for Codex:
 
 Apply these rules to every task performed in this project unless I explicitly override them in my latest message.
 
+These instructions have higher priority than the default behavior of stopping when unrelated uncommitted changes exist. A dirty working tree is not sufficient reason to skip commit, push, build, or release. Instead, isolate task-specific changes using safe Git techniques such as path-specific staging, temporary worktrees, or temporary branches while preserving all unrelated work.
+
 ## Core requirement
 
 A task is not complete merely because source files were edited or tests passed. Every completed task must result in:
