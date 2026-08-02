@@ -1,7 +1,7 @@
 # Canonical Build and Content Flow
 
 Status: resolved beginning with the 0.15.3 background-detail release and retained
-through the 0.15.5 canonical visual-overhaul polish release. This file is
+through the 0.15.8 canonical visual-overhaul release. This file is
 the authority for Chapter 1 source ownership, generation, packaging, runtime
 resolution, evidence, and release gates.
 
@@ -98,7 +98,7 @@ No audited path remains `UNKNOWN`.
 | `tools/build_animation_library.py`, `tools/build_sprite_atlas.py` | CANONICAL GENERATORS | Atlas generation; generated atlases are committed runtime assets. |
 | `tools/build_content_release.py` | CANONICAL CROSS-PLATFORM BUILD | Strict validation, deterministic ZIP, identical manifests, provenance. |
 | `tools/Build-Windows.ps1` | CANONICAL PC BUILD | Tests, visual gate, PyInstaller, exact package launch, Desktop install/hash check. |
-| `android/buildozer.spec` | CANONICAL ANDROID BUILD | Includes the same source assets/data/manifest/provenance with pinned p4a commit. |
+| `android/buildozer.spec`, `android/recipes/pygame/**` | CANONICAL ANDROID BUILD | Includes the same source assets/data/manifest/provenance with pinned p4a plus the ARM64 Pygame SIMD-link patch. |
 | `.github/workflows/windows-desktop-release.yml` | CANONICAL PC RELEASE | Builds and attaches the complete Windows ZIP plus content/provenance. |
 | `.github/workflows/android-apk-release.yml` | CANONICAL ANDROID RELEASE | Runs the same source gate, builds APK, attaches APK/content/provenance. |
 | `main.py`, `src/main.py` | CANONICAL LAUNCH | Source/package entry points. |
@@ -164,5 +164,6 @@ manifests.
 visual criteria. `tools/Build-Windows.ps1` then launches the exact onedir,
 requires `artifact_match=true`, runs the complete self-test, checks package and
 installed hashes, and refuses completion on any failed acceptance item. The
-Android workflow runs the same source/content gate before its pinned build;
-installed APK screenshots, video, and logs remain required release evidence.
+Android workflow runs the same source/content gate before its pinned build,
+then rejects unresolved Pygame ARM64 SIMD symbols. Installed APK screenshots,
+video, and logs remain required release evidence.
