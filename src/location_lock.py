@@ -214,26 +214,24 @@ def _validate_asset(
     require_opaque: bool,
     require_alpha: bool,
 ) -> None:
-    try:
-        from PIL import Image
-    except ImportError as exc:  # pragma: no cover - dependency is packaged with the game
-        raise LocationLockError("Pillow is required to validate location-locked art") from exc
-
     asset_path = project_root / relative_asset
     if not asset_path.is_file():
         raise LocationLockError(f"{label} is missing: {relative_asset}")
     try:
-        with Image.open(asset_path) as image:
-            image.load()
-            if image.size != expected_size:
-                raise LocationLockError(
-                    f"{label} must be {expected_size[0]}x{expected_size[1]}, got "
-                    f"{image.size[0]}x{image.size[1]}"
-                )
-            alpha = image.getchannel("A") if "A" in image.getbands() else None
-            if require_alpha and alpha is None:
-                raise LocationLockError(f"{label} must retain a transparent alpha channel")
-            if require_opaque and alpha is not None and alpha.getextrema()[0] != 255:
+        import pygame
+
+        image = pygame.image.load(str(asset_path))
+        if image.get_size() != expected_size:
+            raise LocationLockError(
+                f"{label} must be {expected_size[0]}x{expected_size[1]}, got "
+                f"{image.get_width()}x{image.get_height()}"
+            )
+        has_alpha = image.get_masks()[3] != 0
+        if require_alpha and not has_alpha:
+            raise LocationLockError(f"{label} must retain a transparent alpha channel")
+        if require_opaque and has_alpha:
+            alpha_bytes = pygame.image.tobytes(image, "RGBA")[3::4]
+            if any(alpha != 255 for alpha in alpha_bytes):
                 raise LocationLockError(f"{label} must be fully opaque")
     except LocationLockError:
         raise
@@ -398,15 +396,15 @@ def _validate_physical_scene_objects(
             if not expected_path.is_file():
                 raise LocationLockError(f"{object_label}.asset is missing: {asset}")
             try:
-                from PIL import Image
+                import pygame
 
-                with Image.open(expected_path) as image:
-                    if image.format != "PNG" or "A" not in image.getbands():
-                        raise LocationLockError(
-                            f"{object_label}.asset must be a transparent RGBA PNG"
-                        )
-                    if image.getchannel("A").getbbox() is None:
-                        raise LocationLockError(f"{object_label}.asset must contain visible pixels")
+                image = pygame.image.load(str(expected_path))
+                if image.get_masks()[3] == 0:
+                    raise LocationLockError(
+                        f"{object_label}.asset must be a transparent RGBA PNG"
+                    )
+                if not any(pygame.image.tobytes(image, "RGBA")[3::4]):
+                    raise LocationLockError(f"{object_label}.asset must contain visible pixels")
             except LocationLockError:
                 raise
             except Exception as exc:
@@ -486,25 +484,20 @@ def _validate_ground_coverage(
     world_width: int,
     route_label: str,
 ) -> None:
-    try:
-        from PIL import Image
-    except ImportError as exc:  # pragma: no cover - dependency is packaged with the game
-        raise LocationLockError("Pillow is required to validate location-locked art") from exc
     asset_path = project_root / relative_asset
     try:
-        with Image.open(asset_path) as image:
-            image = image.convert("RGBA")
-            if image.size != (world_width, LOGICAL_HEIGHT):
-                raise LocationLockError(f"{route_label}.ground_asset_size must equal [{world_width}, {LOGICAL_HEIGHT}]")
-            _, _, _, alpha = image.split()
-            start = max(0, min(LOGICAL_HEIGHT, int(opaque_from_y)))
-            for y in range(start, LOGICAL_HEIGHT):
-                for x in range(world_width):
-                    if alpha.getpixel((x, y)) != 255:
-                        raise LocationLockError(
-                            f"{route_label}.ground_asset must be fully opaque at and below "
-                            f"ground_opaque_from_y={start}"
-                        )
+        import pygame
+
+        image = pygame.image.load(str(asset_path))
+        if image.get_size() != (world_width, LOGICAL_HEIGHT):
+            raise LocationLockError(f"{route_label}.ground_asset_size must equal [{world_width}, {LOGICAL_HEIGHT}]")
+        start = max(0, min(LOGICAL_HEIGHT, int(opaque_from_y)))
+        alpha_bytes = pygame.image.tobytes(image, "RGBA")[3::4]
+        if any(alpha != 255 for alpha in alpha_bytes[start * world_width :]):
+            raise LocationLockError(
+                f"{route_label}.ground_asset must be fully opaque at and below "
+                f"ground_opaque_from_y={start}"
+            )
     except LocationLockError:
         raise
     except Exception as exc:

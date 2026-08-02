@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
 import unittest
+from unittest.mock import patch
 
 from src.chapter_content import ChapterContentError, load_chapter_content, validate_chapter_content
 from src.config import ConfigError, load_gameplay, validate_gameplay
@@ -438,6 +439,14 @@ class ChapterOneLocationLockTests(unittest.TestCase):
                 oversized,
                 project_root=ROOT,
                 validate_assets=False,
+            )
+
+    def test_runtime_asset_validation_does_not_require_pillow(self) -> None:
+        with patch.dict("sys.modules", {"PIL": None, "PIL.Image": None}):
+            validate_location_lock(
+                deepcopy(self.manifest),
+                project_root=ROOT,
+                validate_assets=True,
             )
 
     def test_physical_sedan_models_are_renderer_supported(self) -> None:
