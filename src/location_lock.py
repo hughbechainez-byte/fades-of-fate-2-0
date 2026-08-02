@@ -429,6 +429,11 @@ def _validate_physical_scene_objects(
                 raise LocationLockError(
                     f"{object_label}.paint_color must contain three integer RGB channels"
                 )
+            model = _require_text(feature.get("model"), f"{object_label}.model")
+            if model not in {"sedan", "wagon", "coupe", "compact"}:
+                raise LocationLockError(
+                    f"{object_label}.model must be sedan, wagon, coupe, or compact"
+                )
             condition = _require_text(feature.get("condition"), f"{object_label}.condition")
             if condition not in {"clean", "dusty", "weathered"}:
                 raise LocationLockError(

@@ -213,6 +213,7 @@ def validate_canonical_content(project_root: Path) -> dict[str, Any]:
             vehicle_signatures.add(
                 (
                     path.relative_to(project_root).as_posix(),
+                    str(feature.get("model", "")),
                     tuple(feature.get("paint_color", ())),
                     str(feature.get("condition", "")),
                     str(feature.get("accessory", "")),

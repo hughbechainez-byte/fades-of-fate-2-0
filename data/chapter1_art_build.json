@@ -78,8 +78,8 @@
     },
     {
       "path": "data/chapter1_location_lock.json",
-      "sha256": "58d40c8da75afd170142bd2117f49569c2421cf4e99010d6c55c69f711650109",
-      "size": 66665
+      "sha256": "093490ebcc82f191deea619eee3ddf1c80dda1a7bbfce9ef2803d41c4b8a17c7",
+      "size": 66855
     },
     {
       "path": "data/gameplay.json",

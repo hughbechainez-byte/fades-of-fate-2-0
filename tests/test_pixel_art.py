@@ -593,8 +593,8 @@ class PixelArtTests(unittest.TestCase):
                 self.assertGreater(max(sampled_luma), 170)
                 self.assertGreater(max(sampled_luma) - min(sampled_luma), 160)
 
-    def test_chapter_one_authored_routes_do_not_spawn_tiny_vehicle_overlays(self) -> None:
-        """Legacy tiny traffic helpers stay disabled beside calibrated physical cars."""
+    def test_chapter_one_authored_routes_do_not_spawn_legacy_parked_cars(self) -> None:
+        """Only manifest cars may occupy the parked-car depth lane."""
 
         for theme, stage_width in pixel_art._CHAPTER_ONE_THEME_ROUTE_WIDTHS.items():
             surface = pygame.Surface((DESIGN_WIDTH, DESIGN_HEIGHT))
@@ -602,11 +602,9 @@ class PixelArtTests(unittest.TestCase):
             with (
                 self.subTest(theme=theme),
                 patch.object(pixel_art, "_draw_parked_car") as parked_car,
-                patch.object(pixel_art, "_draw_ambient_vehicle") as ambient_vehicle,
             ):
                 draw_stage_background(surface, 0, stage_width, theme=theme)
                 parked_car.assert_not_called()
-                ambient_vehicle.assert_not_called()
 
     def test_physical_sedan_uses_dave_ruler_plus_far_apron_visual_scale(self) -> None:
         route = pixel_art._location_route("sprouts_el_cilantro")
@@ -686,7 +684,20 @@ class PixelArtTests(unittest.TestCase):
 
         self.assertEqual(len(features), 4)
         self.assertEqual(len(signatures), 4)
-        self.assertEqual({sprite.get_height() for sprite in sprites}, {72})
+        self.assertEqual(
+            {feature["model"] for feature in features},
+            {"sedan", "wagon", "coupe", "compact"},
+        )
+        self.assertEqual(
+            {feature["condition"] for feature in features},
+            {"clean", "weathered", "dusty"},
+        )
+        self.assertEqual(
+            {feature["accessory"] for feature in features},
+            {"none", "roof_rack", "rear_window_sticker", "church_decal"},
+        )
+        self.assertGreaterEqual(min(sprite.get_height() for sprite in sprites), 64)
+        self.assertLessEqual(max(sprite.get_height() for sprite in sprites), 72)
         self.assertLessEqual(max(sprite.get_width() for sprite in sprites), 250)
 
     def test_ambient_planes_move_independently_at_pixel_aligned_rates(self) -> None:
@@ -694,6 +705,37 @@ class PixelArtTests(unittest.TestCase):
         second = {plane: pixel_art._ambient_plane_offset(500, plane) for plane in ("far", "mid", "world")}
         shifts = {plane: second[plane] - first[plane] for plane in first}
         self.assertEqual(shifts, {"far": -46, "mid": -74, "world": -100})
+
+    def test_each_route_has_fixed_camera_ambient_motion(self) -> None:
+        for theme, stage_width in pixel_art._CHAPTER_ONE_THEME_ROUTE_WIDTHS.items():
+            events = pixel_art._CHAPTER_ONE_AMBIENT_EVENTS[theme]
+            first = events[0]
+            midpoint = (float(first.get("start", 0)) + float(first.get("end", stage_width))) / 2
+            camera_x = max(0, min(stage_width - DESIGN_WIDTH, round(midpoint - DESIGN_WIDTH / 2)))
+            early = pygame.Surface((DESIGN_WIDTH, DESIGN_HEIGHT), pygame.SRCALPHA)
+            late = pygame.Surface((DESIGN_WIDTH, DESIGN_HEIGHT), pygame.SRCALPHA)
+            for plane in ("far", "mid", "world"):
+                pixel_art._draw_chapter_one_ambient_plane(
+                    early,
+                    camera_x,
+                    stage_width,
+                    theme,
+                    plane,
+                    atmosphere={"time_seconds": 0.0},
+                )
+                pixel_art._draw_chapter_one_ambient_plane(
+                    late,
+                    camera_x,
+                    stage_width,
+                    theme,
+                    plane,
+                    atmosphere={"time_seconds": 2.0},
+                )
+            with self.subTest(theme=theme):
+                self.assertNotEqual(
+                    pygame.image.tobytes(early, "RGBA", False),
+                    pygame.image.tobytes(late, "RGBA", False),
+                )
 
     def test_moving_travel_panels_render_distinct_pixel_aligned_progress_frames(self) -> None:
         panels = [

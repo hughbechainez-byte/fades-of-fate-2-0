@@ -440,6 +440,16 @@ class ChapterOneLocationLockTests(unittest.TestCase):
                 validate_assets=False,
             )
 
+    def test_physical_sedan_models_are_renderer_supported(self) -> None:
+        malformed = deepcopy(self.manifest)
+        malformed["routes"][0]["physical_scene_objects"][0]["model"] = "monster_truck"
+        with self.assertRaisesRegex(LocationLockError, "model must be"):
+            validate_location_lock(
+                malformed,
+                project_root=ROOT,
+                validate_assets=False,
+            )
+
     def test_production_mapping_never_references_old_generic_stage_art(self) -> None:
         raw = json.dumps(self.manifest).lower()
         self.assertNotIn("second_street_route_level1_panorama_v1", raw)
