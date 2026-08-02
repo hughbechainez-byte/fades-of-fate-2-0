@@ -1,13 +1,13 @@
-"""Build location-locked fallback panoramas and calibrated 2.5D route layers.
+"""Build the canonical Chapter 1 panoramas and calibrated 2.5D route layers.
 
-Authored paintings remain available as an explicit fallback and as a material
-detail source. Shipping layered routes keep calibrated transparent façades and
-an orthographic floor, while masked source color/texture restores route detail
-without restoring the paintings' perspective floor, baked sky, or tiny cars.
+The authored paintings are the runtime visual base. Transparent generated
+layers add atmosphere, ground support, culling compatibility, and foreground
+depth without replacing the detailed panorama.
 """
 from __future__ import annotations
 
 from dataclasses import dataclass
+import hashlib
 import json
 import math
 from pathlib import Path
@@ -372,29 +372,6 @@ def _build_panorama_layers(route: Mapping[str, Any]) -> tuple[
     for seam_index, seam in enumerate(seams):
         _draw_structural_handoff(panorama, seam, accent, seam_index)
     return panorama
-
-
-def _draw_natural_signs(surface: pygame.Surface, route: Mapping[str, Any]) -> None:
-    width = int(route["world_width"])
-    accent = ROUTE_ACCENTS[str(route["theme"])]
-    for index, landmark in enumerate(route["landmarks"]):
-        label = ART_LABELS.get(str(landmark["id"]), str(landmark["display_name"]).upper())
-        label_image = _font(14, bold=True).render(label, False, WARM_WHITE)
-        sign_width = min(240, label_image.get_width() + 18)
-        sign_x = max(4, min(width - sign_width - 4, int(landmark["world_x"]) - sign_width // 2))
-        sign_y = 104 + (index % 2) * 20
-        _alpha_rect(surface, (18, 21, 25, 215), (sign_x, sign_y, sign_width, 18))
-        pygame.draw.rect(surface, accent, (sign_x, sign_y, 4, 18))
-        surface.blit(label_image, (sign_x + 10, sign_y + 3))
-
-    for index, landmark in enumerate(route.get("opposite_side_landmarks", ())):
-        label = str(landmark["display_name"]).upper()
-        label_image = _font(11, bold=True).render(label, False, (197, 178, 145))
-        sign_width = min(150, label_image.get_width() + 10)
-        sign_x = max(2, min(width - sign_width - 2, int(landmark["world_x"]) - sign_width // 2))
-        sign_y = 67 + (index % 2) * 13
-        _alpha_rect(surface, (25, 26, 31, 180), (sign_x, sign_y, sign_width, 12))
-        surface.blit(label_image, (sign_x + 5, sign_y + 1))
 
 
 def _draw_far(route: Mapping[str, Any]) -> pygame.Surface:
@@ -1089,7 +1066,6 @@ def _build_layered_assets(
 
 def _build_route(route: Mapping[str, Any]) -> tuple[pygame.Surface, pygame.Surface, pygame.Surface]:
     main = _build_panorama_layers(route)
-    _draw_natural_signs(main, route)
     return main, _draw_far(route), _draw_near(route)
 
 
@@ -1097,6 +1073,73 @@ def _save(surface: pygame.Surface, relative_asset: str) -> None:
     path = ROOT / relative_asset
     path.parent.mkdir(parents=True, exist_ok=True)
     pygame.image.save(surface, str(path))
+
+
+_RECEIPT_TEXT_SUFFIXES = frozenset({".json", ".py"})
+
+
+def _receipt_bytes(path: Path) -> bytes:
+    data = path.read_bytes()
+    if path.suffix.lower() in _RECEIPT_TEXT_SUFFIXES:
+        return data.replace(b"\r\n", b"\n").replace(b"\r", b"\n")
+    return data
+
+
+def _file_record(path: Path) -> dict[str, Any]:
+    data = _receipt_bytes(path)
+    return {
+        "path": path.relative_to(ROOT).as_posix(),
+        "sha256": hashlib.sha256(data).hexdigest(),
+        "size": len(data),
+    }
+
+
+def _write_generation_receipt(
+    routes: Iterable[Mapping[str, Any]],
+    stage_chunks_payload: Mapping[str, Any],
+) -> None:
+    route_list = list(routes)
+    input_paths = {
+        Path(__file__).resolve(),
+        ROOT / "data" / "chapter1_location_lock.json",
+        ROOT / "data" / "gameplay.json",
+        ORTHOGRAPHIC_GROUND_SOURCE,
+    }
+    input_paths.update(
+        ROOT / spec.source
+        for specs in PANEL_SPECS.values()
+        for spec in specs
+    )
+    output_paths = {ROOT / "data" / "stage_chunks.json"}
+    for route in route_list:
+        output_paths.update(
+            {
+                ROOT / str(route["main_panorama_asset"]),
+                ROOT / str(route["far_asset"]),
+                ROOT / str(route["near_asset"]),
+            }
+        )
+        for item in LAYER_FIELDS:
+            layer_name = item[0] if isinstance(item, tuple) else item
+            output_paths.add(_layer_asset_path(route, layer_name))
+    for route in stage_chunks_payload.get("routes", ()):
+        for asset in route.get("global_layers", {}).values():
+            output_paths.add(ROOT / str(asset))
+        for chunk in route.get("chunks", ()):
+            for layer in chunk.get("layers", {}).values():
+                output_paths.add(ROOT / str(layer["asset"]))
+    missing = [path for path in input_paths | output_paths if not path.is_file()]
+    if missing:
+        raise FileNotFoundError(f"cannot write generation receipt; missing files: {missing}")
+    payload = {
+        "schema_version": 1,
+        "builder": "tools/build_chapter1_location_art.py",
+        "inputs": [_file_record(path) for path in sorted(input_paths, key=lambda item: item.as_posix())],
+        "outputs": [_file_record(path) for path in sorted(output_paths, key=lambda item: item.as_posix())],
+    }
+    (ROOT / "data" / "chapter1_art_build.json").write_bytes(
+        (json.dumps(payload, indent=2, sort_keys=True) + "\n").encode("utf-8")
+    )
 
 
 def _route_gameplay_level(
@@ -1295,12 +1338,11 @@ def main() -> None:
     gameplay = json.loads(
         (ROOT / "data" / "gameplay.json").read_text(encoding="utf-8-sig")
     )
-    routes: Iterable[Mapping[str, Any]] = manifest["routes"]
+    routes: tuple[Mapping[str, Any], ...] = tuple(manifest["routes"])
     chunk_routes: list[dict[str, Any]] = []
     for route in routes:
         detail_surface = _build_panorama_layers(route)
         main_surface = detail_surface.copy()
-        _draw_natural_signs(main_surface, route)
         far_surface = _draw_far(route)
         near_surface = _draw_near(route)
         layered_assets = _build_layered_assets(route, detail_surface)
@@ -1322,19 +1364,15 @@ def main() -> None:
             f"far={far_surface.get_size()} near={near_surface.get_size()} "
             f"chunks={len(chunk_routes[-1]['chunks'])}"
         )
-    (ROOT / "data" / "stage_chunks.json").write_text(
-        json.dumps(
-            {
-                "schema_version": CHUNK_MANIFEST_SCHEMA_VERSION,
-                "description": "Panel-backed world chunks for location-locked Chapter 1 routes.",
-                "routes": chunk_routes,
-            },
-            ensure_ascii=False,
-            indent=2,
-        )
-        + "\n",
-        encoding="utf-8",
+    stage_chunks_payload = {
+        "schema_version": CHUNK_MANIFEST_SCHEMA_VERSION,
+        "description": "Panel-backed world chunks for location-locked Chapter 1 routes.",
+        "routes": chunk_routes,
+    }
+    (ROOT / "data" / "stage_chunks.json").write_bytes(
+        (json.dumps(stage_chunks_payload, ensure_ascii=False, indent=2) + "\n").encode("utf-8")
     )
+    _write_generation_receipt(routes, stage_chunks_payload)
     pygame.quit()
 
 

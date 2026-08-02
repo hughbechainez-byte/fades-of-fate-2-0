@@ -130,6 +130,7 @@ class GameAtmosphereIntegrationTests(unittest.TestCase):
         game = object.__new__(FadesGame)
         game.data = load_gameplay()
         manifest_path = resource_path("data/chapter1_location_lock.json")
+        game.location_manifest_path = manifest_path
         game.location_manifest = load_location_lock(
             manifest_path,
             project_root=manifest_path.parent.parent,
@@ -162,6 +163,7 @@ class GameAtmosphereIntegrationTests(unittest.TestCase):
         game = object.__new__(FadesGame)
         game.data = load_gameplay()
         manifest_path = resource_path("data/chapter1_location_lock.json")
+        game.location_manifest_path = manifest_path
         game.location_manifest = load_location_lock(
             manifest_path,
             project_root=manifest_path.parent.parent,

@@ -430,6 +430,16 @@ class ChapterOneLocationLockTests(unittest.TestCase):
                 validate_assets=False,
             )
 
+    def test_physical_sedans_require_a_bounded_far_apron_visual_scale(self) -> None:
+        oversized = deepcopy(self.manifest)
+        oversized["routes"][0]["physical_scene_objects"][0]["visual_depth_scale"] = 1.0
+        with self.assertRaisesRegex(LocationLockError, "far-apron sedan"):
+            validate_location_lock(
+                oversized,
+                project_root=ROOT,
+                validate_assets=False,
+            )
+
     def test_production_mapping_never_references_old_generic_stage_art(self) -> None:
         raw = json.dumps(self.manifest).lower()
         self.assertNotIn("second_street_route_level1_panorama_v1", raw)

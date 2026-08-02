@@ -55,6 +55,7 @@ __all__ = [
     "draw_stage_background",
     "draw_stage_foreground",
     "stage_world_debug_snapshot",
+    "background_cache_used",
     "draw_physical_scene_object",
     "draw_location_travel_panel",
     "draw_stage_prop",
@@ -354,6 +355,7 @@ _STAGE_ROUTE_PANORAMA_CACHE: dict[tuple[object, ...], pygame.Surface | None] = {
 _STAGE_NEAR_LAYER_CACHE: dict[tuple[str, int, int], pygame.Surface | None] = {}
 _SUNSET_BACKGROUND_CACHE: dict[tuple[int, int], dict[str, pygame.Surface] | None] = {}
 _LOCATION_ART_CACHE: dict[str, dict[str, pygame.Surface | None]] = {}
+_BACKGROUND_CACHE_HIT_THEMES: set[str] = set()
 _TRAVEL_PANEL_CACHE: dict[tuple[object, ...], pygame.Surface] = {}
 _PHYSICAL_SCENE_OBJECT_CACHE: dict[tuple[object, ...], pygame.Surface] = {}
 
@@ -2093,6 +2095,7 @@ def _location_art_layers(theme: str) -> dict[str, pygame.Surface | None]:
     key = _theme_key(theme)
     cached = _LOCATION_ART_CACHE.get(key)
     if cached is not None:
+        _BACKGROUND_CACHE_HIT_THEMES.add(key)
         route = _location_route(key)
         if route is not None:
             _STAGE_ROUTE_PANORAMA_CACHE[
@@ -2156,6 +2159,12 @@ def _location_art_layers(theme: str) -> dict[str, pygame.Surface | None]:
     return layers
 
 
+def background_cache_used(theme: object) -> bool:
+    """Return whether this route reused any in-memory scenery surface."""
+
+    return _theme_key(theme) in _BACKGROUND_CACHE_HIT_THEMES
+
+
 def _bounded_location_layer_offset(
     camera_x: float,
     rate: float,
@@ -2195,23 +2204,24 @@ def _draw_location_locked_background(
         raise LocationArtError(
             f"{theme} runtime width disagrees with chapter1_location_lock.json"
         )
-    world = _stage_world(theme)
-    haze = _stage_world_global_surface(theme, "far_haze")
-    # Keep the existing atmosphere compositor as the single authority for
-    # profile sky and moving haze.  Skyline, architecture, and ground are
-    # now chunked world pieces and are drawn only when near the camera.
-    backdrop._draw_opaque_sky(surface, route, atmosphere)
-    backdrop._apply_dynamic_atmosphere(
+    # The authored panorama is the visual authority. The chunk renderer was
+    # introduced for culling, but its low-detail architecture and ground plates
+    # accidentally replaced this panorama and caused the rectangular-scene
+    # regression. The shared compositor keeps the panorama at a 1:1 world
+    # anchor, then adds only transparent atmosphere and ground detail.
+    backdrop.render_route_backdrop(
         surface,
+        theme,
         route,
-        {"far_haze": haze},
-        camera_x=cx,
+        _location_art_layers(theme),
+        cx,
+        world_width,
         atmosphere=atmosphere,
-        width=surface.get_width(),
+        loader_identity=id(pygame.image.load),
     )
-    _draw_stage_world_layer(surface, world, cx, "far_skyline")
-    _draw_stage_world_layer(surface, world, cx, "architecture")
-    _draw_stage_world_layer(surface, world, cx, "ground")
+    # Iteration 1 intentionally stops at the recovered authored composition.
+    # Later tagged iterations layer environmental activity and final lighting
+    # over this exact, independently verifiable foundation.
 
 
 def _draw_chapter_one_stage_panel(surface: pygame.Surface, cx: float, world_width: int, theme: str) -> bool:
@@ -2867,6 +2877,7 @@ def draw_stage_background(
     frame_key = _stage_background_frame_key(theme, width, height, world_width, cx)
     cached = _STAGE_BACKGROUND_FRAME_CACHE.get(frame_key)
     if cached is not None:
+        _BACKGROUND_CACHE_HIT_THEMES.add(_theme_key(theme))
         _STAGE_BACKGROUND_FRAME_CACHE.move_to_end(frame_key)
         surface.blit(cached, (0, 0))
         return surface.get_rect()
@@ -3156,6 +3167,54 @@ def draw_location_travel_panel(
     return surface.get_rect()
 
 
+def _vehicle_variant_surface(
+    sprite: pygame.Surface,
+    feature: Mapping[str, Any],
+) -> pygame.Surface:
+    """Apply a deterministic paint, condition, and accessory treatment."""
+
+    variant = sprite.copy()
+    paint = tuple(int(value) for value in feature.get("paint_color", (190, 156, 104)))
+    target_luma = max(1.0, sum(paint) / 3.0)
+    for x in range(variant.get_width()):
+        for y in range(variant.get_height()):
+            pixel = variant.get_at((x, y))
+            # The authored bodies are warm tan. This mask leaves tires,
+            # windows, chrome, lamps, and transparent pixels untouched.
+            if pixel.a < 8 or pixel.r < 60 or pixel.r - pixel.b < 16 or pixel.g - pixel.b < 7:
+                continue
+            luma = 0.30 * pixel.r + 0.59 * pixel.g + 0.11 * pixel.b
+            scale = luma / target_luma
+            recolored = tuple(max(0, min(255, round(channel * scale))) for channel in paint)
+            variant.set_at((x, y), (*recolored, pixel.a))
+
+    width, height = variant.get_size()
+    condition = str(feature.get("condition", "clean"))
+    if condition in {"weathered", "dusty"}:
+        count = 18 if condition == "weathered" else 11
+        for index in range(count):
+            x = (index * 37 + width // 9) % max(1, width)
+            y = height * 3 // 4 + (index * 11) % max(1, height // 5)
+            pygame.draw.rect(variant, (57, 45, 39, 145), (x, y, 2 + index % 3, 1))
+
+    accessory = str(feature.get("accessory", "none"))
+    if accessory == "roof_rack":
+        rack_y = max(1, height // 25)
+        left, right = width * 7 // 20, width * 15 // 20
+        pygame.draw.line(variant, (24, 28, 31, 255), (left, rack_y), (right, rack_y), 2)
+        for support_x in (left + 3, right - 3):
+            pygame.draw.line(variant, (74, 76, 75, 255), (support_x, rack_y), (support_x, rack_y + 4), 2)
+    elif accessory == "rear_window_sticker":
+        sticker = pygame.Rect(width * 13 // 20, height // 5, 5, 4)
+        pygame.draw.rect(variant, (230, 237, 201, 255), sticker)
+        pygame.draw.rect(variant, (63, 121, 151, 255), sticker, 1)
+    elif accessory == "church_decal":
+        center_x, center_y = width * 13 // 20, height // 4
+        pygame.draw.line(variant, (238, 235, 211, 255), (center_x, center_y - 3), (center_x, center_y + 4), 2)
+        pygame.draw.line(variant, (238, 235, 211, 255), (center_x - 3, center_y), (center_x + 3, center_y), 2)
+    return variant
+
+
 def _physical_scene_object_sprite(feature: Mapping[str, Any]) -> pygame.Surface:
     asset = str(feature.get("asset", "")).strip()
     kind = str(feature.get("kind", "")).strip().lower()
@@ -3169,7 +3228,7 @@ def _physical_scene_object_sprite(feature: Mapping[str, Any]) -> pygame.Surface:
     # ruler; the previous 120px fallback made a 1.35m sedan undersized despite
     # otherwise correct world placement.
     reference_adult_height_px = 134.0
-    visible_height = max(
+    physical_visible_height = max(
         1,
         int(
             round(
@@ -3182,8 +3241,28 @@ def _physical_scene_object_sprite(feature: Mapping[str, Any]) -> pygame.Surface:
             )
         ),
     )
+    # Parked vehicles sit on the far scenery apron, not in the fighters'
+    # active lane.  Preserve their measured physical dimensions, then apply
+    # the explicit visual-depth factor from the route manifest so a car does
+    # not read as a foreground giant beside the production hero silhouettes.
+    visual_depth_scale = float(feature.get("visual_depth_scale", 1.0))
+    visible_height = max(1, int(round(physical_visible_height * visual_depth_scale)))
+    paint_color = tuple(int(value) for value in feature.get("paint_color", ()))
+    condition = str(feature.get("condition", ""))
+    accessory = str(feature.get("accessory", ""))
     facing = -1 if int(feature.get("facing", 1)) < 0 else 1
-    key = (asset, kind, visible_height, facing, id(pygame.image.load))
+    key = (
+        asset,
+        kind,
+        physical_visible_height,
+        visual_depth_scale,
+        visible_height,
+        paint_color,
+        condition,
+        accessory,
+        facing,
+        id(pygame.image.load),
+    )
     cached = _PHYSICAL_SCENE_OBJECT_CACHE.get(key)
     if cached is not None:
         return cached
@@ -3201,6 +3280,8 @@ def _physical_scene_object_sprite(feature: Mapping[str, Any]) -> pygame.Surface:
     visible = authored.subsurface(visible_bounds).copy()
     visible_width = max(1, int(round(visible.get_width() * visible_height / visible.get_height())))
     sprite = pygame.transform.smoothscale(visible, (visible_width, visible_height))
+    if kind == "sedan":
+        sprite = _vehicle_variant_surface(sprite, feature)
     if facing < 0:
         sprite = pygame.transform.flip(sprite, True, False)
     _PHYSICAL_SCENE_OBJECT_CACHE[key] = sprite

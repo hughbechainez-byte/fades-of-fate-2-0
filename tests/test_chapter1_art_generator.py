@@ -44,6 +44,18 @@ class ChapterOneArtGeneratorTests(unittest.TestCase):
                     route["world_width"],
                 )
 
+    def test_main_panorama_adds_no_floating_landmark_label_boxes(self) -> None:
+        """Landmark names belong on facade geometry, never in an air overlay."""
+
+        for route in self.manifest["routes"]:
+            authored = art._build_panorama_layers(route)
+            main, _, _ = art._build_route(route)
+            with self.subTest(theme=route["theme"]):
+                self.assertEqual(
+                    pygame.image.tobytes(main, "RGBA", False),
+                    pygame.image.tobytes(authored, "RGBA", False),
+                )
+
     def test_layered_manifest_fields_are_present_and_route_specific(self) -> None:
         required_fields = (
             "projection_profile_id",

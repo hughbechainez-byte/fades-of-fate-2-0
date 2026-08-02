@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import inspect
+import hashlib
 import os
 from pathlib import Path
 import sys
@@ -96,14 +97,14 @@ class PixelArtTests(unittest.TestCase):
             settled = pygame.Surface((DESIGN_WIDTH, DESIGN_HEIGHT))
             moved = pygame.Surface((DESIGN_WIDTH, DESIGN_HEIGHT))
             with patch.object(
-                pixel_art,
-                "_stage_world_surface",
-                wraps=pixel_art._stage_world_surface,
-            ) as chunk_layers:
+                pixel_art.backdrop,
+                "render_route_backdrop",
+                wraps=pixel_art.backdrop.render_route_backdrop,
+            ) as authored_backdrop:
                 draw_stage_background(first, 900, 1600, theme="awaken_church_finale")
                 draw_stage_background(settled, 900, 1600, theme="awaken_church_finale")
                 draw_stage_background(moved, 901, 1600, theme="awaken_church_finale")
-            self.assertGreater(chunk_layers.call_count, 0)
+            self.assertGreater(authored_backdrop.call_count, 0)
             self.assertEqual(pygame.image.tobytes(first, "RGB"), pygame.image.tobytes(settled, "RGB"))
             self.assertNotEqual(pygame.image.tobytes(first, "RGB"), pygame.image.tobytes(moved, "RGB"))
             self.assertLessEqual(
@@ -545,20 +546,22 @@ class PixelArtTests(unittest.TestCase):
 
         def semantic_samples(
             surface: pygame.Surface,
-            architecture: pygame.Surface,
-            camera_x: int,
-            ground_row: int,
         ) -> tuple[list[pygame.Color], list[pygame.Color], list[pygame.Color]]:
-            sky: list[pygame.Color] = []
-            facade: list[pygame.Color] = []
-            ground: list[pygame.Color] = []
-            for x in range(4, DESIGN_WIDTH, 8):
-                for y in range(4, ground_row, 8):
-                    sample = surface.get_at((x, y))
-                    authored = architecture.get_at((camera_x + x, y))
-                    (facade if authored.a else sky).append(sample)
-                for y in range(ground_row + 4, DESIGN_HEIGHT, 8):
-                    ground.append(surface.get_at((x, y)))
+            sky = [
+                surface.get_at((x, y))
+                for x in range(4, DESIGN_WIDTH, 8)
+                for y in range(4, 110, 8)
+            ]
+            facade = [
+                surface.get_at((x, y))
+                for x in range(4, DESIGN_WIDTH, 8)
+                for y in range(114, 280, 8)
+            ]
+            ground = [
+                surface.get_at((x, y))
+                for x in range(4, DESIGN_WIDTH, 8)
+                for y in range(292, DESIGN_HEIGHT, 8)
+            ]
             return sky, facade, ground
 
         for theme, stage_width in pixel_art._CHAPTER_ONE_THEME_ROUTE_WIDTHS.items():
@@ -570,14 +573,7 @@ class PixelArtTests(unittest.TestCase):
                 stage_width,
                 theme=theme,
             )
-            route = pixel_art._location_route(theme)
-            layers = pixel_art._location_art_layers(theme)
-            sky_samples, facade_samples, ground_samples = semantic_samples(
-                surface,
-                layers["architecture"],
-                camera_x,
-                int(route["ground_opaque_from_y"]),
-            )
+            sky_samples, facade_samples, ground_samples = semantic_samples(surface)
             sky = mean_luma(sky_samples)
             facade = mean_luma(facade_samples)
             ground = mean_luma(ground_samples)
@@ -591,11 +587,11 @@ class PixelArtTests(unittest.TestCase):
                 # A dusk route may legitimately put lit storefronts above the
                 # dark sky in luma.  What must remain stable is a pronounced
                 # depth separation, not one prescribed brightness ordering.
-                self.assertGreater(abs(sky - facade), 10)
-                self.assertGreater(abs(sky - ground), 5)
-                self.assertLess(min(sampled_luma), 30)
-                self.assertGreater(max(sampled_luma), 220)
-                self.assertGreater(max(sampled_luma) - min(sampled_luma), 180)
+                self.assertGreater(abs(sky - facade), 30)
+                self.assertGreater(abs(sky - ground), 40)
+                self.assertLess(min(sampled_luma), 15)
+                self.assertGreater(max(sampled_luma), 170)
+                self.assertGreater(max(sampled_luma) - min(sampled_luma), 160)
 
     def test_chapter_one_authored_routes_do_not_spawn_tiny_vehicle_overlays(self) -> None:
         """Legacy tiny traffic helpers stay disabled beside calibrated physical cars."""
@@ -612,7 +608,7 @@ class PixelArtTests(unittest.TestCase):
                 parked_car.assert_not_called()
                 ambient_vehicle.assert_not_called()
 
-    def test_physical_sedan_uses_the_same_height_ruler_as_dave(self) -> None:
+    def test_physical_sedan_uses_dave_ruler_plus_far_apron_visual_scale(self) -> None:
         route = pixel_art._location_route("sprouts_el_cilantro")
         self.assertIsNotNone(route)
         feature = route["physical_scene_objects"][0]
@@ -633,12 +629,14 @@ class PixelArtTests(unittest.TestCase):
             float(feature["physical_height_m"])
             / 1.8
             * dave.height
+            * float(feature["visual_depth_scale"])
         )
 
         self.assertEqual(dave.height, 134)
+        self.assertEqual(feature["visual_depth_scale"], 0.72)
         self.assertEqual(sprite.get_height(), expected)
-        self.assertGreaterEqual(sprite.get_height() / dave.height, 0.70)
-        self.assertLessEqual(sprite.get_height() / dave.height, 0.90)
+        self.assertGreaterEqual(sprite.get_height() / dave.height, 0.50)
+        self.assertLessEqual(sprite.get_height() / dave.height, 0.58)
 
     def test_physical_sedan_has_two_level_wheel_contacts_and_a_shadow(self) -> None:
         route = pixel_art._location_route("sprouts_el_cilantro")
@@ -673,6 +671,23 @@ class PixelArtTests(unittest.TestCase):
         )
         self.assertEqual(rect.midbottom, (320, 220))
         self.assertGreater(surface.get_at((320, 222)).a, 0)
+
+    def test_each_chapter_route_uses_a_distinct_scaled_vehicle_variant(self) -> None:
+        routes = [
+            pixel_art._location_route(theme)
+            for theme in pixel_art._CHAPTER_ONE_THEME_ROUTE_WIDTHS
+        ]
+        features = [route["physical_scene_objects"][0] for route in routes if route]
+        sprites = [pixel_art._physical_scene_object_sprite(feature) for feature in features]
+        signatures = {
+            hashlib.sha256(pygame.image.tobytes(sprite, "RGBA", False)).hexdigest()
+            for sprite in sprites
+        }
+
+        self.assertEqual(len(features), 4)
+        self.assertEqual(len(signatures), 4)
+        self.assertEqual({sprite.get_height() for sprite in sprites}, {72})
+        self.assertLessEqual(max(sprite.get_width() for sprite in sprites), 250)
 
     def test_ambient_planes_move_independently_at_pixel_aligned_rates(self) -> None:
         first = {plane: pixel_art._ambient_plane_offset(400, plane) for plane in ("far", "mid", "world")}

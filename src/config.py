@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import math
 import os
 import sys
 from copy import deepcopy
+from functools import lru_cache
 from pathlib import Path
 from typing import Any, Mapping
 
@@ -122,15 +124,99 @@ def bundled_root() -> Path:
     return Path(getattr(sys, "_MEIPASS", executable_root()))
 
 
+def _sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(131_072), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+@lru_cache(maxsize=8)
+def _validate_content_override(
+    root_text: str,
+    manifest_mtime_ns: int,
+    manifest_size: int,
+) -> Path:
+    """Validate one complete updater tree before it can become active.
+
+    The old per-file search order could combine stale updater files with a new
+    executable.  A root is now all-or-nothing and every manifest file is
+    size/hash checked once per manifest identity.
+    """
+
+    del manifest_mtime_ns, manifest_size  # Values deliberately key the cache.
+    root = Path(root_text).resolve()
+    manifest_path = root / CONTENT_MANIFEST_PATH
+    try:
+        with manifest_path.open("r", encoding="utf-8-sig") as handle:
+            manifest = json.load(handle)
+    except (OSError, json.JSONDecodeError) as exc:
+        raise ConfigError(f"content override manifest is unreadable: {manifest_path}") from exc
+    records = manifest.get("files") if isinstance(manifest, Mapping) else None
+    if not isinstance(records, list) or not records:
+        raise ConfigError(f"content override manifest has no complete file inventory: {manifest_path}")
+    for index, value in enumerate(records):
+        if not isinstance(value, Mapping):
+            raise ConfigError(f"content override files[{index}] must be an object")
+        relative = str(value.get("path", "")).replace("\\", "/").strip()
+        if not relative or relative.startswith("/") or ".." in Path(relative).parts:
+            raise ConfigError(f"content override files[{index}] has an unsafe path")
+        candidate = (root / relative).resolve()
+        if root not in candidate.parents:
+            raise ConfigError(f"content override files[{index}] escapes its root")
+        if not candidate.is_file():
+            raise ConfigError(f"content override is incomplete; missing {relative}")
+        expected_size = int(value.get("size", -1))
+        expected_hash = str(value.get("sha256", "")).strip().lower()
+        if candidate.stat().st_size != expected_size:
+            raise ConfigError(f"content override size mismatch: {relative}")
+        if len(expected_hash) != 64 or _sha256_file(candidate) != expected_hash:
+            raise ConfigError(f"content override hash mismatch: {relative}")
+    return root
+
+
+def active_resource_root() -> Path:
+    """Return the one complete resource tree selected for this launch."""
+
+    override = os.environ.get(CONTENT_ROOT_ENV, "").strip()
+    if override:
+        root = Path(override).expanduser().resolve()
+        manifest = root / CONTENT_MANIFEST_PATH
+        try:
+            stat = manifest.stat()
+        except OSError as exc:
+            raise ConfigError(f"content override is missing its manifest: {manifest}") from exc
+        return _validate_content_override(str(root), stat.st_mtime_ns, stat.st_size)
+
+    packaged = executable_root().resolve()
+    if (packaged / "data" / "gameplay.json").is_file() and (packaged / "assets").is_dir():
+        return packaged
+    bundled = bundled_root().resolve()
+    if (bundled / "data" / "gameplay.json").is_file() and (bundled / "assets").is_dir():
+        return bundled
+    raise ConfigError("no complete packaged resource root is available")
+
+
+def clear_resource_root_cache() -> None:
+    """Discard validated override identities after an updater activation."""
+
+    _validate_content_override.cache_clear()
+
+
 def resource_path(relative: str | os.PathLike[str]) -> Path:
-    """Prefer synchronized content first, then executable data, then bundled data."""
+    """Resolve a resource inside the single validated root for this launch."""
+
     relative_path = Path(relative)
-    content_root_path = content_root()
-    for root in (content_root_path, executable_root()):
-        candidate = root / relative_path
-        if candidate.exists():
-            return candidate
-    return bundled_root() / relative_path
+    if relative_path.is_absolute() or ".." in relative_path.parts:
+        raise ConfigError(f"resource path must stay relative to the active root: {relative}")
+    root = active_resource_root()
+    candidate = (root / relative_path).resolve()
+    if root not in candidate.parents:
+        raise ConfigError(f"resource path escapes the active root: {relative}")
+    if not candidate.exists():
+        raise FileNotFoundError(f"active resource is missing: {candidate}")
+    return candidate
 
 
 def load_json(relative: str) -> dict[str, Any]:

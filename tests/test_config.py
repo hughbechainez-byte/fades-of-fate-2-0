@@ -1,13 +1,25 @@
 from __future__ import annotations
 
 from copy import deepcopy
+import hashlib
 import json
+import os
 from pathlib import Path
 import tempfile
 import unittest
 from unittest.mock import patch
 
-from src.config import ConfigError, active_campaign_level, load_gameplay, load_json, validate_gameplay
+from src.config import (
+    CONTENT_ROOT_ENV,
+    ConfigError,
+    active_campaign_level,
+    active_resource_root,
+    clear_resource_root_cache,
+    load_gameplay,
+    load_json,
+    resource_path,
+    validate_gameplay,
+)
 
 
 class GameplayConfigTests(unittest.TestCase):
@@ -351,6 +363,44 @@ class GameplayConfigTests(unittest.TestCase):
             path.write_text(json.dumps({"chief": {"command_cost": 50}}), encoding="utf-8-sig")
             with patch("src.config.resource_path", return_value=path):
                 self.assertEqual(load_json("data/gameplay.json")["chief"]["command_cost"], 50)
+
+    def test_resource_resolution_uses_one_validated_root_without_file_mixing(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            override = root / "override"
+            packaged = root / "packaged"
+            (override / "assets").mkdir(parents=True)
+            (override / "data").mkdir()
+            (packaged / "assets").mkdir(parents=True)
+            (packaged / "data").mkdir()
+            live = override / "assets" / "live.bin"
+            live.write_bytes(b"canonical")
+            (packaged / "assets" / "package-only.bin").write_bytes(b"must-not-mix")
+            (packaged / "data" / "gameplay.json").write_text("{}", encoding="utf-8")
+            manifest = {
+                "files": [
+                    {
+                        "path": "assets/live.bin",
+                        "size": live.stat().st_size,
+                        "sha256": hashlib.sha256(live.read_bytes()).hexdigest(),
+                    }
+                ]
+            }
+            (override / "data" / "content-manifest.json").write_text(
+                json.dumps(manifest), encoding="utf-8"
+            )
+            clear_resource_root_cache()
+            try:
+                with (
+                    patch.dict(os.environ, {CONTENT_ROOT_ENV: str(override)}, clear=False),
+                    patch("src.config.executable_root", return_value=packaged),
+                ):
+                    self.assertEqual(active_resource_root(), override.resolve())
+                    self.assertEqual(resource_path("assets/live.bin"), live.resolve())
+                    with self.assertRaises(FileNotFoundError):
+                        resource_path("assets/package-only.bin")
+            finally:
+                clear_resource_root_cache()
 
 
 if __name__ == "__main__":

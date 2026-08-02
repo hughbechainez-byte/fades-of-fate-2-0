@@ -58,7 +58,9 @@ from .logger import breadcrumb, get_log_paths
 from .level_complete import CompletionStats, LevelCompleteTimeline, LevelStatTracker, RankRules
 from .level_outro import JerryLevelOneOutro, LevelOutroFrame
 from .progression import GameOptions, RunStats, SaveData, SaveRepository
+from .provenance import build_runtime_provenance
 from .stage_transition import BossLoadingTransition, TransitionFrame
+from .version import VERSION
 from .world_engine import (
     BeatEmUpProjection,
     CameraDirector,
@@ -208,11 +210,12 @@ class AudioAdapter:
 
 
 class FadesGame:
-    VERSION = "0.15.2-motorola-bootstrap-fix"
+    VERSION = VERSION
 
     def __init__(self, input_manager: InputManager, *, mute: bool = False) -> None:
         self.data = load_gameplay()
         location_manifest_path = resource_path("data/chapter1_location_lock.json")
+        self.location_manifest_path = location_manifest_path
         self.location_manifest = location_lock.load_location_lock(
             location_manifest_path,
             project_root=location_manifest_path.parent.parent,
@@ -251,6 +254,7 @@ class FadesGame:
             self.location_manifest,
         )
         self._validate_location_route_binding()
+        self._refresh_runtime_provenance()
         self.atmosphere.set_profile_for_route(self.level_id)
         self.level_is_chapter_finale = bool(self.level_data.get("chapter_finale", False))
         self.level_has_couch = self.level_data.get("boss") == "couch"
@@ -446,6 +450,33 @@ class FadesGame:
                 f"{self.level_id} runtime width disagrees with location manifest"
             )
 
+    def _refresh_runtime_provenance(self) -> None:
+        """Resolve and log the exact scene and scenery files used by this level."""
+
+        self.provenance = build_runtime_provenance(
+            self.location_manifest_path.parent.parent,
+            game_version=self.VERSION,
+            platform=None,
+            level_id=self.level_id,
+            route=self.location_route,
+            renderer="src.pixel_art._draw_location_locked_background",
+            fallback_asset_used=False,
+            cached_asset_used=False,
+        )
+        summary = {
+            key: value
+            for key, value in self.provenance.items()
+            if key != "active_scenery_assets"
+        }
+        breadcrumb(
+            "scene_definition_resolved",
+            path=self.provenance["scene_definition_resolved_path"],
+            sha256=self.provenance["scene_definition_sha256"],
+        )
+        breadcrumb("level_scene_resolved", **summary)
+        for record in self.provenance["active_scenery_assets"]:
+            breadcrumb("scenery_asset_resolved", **record)
+
     def _landmark_record(self, landmark_id: str) -> Mapping[str, Any]:
         return location_lock.landmark_for_id(self.location_route, landmark_id)
 
@@ -578,6 +609,8 @@ class FadesGame:
                 if event.key == pygame.K_F3:
                     self.debug = not self.debug
                     self.audio.play("menu")
+                elif event.key == pygame.K_F4:
+                    self._activate_visual_evidence_scene()
                 elif event.key == pygame.K_ESCAPE:
                     if self.state == "gameplay":
                         if self.pause:
@@ -828,6 +861,7 @@ class FadesGame:
             self.location_manifest,
         )
         self._validate_location_route_binding()
+        self._refresh_runtime_provenance()
         self.atmosphere.set_profile_for_route(self.level_id)
         self.level_is_chapter_finale = bool(self.level_data.get("chapter_finale", False))
         self.level_has_couch = self.level_data.get("boss") == "couch"
@@ -5560,9 +5594,57 @@ class FadesGame:
         layer.set_alpha(int(round(255 * self.options.hud_opacity)))
         surface.blit(layer, (0, 0))
 
+    def _activate_visual_evidence_scene(self) -> None:
+        """Open the same fixed-camera Level 1 proof scene on PC and Android."""
+
+        first_level_id = str(campaign_levels(self.data)[0]["id"])
+        self.select_slots = [
+            SelectSlot(
+                {"type": "keyboard", "instance_id": -1},
+                character_index=0,
+                confirmed=True,
+            )
+        ]
+        if self.level_id != first_level_id:
+            self._select_campaign_level(first_level_id)
+        self._start_stage()
+        # Keep the proof scene noncombat and deterministic while atmosphere,
+        # clouds, and environmental activity continue to advance normally.
+        self.encounter_index = len(self.data["encounters"])
+        self.encounter_active = False
+        self.active_gate = None
+        self.spawn_queue.clear()
+        self.enemies.clear()
+        self.projectiles.clear()
+        evidence_camera_x = min(800.0, float(self.meta["stage_width"]) - LOGICAL_SIZE[0])
+        self.camera.pan_to(evidence_camera_x, 0.0)
+        self.camera_x = evidence_camera_x
+        self._render_camera_x = evidence_camera_x
+        for index, player in enumerate(self.players):
+            player.x = evidence_camera_x + 320.0 + index * 72.0
+            player.y = 304.0 + index * 14.0
+            player.set_state("idle")
+        for chief in self.chiefs:
+            chief.x = evidence_camera_x + 452.0
+            chief.y = 325.0
+            chief.state = "sit"
+        self.stage_banner = ""
+        self.stage_banner_timer = 0.0
+        self.debug = False
+        self.log_breadcrumb(
+            "visual_evidence_scene_activated",
+            level_id=self.level_id,
+            camera_x=evidence_camera_x,
+        )
+
     def _draw_debug(self, surface: pygame.Surface) -> None:
+        self.provenance["cached_asset_used"] = pixel_art.background_cache_used(
+            self.level_theme
+        )
         rect = pygame.Rect(6, 88, 354, 260)
         self._panel(surface, rect, (4, 7, 12), (74, 236, 160))
+        provenance_rect = pygame.Rect(364, 88, 270, 260)
+        self._panel(surface, provenance_rect, (4, 7, 12), (255, 183, 82))
         player = self.players[0] if self.players else None
         phase = "none"
         if player is not None and player.state in {"light", "heavy", "air_attack"}:
@@ -5706,6 +5788,34 @@ class FadesGame:
         )
         for index, line in enumerate(lines):
             self._text(surface, self.font_tiny, line, (174, 255, 214), (11, 94 + index * 13))
+
+        def provenance_lines(label: str, value: Any, width: int = 39) -> list[str]:
+            rendered = str(value)
+            chunks = [rendered[index : index + width] for index in range(0, len(rendered), width)] or [""]
+            return [f"{label} {chunks[0]}", *(f"  {chunk}" for chunk in chunks[1:])]
+
+        provenance_display: list[str] = ["RUNTIME PROVENANCE"]
+        provenance_display.extend(provenance_lines("GAME", self.provenance["game_git_commit"]))
+        provenance_display.extend(provenance_lines("CONTENT", self.provenance["content_git_commit"]))
+        provenance_display.extend(provenance_lines("MANIFEST", self.provenance["content_manifest_hash"]))
+        provenance_display.extend(provenance_lines("BUILT", self.provenance["build_timestamp"]))
+        provenance_display.append(f"PLATFORM {self.provenance['platform']}")
+        provenance_display.append(f"LEVEL {self.provenance['active_level_id']}")
+        provenance_display.extend(provenance_lines("SCENE", self.provenance["scene_definition_resolved_path"]))
+        provenance_display.extend(provenance_lines("RENDERER", self.provenance["active_background_renderer"]))
+        provenance_display.extend(provenance_lines("ASSET ROOT", self.provenance["canonical_asset_root"]))
+        provenance_display.append(
+            f"LAYERS {self.provenance['background_layers']}  "
+            f"ANIM {self.provenance['animated_environment_entities']}  "
+            f"VEH {self.provenance['vehicle_variants']}"
+        )
+        provenance_display.append(
+            f"FALLBACK {self.provenance['fallback_asset_used']}  "
+            f"CACHE {self.provenance['cached_asset_used']}"
+        )
+        provenance_display.append(f"ARTIFACT MATCH {self.provenance['artifact_match']}")
+        for index, line in enumerate(provenance_display[:21]):
+            self._text(surface, self.font_tiny, line, (255, 220, 151), (369, 94 + index * 12))
 
         def project_floor(x: float, depth: float) -> tuple[int, int]:
             return self.projection.project(

@@ -225,6 +225,21 @@ def run_foundation_self_test(output_dir: Path | None = None) -> dict[str, Any]:
 
         manager.clear_held_state()
         game = FadesGame(manager, mute=True)
+        provenance_path = output_dir / "runtime_provenance.json"
+        provenance_path.write_text(
+            json.dumps(game.provenance, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        packaged_provenance = game.provenance["build_provenance_path"] != "source"
+        _check(
+            game.provenance["all_assets_resolved"]
+            and not game.provenance["noncanonical_asset_used"]
+            and not game.provenance["fallback_asset_used"]
+            and (not packaged_provenance or game.provenance["artifact_match"] is True),
+            "runtime_provenance",
+            report,
+            f"scene/assets resolved from one root; artifact_match={game.provenance['artifact_match']}",
+        )
 
         chapter_one_levels = campaign_levels(game.data)
         route_manifest = [

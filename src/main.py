@@ -15,6 +15,7 @@ if __package__ in {None, ""}:
 # Pointer translation is used by the live loop below, so this needs module
 # scope rather than the local imports inside _run().
 from src.config import LOGICAL_SIZE, is_android_runtime
+from src.version import VERSION
 
 
 def letterbox_viewport(
@@ -247,14 +248,13 @@ def _run() -> int:
 
     import pygame
 
-    from src.config import GAME_NAME, executable_root
+    from src.config import CONTENT_ROOT_ENV, GAME_NAME, executable_root
     from src.app_update import (
         AppUpdateError,
         AppUpdateResult,
         check_app_update,
         spawn_windows_updater,
     )
-    from src.game import FadesGame
     from src.content_update import (
         ContentUpdateError,
         apply_content_update_if_available,
@@ -262,12 +262,15 @@ def _run() -> int:
     from src.input_manager import InputManager
     from src.logger import breadcrumb, capture_exception, initialize_logging, shutdown_logging
 
+    if args.content_root:
+        os.environ[CONTENT_ROOT_ENV] = str(Path(args.content_root).expanduser().resolve())
+
     update_result = None
     if not args.self_test and not args.skip_content_update:
         try:
             update_result = apply_content_update_if_available(
                 content_root_override=args.content_root,
-                game_version=FadesGame.VERSION,
+                game_version=VERSION,
                 feed_url=args.content_feed,
                 timeout_seconds=args.content_update_timeout,
             )
@@ -284,6 +287,15 @@ def _run() -> int:
                 "manifest_path": "",
                 "reason": f"{type(exc).__name__}: {exc}",
             }
+
+    if update_result and getattr(update_result, "status", "") in {"updated", "up_to_date"}:
+        os.environ[CONTENT_ROOT_ENV] = str(update_result.content_root)
+
+    # Import resource-owning modules only after a successful content update has
+    # selected one complete root.  This prevents module-level atlases and
+    # atmosphere data from binding to a stale or mixed tree before the updater
+    # finishes.
+    from src.game import FadesGame
 
     app_update_result: AppUpdateResult | None = None
     if (

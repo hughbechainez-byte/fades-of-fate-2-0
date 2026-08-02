@@ -381,6 +381,14 @@ def _validate_physical_scene_objects(
             raise LocationLockError(
                 f"{object_label}.physical_height_m must be between 0.1 and 12.0"
             )
+        visual_depth_scale = _finite(
+            feature.get("visual_depth_scale", 1.0),
+            f"{object_label}.visual_depth_scale",
+        )
+        if not 0.5 <= visual_depth_scale <= 1.0:
+            raise LocationLockError(
+                f"{object_label}.visual_depth_scale must be between 0.5 and 1.0"
+            )
         asset = _require_text(feature.get("asset"), f"{object_label}.asset")
         asset_path = Path(asset)
         if asset_path.suffix.lower() != ".png" or "assets" not in asset_path.parts:
@@ -408,6 +416,27 @@ def _validate_physical_scene_objects(
                 f"{object_label}.physical_height_m must be a calibrated sedan height"
             )
         if kind == "sedan":
+            if not 0.65 <= visual_depth_scale <= 0.80:
+                raise LocationLockError(
+                    f"{object_label}.visual_depth_scale must keep a far-apron sedan between 0.65 and 0.80"
+                )
+            paint_color = feature.get("paint_color")
+            if (
+                not isinstance(paint_color, list)
+                or len(paint_color) != 3
+                or any(not isinstance(value, int) or isinstance(value, bool) or not 0 <= value <= 255 for value in paint_color)
+            ):
+                raise LocationLockError(
+                    f"{object_label}.paint_color must contain three integer RGB channels"
+                )
+            condition = _require_text(feature.get("condition"), f"{object_label}.condition")
+            if condition not in {"clean", "dusty", "weathered"}:
+                raise LocationLockError(
+                    f"{object_label}.condition must be clean, dusty, or weathered"
+                )
+            accessory = _require_text(feature.get("accessory"), f"{object_label}.accessory")
+            if accessory not in {"none", "roof_rack", "rear_window_sticker", "church_decal"}:
+                raise LocationLockError(f"{object_label}.accessory is not renderer-supported")
             if abs(elevation) > 1e-6:
                 raise LocationLockError(
                     f"{object_label}.elevation must be zero for a grounded sedan"
