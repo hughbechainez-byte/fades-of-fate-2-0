@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import re
 import unittest
 
 
@@ -37,6 +38,16 @@ class AndroidPackagingTests(unittest.TestCase):
         self.assertIn("*_python_bundle__arm64-v8a*/pygame/surface.so", workflow)
         self.assertIn("test ! -x \"$LLVM_READELF\"", workflow)
         self.assertIn("if: always()", workflow)
+
+    def test_apk_numeric_version_matches_canonical_app_version(self) -> None:
+        spec = (ROOT / "android" / "buildozer.spec").read_text(encoding="utf-8")
+        version_module = (ROOT / "src" / "version.py").read_text(encoding="utf-8")
+
+        apk_match = re.search(r"(?m)^version\s*=\s*([^\s]+)\s*$", spec)
+        app_match = re.search(r'(?m)^VERSION\s*=\s*"([^"]+)"\s*$', version_module)
+        self.assertIsNotNone(apk_match)
+        self.assertIsNotNone(app_match)
+        self.assertEqual(apk_match.group(1), app_match.group(1).split("-", 1)[0])
 
 
 if __name__ == "__main__":
