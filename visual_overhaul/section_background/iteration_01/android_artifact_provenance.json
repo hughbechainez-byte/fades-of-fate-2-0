@@ -1,0 +1,18 @@
+{
+  "artifact_id": "635c622592cbc257a7427966b8ef6172ff71f62e2c628e17f06b530d5dcbd5f0",
+  "build_timestamp": "2026-08-02T07:11:00-07:00",
+  "cached_asset_used": false,
+  "canonical_asset_root": "/home/runner/work/the-fades-of-fate/the-fades-of-fate/assets",
+  "canonical_source_root": "/home/runner/work/the-fades-of-fate/the-fades-of-fate",
+  "content_git_commit": "55bb5e120d79978b807b76420b65b7b5eebe157a",
+  "content_manifest_sha256": "514760e80ede5a6958ac529a739f6af3cf25138d6cfbd7112e279cda7e1a39b0",
+  "content_pack_sha256": "230fd0727ca783ff81aed7d288aa91ec0484a9345a9b50aa4a444108cbd30819",
+  "content_pack_size": 113698139,
+  "content_revision": 75,
+  "fallback_asset_used": false,
+  "game_git_commit": "55bb5e120d79978b807b76420b65b7b5eebe157a",
+  "game_version": "0.15.3-background-detail-r6",
+  "platform": "android",
+  "schema_version": 1,
+  "working_tree_dirty": false
+}
