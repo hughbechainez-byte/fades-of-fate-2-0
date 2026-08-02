@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
 import unittest
+from unittest.mock import patch
 
 from src.chapter_content import ChapterContentError, load_chapter_content, validate_chapter_content
 from src.config import ConfigError, load_gameplay, validate_gameplay
@@ -426,6 +427,34 @@ class ChapterOneLocationLockTests(unittest.TestCase):
         ):
             validate_location_lock(
                 elevated,
+                project_root=ROOT,
+                validate_assets=False,
+            )
+
+    def test_physical_sedans_require_a_bounded_far_apron_visual_scale(self) -> None:
+        oversized = deepcopy(self.manifest)
+        oversized["routes"][0]["physical_scene_objects"][0]["visual_depth_scale"] = 1.0
+        with self.assertRaisesRegex(LocationLockError, "far-apron sedan"):
+            validate_location_lock(
+                oversized,
+                project_root=ROOT,
+                validate_assets=False,
+            )
+
+    def test_runtime_asset_validation_does_not_require_pillow(self) -> None:
+        with patch.dict("sys.modules", {"PIL": None, "PIL.Image": None}):
+            validate_location_lock(
+                deepcopy(self.manifest),
+                project_root=ROOT,
+                validate_assets=True,
+            )
+
+    def test_physical_sedan_models_are_renderer_supported(self) -> None:
+        malformed = deepcopy(self.manifest)
+        malformed["routes"][0]["physical_scene_objects"][0]["model"] = "monster_truck"
+        with self.assertRaisesRegex(LocationLockError, "model must be"):
+            validate_location_lock(
+                malformed,
                 project_root=ROOT,
                 validate_assets=False,
             )

@@ -55,6 +55,7 @@ __all__ = [
     "draw_stage_background",
     "draw_stage_foreground",
     "stage_world_debug_snapshot",
+    "background_cache_used",
     "draw_physical_scene_object",
     "draw_location_travel_panel",
     "draw_stage_prop",
@@ -311,20 +312,25 @@ _AMBIENT_PLANE_RATES = {"far": 0.46, "mid": 0.74, "world": 1.0}
 _AMBIENT_PARTICLE_LIMIT = 16
 _CHAPTER_ONE_AMBIENT_EVENTS: dict[str, tuple[dict[str, object], ...]] = {
     "sprouts_el_cilantro": (
+        {"kind": "traffic", "plane": "mid", "start": 0, "end": 3200, "y": 218, "instances": 4, "speed": 1.15, "direction": -1, "palette": ((78, 112, 138), (154, 72, 57), (188, 159, 101)), "seed": 17},
         {"kind": "market_canopy", "plane": "world", "start": 2350, "end": 3200, "anchor": 2780, "span": 430, "seed": 23},
-        {"kind": "paper", "plane": "world", "start": 520, "end": 2460, "anchor": 1480, "span": 1940, "y": 286, "height": 48, "particles": 6, "seed": 31},
+        {"kind": "paper", "plane": "world", "start": 520, "end": 2460, "anchor": 1480, "span": 1940, "y": 286, "height": 48, "particles": 6, "speed": 0.42, "seed": 31},
     ),
     "seven_eleven_underpass": (
-        {"kind": "mist", "plane": "far", "start": 1640, "end": 3000, "anchor": 2310, "span": 820, "y": 190, "height": 79, "particles": 8, "seed": 43},
+        {"kind": "mist", "plane": "far", "start": 1640, "end": 3000, "anchor": 2310, "span": 820, "y": 190, "height": 79, "particles": 8, "speed": 0.18, "seed": 43},
+        {"kind": "traffic", "plane": "mid", "start": 1100, "end": 3100, "y": 226, "instances": 5, "speed": 1.45, "direction": 1, "palette": ((61, 78, 99), (173, 99, 63), (113, 125, 120)), "seed": 29},
         {"kind": "underpass_lights", "plane": "world", "start": 1750, "end": 3000, "anchor": 2320, "span": 560, "seed": 7},
     ),
     "soapy_joes_revive": (
-        {"kind": "wash_spray", "plane": "far", "start": 0, "end": 920, "anchor": 330, "span": 690, "y": 174, "height": 91, "particles": 12, "seed": 53},
+        {"kind": "wash_spray", "plane": "far", "start": 0, "end": 920, "anchor": 330, "span": 690, "y": 174, "height": 91, "particles": 12, "speed": 0.55, "seed": 53},
+        {"kind": "traffic", "plane": "mid", "start": 650, "end": 3200, "y": 220, "instances": 4, "speed": 1.05, "direction": -1, "palette": ((58, 108, 114), (180, 126, 73), (120, 82, 111)), "seed": 37},
         {"kind": "wash_cycle", "plane": "world", "start": 0, "end": 900, "anchor": 330, "span": 680, "seed": 13},
         {"kind": "revive_neon", "plane": "world", "start": 2020, "end": 3000, "anchor": 2520, "span": 660, "seed": 5},
     ),
     "awaken_church_finale": (
-        {"kind": "dust", "plane": "far", "start": 430, "end": 1600, "anchor": 1010, "span": 1080, "y": 167, "height": 104, "particles": 8, "seed": 61},
+        {"kind": "birds", "plane": "far", "start": 0, "end": 1600, "y": 83, "instances": 5, "speed": 0.62, "direction": 1, "seed": 71},
+        {"kind": "dust", "plane": "far", "start": 430, "end": 1600, "anchor": 1010, "span": 1080, "y": 167, "height": 104, "particles": 8, "speed": 0.24, "seed": 61},
+        {"kind": "traffic", "plane": "mid", "start": 0, "end": 1600, "y": 222, "instances": 3, "speed": 0.92, "direction": -1, "palette": ((91, 97, 109), (157, 74, 59), (180, 154, 110)), "seed": 11},
         {"kind": "corridor", "plane": "world", "start": 350, "end": 1370, "anchor": 850, "span": 760, "seed": 19},
         {"kind": "crowd", "plane": "world", "start": 720, "end": 1600, "anchor": 1160, "span": 520, "instances": 4, "seed": 47},
     ),
@@ -354,8 +360,12 @@ _STAGE_ROUTE_PANORAMA_CACHE: dict[tuple[object, ...], pygame.Surface | None] = {
 _STAGE_NEAR_LAYER_CACHE: dict[tuple[str, int, int], pygame.Surface | None] = {}
 _SUNSET_BACKGROUND_CACHE: dict[tuple[int, int], dict[str, pygame.Surface] | None] = {}
 _LOCATION_ART_CACHE: dict[str, dict[str, pygame.Surface | None]] = {}
+_BACKGROUND_CACHE_HIT_THEMES: set[str] = set()
 _TRAVEL_PANEL_CACHE: dict[tuple[object, ...], pygame.Surface] = {}
 _PHYSICAL_SCENE_OBJECT_CACHE: dict[tuple[object, ...], pygame.Surface] = {}
+_AMBIENT_OVERLAY_CACHE: dict[tuple[int, int, str], pygame.Surface] = {}
+_WORLD_LIGHTING_CACHE_LIMIT = 16
+_WORLD_LIGHTING_CACHE: OrderedDict[tuple[object, ...], pygame.Surface] = OrderedDict()
 
 # A camera can remain settled for much longer than the actors/effects rendered
 # above it.  Cache the fully composited opaque foundation at those exact
@@ -2093,6 +2103,7 @@ def _location_art_layers(theme: str) -> dict[str, pygame.Surface | None]:
     key = _theme_key(theme)
     cached = _LOCATION_ART_CACHE.get(key)
     if cached is not None:
+        _BACKGROUND_CACHE_HIT_THEMES.add(key)
         route = _location_route(key)
         if route is not None:
             _STAGE_ROUTE_PANORAMA_CACHE[
@@ -2156,6 +2167,12 @@ def _location_art_layers(theme: str) -> dict[str, pygame.Surface | None]:
     return layers
 
 
+def background_cache_used(theme: object) -> bool:
+    """Return whether this route reused any in-memory scenery surface."""
+
+    return _theme_key(theme) in _BACKGROUND_CACHE_HIT_THEMES
+
+
 def _bounded_location_layer_offset(
     camera_x: float,
     rate: float,
@@ -2195,23 +2212,35 @@ def _draw_location_locked_background(
         raise LocationArtError(
             f"{theme} runtime width disagrees with chapter1_location_lock.json"
         )
-    world = _stage_world(theme)
-    haze = _stage_world_global_surface(theme, "far_haze")
-    # Keep the existing atmosphere compositor as the single authority for
-    # profile sky and moving haze.  Skyline, architecture, and ground are
-    # now chunked world pieces and are drawn only when near the camera.
-    backdrop._draw_opaque_sky(surface, route, atmosphere)
-    backdrop._apply_dynamic_atmosphere(
+    # The authored panorama is the visual authority. The chunk renderer was
+    # introduced for culling, but its low-detail architecture and ground plates
+    # accidentally replaced this panorama and caused the rectangular-scene
+    # regression. The shared compositor keeps the panorama at a 1:1 world
+    # anchor, then adds only transparent atmosphere and ground detail.
+    backdrop.render_route_backdrop(
         surface,
+        theme,
         route,
-        {"far_haze": haze},
-        camera_x=cx,
+        _location_art_layers(theme),
+        cx,
+        world_width,
         atmosphere=atmosphere,
-        width=surface.get_width(),
+        loader_identity=id(pygame.image.load),
     )
-    _draw_stage_world_layer(surface, world, cx, "far_skyline")
-    _draw_stage_world_layer(surface, world, cx, "architecture")
-    _draw_stage_world_layer(surface, world, cx, "ground")
+    # Final composition keeps the recovered authored panorama authoritative,
+    # then layers depth activity around a perspective-registered ground pass.
+    # Physical cars and fighters are drawn later by the game in depth order.
+    _draw_chapter_one_ambient_plane(
+        surface, cx, world_width, theme, "far", atmosphere=atmosphere
+    )
+    _draw_chapter_one_ambient_plane(
+        surface, cx, world_width, theme, "mid", atmosphere=atmosphere
+    )
+    _draw_gameplay_ground_plane(surface, cx, world_width, theme)
+    _draw_chapter_one_ambient_plane(
+        surface, cx, world_width, theme, "world", atmosphere=atmosphere
+    )
+    _draw_world_lighting(surface, cx, world_width, theme)
 
 
 def _draw_chapter_one_stage_panel(surface: pygame.Surface, cx: float, world_width: int, theme: str) -> bool:
@@ -2286,6 +2315,12 @@ def _draw_world_lighting(surface: pygame.Surface, cx: float, world_width: int, t
     """Add transparent, world-locked light pools without repainting scenery."""
 
     width, height = surface.get_size()
+    cache_key = (theme, width, height, int(world_width), round(float(cx), 6))
+    overlay = _WORLD_LIGHTING_CACHE.get(cache_key)
+    if overlay is not None:
+        _WORLD_LIGHTING_CACHE.move_to_end(cache_key)
+        surface.blit(overlay, (0, 0))
+        return
     overlay = pygame.Surface((width, height), pygame.SRCALPHA)
     scale = _theme_route_scale(theme, world_width) if theme in _CHAPTER_ONE_THEME_ROUTE_WIDTHS else world_width / CANONICAL_STAGE_WIDTH
     specs = _THEME_LIGHT_POOLS.get(
@@ -2317,6 +2352,10 @@ def _draw_world_lighting(surface: pygame.Surface, cx: float, world_width: int, t
     for inset, alpha in ((0, 34), (12, 22), (26, 12)):
         pygame.draw.polygon(overlay, (12, 16, 29, alpha), [(0, height), (0, height - 31 - inset), (94 + inset, height)])
         pygame.draw.polygon(overlay, (12, 16, 29, alpha), [(width, height), (width, height - 31 - inset), (width - 94 - inset, height)])
+    _WORLD_LIGHTING_CACHE[cache_key] = overlay
+    _WORLD_LIGHTING_CACHE.move_to_end(cache_key)
+    while len(_WORLD_LIGHTING_CACHE) > _WORLD_LIGHTING_CACHE_LIMIT:
+        _WORLD_LIGHTING_CACHE.popitem(last=False)
     surface.blit(overlay, (0, 0))
 
 
@@ -2342,8 +2381,12 @@ def _draw_gameplay_ground_plane(surface: pygame.Surface, cx: float, world_width:
     first_dash = int(cx // dash_step) * dash_step - dash_step
     for world_x in range(first_dash, _i(cx) + width + dash_step, dash_step):
         sx = _layer_screen_x(world_x, cx)
-        pygame.draw.polygon(overlay, (232, 205, 128, 78), [(sx, 334), (sx + 62, 334), (sx + 70, 338), (sx - 4, 338)])
-        pygame.draw.line(overlay, (255, 231, 165, 46), (sx + 7, 335), (sx + 43, 335), 1)
+        pygame.draw.polygon(
+            overlay,
+            (183, 166, 128, 38),
+            [(sx, 334), (sx + 62, 334), (sx + 70, 338), (sx - 4, 338)],
+        )
+        pygame.draw.line(overlay, (238, 218, 174, 22), (sx + 7, 335), (sx + 43, 335), 1)
     surface.blit(overlay, (0, 0))
 
 
@@ -2353,6 +2396,12 @@ def _ambient_plane_offset(camera_x: float, plane: str) -> int:
     if plane not in _AMBIENT_PLANE_RATES:
         raise KeyError(f"unknown ambient plane: {plane!r}")
     return -_i(camera_x * _AMBIENT_PLANE_RATES[plane])
+
+
+def _ambient_motion_tick(atmosphere: Any | None) -> int:
+    """Return a deterministic 30 Hz presentation tick for ambient life."""
+
+    return max(0, int(backdrop._read_time_seconds(atmosphere) * 30.0))  # type: ignore[attr-defined]
 
 
 def _chapter_one_ambient_particle_count(theme: str) -> int:
@@ -2443,6 +2492,7 @@ def _draw_ambient_particles(
     theme: str,
     event: dict[str, object],
     limit: int,
+    motion_tick: int,
 ) -> int:
     """Render a deterministic, budget-clamped localized particle field."""
 
@@ -2459,7 +2509,9 @@ def _draw_ambient_particles(
     field_height = max(8, _i(float(event.get("height", 54.0))))
     seed = int(event.get("seed", 0))
     rate = _AMBIENT_PLANE_RATES[plane]
-    relative_motion = _i(cx * (1.0 - rate))
+    relative_motion = _i(cx * (1.0 - rate)) + _i(
+        motion_tick * float(event.get("speed", 0.35))
+    )
     width = surface.get_width()
     for index in range(count):
         local_x = (seed * 37 + index * 83 + relative_motion) % span
@@ -2470,7 +2522,12 @@ def _draw_ambient_particles(
     return count
 
 
-def _draw_ambient_traffic(surface: pygame.Surface, cx: float, event: dict[str, object]) -> None:
+def _draw_ambient_traffic(
+    surface: pygame.Surface,
+    cx: float,
+    event: dict[str, object],
+    motion_tick: int,
+) -> None:
     plane = str(event["plane"])
     count = max(1, min(6, int(event.get("instances", 3))))
     seed = int(event.get("seed", 0))
@@ -2478,12 +2535,39 @@ def _draw_ambient_traffic(surface: pygame.Surface, cx: float, event: dict[str, o
     palette = tuple(event.get("palette", ((93, 104, 112),)))
     period = surface.get_width() + 116
     spacing = max(64, period // count)
-    shift = _ambient_plane_offset(cx, plane)
+    direction = -1 if int(event.get("direction", 1)) < 0 else 1
+    shift = _ambient_plane_offset(cx, plane) + direction * _i(
+        motion_tick * float(event.get("speed", 1.0))
+    )
     for index in range(count):
         x = -58 + ((seed * 41 + index * spacing + shift) % period)
         y = base_y + (index % 2) * 5
         color = palette[index % len(palette)]
-        _draw_ambient_vehicle(surface, x, y, color, -1 if (seed + index) % 2 else 1)  # type: ignore[arg-type]
+        _draw_ambient_vehicle(surface, x, y, color, direction)  # type: ignore[arg-type]
+
+
+def _draw_ambient_birds(
+    surface: pygame.Surface,
+    cx: float,
+    event: dict[str, object],
+    motion_tick: int,
+) -> None:
+    """Draw a small far-sky flock whose wing and travel phases are visible."""
+
+    count = max(1, min(8, int(event.get("instances", 5))))
+    seed = int(event.get("seed", 0))
+    direction = -1 if int(event.get("direction", 1)) < 0 else 1
+    period = surface.get_width() + 150
+    travel = direction * _i(motion_tick * float(event.get("speed", 0.6)))
+    camera_shift = _ambient_plane_offset(cx, str(event["plane"]))
+    base_y = _i(float(event.get("y", 82.0)))
+    for index in range(count):
+        x = -75 + ((seed * 19 + index * 137 + camera_shift + travel) % period)
+        y = base_y + (index * 13 + seed) % 39
+        wing = 2 + ((motion_tick // 4 + index) % 2) * 2
+        color = (42, 37, 49, 185)
+        pygame.draw.line(surface, color, (x - 5, y + wing), (x, y), 2)
+        pygame.draw.line(surface, color, (x, y), (x + 5, y + wing), 2)
 
 
 def _draw_market_canopy(surface: pygame.Surface, center: int, span: int, seed: int) -> None:
@@ -2561,12 +2645,19 @@ def _draw_corridor(surface: pygame.Surface, center: int, span: int, seed: int) -
     pygame.draw.rect(surface, (241, 216, 162, 92), (center - 42, 173, 84, 2))
 
 
-def _draw_ambient_crowd(surface: pygame.Surface, center: int, span: int, instances: int, seed: int) -> None:
+def _draw_ambient_crowd(
+    surface: pygame.Surface,
+    center: int,
+    span: int,
+    instances: int,
+    seed: int,
+    motion_tick: int,
+) -> None:
     count = max(1, min(6, instances))
     half = min(250, max(100, span // 2))
     for index in range(count):
         x = center - half + 28 + (seed * 23 + index * 101) % max(80, half * 2 - 56)
-        base_y = 254 + (index % 2) * 4
+        base_y = 254 + (index % 2) * 4 + ((motion_tick // 8 + index) % 2)
         pygame.draw.circle(surface, (22, 24, 31, 176), (x, base_y - 24), 5)
         pygame.draw.polygon(surface, (25, 28, 36, 178), [(x - 5, base_y - 18), (x + 6, base_y - 18), (x + 10, base_y), (x - 9, base_y)])
         pygame.draw.rect(surface, (171, 104, 70, 105), (x - 3, base_y - 16, 6, 2))
@@ -2579,29 +2670,48 @@ def _draw_ambient_event(
     theme: str,
     event: dict[str, object],
     particle_limit: int,
+    motion_tick: int,
 ) -> int:
     kind = str(event["kind"])
     if kind == "traffic":
-        _draw_ambient_traffic(surface, cx, event)
+        _draw_ambient_traffic(surface, cx, event, motion_tick)
+        return 0
+    if kind == "birds":
+        _draw_ambient_birds(surface, cx, event, motion_tick)
         return 0
     if int(event.get("particles", 0)):
-        return _draw_ambient_particles(surface, cx, world_width, theme, event, particle_limit)
+        return _draw_ambient_particles(
+            surface,
+            cx,
+            world_width,
+            theme,
+            event,
+            particle_limit,
+            motion_tick,
+        )
 
     center = _ambient_anchor_x(event, cx, world_width, theme)
     span = max(1, _i(float(event.get("span", 480.0)) * _theme_route_scale(theme, world_width)))
     seed = int(event.get("seed", 0))
     if kind == "market_canopy":
-        _draw_market_canopy(surface, center, span, seed)
+        _draw_market_canopy(surface, center, span, seed + motion_tick // 12)
     elif kind == "underpass_lights":
-        _draw_underpass_lights(surface, center, span, seed)
+        _draw_underpass_lights(surface, center, span, seed + motion_tick // 3)
     elif kind == "wash_cycle":
-        _draw_wash_cycle(surface, center, span, seed)
+        _draw_wash_cycle(surface, center, span, seed + motion_tick // 4)
     elif kind == "revive_neon":
-        _draw_revive_neon(surface, center, span, seed)
+        _draw_revive_neon(surface, center, span, seed + motion_tick // 5)
     elif kind == "corridor":
-        _draw_corridor(surface, center, span, seed)
+        _draw_corridor(surface, center, span, seed + motion_tick // 10)
     elif kind == "crowd":
-        _draw_ambient_crowd(surface, center, span, int(event.get("instances", 4)), seed)
+        _draw_ambient_crowd(
+            surface,
+            center,
+            span,
+            int(event.get("instances", 4)),
+            seed,
+            motion_tick,
+        )
     return 0
 
 
@@ -2611,19 +2721,32 @@ def _draw_chapter_one_ambient_plane(
     world_width: int,
     theme: str,
     plane: str,
+    *,
+    atmosphere: Any | None = None,
 ) -> int:
     """Composite one deterministic ambient plane and return particles consumed."""
 
     if plane not in _AMBIENT_PLANE_RATES:
         raise KeyError(f"unknown ambient plane: {plane!r}")
     events = _CHAPTER_ONE_AMBIENT_EVENTS.get(theme, ())
-    overlay = pygame.Surface(surface.get_size(), pygame.SRCALPHA)
+    visible_events = tuple(
+        event
+        for event in events
+        if event.get("plane") == plane
+        and _ambient_event_visible(surface, cx, world_width, theme, event)
+    )
+    if not visible_events:
+        return 0
+    cache_key = (*surface.get_size(), plane)
+    overlay = _AMBIENT_OVERLAY_CACHE.get(cache_key)
+    if overlay is None:
+        overlay = pygame.Surface(surface.get_size(), pygame.SRCALPHA)
+        _AMBIENT_OVERLAY_CACHE[cache_key] = overlay
+    else:
+        overlay.fill((0, 0, 0, 0))
     particles = 0
-    drew = False
-    for event in events:
-        if event.get("plane") != plane or not _ambient_event_visible(surface, cx, world_width, theme, event):
-            continue
-        drew = True
+    motion_tick = _ambient_motion_tick(atmosphere)
+    for event in visible_events:
         particles += _draw_ambient_event(
             overlay,
             cx,
@@ -2631,9 +2754,9 @@ def _draw_chapter_one_ambient_plane(
             theme,
             event,
             max(0, _AMBIENT_PARTICLE_LIMIT - particles),
+            motion_tick,
         )
-    if drew:
-        surface.blit(overlay, (0, 0))
+    surface.blit(overlay, (0, 0))
     return particles
 
 
@@ -2867,6 +2990,7 @@ def draw_stage_background(
     frame_key = _stage_background_frame_key(theme, width, height, world_width, cx)
     cached = _STAGE_BACKGROUND_FRAME_CACHE.get(frame_key)
     if cached is not None:
+        _BACKGROUND_CACHE_HIT_THEMES.add(_theme_key(theme))
         _STAGE_BACKGROUND_FRAME_CACHE.move_to_end(frame_key)
         surface.blit(cached, (0, 0))
         return surface.get_rect()
@@ -3156,6 +3280,67 @@ def draw_location_travel_panel(
     return surface.get_rect()
 
 
+def _vehicle_variant_surface(
+    sprite: pygame.Surface,
+    feature: Mapping[str, Any],
+) -> pygame.Surface:
+    """Apply a deterministic paint, condition, and accessory treatment."""
+
+    model = str(feature.get("model", "sedan"))
+    width_scale, height_scale = {
+        "sedan": (1.0, 1.0),
+        "wagon": (1.0, 1.0),
+        "coupe": (1.0, 0.92),
+        "compact": (0.88, 0.96),
+    }.get(model, (1.0, 1.0))
+    variant = pygame.transform.smoothscale(
+        sprite,
+        (
+            max(1, round(sprite.get_width() * width_scale)),
+            max(1, round(sprite.get_height() * height_scale)),
+        ),
+    )
+    paint = tuple(int(value) for value in feature.get("paint_color", (190, 156, 104)))
+    target_luma = max(1.0, sum(paint) / 3.0)
+    for x in range(variant.get_width()):
+        for y in range(variant.get_height()):
+            pixel = variant.get_at((x, y))
+            # The authored bodies are warm tan. This mask leaves tires,
+            # windows, chrome, lamps, and transparent pixels untouched.
+            if pixel.a < 8 or pixel.r < 60 or pixel.r - pixel.b < 16 or pixel.g - pixel.b < 7:
+                continue
+            luma = 0.30 * pixel.r + 0.59 * pixel.g + 0.11 * pixel.b
+            scale = luma / target_luma
+            recolored = tuple(max(0, min(255, round(channel * scale))) for channel in paint)
+            variant.set_at((x, y), (*recolored, pixel.a))
+
+    width, height = variant.get_size()
+    condition = str(feature.get("condition", "clean"))
+    if condition in {"weathered", "dusty"}:
+        count = 18 if condition == "weathered" else 11
+        for index in range(count):
+            x = (index * 37 + width // 9) % max(1, width)
+            y = height * 3 // 4 + (index * 11) % max(1, height // 5)
+            pygame.draw.rect(variant, (57, 45, 39, 145), (x, y, 2 + index % 3, 1))
+
+    accessory = str(feature.get("accessory", "none"))
+    if accessory == "roof_rack":
+        rack_y = max(1, height // 25)
+        left, right = width * 7 // 20, width * 15 // 20
+        pygame.draw.line(variant, (24, 28, 31, 255), (left, rack_y), (right, rack_y), 2)
+        for support_x in (left + 3, right - 3):
+            pygame.draw.line(variant, (74, 76, 75, 255), (support_x, rack_y), (support_x, rack_y + 4), 2)
+    elif accessory == "rear_window_sticker":
+        sticker = pygame.Rect(width * 13 // 20, height // 5, 5, 4)
+        pygame.draw.rect(variant, (230, 237, 201, 255), sticker)
+        pygame.draw.rect(variant, (63, 121, 151, 255), sticker, 1)
+    elif accessory == "church_decal":
+        center_x, center_y = width * 13 // 20, height // 4
+        pygame.draw.line(variant, (238, 235, 211, 255), (center_x, center_y - 3), (center_x, center_y + 4), 2)
+        pygame.draw.line(variant, (238, 235, 211, 255), (center_x - 3, center_y), (center_x + 3, center_y), 2)
+    return variant
+
+
 def _physical_scene_object_sprite(feature: Mapping[str, Any]) -> pygame.Surface:
     asset = str(feature.get("asset", "")).strip()
     kind = str(feature.get("kind", "")).strip().lower()
@@ -3169,7 +3354,7 @@ def _physical_scene_object_sprite(feature: Mapping[str, Any]) -> pygame.Surface:
     # ruler; the previous 120px fallback made a 1.35m sedan undersized despite
     # otherwise correct world placement.
     reference_adult_height_px = 134.0
-    visible_height = max(
+    physical_visible_height = max(
         1,
         int(
             round(
@@ -3182,8 +3367,30 @@ def _physical_scene_object_sprite(feature: Mapping[str, Any]) -> pygame.Surface:
             )
         ),
     )
+    # Parked vehicles sit on the far scenery apron, not in the fighters'
+    # active lane.  Preserve their measured physical dimensions, then apply
+    # the explicit visual-depth factor from the route manifest so a car does
+    # not read as a foreground giant beside the production hero silhouettes.
+    visual_depth_scale = float(feature.get("visual_depth_scale", 1.0))
+    visible_height = max(1, int(round(physical_visible_height * visual_depth_scale)))
+    paint_color = tuple(int(value) for value in feature.get("paint_color", ()))
+    model = str(feature.get("model", ""))
+    condition = str(feature.get("condition", ""))
+    accessory = str(feature.get("accessory", ""))
     facing = -1 if int(feature.get("facing", 1)) < 0 else 1
-    key = (asset, kind, visible_height, facing, id(pygame.image.load))
+    key = (
+        asset,
+        kind,
+        physical_visible_height,
+        visual_depth_scale,
+        visible_height,
+        paint_color,
+        model,
+        condition,
+        accessory,
+        facing,
+        id(pygame.image.load),
+    )
     cached = _PHYSICAL_SCENE_OBJECT_CACHE.get(key)
     if cached is not None:
         return cached
@@ -3201,6 +3408,8 @@ def _physical_scene_object_sprite(feature: Mapping[str, Any]) -> pygame.Surface:
     visible = authored.subsurface(visible_bounds).copy()
     visible_width = max(1, int(round(visible.get_width() * visible_height / visible.get_height())))
     sprite = pygame.transform.smoothscale(visible, (visible_width, visible_height))
+    if kind == "sedan":
+        sprite = _vehicle_variant_surface(sprite, feature)
     if facing < 0:
         sprite = pygame.transform.flip(sprite, True, False)
     _PHYSICAL_SCENE_OBJECT_CACHE[key] = sprite
@@ -3227,6 +3436,18 @@ def draw_physical_scene_object(
         elevation=float(feature.get("elevation", 0.0)),
     )
     rect = sprite.get_rect(midbottom=(_i(x), _i(y)))
+    # Two compact tire contacts stop a parked car from hovering above the
+    # painted apron while retaining the broader soft shadow beneath its body.
+    contact_width = max(7, sprite.get_width() // 15)
+    for center_x in (
+        rect.centerx - sprite.get_width() * 3 // 10,
+        rect.centerx + sprite.get_width() * 3 // 10,
+    ):
+        pygame.draw.ellipse(
+            surface,
+            (7, 10, 16),
+            (center_x - contact_width // 2, rect.bottom - 2, contact_width, 4),
+        )
     surface.blit(sprite, rect)
     return rect
 

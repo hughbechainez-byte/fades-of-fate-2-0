@@ -1,0 +1,630 @@
+{
+  "title": "The Fades of Fate",
+  "suite": "foundation",
+  "status": "pass",
+  "checks": [
+    {
+      "name": "controller_x_light",
+      "status": "pass",
+      "detail": "synthetic SDL controller X maps to light attack"
+    },
+    {
+      "name": "controller_left_stick",
+      "status": "pass",
+      "detail": "left stick produces rightward movement"
+    },
+    {
+      "name": "controller_action_layout",
+      "status": "pass",
+      "detail": "Y/A/B/RB/RT/LT/LB/Start map to combat, Chief, secondary, interact, and pause"
+    },
+    {
+      "name": "keyboard_light",
+      "status": "pass",
+      "detail": "J maps to light attack"
+    },
+    {
+      "name": "keyboard_chief_command",
+      "status": "pass",
+      "detail": "R maps to the dedicated Chief command"
+    },
+    {
+      "name": "keyboard_secondary",
+      "status": "pass",
+      "detail": "G maps to the contextual secondary"
+    },
+    {
+      "name": "runtime_provenance",
+      "status": "pass",
+      "detail": "scene/assets resolved from one root; artifact_match=True"
+    },
+    {
+      "name": "chapter_one_route_manifest",
+      "status": "pass",
+      "detail": "Levels run Sprouts\u2192El Cilantro, 7-Eleven\u2192I-8, Soapy Joe's\u2192Revive approach, then Awaken Church finale"
+    },
+    {
+      "name": "level_one_landmark_manifest",
+      "status": "pass",
+      "detail": "ordered west-side landmarks terminate beside Goodwill at El Cilantro"
+    },
+    {
+      "name": "sole_couch_awaken_finale",
+      "status": "pass",
+      "detail": "Couch exists only as Chapter 1 Level 4's final Awaken Church wave"
+    },
+    {
+      "name": "security_reinforcement_escalation",
+      "status": "pass",
+      "detail": "Levels 1-3 add increasingly dense post-clear security mini-waves with unique warnings; Couch's finale has none"
+    },
+    {
+      "name": "active_level_one_contract",
+      "status": "pass",
+      "detail": "playable Level 1 has exactly three encounters, Jerry outro, and no Couch/loading handoff"
+    },
+    {
+      "name": "animation_floor_91_clips_828_poses",
+      "status": "pass",
+      "detail": "all 91 active clips provide 8-16 rooted, translation-normalized authored keys (828 total) on a 30 Hz presentation clock"
+    },
+    {
+      "name": "dave_semantic_fist_landmarks",
+      "status": "pass",
+      "detail": "packaged metadata maps both hands for all 144 Dave poses and rejects the prior idle-bicep, kick-sneaker, and downed-face/shoe anchors"
+    },
+    {
+      "name": "jerry_dialogue_and_pose_library",
+      "status": "pass",
+      "detail": "five-beat warning names Couch/7-Eleven/El Cilantro/Goodwill and uses four distinct twenty-four-pose art states"
+    },
+    {
+      "name": "refined_sunset_bmx_strip",
+      "status": "pass",
+      "detail": "eight detailed Dave/Shelly/Chief authored BMX keys replace the old rectangle placeholder"
+    },
+    {
+      "name": "menu_stage_music_assets",
+      "status": "pass",
+      "detail": "distinct packaged OGG tracks: friday_activities_klickaud_menu.ogg -> red_2nd_track_stage_8bit.ogg"
+    },
+    {
+      "name": "menu_music_lifecycle",
+      "status": "pass",
+      "detail": "title/select loop starts friday_activities_klickaud_menu.ogg"
+    },
+    {
+      "name": "stage_music_lifecycle",
+      "status": "pass",
+      "detail": "starting Second Street switches to red_2nd_track_stage_8bit.ogg"
+    },
+    {
+      "name": "solo_cpu_party",
+      "status": "pass",
+      "detail": "human Black Dave plus CPU Shelly created"
+    },
+    {
+      "name": "solo_default_roster",
+      "status": "pass",
+      "detail": "solo uses Dave/Shelly while retaining one-player encounter scaling"
+    },
+    {
+      "name": "solo_chief_owner",
+      "status": "pass",
+      "detail": "Chief stays assigned to CPU Shelly"
+    },
+    {
+      "name": "solo_dave_bb_ammo",
+      "status": "pass",
+      "detail": "Dave alone starts with finite BB ammo"
+    },
+    {
+      "name": "orthographic_depth_projection",
+      "status": "pass",
+      "detail": "lane depth changes screen position without resizing pixel sprites"
+    },
+    {
+      "name": "physical_sprouts_cart_return",
+      "status": "pass",
+      "detail": "shared world collision prevents walking through the Sprouts parking-lot cart return"
+    },
+    {
+      "name": "sprouts_route_lane_seams",
+      "status": "pass",
+      "detail": "all three Sprouts-to-El-Cilantro rail joins are traversable"
+    },
+    {
+      "name": "human_camera_authority",
+      "status": "pass",
+      "detail": "CPU companion cannot pull the camera away from Dave"
+    },
+    {
+      "name": "cpu_companion_combat",
+      "status": "pass",
+      "detail": "CPU Shelly independently selects an attack or Chief command"
+    },
+    {
+      "name": "cpu_chief_command_choice",
+      "status": "pass",
+      "detail": "CPU companion spends its own Chief meter when an enemy is in command range"
+    },
+    {
+      "name": "chief_autonomous_bite",
+      "status": "pass",
+      "detail": "Chief independently closes distance and bites a nearby threat"
+    },
+    {
+      "name": "chief_party_idle_settle",
+      "status": "pass",
+      "detail": "Chief enters his sit state and stays still when Dave and Shelly are both idle"
+    },
+    {
+      "name": "chief_pet_interaction",
+      "status": "pass",
+      "detail": "Dave can pet Chief during a safe moment"
+    },
+    {
+      "name": "controller_bb_gun_live",
+      "status": "pass",
+      "detail": "controller LT fires one finite-ammo BB through live gameplay during hitstop"
+    },
+    {
+      "name": "return_to_menu_music",
+      "status": "pass",
+      "detail": "leaving gameplay restores the configured menu loop"
+    },
+    {
+      "name": "join_and_select_flow",
+      "status": "pass",
+      "detail": "keyboard Enter and controller A join through the real menu event path"
+    },
+    {
+      "name": "two_player_start",
+      "status": "pass",
+      "detail": "keyboard plus controller players created"
+    },
+    {
+      "name": "both_heroes_playable",
+      "status": "pass",
+      "detail": "Black Dave and Shelly selected"
+    },
+    {
+      "name": "chief_companion",
+      "status": "pass",
+      "detail": "Chief follows Shelly"
+    },
+    {
+      "name": "independent_chief_meters",
+      "status": "pass",
+      "detail": "Dave and Shelly each start with their own ready Chief meter"
+    },
+    {
+      "name": "allied_hero_passthrough",
+      "status": "pass",
+      "detail": "Dave and Shelly no longer body-block each other"
+    },
+    {
+      "name": "escape_pause_menu",
+      "status": "pass",
+      "detail": "gameplay opens the full pause menu"
+    },
+    {
+      "name": "pause_controls_render",
+      "status": "pass",
+      "detail": "keyboard/controller controls page renders"
+    },
+    {
+      "name": "controller_pause_menu",
+      "status": "pass",
+      "detail": "controller Start opens the same pause menu"
+    },
+    {
+      "name": "black_dave_fist_damage",
+      "status": "pass",
+      "detail": "enemy health 50->41"
+    },
+    {
+      "name": "layered_combat_feedback",
+      "status": "pass",
+      "detail": "confirmed hits emit a spark, impact ring and damage number"
+    },
+    {
+      "name": "dave_flaming_fists_chain",
+      "status": "pass",
+      "detail": "six air presses ignite Dave, fists deal +20%, the ten-second timer cools without a four-press refresh, and both-facing/strike flame renders save"
+    },
+    {
+      "name": "dave_flaming_contact_feedback",
+      "status": "pass",
+      "detail": "flame contact emits a trail, embers, burst and scorch plus an enemy-following visual without applying burn damage"
+    },
+    {
+      "name": "bb_gun_hitstop_dispatch",
+      "status": "pass",
+      "detail": "G fires one finite-ammo BB even during hitstop"
+    },
+    {
+      "name": "bb_lane_hit_no_friendly_fire",
+      "status": "pass",
+      "detail": "straight BB hits its aligned enemy and cannot hurt Shelly"
+    },
+    {
+      "name": "bb_deterministic_drop_schedule",
+      "status": "pass",
+      "detail": "eligible Level 1 KOs drop BB tins at 2/6/9 and schedule 12 next"
+    },
+    {
+      "name": "bb_range_probe_fired",
+      "status": "pass",
+      "detail": "range probe BB fired"
+    },
+    {
+      "name": "bb_range_clamp",
+      "status": "pass",
+      "detail": "oversized frame time cannot extend a BB past its configured range"
+    },
+    {
+      "name": "bb_pickup_clamp",
+      "status": "pass",
+      "detail": "Dave-only pickup collects without exceeding maximum ammo"
+    },
+    {
+      "name": "shelly_propane_secondary_live",
+      "status": "pass",
+      "detail": "controller LT starts Shelly's long-range flame and consumes only Super Butane"
+    },
+    {
+      "name": "shelly_super_butane_drops",
+      "status": "pass",
+      "detail": "separate Super Butane drops arrive every 2-3 KOs and clamp only Shelly's flame bar"
+    },
+    {
+      "name": "chief_command_dispatch",
+      "status": "pass",
+      "detail": "Dave's R command dispatches even during hitstop"
+    },
+    {
+      "name": "chief_command_bite",
+      "status": "pass",
+      "detail": "command delivers one weaker bite without spending Shelly's meter"
+    },
+    {
+      "name": "chief_command_return_pet",
+      "status": "pass",
+      "detail": "Chief returns to a safe caller for a pet"
+    },
+    {
+      "name": "controller_chief_command_live",
+      "status": "pass",
+      "detail": "controller RT commands Chief through live gameplay"
+    },
+    {
+      "name": "elevation_aware_combat",
+      "status": "pass",
+      "detail": "ground strike misses Dave above its vertical hit volume"
+    },
+    {
+      "name": "speaker_shockwave",
+      "status": "pass",
+      "detail": "Black Dave super damages nearby enemies"
+    },
+    {
+      "name": "chief_frenzy_super_cinematic_burst",
+      "status": "pass",
+      "detail": "Shelly's super darkens/focuses the screen and wipes a four-enemy non-boss crowd"
+    },
+    {
+      "name": "fixed_step_simulation",
+      "status": "pass",
+      "detail": "180 fixed 60 Hz frames completed"
+    },
+    {
+      "name": "gameplay_render",
+      "status": "pass",
+      "detail": "C:\\Users\\blowb\\Desktop\\fof-release-artifacts\\v0.15.3-background-detail-r6\\package\\build\\self_test_gameplay.png"
+    },
+    {
+      "name": "four_player_start",
+      "status": "pass",
+      "detail": "one keyboard plus three controller players created"
+    },
+    {
+      "name": "four_player_roster",
+      "status": "pass",
+      "detail": "all four slots use the two available heroes"
+    },
+    {
+      "name": "level_one_three_encounters",
+      "status": "pass",
+      "detail": "Sprouts Parking Lot, Town & Country, and El Cilantro at Madison are the complete Level 1 combat route"
+    },
+    {
+      "name": "level_one_encounter_1_ready",
+      "status": "pass",
+      "detail": "Sprouts Parking Lot"
+    },
+    {
+      "name": "level_one_encounter_1_cleared",
+      "status": "pass",
+      "detail": "Sprouts Parking Lot clears without a boss handoff"
+    },
+    {
+      "name": "level_one_encounter_2_ready",
+      "status": "pass",
+      "detail": "Town & Country"
+    },
+    {
+      "name": "level_one_encounter_2_cleared",
+      "status": "pass",
+      "detail": "Town & Country clears without a boss handoff"
+    },
+    {
+      "name": "level_one_encounter_2_security_reinforcement",
+      "status": "pass",
+      "detail": "Town & Country holds its gate for a speaking security mini-wave"
+    },
+    {
+      "name": "level_one_encounter_3_ready",
+      "status": "pass",
+      "detail": "El Cilantro at Madison"
+    },
+    {
+      "name": "level_one_encounter_3_cleared",
+      "status": "pass",
+      "detail": "El Cilantro at Madison clears without a boss handoff"
+    },
+    {
+      "name": "level_one_encounter_3_security_reinforcement",
+      "status": "pass",
+      "detail": "El Cilantro at Madison holds its gate for a speaking security mini-wave"
+    },
+    {
+      "name": "level_one_jerry_handoff",
+      "status": "pass",
+      "detail": "final El Cilantro wave freezes gameplay into Jerry's arrival with no Couch or loading overlay"
+    },
+    {
+      "name": "jerry_outro_render",
+      "status": "pass",
+      "detail": "C:\\Users\\blowb\\Desktop\\fof-release-artifacts\\v0.15.3-background-detail-r6\\package\\build\\self_test_jerry_outro.png"
+    },
+    {
+      "name": "jerry_outro_requires_player_continue",
+      "status": "pass",
+      "detail": "arrival settles and waits; no dialogue beat has a timer skip"
+    },
+    {
+      "name": "level_one_generic_results",
+      "status": "pass",
+      "detail": "Jerry finishes before Level 1 opens its ordinary score card without a finale celebration"
+    },
+    {
+      "name": "level_one_complete_stats",
+      "status": "pass",
+      "detail": "Level 1 freezes score, KO, hit, damage, rating, and rank statistics"
+    },
+    {
+      "name": "level_one_complete_render",
+      "status": "pass",
+      "detail": "C:\\Users\\blowb\\Desktop\\fof-release-artifacts\\v0.15.3-background-detail-r6\\package\\build\\self_test_level_one_complete.png"
+    },
+    {
+      "name": "level_one_generic_options_no_bmx",
+      "status": "pass",
+      "detail": "Level 1 shows Sprouts-to-El-Cilantro route options; BMX sunset remains finale-only"
+    },
+    {
+      "name": "level_one_to_two_interlevel",
+      "status": "pass",
+      "detail": "Level 1 route card queues the playable 7-Eleven-to-I-8 stage"
+    },
+    {
+      "name": "level_two_runtime_snapshot",
+      "status": "pass",
+      "detail": "Level 2 activates its own 7-Eleven/I-8 geometry and theme"
+    },
+    {
+      "name": "level_2_background_render",
+      "status": "pass",
+      "detail": "7-Eleven to I-8 Underpass renders its seven_eleven_underpass route"
+    },
+    {
+      "name": "level_2_encounter_1_triggered",
+      "status": "pass",
+      "detail": "7-Eleven Pad"
+    },
+    {
+      "name": "level_2_encounter_1_cleared",
+      "status": "pass",
+      "detail": "7-Eleven Pad clears through its authored gate"
+    },
+    {
+      "name": "level_2_encounter_2_triggered",
+      "status": "pass",
+      "detail": "Madison Plaza"
+    },
+    {
+      "name": "level_2_encounter_2_cleared",
+      "status": "pass",
+      "detail": "Madison Plaza clears through its authored gate"
+    },
+    {
+      "name": "level_2_encounter_3_triggered",
+      "status": "pass",
+      "detail": "I-8 Underpass"
+    },
+    {
+      "name": "level_2_encounter_3_cleared",
+      "status": "pass",
+      "detail": "I-8 Underpass clears through its authored gate"
+    },
+    {
+      "name": "level_2_completion",
+      "status": "pass",
+      "detail": "7-Eleven to I-8 Underpass reaches its playable results screen"
+    },
+    {
+      "name": "level_two_to_three_interlevel",
+      "status": "pass",
+      "detail": "I-8 transfer card queues the playable Soapy Joe's-to-Revive route"
+    },
+    {
+      "name": "level_three_runtime_snapshot",
+      "status": "pass",
+      "detail": "Level 3 activates Soapy Joe's/Broadway/Revive geometry and theme"
+    },
+    {
+      "name": "level_3_background_render",
+      "status": "pass",
+      "detail": "Soapy Joe's to Revive Approach renders its soapy_joes_revive route"
+    },
+    {
+      "name": "level_3_encounter_1_triggered",
+      "status": "pass",
+      "detail": "Soapy Joe's Front Lot"
+    },
+    {
+      "name": "level_3_encounter_1_cleared",
+      "status": "pass",
+      "detail": "Soapy Joe's Front Lot clears through its authored gate"
+    },
+    {
+      "name": "level_3_encounter_2_triggered",
+      "status": "pass",
+      "detail": "Broadway Turn"
+    },
+    {
+      "name": "level_3_encounter_2_cleared",
+      "status": "pass",
+      "detail": "Broadway Turn clears through its authored gate"
+    },
+    {
+      "name": "level_3_encounter_3_triggered",
+      "status": "pass",
+      "detail": "Revive Approach"
+    },
+    {
+      "name": "level_3_encounter_3_cleared",
+      "status": "pass",
+      "detail": "Revive Approach clears through its authored gate"
+    },
+    {
+      "name": "level_3_completion",
+      "status": "pass",
+      "detail": "Soapy Joe's to Revive Approach reaches its playable results screen"
+    },
+    {
+      "name": "level_three_to_four_interlevel",
+      "status": "pass",
+      "detail": "Revive-to-Awaken moving panel queues the playable Awaken Church Couch finale"
+    },
+    {
+      "name": "level_four_runtime_snapshot",
+      "status": "pass",
+      "detail": "Level 4 arrives at the Awaken Church parking-lot finale through campaign flow"
+    },
+    {
+      "name": "awaken_finale_configured",
+      "status": "pass",
+      "detail": "all Couch checks use the live Chapter 1 Level 4 Awaken Church transition"
+    },
+    {
+      "name": "cpu_shelly_awaken_boss_super",
+      "status": "pass",
+      "detail": "charged CPU Shelly activates Chief frenzy against Couch at Awaken Church"
+    },
+    {
+      "name": "awaken_couch_spawn",
+      "status": "pass",
+      "detail": "Awaken Church Couch HP=620"
+    },
+    {
+      "name": "awaken_couch_bb_drop_exclusion",
+      "status": "pass",
+      "detail": "Couch never advances the ordinary-enemy BB-ammo drop schedule"
+    },
+    {
+      "name": "awaken_boss_loading_handoff",
+      "status": "pass",
+      "detail": "clearing Awaken's front lot starts Level 4's explicit Couch handoff"
+    },
+    {
+      "name": "awaken_boss_loading_finished",
+      "status": "pass",
+      "detail": "the enabled Awaken transition completes directly into Couch's wave"
+    },
+    {
+      "name": "awaken_boss_loaded_from_encounter",
+      "status": "pass",
+      "detail": "Couch loads from the live Level 4 Awaken encounter with solo HP=620"
+    },
+    {
+      "name": "awaken_couch_retreat_waves",
+      "status": "pass",
+      "detail": "Couch performs two health-gated BMX refuges with the exact dope offer, live crews, and targetable returns"
+    },
+    {
+      "name": "awaken_finale_completion",
+      "status": "pass",
+      "detail": "defeating Couch at Awaken Church starts the finale hug/treat celebration"
+    },
+    {
+      "name": "awaken_finale_results",
+      "status": "pass",
+      "detail": "the Awaken finale celebration deterministically reaches results"
+    },
+    {
+      "name": "awaken_refined_sunset_render",
+      "status": "pass",
+      "detail": "C:\\Users\\blowb\\Desktop\\fof-release-artifacts\\v0.15.3-background-detail-r6\\package\\build\\self_test_awaken_sunset.png"
+    },
+    {
+      "name": "crash_log_ready",
+      "status": "pass",
+      "detail": "C:\\Users\\blowb\\Desktop\\fof-release-artifacts\\v0.15.3-background-detail-r6\\package\\logs\\latest.log"
+    }
+  ],
+  "controller_metadata": [
+    {
+      "instance_id": 77,
+      "name": "QA Virtual Xbox Layout",
+      "guid": "synthetic",
+      "axis_count": 6,
+      "button_count": 15,
+      "hat_count": 1,
+      "mapped": true,
+      "synthetic": true
+    },
+    {
+      "instance_id": 78,
+      "name": "QA Virtual Pad 2",
+      "guid": "synthetic",
+      "axis_count": 6,
+      "button_count": 15,
+      "hat_count": 1,
+      "mapped": true,
+      "synthetic": true
+    },
+    {
+      "instance_id": 79,
+      "name": "QA Virtual Pad 3",
+      "guid": "synthetic",
+      "axis_count": 6,
+      "button_count": 15,
+      "hat_count": 1,
+      "mapped": true,
+      "synthetic": true
+    }
+  ],
+  "log_path": "C:\\Users\\blowb\\Desktop\\fof-release-artifacts\\v0.15.3-background-detail-r6\\package\\logs\\latest.log",
+  "screenshot": "C:\\Users\\blowb\\Desktop\\fof-release-artifacts\\v0.15.3-background-detail-r6\\package\\build\\self_test_gameplay.png",
+  "jerry_screenshot": "C:\\Users\\blowb\\Desktop\\fof-release-artifacts\\v0.15.3-background-detail-r6\\package\\build\\self_test_jerry_outro.png",
+  "completion_screenshot": "C:\\Users\\blowb\\Desktop\\fof-release-artifacts\\v0.15.3-background-detail-r6\\package\\build\\self_test_level_one_complete.png",
+  "flame_idle_screenshot": "C:\\Users\\blowb\\Desktop\\fof-release-artifacts\\v0.15.3-background-detail-r6\\package\\build\\self_test_dave_flaming_idle.png",
+  "flame_left_screenshot": "C:\\Users\\blowb\\Desktop\\fof-release-artifacts\\v0.15.3-background-detail-r6\\package\\build\\self_test_dave_flaming_left.png",
+  "flame_strike_screenshot": "C:\\Users\\blowb\\Desktop\\fof-release-artifacts\\v0.15.3-background-detail-r6\\package\\build\\self_test_dave_flaming_strike.png",
+  "level_two_screenshot": "C:\\Users\\blowb\\Desktop\\fof-release-artifacts\\v0.15.3-background-detail-r6\\package\\build\\self_test_level_2_gameplay.png",
+  "level_three_screenshot": "C:\\Users\\blowb\\Desktop\\fof-release-artifacts\\v0.15.3-background-detail-r6\\package\\build\\self_test_level_3_gameplay.png",
+  "finale_screenshot": "C:\\Users\\blowb\\Desktop\\fof-release-artifacts\\v0.15.3-background-detail-r6\\package\\build\\self_test_awaken_sunset.png",
+  "duration_seconds": 7.803
+}

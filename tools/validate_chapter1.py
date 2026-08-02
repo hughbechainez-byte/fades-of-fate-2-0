@@ -2274,7 +2274,7 @@ def _runtime_integration_probe() -> dict[str, Any]:
         game_source = inspect.getsource(FadesGame)
         renderer_receives_atmosphere = _source_forwards_non_null_keyword(
             getattr(pixel_art, "_draw_location_locked_background"),
-            callee_name="_apply_dynamic_atmosphere",
+            callee_name="render_route_backdrop",
             keyword_name="atmosphere",
         )
         physical_objects_wired = "physical_scene_objects" in game_source

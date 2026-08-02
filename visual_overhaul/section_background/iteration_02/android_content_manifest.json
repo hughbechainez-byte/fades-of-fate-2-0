@@ -1,0 +1,982 @@
+{
+  "content_revision": 75,
+  "content_version": "0.15.4-background-life-r5",
+  "files": [
+    {
+      "path": "assets/audio/fades_title_original.ogg",
+      "sha256": "fcb4180ac48e9e66634426b6ca1d8897112514239845f5f61cf3956fb27bddcb",
+      "size": 300807
+    },
+    {
+      "path": "assets/audio/flight_at_first_sight_menu_8bit.ogg",
+      "sha256": "5d0d4207d90a5cdcdc3b02800448c12d01e1d741bb0294f8d088f0998ddf3d72",
+      "size": 459995
+    },
+    {
+      "path": "assets/audio/friday_activities_klickaud_menu.ogg",
+      "sha256": "2cf5cf95a6a040c4ca3ba4623cf52404104eeebd593e9d91b18573365c22c097",
+      "size": 2589398
+    },
+    {
+      "path": "assets/audio/red_2nd_track_stage_8bit.ogg",
+      "sha256": "27dace857981b0d3c87a3b5686fe6ce559f6057a62139f37eb89a093645246c5",
+      "size": 1099971
+    },
+    {
+      "path": "assets/audio/second_street_loop.wav",
+      "sha256": "49d7f307883d04b4b4205ad77765ba96074b093f5b1d1723b0f47eb890195bbc",
+      "size": 641498
+    },
+    {
+      "path": "assets/fades_of_fate_key_art.png",
+      "sha256": "4c4ecd63728ce10e7e9cf34abd6bb663e2cf078f9e446da6ae49e8f44751f8b3",
+      "size": 2575526
+    },
+    {
+      "path": "assets/ko_preview.png",
+      "sha256": "69668f69e694d82e82256f3aa00aa10addc84dad4fba6585c5f84f9347d16ab6",
+      "size": 2246572
+    },
+    {
+      "path": "assets/ko_preview_chroma.png",
+      "sha256": "2c87b1fd70d6a4ddc4afbefbf536f3608eeb5e7bbfb9a3f08e02754cffe92af3",
+      "size": 1645565
+    },
+    {
+      "path": "assets/ko_preview_cutout.png",
+      "sha256": "693643330e8431044aa1aaa5e7bb93ecb36b515baaefadf6c443e072f4463485",
+      "size": 945010
+    },
+    {
+      "path": "assets/portraits/dave_portrait_lean_young_v1.png",
+      "sha256": "042c0a1eb04320fbb96019d596beacb58e528a0f7a07f210fa5388c9272e02cc",
+      "size": 2148018
+    },
+    {
+      "path": "assets/portraits/dave_portrait_lean_young_v2.png",
+      "sha256": "dd71cce14c7321e3ae96217eab3bf5b83865bd11a776a1323389af6dee3573aa",
+      "size": 2051338
+    },
+    {
+      "path": "assets/portraits/shelly_portrait_curvy_v1.png",
+      "sha256": "d74e1705e3724431410911f36812a25d7493a5d2f3b6c3f7151e87df333626f0",
+      "size": 2144912
+    },
+    {
+      "path": "assets/props/vehicles/compact_sedan_v2.png",
+      "sha256": "ba6b645a977c1140f2a86c268c2e6678568bc37581ee2095790eca509efe60f6",
+      "size": 905272
+    },
+    {
+      "path": "assets/props/vehicles/compact_sedan_v3.png",
+      "sha256": "ba4fb4f45a7f9bf9fe34f385c748a3416635d877ed41fad963b05e1a10d21ba3",
+      "size": 745827
+    },
+    {
+      "path": "assets/reference/black_dave_walk_reference_v2.png",
+      "sha256": "e2782138205789b6c09e09260e7aab2fdd09952561ffcc9fd041fe7405bb19a3",
+      "size": 840401
+    },
+    {
+      "path": "assets/reference/black_dave_walk_reference_v2_chroma.png",
+      "sha256": "eb8c3a5504e8bbf63ee92072e25968f34d0260c632f0e7e948920322817b3c44",
+      "size": 1528764
+    },
+    {
+      "path": "assets/reference/chief_command_pose_reference_v1.png",
+      "sha256": "bd7fc8807eaeba8437a8df8025230771badff4fc2f8e448c71197e3f4cb01ebd",
+      "size": 1185726
+    },
+    {
+      "path": "assets/reference/chief_maul_reference_v1.png",
+      "sha256": "80df66bfc3e95252740a314c4909d8fd723ff96fceaa1d2f8260bc38d64ca30d",
+      "size": 894320
+    },
+    {
+      "path": "assets/reference/chief_maul_reference_v1_chroma.png",
+      "sha256": "e8e04185e89edc351f05d9f377536ed8271c64626897b059df0336906bedb807",
+      "size": 1541223
+    },
+    {
+      "path": "assets/reference/chief_run_reference_v1.png",
+      "sha256": "b8c807000df3f49930184d9b5e89ee490735e4fed4519d521bd72863dba763aa",
+      "size": 883107
+    },
+    {
+      "path": "assets/reference/chief_run_reference_v1_chroma.png",
+      "sha256": "352d61820388602aff66a616b736e318453c59db6c7f476d2e5d8d3310619c55",
+      "size": 1514712
+    },
+    {
+      "path": "assets/reference/chief_sit_reference_v1.png",
+      "sha256": "0e14abc5a7837251d0f44fb514cba5d714af68bc9bdf801a69eb9f69c57bc7f4",
+      "size": 1043554
+    },
+    {
+      "path": "assets/reference/couch_waddle_reference_v1.png",
+      "sha256": "bef9c29c8a7256020002417a56f10ef1b81555ece701bdf2f9943b351cbbce58",
+      "size": 1053679
+    },
+    {
+      "path": "assets/reference/couch_waddle_reference_v1_chroma.png",
+      "sha256": "c7f2a2ed80cfc5b678cb2e6d729525d02eeea88339a8ec5bbd5b5935574d54d0",
+      "size": 1851684
+    },
+    {
+      "path": "assets/reference/enemy_cart_walk_reference_v1.png",
+      "sha256": "0a157eae708bab5a8c57a489cf227d60cdd5017c79d2251e76af3284ea1d6d9a",
+      "size": 995444
+    },
+    {
+      "path": "assets/reference/enemy_cart_walk_reference_v1_chroma.png",
+      "sha256": "563ea22d7f80ce92c1a77ef146344924f495729eaa729ea7af9491ff4e147b82",
+      "size": 1879623
+    },
+    {
+      "path": "assets/reference/enemy_pipe_walk_reference_v1.png",
+      "sha256": "9676a7bbed6fcc54d237195c9f486ea90809ac885bf63c7389f6d15f8a67f644",
+      "size": 681558
+    },
+    {
+      "path": "assets/reference/enemy_pipe_walk_reference_v1_chroma.png",
+      "sha256": "0e30a0392b9139569b315f86bf9f0bad8083788cdc6a9e1ea734949c39043156",
+      "size": 1668777
+    },
+    {
+      "path": "assets/reference/enemy_stick_walk_reference_v1.png",
+      "sha256": "18613f71555a9657effa287bb87237fef4ff79a9f19cf463912220703023643e",
+      "size": 696556
+    },
+    {
+      "path": "assets/reference/enemy_stick_walk_reference_v1_chroma.png",
+      "sha256": "b032a58466503f196dc4941d88a05be5391463eed83f525f2991985516b9538b",
+      "size": 1473891
+    },
+    {
+      "path": "assets/reference/enemy_whip_walk_reference_v1.png",
+      "sha256": "1e2260f032790d9eb3f20cf9986a4c7d0d2e3107d772c9956eb7c84c64daf7c6",
+      "size": 720637
+    },
+    {
+      "path": "assets/reference/enemy_whip_walk_reference_v1_chroma.png",
+      "sha256": "9b8f8fb9f8d5b2acb865bb04c9c8253b99b3d56b9f6b9febea816a2480745b47",
+      "size": 1514433
+    },
+    {
+      "path": "assets/reference/jerry_pose_reference_v1.png",
+      "sha256": "dd5ea0089ce17f481c622c0e084230b131b541492114f057845122d6b6b25892",
+      "size": 1909243
+    },
+    {
+      "path": "assets/reference/jerry_pose_reference_v2.png",
+      "sha256": "b1180fbbc761029a837a2e76d46211f4f895d67eb4707bbbe1d906dea23b1a8a",
+      "size": 2255170
+    },
+    {
+      "path": "assets/reference/shelly_walk_reference_v2.png",
+      "sha256": "2869bbfe8a96597a2fd0756278e1b366a23a7d55e3429aa71ab4d50b32801a3e",
+      "size": 967675
+    },
+    {
+      "path": "assets/reference/shelly_walk_reference_v2_chroma.png",
+      "sha256": "66b70ee673a1ed20ca1cd56bd51e7e83d0e9b18a671cd1af6de99501aff94b0a",
+      "size": 1639528
+    },
+    {
+      "path": "assets/sprites/black_dave_animation_atlas.png",
+      "sha256": "db2315068e870b0be5955d8424f194567b8cfde23bf0a8fe03609d3c25ae0c4d",
+      "size": 1359880
+    },
+    {
+      "path": "assets/sprites/black_dave_atlas.png",
+      "sha256": "b36dc8fdb73e072464af1298ffb593a962b5f1c31dd9a17bde064efde537dbfa",
+      "size": 231892
+    },
+    {
+      "path": "assets/sprites/black_dave_fist_anchors.json",
+      "sha256": "10c0f0269a31806a16ba8162fc98c1f7d9bcafc91b181662a28f712857cd08e8",
+      "size": 22004
+    },
+    {
+      "path": "assets/sprites/chief_animation_atlas.png",
+      "sha256": "523157409b23d703c635067715a38f480f47ec44a0167ac0f05c8a407c589111",
+      "size": 730350
+    },
+    {
+      "path": "assets/sprites/chief_atlas.png",
+      "sha256": "70027a8d512df966530a013a76fa529790086626d52396d493bc8f96189de6bf",
+      "size": 152001
+    },
+    {
+      "path": "assets/sprites/chief_maul_animation_strip.png",
+      "sha256": "cc585c38694b20b965c0a53d1c76368f94fd95da97ec17888a5998ca888112e7",
+      "size": 250515
+    },
+    {
+      "path": "assets/sprites/couch_animation_atlas.png",
+      "sha256": "ab1d656ef9d8e66aff52d3a4240b3c2353eb3ad31d92e2377c326c2a6cb6c745",
+      "size": 1254698
+    },
+    {
+      "path": "assets/sprites/couch_atlas.png",
+      "sha256": "de1cff33af5f7d284806ac54ab8eb68ba642d13a08ed2693709f8d7c9d2f3be3",
+      "size": 214852
+    },
+    {
+      "path": "assets/sprites/couch_denim_atlas.png",
+      "sha256": "9a533e19ef712801805dc90d2aa60bc1219711545474a9aa3b17363c7e2916b2",
+      "size": 163062
+    },
+    {
+      "path": "assets/sprites/couch_denim_v2_atlas.png",
+      "sha256": "7e2a7e08c53da7dfeff2ddde6b8d1e3737a7127ba02f3801ad2df16cf9e716d0",
+      "size": 157724
+    },
+    {
+      "path": "assets/sprites/enemies_animation_atlas.png",
+      "sha256": "741730d70a58dbcc909d2ca2004730ca0bd993e16fe3759ff2f0c30f1fad9b91",
+      "size": 3784381
+    },
+    {
+      "path": "assets/sprites/enemies_atlas.png",
+      "sha256": "ff76971ede834d95ee30ef1d1234cbcabc56dde0a2d19f08682f628b9ba1e542",
+      "size": 354196
+    },
+    {
+      "path": "assets/sprites/jerry_animation_atlas.png",
+      "sha256": "90ae44b930f0bff1553ad7a0a744234c7135a1f32ee4006d7ada2ab3606e0132",
+      "size": 983184
+    },
+    {
+      "path": "assets/sprites/shelly_animation_atlas.png",
+      "sha256": "f6cb844c375f6e85b3412abfb6d3849f23b8b6d2061b329ee059efe1e1dbf2c3",
+      "size": 1310116
+    },
+    {
+      "path": "assets/sprites/shelly_atlas.png",
+      "sha256": "3edefd0218ec459149301ca0fa6190e1466ddfc357e40f52d54c9d314c58ea8d",
+      "size": 234006
+    },
+    {
+      "path": "assets/sprites/shelly_idle_extended.png",
+      "sha256": "c24544388d359b9a57f8fbbaa23c5cdca453a27aa9ca73e0021e9da41f5f6c42",
+      "size": 125092
+    },
+    {
+      "path": "assets/sprites/shelly_idle_extras.png",
+      "sha256": "4e76b9780fac7c5fc5e8ca6a461e658cc9ca65c5f11cf76df18644ad63d74bbe",
+      "size": 100456
+    },
+    {
+      "path": "assets/sprites/sunset_bmx_animation_strip.png",
+      "sha256": "ecb049ad9b80833652cbad2e3a74a21adbe98b979c029c1fda7c52c5dcac7ce4",
+      "size": 87960
+    },
+    {
+      "path": "assets/sprites/victory_animation_strip.png",
+      "sha256": "44eca916acfe0ae2ffed9ec791b4c08cf0d94437ddb729cbd057a8192410d7d1",
+      "size": 135121
+    },
+    {
+      "path": "assets/sprites/victory_hug_treats.png",
+      "sha256": "fe57425575acf222c0b24479cc8378d87daf6de6040144e09fd48f09c518a7b6",
+      "size": 97610
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/ch1_l1_architecture_v2.png",
+      "sha256": "0c5c8badf21987ed3b323ccae19d7b8e8a3fa42dd1ad5550d07e0e2d7a81f182",
+      "size": 51665
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/ch1_l1_far_v2.png",
+      "sha256": "8b7a6b394531f600c5738b92d50834e9e1007d81ad10588a80d3442804a5fdb7",
+      "size": 17186
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/ch1_l1_ground_v2.png",
+      "sha256": "e1ef9b3bf4283bb315d92c5cf498e4825ec5d75e5397c080142e373b39d36414",
+      "size": 503064
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/ch1_l1_haze_v2.png",
+      "sha256": "e6a0fe43beeb83223b42c990c1655bfe6d7f367424219190e3c925a0322cca9d",
+      "size": 8990
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/ch1_l1_main_v2.png",
+      "sha256": "fc1e69e3b3fc6c635b7a7342cae3b7538c979dcf118a569c693121af95c62316",
+      "size": 1946732
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/ch1_l1_near_occluder_v2.png",
+      "sha256": "96e73b6327db67084ac6753174094d60f6d898a530a7f4b2b8e99934ef36ec39",
+      "size": 6170
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/ch1_l1_near_v2.png",
+      "sha256": "96e73b6327db67084ac6753174094d60f6d898a530a7f4b2b8e99934ef36ec39",
+      "size": 6170
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/ch1_l1_skyline_v2.png",
+      "sha256": "e79a6d62710056c8f539728cd7cde0a047a6514840cc868326e1fad4dfa80b4d",
+      "size": 11227
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/ch1_l2_architecture_v2.png",
+      "sha256": "f01e7ad58392fcbbc5c06a94d419f41851e87b453fda7961a5c2995432d0385b",
+      "size": 42128
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/ch1_l2_far_v2.png",
+      "sha256": "5edb667a46ba9940917ce44c3972134e192f4e4620f7f63404bd9b2f585649bb",
+      "size": 17535
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/ch1_l2_ground_v2.png",
+      "sha256": "84ddf61507722c35a700d42cc195983d7e55f9f39f55b1da997a4890bd068289",
+      "size": 475564
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/ch1_l2_haze_v2.png",
+      "sha256": "83225f9ba6d73c1c018e1196212fb19013fc4597419b84ee3a29e93e4ca1c09d",
+      "size": 9357
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/ch1_l2_main_v2.png",
+      "sha256": "8f1fc86b8c9776b8a9c6b07358f786433c55bad2e82a49a7f2013f464f49b26e",
+      "size": 1915683
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/ch1_l2_near_occluder_v2.png",
+      "sha256": "3f88d6fd62da2030550915b00db6e9f6936e7e635eccb734ca28a717edb68ee9",
+      "size": 6171
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/ch1_l2_near_v2.png",
+      "sha256": "3f88d6fd62da2030550915b00db6e9f6936e7e635eccb734ca28a717edb68ee9",
+      "size": 6171
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/ch1_l2_skyline_v2.png",
+      "sha256": "d84047a74c52a2bf6caa2673f93629bc17dbaa7079e7781dbdfa66eefa95d482",
+      "size": 10909
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/ch1_l3_architecture_v2.png",
+      "sha256": "ad77407385df8ecef22594504d50200ad6c87690337aa2cfe4c174ee9563764d",
+      "size": 56991
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/ch1_l3_far_v2.png",
+      "sha256": "45abc5f73963b154f7e960f387354e975607583adff32a210b97ee651d893a93",
+      "size": 17118
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/ch1_l3_ground_v2.png",
+      "sha256": "c0795f7e3f6b9c775ead59a5102e42dc42e1333c6e083a7a05e686fd7074afd2",
+      "size": 478188
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/ch1_l3_haze_v2.png",
+      "sha256": "f18d6c5ec959aa81a278868f445b7978bc9ab9f31c58930820d04875abf6348a",
+      "size": 8801
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/ch1_l3_main_v2.png",
+      "sha256": "684a64fc7701efc0386b73774c308dfd9f88408c7756909ff548464b1c343aef",
+      "size": 2022876
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/ch1_l3_near_occluder_v2.png",
+      "sha256": "c1eb3774c87ce5eb524e89c720bb5b7b47aca2e90d0eeb0cac8f37175681ee79",
+      "size": 6164
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/ch1_l3_near_v2.png",
+      "sha256": "c1eb3774c87ce5eb524e89c720bb5b7b47aca2e90d0eeb0cac8f37175681ee79",
+      "size": 6164
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/ch1_l3_skyline_v2.png",
+      "sha256": "f8ccc44115e140ea68e5f7ca00e762619f1bd32e1d4aa351bc4ddb086a6000e4",
+      "size": 11750
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/ch1_l4_architecture_v2.png",
+      "sha256": "1a69ff750d365cc038932166c4627785407ecd8ed27da31dab2d4f87febdadd9",
+      "size": 22526
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/ch1_l4_far_v2.png",
+      "sha256": "1ee2fab820ccfff4ba752af5d982468f2381f0b6c50ee831e38eb7eae815dfb1",
+      "size": 9785
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/ch1_l4_ground_v2.png",
+      "sha256": "d09ec042cd9556dfbe56a503cf0f20fab809d238f3acfa3e0b3df6b87fd83a65",
+      "size": 405940
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/ch1_l4_haze_v2.png",
+      "sha256": "3612604b89d0fb5a4a054f00d30732e182bdfaba9a8e23eefa87117cdfa89582",
+      "size": 5275
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/ch1_l4_main_v2.png",
+      "sha256": "23ed11bc6e9dc2b3e2e4f34a73930550de5941295eb27f1fb0e3f37c23316003",
+      "size": 976896
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/ch1_l4_near_occluder_v2.png",
+      "sha256": "2bad2603618239f1dd289d8fbba6a66e9890f5ef790ae6a4cb722fb02cdfd350",
+      "size": 3670
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/ch1_l4_near_v2.png",
+      "sha256": "2bad2603618239f1dd289d8fbba6a66e9890f5ef790ae6a4cb722fb02cdfd350",
+      "size": 3670
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/ch1_l4_skyline_v2.png",
+      "sha256": "8a37eda14d3992825e65e5ede112f0c1331de8c04138645c2871d54a2671e65f",
+      "size": 6103
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/awaken_church_finale/atmosphere_haze_tile_v1.png",
+      "sha256": "f537ac887e61d7d56cea8c6a0691fd3905077052f8ae9ed5310214d82f1f62fa",
+      "size": 3158
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/awaken_church_finale/chunk_00_architecture_v1.png",
+      "sha256": "32fd8c5f08b0ce84f09c3380999dc538f337fd175a391d64a9e26d49c31dff44",
+      "size": 13634
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/awaken_church_finale/chunk_00_far_skyline_v1.png",
+      "sha256": "15f8014247fb7e989093d8e50447459085254c2339e5c1f73b1ae4ae9b1bfc9a",
+      "size": 3484
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/awaken_church_finale/chunk_00_ground_v1.png",
+      "sha256": "47777bb4e40b50d88195f5c5c042ac889d59540dead5ab07369d4d69c79a00ba",
+      "size": 212571
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/awaken_church_finale/chunk_00_near_occluder_v1.png",
+      "sha256": "152b97d5fa0a97de9f94bdd8c35cbea40c76bb77ebf604d1d7b9817b991c8a72",
+      "size": 2189
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/awaken_church_finale/chunk_01_architecture_v1.png",
+      "sha256": "7defc0c528f910ce9b32a5fcf26f827729a971e1256e9d450a4eccfe57aeff76",
+      "size": 10303
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/awaken_church_finale/chunk_01_far_skyline_v1.png",
+      "sha256": "ef7bd757e33da7c9cbcff205bb1caf68b6b8b93cb1ef251e9bd73c592c52a164",
+      "size": 3393
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/awaken_church_finale/chunk_01_ground_v1.png",
+      "sha256": "e6c29d33d6b5acfc2e325fb9f1a9480ad7dba5cd54f636a2533059fd9f10e249",
+      "size": 209277
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/awaken_church_finale/chunk_01_near_occluder_v1.png",
+      "sha256": "26a4d1ae932c0d8940e1d9a93cf6438d6e1ba1b212fa58e53faa8e4bc03575d2",
+      "size": 2235
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/seven_eleven_underpass/atmosphere_haze_tile_v1.png",
+      "sha256": "75e93db6a1443a45f7bcf953402bd6bdf7cb8a9f9c5b7c7dad6fddef88a682ea",
+      "size": 3158
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/seven_eleven_underpass/chunk_00_architecture_v1.png",
+      "sha256": "7a480c9414c234ba24f14dcc3fbd298a8d1ce6a57a9415e4c71f3763cb02b308",
+      "size": 14869
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/seven_eleven_underpass/chunk_00_far_skyline_v1.png",
+      "sha256": "4c92dbdd6b228d460b266c002def5c1cadecb3d297a4eda2781cf9556d40ad14",
+      "size": 3287
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/seven_eleven_underpass/chunk_00_ground_v1.png",
+      "sha256": "2e5e26cafee43f80e8f00de73e0dada6fb842877baef1fc6200df22e1d4ed6f7",
+      "size": 199428
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/seven_eleven_underpass/chunk_00_near_occluder_v1.png",
+      "sha256": "1ba6d8a529cb3af583a879221af78494ced835eb6fba4253d90dfa680ba49aff",
+      "size": 2197
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/seven_eleven_underpass/chunk_01_architecture_v1.png",
+      "sha256": "4d9df256761b693dfe601e75e45476bacd4745f3434157ff0e546e34e218263c",
+      "size": 19600
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/seven_eleven_underpass/chunk_01_far_skyline_v1.png",
+      "sha256": "1eed092432e6de3eb146ebdfec2f4c8fcb3043a45a79377a1635ab0d89ad0737",
+      "size": 3239
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/seven_eleven_underpass/chunk_01_ground_v1.png",
+      "sha256": "54da292afceda977330a81e956597b950e73261813503d72568db11157235e39",
+      "size": 200415
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/seven_eleven_underpass/chunk_01_near_occluder_v1.png",
+      "sha256": "1973fdfd36e56dbe651e0b0c8840ad1af8c19a68dadf371ef634c771c54d084e",
+      "size": 2281
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/seven_eleven_underpass/chunk_02_architecture_v1.png",
+      "sha256": "97fefd0d5a8b6331ae47bd423b4462000465eb8926323f8936737913e0f597aa",
+      "size": 4516
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/seven_eleven_underpass/chunk_02_far_skyline_v1.png",
+      "sha256": "4e0af129a8d1c2819d7edb885fc4e80e50b59353a25ffec01c47fcdb2e9d76a9",
+      "size": 3399
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/seven_eleven_underpass/chunk_02_ground_v1.png",
+      "sha256": "7400ee634ca02453ed39b5069d31586f8e9e3c6e092370618a8bc8f9c4a296dc",
+      "size": 207163
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/seven_eleven_underpass/chunk_02_near_occluder_v1.png",
+      "sha256": "2dad45b88e4100a54255015f14d457ebfb1ae0e1e5a16d5fb3c6309d879fa677",
+      "size": 2015
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/seven_eleven_underpass/chunk_03_architecture_v1.png",
+      "sha256": "9b71ea1608abb0aa51e98ab382cbb71c8bc3e76f2994e242e1887394ea395560",
+      "size": 6194
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/seven_eleven_underpass/chunk_03_far_skyline_v1.png",
+      "sha256": "2e389292e0f17d0b6b1723ffa361c1593a058d40157a7da1ac4b618d3592be56",
+      "size": 3166
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/seven_eleven_underpass/chunk_03_ground_v1.png",
+      "sha256": "8e71ef525c96460365d621ee28d2286e6a065ee1243306ef1d4357bfa10829f3",
+      "size": 194441
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/seven_eleven_underpass/chunk_03_near_occluder_v1.png",
+      "sha256": "84ea83d83d8d559bbfa2dd47a93c4b7600a9fb6c0a997d1a38520f2a1acc1b31",
+      "size": 2241
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/soapy_joes_revive/atmosphere_haze_tile_v1.png",
+      "sha256": "eddf08f378ff6ce1eb091055e2c8c65aa2a4ba039448e3071c0266b7fd6337d2",
+      "size": 2891
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/soapy_joes_revive/chunk_00_architecture_v1.png",
+      "sha256": "166e0ea4c85f27182691b5139a9bf8caae9c24400c29cbd0f01f9b723b8ea6fd",
+      "size": 17591
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/soapy_joes_revive/chunk_00_far_skyline_v1.png",
+      "sha256": "3ce2d918cd4f73a79256c80b368b72ece61c8d941c7bd981ad3bb06ce48191f6",
+      "size": 3561
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/soapy_joes_revive/chunk_00_ground_v1.png",
+      "sha256": "68d1f0f363c5180fd430689d08119246d1bd3a1812db387995dee07807bc0f84",
+      "size": 200349
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/soapy_joes_revive/chunk_00_near_occluder_v1.png",
+      "sha256": "af33146c83db35961a1a0e5561073a6cbd5fe8fe739d1d53ce7d8039181f5dd4",
+      "size": 2194
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/soapy_joes_revive/chunk_01_architecture_v1.png",
+      "sha256": "2e2b7b6dc160f58351ca214639b54a7d20f09102d2c0e50acc536449a443e547",
+      "size": 20473
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/soapy_joes_revive/chunk_01_far_skyline_v1.png",
+      "sha256": "fe9d8f6fd3c7d0a3f1a11f0a8b865f82e7260fcbcda52af9e5e912cd44720192",
+      "size": 3514
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/soapy_joes_revive/chunk_01_ground_v1.png",
+      "sha256": "fb1ee9d5a3c5bcf23790b14e7b1c713b7d4115881cf1f2d95f2d39ca7daab60e",
+      "size": 201649
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/soapy_joes_revive/chunk_01_near_occluder_v1.png",
+      "sha256": "f89040ab4d91a86be1d3f04bcc8b4977ff6705cb35721ddb6850796935e5730c",
+      "size": 2189
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/soapy_joes_revive/chunk_02_architecture_v1.png",
+      "sha256": "5810d128b6c4bee73fdab6f101f1a75ef2868c5e4c3342f44df9d8997f62cc80",
+      "size": 15621
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/soapy_joes_revive/chunk_02_far_skyline_v1.png",
+      "sha256": "84bdaae2aa74a96d94522738fbcf2dccec293ff6a32549f6ff6e7f399d1ace7c",
+      "size": 3653
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/soapy_joes_revive/chunk_02_ground_v1.png",
+      "sha256": "beadc3d645703f628b8ef1c12cd5b22a3c17660fe1d8f53bd920a798ef13c8c4",
+      "size": 208263
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/soapy_joes_revive/chunk_02_near_occluder_v1.png",
+      "sha256": "9f74868277c39c63f4d0f9a831697bc5db91153010eecbf93fcfd43cda6b99b2",
+      "size": 2243
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/soapy_joes_revive/chunk_03_architecture_v1.png",
+      "sha256": "b9ae69ec9097e99d46058e882f0d84f75d51f91227f5498bd73b489ba6b56769",
+      "size": 10055
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/soapy_joes_revive/chunk_03_far_skyline_v1.png",
+      "sha256": "ef36c72b8f7b5dc56dfdc006374421b69625ae27beff388c5c7dc85e52e179c9",
+      "size": 3283
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/soapy_joes_revive/chunk_03_ground_v1.png",
+      "sha256": "fd79a4fd8db2ca8c3fc08b0ee73a2b8df62ad01e658f781983335e8523aebab3",
+      "size": 195567
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/soapy_joes_revive/chunk_03_near_occluder_v1.png",
+      "sha256": "497f7fb841f43ec827a5e16f5d84b3b459283451d25a260e1e8a2de68f8e0b28",
+      "size": 2241
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/atmosphere_haze_tile_v1.png",
+      "sha256": "8eb0ffdf84e7076c63bf087ecc8d4f2ea94b82c4ed47821c3f3a968f69cf9501",
+      "size": 2952
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_00_architecture_v1.png",
+      "sha256": "046c0001e357b7d54e427b79485268d30dde5d2f3b9a1da2351c8fc8d73fbaf7",
+      "size": 15352
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_00_far_skyline_v1.png",
+      "sha256": "05ae19402d3ab57392fc81fdd3ed43a6c9370707c31850cae73f2abbf1c98d1b",
+      "size": 3397
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_00_ground_v1.png",
+      "sha256": "eec63a9f485ea0afe36a268061a9cca3e9d75668a14361e862f6f788b0d2b383",
+      "size": 212609
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_00_near_occluder_v1.png",
+      "sha256": "b514ea32b3158e2cbb2ff3720cc3a4198d72003d22cfebd79e7d437efdece23d",
+      "size": 2196
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_01_architecture_v1.png",
+      "sha256": "02a1fce7d60587fc469f06461db715275d2467570b53bc53046821900d6efdd7",
+      "size": 17845
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_01_far_skyline_v1.png",
+      "sha256": "05cf00ccfc4bfd1ce4afa87e38ae2a4a464263665e6227a6312f5791efcfda58",
+      "size": 3555
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_01_ground_v1.png",
+      "sha256": "7a8ca45f7bdeba187c0ba23ee7f651c864fa23c9ab53cb747843348f6c1368a2",
+      "size": 215261
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_01_near_occluder_v1.png",
+      "sha256": "487045437d890e08050dad8850c147263bee690551b67fc8cbbcf0884a76d110",
+      "size": 2284
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_02_architecture_v1.png",
+      "sha256": "93f03ef89ae86a9e1760b8e102c0d5325d3b1b6a1a0e45aec513174b306dad6d",
+      "size": 15053
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_02_far_skyline_v1.png",
+      "sha256": "b781d5c3432bb59d7fe3ec3f5c1ec42647af8904d9042786d58bd5bb958b2a36",
+      "size": 3512
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_02_ground_v1.png",
+      "sha256": "cc5e3c46f01f66a87025e9893f55de7d4cc078121038dd957a21f62b956f6add",
+      "size": 217562
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_02_near_occluder_v1.png",
+      "sha256": "c7a62e4939b887464fb4f6a15b9d56245157f828ea0093b77e6eeb63131e9133",
+      "size": 1918
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_03_architecture_v1.png",
+      "sha256": "4bcde1b8ccb0987826e7cc2299788302250ff93e00fcffc08e7541ada76e7dfa",
+      "size": 13214
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_03_far_skyline_v1.png",
+      "sha256": "7ccf6abed1d3dea54f3c08c82a44567ceaac54d61a445690f6f97673fe21e03b",
+      "size": 3075
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_03_ground_v1.png",
+      "sha256": "2984a044feddffabaf8949d3e83fdf81da6d98d5415435a19976fd99a92c83e3",
+      "size": 212705
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_03_near_occluder_v1.png",
+      "sha256": "4a90b31e31bc3fb26a37f305e6c9eabbfae7ed34aac4f43b1b83c83500ae96ec",
+      "size": 2242
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/source_concepts/chapter1_level1_source_concept.png",
+      "sha256": "d93fcd8af267591d1a77f3962e7682407f4c408366bde195387a269f4150d0ac",
+      "size": 2466340
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/source_concepts/chapter1_level2_source_concept.png",
+      "sha256": "3f00bf57a1eba527ac0dceac1a72009575674b34824c3fe4410f71414dbfc69f",
+      "size": 2738168
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/source_concepts/chapter1_level3_source_concept.png",
+      "sha256": "be8baed2de4aae0916b9e76574ec9a87478588ade0a4a5625ad73fccb0331088",
+      "size": 2752862
+    },
+    {
+      "path": "assets/stage/chapter1_location_locked/source_concepts/chapter1_level4_source_concept.png",
+      "sha256": "3be868b5364aaf1ec8f4250588ddbff997360491ba0dc8437420a2140db3dbe3",
+      "size": 2241839
+    },
+    {
+      "path": "assets/stage/second_street_awaken_hall.png",
+      "sha256": "b66190bd811a6c3fdc287472cf58930fa9a3494d8a8dcf85721a859da0b0110e",
+      "size": 2437854
+    },
+    {
+      "path": "assets/stage/second_street_bmx_sunset_v1.png",
+      "sha256": "e0af9a759bd0604017eb076dd8146669d0d1dd5a622cba1139dd337c76d61aea",
+      "size": 2641406
+    },
+    {
+      "path": "assets/stage/second_street_level1_near_props_v1.png",
+      "sha256": "9493061cc28d3890c41fd55c4ed8a679f67c642773cb387fe90199db0d550e87",
+      "size": 626306
+    },
+    {
+      "path": "assets/stage/second_street_level1_opening_vehicle_free_v1.png",
+      "sha256": "69d17d9e63997f569ac377f7891a07e1d84ce20ae1e11fc468d41a295dd32044",
+      "size": 2679164
+    },
+    {
+      "path": "assets/stage/second_street_level1_sprouts_el_cilantro_v1.png",
+      "sha256": "1c53712207ff25c582082769102143558190b4afac71705e19c550ea2a455063",
+      "size": 2383625
+    },
+    {
+      "path": "assets/stage/second_street_level2_i8_v1.png",
+      "sha256": "91a7e887abfe9f39a6c0987349555be9fd1331e5a91d897cf2cef292218fd724",
+      "size": 2153706
+    },
+    {
+      "path": "assets/stage/second_street_level3_soapy_revive_v1.png",
+      "sha256": "4b41b0a6dfe7c2eb5a8c35fd9774b55baa119a8ee029bd26ead275165a194daf",
+      "size": 2400353
+    },
+    {
+      "path": "assets/stage/second_street_level4_awaken_v1.png",
+      "sha256": "d646ef4d11fd4aa008f6818610a23713210fe979f4d761f9d6e9f3bdfe850d24",
+      "size": 2351335
+    },
+    {
+      "path": "assets/stage/second_street_market_block_v1.png",
+      "sha256": "75b4df56fdced53a1e131fefc14aec7b7fabcc7850ee11bb22a49bda7c350898",
+      "size": 2607104
+    },
+    {
+      "path": "assets/stage/second_street_overpass.png",
+      "sha256": "616ebb1c687a79cce90ccc7a354222e9d7fec21b9b3ce6b9a326e91ae023c8ca",
+      "size": 2330580
+    },
+    {
+      "path": "assets/stage/second_street_pharmacy.png",
+      "sha256": "855813553c617f6cf1180c18beb8fadefa8075db1669691cae6152e67a49317c",
+      "size": 2262303
+    },
+    {
+      "path": "assets/stage/second_street_route_level1_panorama_v1.png",
+      "sha256": "8f11a76426f000177abe330a636619108f84a2c0c73a0b020503983d095aea23",
+      "size": 2566955
+    },
+    {
+      "path": "assets/stage/second_street_underpass_service_v1.png",
+      "sha256": "b95e9ecd8db4ff7e33052dae07fdab63968883940f4dac0c997a62a071038293",
+      "size": 2522080
+    },
+    {
+      "path": "assets/stage/second_street_wash_corridor_v1.png",
+      "sha256": "48f99013402bb9834bcb20f4f92fa77230940eff306b8c3f46d4fba595c2a28f",
+      "size": 2708120
+    },
+    {
+      "path": "data/atmosphere.json",
+      "sha256": "ce24e71ea49b435938a341e922f40258c74a937aaf37d6488f46a8338b1f92f1",
+      "size": 1426
+    },
+    {
+      "path": "data/chapter1_art_build.json",
+      "sha256": "fb633cb78d474e2bb22e39502ce7d79039bf9b755c47c583252a461de813a202",
+      "size": 23852
+    },
+    {
+      "path": "data/chapter1_location_lock.json",
+      "sha256": "093490ebcc82f191deea619eee3ddf1c80dda1a7bbfce9ef2803d41c4b8a17c7",
+      "size": 66855
+    },
+    {
+      "path": "data/chapter_content.json",
+      "sha256": "5fac2c0ea9b9c11b2b65f3a84b48e4c3a82edddb7401794bd95a7521c1dde6aa",
+      "size": 30150
+    },
+    {
+      "path": "data/gameplay.json",
+      "sha256": "ab8dd7a6723cc383ecd1a9dc20ba4b50eabecb31c2810a08329d58c095da0adf",
+      "size": 75606
+    },
+    {
+      "path": "data/stage_chunks.json",
+      "sha256": "dc8434b606990d9ced265edfb5cae63348bd07e655e0228695979f8197f8023a",
+      "size": 34526
+    }
+  ],
+  "generated_utc": "2026-08-02T07:11:14-07:00",
+  "logical_content_sha256": "8b39176587932b32f337325de871dd807c8abb6a7b386090b7181424e00d16c3",
+  "minimum_game_version": "0.15.4-background-life-r5",
+  "pack": {
+    "asset": "fades-of-fate-content-pack.zip",
+    "sha256": "da6775d193f8947b4caea9fa0f54e3c680ac79c17c02cbce6098e37aa11a624d",
+    "size": 113698230
+  },
+  "platforms": [
+    "pc",
+    "android"
+  ],
+  "schema_version": 2,
+  "source_commit": "f464aa75dbdea4026e3854390a45686aec66e5e8",
+  "source_dirty": false,
+  "strict_validation": {
+    "active_assets": [
+      "assets/props/vehicles/compact_sedan_v3.png",
+      "assets/stage/chapter1_location_locked/ch1_l1_architecture_v2.png",
+      "assets/stage/chapter1_location_locked/ch1_l1_far_v2.png",
+      "assets/stage/chapter1_location_locked/ch1_l1_ground_v2.png",
+      "assets/stage/chapter1_location_locked/ch1_l1_haze_v2.png",
+      "assets/stage/chapter1_location_locked/ch1_l1_main_v2.png",
+      "assets/stage/chapter1_location_locked/ch1_l1_near_occluder_v2.png",
+      "assets/stage/chapter1_location_locked/ch1_l1_near_v2.png",
+      "assets/stage/chapter1_location_locked/ch1_l1_skyline_v2.png",
+      "assets/stage/chapter1_location_locked/ch1_l2_architecture_v2.png",
+      "assets/stage/chapter1_location_locked/ch1_l2_far_v2.png",
+      "assets/stage/chapter1_location_locked/ch1_l2_ground_v2.png",
+      "assets/stage/chapter1_location_locked/ch1_l2_haze_v2.png",
+      "assets/stage/chapter1_location_locked/ch1_l2_main_v2.png",
+      "assets/stage/chapter1_location_locked/ch1_l2_near_occluder_v2.png",
+      "assets/stage/chapter1_location_locked/ch1_l2_near_v2.png",
+      "assets/stage/chapter1_location_locked/ch1_l2_skyline_v2.png",
+      "assets/stage/chapter1_location_locked/ch1_l3_architecture_v2.png",
+      "assets/stage/chapter1_location_locked/ch1_l3_far_v2.png",
+      "assets/stage/chapter1_location_locked/ch1_l3_ground_v2.png",
+      "assets/stage/chapter1_location_locked/ch1_l3_haze_v2.png",
+      "assets/stage/chapter1_location_locked/ch1_l3_main_v2.png",
+      "assets/stage/chapter1_location_locked/ch1_l3_near_occluder_v2.png",
+      "assets/stage/chapter1_location_locked/ch1_l3_near_v2.png",
+      "assets/stage/chapter1_location_locked/ch1_l3_skyline_v2.png",
+      "assets/stage/chapter1_location_locked/ch1_l4_architecture_v2.png",
+      "assets/stage/chapter1_location_locked/ch1_l4_far_v2.png",
+      "assets/stage/chapter1_location_locked/ch1_l4_ground_v2.png",
+      "assets/stage/chapter1_location_locked/ch1_l4_haze_v2.png",
+      "assets/stage/chapter1_location_locked/ch1_l4_main_v2.png",
+      "assets/stage/chapter1_location_locked/ch1_l4_near_occluder_v2.png",
+      "assets/stage/chapter1_location_locked/ch1_l4_near_v2.png",
+      "assets/stage/chapter1_location_locked/ch1_l4_skyline_v2.png",
+      "assets/stage/chapter1_location_locked/chunks/awaken_church_finale/chunk_00_architecture_v1.png",
+      "assets/stage/chapter1_location_locked/chunks/awaken_church_finale/chunk_00_far_skyline_v1.png",
+      "assets/stage/chapter1_location_locked/chunks/awaken_church_finale/chunk_00_ground_v1.png",
+      "assets/stage/chapter1_location_locked/chunks/awaken_church_finale/chunk_00_near_occluder_v1.png",
+      "assets/stage/chapter1_location_locked/chunks/awaken_church_finale/chunk_01_architecture_v1.png",
+      "assets/stage/chapter1_location_locked/chunks/awaken_church_finale/chunk_01_far_skyline_v1.png",
+      "assets/stage/chapter1_location_locked/chunks/awaken_church_finale/chunk_01_ground_v1.png",
+      "assets/stage/chapter1_location_locked/chunks/awaken_church_finale/chunk_01_near_occluder_v1.png",
+      "assets/stage/chapter1_location_locked/chunks/seven_eleven_underpass/chunk_00_architecture_v1.png",
+      "assets/stage/chapter1_location_locked/chunks/seven_eleven_underpass/chunk_00_far_skyline_v1.png",
+      "assets/stage/chapter1_location_locked/chunks/seven_eleven_underpass/chunk_00_ground_v1.png",
+      "assets/stage/chapter1_location_locked/chunks/seven_eleven_underpass/chunk_00_near_occluder_v1.png",
+      "assets/stage/chapter1_location_locked/chunks/seven_eleven_underpass/chunk_01_architecture_v1.png",
+      "assets/stage/chapter1_location_locked/chunks/seven_eleven_underpass/chunk_01_far_skyline_v1.png",
+      "assets/stage/chapter1_location_locked/chunks/seven_eleven_underpass/chunk_01_ground_v1.png",
+      "assets/stage/chapter1_location_locked/chunks/seven_eleven_underpass/chunk_01_near_occluder_v1.png",
+      "assets/stage/chapter1_location_locked/chunks/seven_eleven_underpass/chunk_02_architecture_v1.png",
+      "assets/stage/chapter1_location_locked/chunks/seven_eleven_underpass/chunk_02_far_skyline_v1.png",
+      "assets/stage/chapter1_location_locked/chunks/seven_eleven_underpass/chunk_02_ground_v1.png",
+      "assets/stage/chapter1_location_locked/chunks/seven_eleven_underpass/chunk_02_near_occluder_v1.png",
+      "assets/stage/chapter1_location_locked/chunks/seven_eleven_underpass/chunk_03_architecture_v1.png",
+      "assets/stage/chapter1_location_locked/chunks/seven_eleven_underpass/chunk_03_far_skyline_v1.png",
+      "assets/stage/chapter1_location_locked/chunks/seven_eleven_underpass/chunk_03_ground_v1.png",
+      "assets/stage/chapter1_location_locked/chunks/seven_eleven_underpass/chunk_03_near_occluder_v1.png",
+      "assets/stage/chapter1_location_locked/chunks/soapy_joes_revive/chunk_00_architecture_v1.png",
+      "assets/stage/chapter1_location_locked/chunks/soapy_joes_revive/chunk_00_far_skyline_v1.png",
+      "assets/stage/chapter1_location_locked/chunks/soapy_joes_revive/chunk_00_ground_v1.png",
+      "assets/stage/chapter1_location_locked/chunks/soapy_joes_revive/chunk_00_near_occluder_v1.png",
+      "assets/stage/chapter1_location_locked/chunks/soapy_joes_revive/chunk_01_architecture_v1.png",
+      "assets/stage/chapter1_location_locked/chunks/soapy_joes_revive/chunk_01_far_skyline_v1.png",
+      "assets/stage/chapter1_location_locked/chunks/soapy_joes_revive/chunk_01_ground_v1.png",
+      "assets/stage/chapter1_location_locked/chunks/soapy_joes_revive/chunk_01_near_occluder_v1.png",
+      "assets/stage/chapter1_location_locked/chunks/soapy_joes_revive/chunk_02_architecture_v1.png",
+      "assets/stage/chapter1_location_locked/chunks/soapy_joes_revive/chunk_02_far_skyline_v1.png",
+      "assets/stage/chapter1_location_locked/chunks/soapy_joes_revive/chunk_02_ground_v1.png",
+      "assets/stage/chapter1_location_locked/chunks/soapy_joes_revive/chunk_02_near_occluder_v1.png",
+      "assets/stage/chapter1_location_locked/chunks/soapy_joes_revive/chunk_03_architecture_v1.png",
+      "assets/stage/chapter1_location_locked/chunks/soapy_joes_revive/chunk_03_far_skyline_v1.png",
+      "assets/stage/chapter1_location_locked/chunks/soapy_joes_revive/chunk_03_ground_v1.png",
+      "assets/stage/chapter1_location_locked/chunks/soapy_joes_revive/chunk_03_near_occluder_v1.png",
+      "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_00_architecture_v1.png",
+      "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_00_far_skyline_v1.png",
+      "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_00_ground_v1.png",
+      "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_00_near_occluder_v1.png",
+      "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_01_architecture_v1.png",
+      "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_01_far_skyline_v1.png",
+      "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_01_ground_v1.png",
+      "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_01_near_occluder_v1.png",
+      "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_02_architecture_v1.png",
+      "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_02_far_skyline_v1.png",
+      "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_02_ground_v1.png",
+      "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_02_near_occluder_v1.png",
+      "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_03_architecture_v1.png",
+      "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_03_far_skyline_v1.png",
+      "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_03_ground_v1.png",
+      "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_03_near_occluder_v1.png"
+    ],
+    "generation_receipt": "data/chapter1_art_build.json",
+    "level_ids": [
+      "chapter_1_level_1",
+      "chapter_1_level_2",
+      "chapter_1_level_3",
+      "chapter_1_level_4"
+    ],
+    "vehicle_variants": 4
+  }
+}

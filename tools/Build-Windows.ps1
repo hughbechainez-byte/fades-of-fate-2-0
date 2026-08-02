@@ -76,6 +76,36 @@ try {
     $sourceValidationReport = Join-Path $projectRoot 'build\chapter1_validation_build.json'
     & $python (Join-Path $projectRoot 'tools\validate_chapter1.py') --output $sourceValidationReport
     if ($LASTEXITCODE -ne 0) { throw 'Chapter 1 validation or performance gate failed.' }
+
+    # Produce one byte-identical PC/Android content contract before either
+    # platform package is allowed to build.
+    $contentOutput = Join-Path $projectRoot 'dist\content'
+    & $python (Join-Path $projectRoot 'tools\build_content_release.py') `
+        --project-root $projectRoot `
+        --output-dir $contentOutput `
+        --strict
+    if ($LASTEXITCODE -ne 0) { throw 'Canonical cross-platform content build failed.' }
+    $contentManifest = Join-Path $contentOutput 'fades-of-fate-content-manifest.json'
+    $pcContentManifest = Join-Path $contentOutput 'fades-of-fate-content-manifest-pc.json'
+    $androidContentManifest = Join-Path $contentOutput 'fades-of-fate-content-manifest-android.json'
+    $pcBuildProvenance = Join-Path $contentOutput 'build_provenance-pc.json'
+    foreach ($requiredContentArtifact in @(
+        $contentManifest,
+        $pcContentManifest,
+        $androidContentManifest,
+        $pcBuildProvenance
+    )) {
+        if (-not (Test-Path -LiteralPath $requiredContentArtifact -PathType Leaf)) {
+            throw "Canonical content artifact is missing: $requiredContentArtifact"
+        }
+    }
+    $rootManifestHash = (Get-FileHash -Algorithm SHA256 -LiteralPath $contentManifest).Hash
+    if (
+        (Get-FileHash -Algorithm SHA256 -LiteralPath $pcContentManifest).Hash -ne $rootManifestHash -or
+        (Get-FileHash -Algorithm SHA256 -LiteralPath $androidContentManifest).Hash -ne $rootManifestHash
+    ) {
+        throw 'PC and Android content manifests are not byte-identical.'
+    }
     $env:SDL_VIDEODRIVER = $savedVideoDriver
     $env:SDL_AUDIODRIVER = $savedAudioDriver
 
@@ -108,6 +138,12 @@ try {
     Copy-Item -LiteralPath (Join-Path $projectRoot 'data') -Destination $packageDir -Recurse -Force
     Copy-Item -LiteralPath (Join-Path $projectRoot 'assets') -Destination $packageDir -Recurse -Force
     Copy-Item -LiteralPath (Join-Path $projectRoot 'tools') -Destination $packageDir -Recurse -Force
+    Copy-Item -LiteralPath $contentManifest -Destination (Join-Path $packageDir 'data\content-manifest.json') -Force
+    $packageProvenance = Join-Path $packageDir 'build_provenance.json'
+    Copy-Item -LiteralPath $pcBuildProvenance -Destination $packageProvenance -Force
+    $packageProvenancePayload = Get-Content -LiteralPath $packageProvenance -Raw | ConvertFrom-Json
+    $packageProvenancePayload | Add-Member -NotePropertyName pc_executable_sha256 -NotePropertyValue $packageExeHash -Force
+    $packageProvenancePayload | ConvertTo-Json -Depth 20 | Set-Content -LiteralPath $packageProvenance -Encoding UTF8
     foreach ($file in @(
         'README.md',
         'ToDoList.md',
@@ -145,6 +181,26 @@ try {
     if ($report.status -ne 'pass') {
         throw "Packaged self-test report did not pass: $reportPath"
     }
+    $runtimeProvenancePath = Join-Path $packageDir 'build\runtime_provenance.json'
+    $runtimeProvenance = Get-Content -LiteralPath $runtimeProvenancePath -Raw | ConvertFrom-Json
+    if (
+        -not $runtimeProvenance.artifact_match -or
+        $runtimeProvenance.fallback_asset_used -or
+        $runtimeProvenance.noncanonical_asset_used -or
+        -not $runtimeProvenance.all_assets_resolved
+    ) {
+        throw "Packaged runtime provenance did not match the built artifact: $runtimeProvenancePath"
+    }
+    $visualAcceptance = Join-Path $projectRoot 'build\visual_acceptance.json'
+    & $python (Join-Path $projectRoot 'tools\validate_visual_acceptance.py') `
+        --project-root $projectRoot `
+        --scenery-report $sourceSceneryReport `
+        --validation-report $sourceValidationReport `
+        --content-dir $contentOutput `
+        --runtime-provenance $runtimeProvenancePath `
+        --require-artifact-match `
+        --output $visualAcceptance
+    if ($LASTEXITCODE -ne 0) { throw 'Final visual release acceptance gate failed.' }
     $requiredSceneryChecks = @(
         # Level 1 is the foundation self-test's live gameplay frame; later
         # routes have dedicated background-only checks after campaign travel.
@@ -249,6 +305,11 @@ try {
     Write-Output "SELF_TEST=$reportPath"
     Write-Output "PACKAGE_LOCATION_VALIDATION=$packageLocationReport"
     Write-Output "PACKAGE_EXE_SHA256=$packageExeHash"
+    Write-Output "CONTENT_MANIFEST=$contentManifest"
+    Write-Output "CONTENT_MANIFEST_SHA256=$rootManifestHash"
+    Write-Output "PACKAGE_PROVENANCE=$packageProvenance"
+    Write-Output "RUNTIME_PROVENANCE=$runtimeProvenancePath"
+    Write-Output "VISUAL_ACCEPTANCE=$visualAcceptance"
     Write-Output "SOURCE_SCENERY_REPORT=$sourceSceneryReport"
     Write-Output "SOURCE_WORLDLOCK_CAPTURE=$sourceRouteWorldlockScreenshot"
     Write-Output "SOURCE_ASSET_INVENTORY_SHA256=$sourceAssetInventoryHash"

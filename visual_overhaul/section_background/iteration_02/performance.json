@@ -1,0 +1,15 @@
+{
+  "classification": "actual_headless_cpu_measurement_not_displayed_fps",
+  "commit": "f464aa75dbdea4026e3854390a45686aec66e5e8",
+  "version": "0.15.4-background-life-r5",
+  "measurement_commit": "637a316250b49b1288611b65e6678f232c2f691f",
+  "delta_since_measurement": "Android recipe ordering, symbol-gate diagnostics, Pillow-free startup validation, and packaging only; renderer unchanged",
+  "passed": true,
+  "fixed_step_budget_ms": 16.6667,
+  "draw_p95_ms": 10.2072,
+  "update_p95_ms": 4.3124,
+  "update_plus_draw_p95_ms": 12.8596,
+  "headless_cpu_equivalent_throughput_fps": 98.18,
+  "route_sweep_p95_ms": [5.2566, 10.7029, 4.9409, 4.9448],
+  "working_tree_dirty": false
+}

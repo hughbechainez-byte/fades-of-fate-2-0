@@ -394,6 +394,8 @@ def _backdrop_cache_key(
         float(route.get("near_parallax", 1.0)),
         float(route.get("far_max_offset", 0)),
         float(route.get("near_max_offset", 0)),
+        bool(str(route.get("main_panorama_asset", "")).strip()),
+        str(route.get("main_panorama_asset", "")),
         tuple(
             (
                 key,
@@ -438,17 +440,18 @@ def _compose_static_backdrop_layers(
     sky_layer = pygame.Surface((width, height), pygame.SRCALPHA)
     structure_layer = pygame.Surface((width, height), pygame.SRCALPHA)
 
+    use_authored_main = bool(str(route.get("main_panorama_asset", "")).strip())
     architecture = layers.get("architecture")
     ground = layers.get("ground")
     layered_route = architecture is not None and ground is not None
 
     main = layers.get("main")
-    if not layered_route and main is not None:
+    if (not layered_route or use_authored_main) and main is not None:
         if main.get_size() != (world_width, height):
             raise ValueError("main layer must match route dimensions")
         sky_layer.blit(main, (-_i(camera_x), 0))
 
-    if architecture is not None:
+    if architecture is not None and not use_authored_main:
         if architecture.get_size() != (world_width, height):
             raise ValueError("architecture_asset must match route dimensions")
         if architecture.get_masks()[3]:
@@ -561,7 +564,8 @@ def render_route_backdrop(
 
     sky_layer, structure_layer = cached
     layered_route = layers.get("architecture") is not None and layers.get("ground") is not None
-    if layered_route:
+    use_authored_main = bool(str(route.get("main_panorama_asset", "")).strip())
+    if layered_route and not use_authored_main:
         _draw_opaque_sky(surface, route, atmosphere)
     else:
         surface.blit(sky_layer, (0, 0))

@@ -106,6 +106,76 @@ class BackdropRendererTests(unittest.TestCase):
                     expected,
                 )
 
+    def test_manifest_route_uses_detailed_main_under_transparent_layers(self) -> None:
+        route = {
+            "main_panorama_asset": "assets/stage/chapter1_location_locked/ch1_l1_main_v2.png",
+            "far_parallax": 0.6,
+            "far_max_offset": 0,
+            "near_parallax": 1.0,
+            "near_max_offset": 0,
+        }
+        world_width = 800
+        main = _color_surface(world_width, (world_width, 360), (200, 10, 20, 255))
+        architecture = pygame.Surface((world_width, 360), pygame.SRCALPHA)
+        architecture.fill((210, 180, 80, 255))
+        ground = pygame.Surface((world_width, 360), pygame.SRCALPHA)
+        ground.fill((0, 0, 0, 0))
+        pygame.draw.rect(ground, (200, 0, 140, 255), (0, 220, world_width, 140))
+        layers = {
+            "main": main,
+            "far": None,
+            "near": None,
+            "far_haze": None,
+            "far_skyline": None,
+            "architecture": architecture,
+            "ground": ground,
+            "near_occluder": None,
+        }
+        surface = pygame.Surface((640, 360))
+        backdrop.clear_backdrop_caches()
+        backdrop.render_route_backdrop(
+            surface,
+            "sprouts_el_cilantro",
+            route,
+            layers,
+            camera_x=0,
+            world_width=world_width,
+            atmosphere=None,
+            loader_identity=id(pygame.image.load),
+        )
+        self.assertEqual(surface.get_at((250, 80)), pygame.Color(200, 10, 20, 255))
+        self.assertEqual(surface.get_at((500, 320)), pygame.Color(200, 0, 140, 255))
+
+    def test_cache_key_distinguishes_detailed_main_mode(self) -> None:
+        layers = {
+            name: None
+            for name in (
+                "main",
+                "far",
+                "near",
+                "far_haze",
+                "far_skyline",
+                "architecture",
+                "ground",
+                "near_occluder",
+            )
+        }
+        common = {"far_parallax": 0.6, "near_parallax": 1.0}
+        legacy = backdrop._backdrop_cache_key(
+            "test", 640, 360, 800, 0, common, layers, "loader"
+        )
+        authored = backdrop._backdrop_cache_key(
+            "test",
+            640,
+            360,
+            800,
+            0,
+            {**common, "main_panorama_asset": "assets/main.png"},
+            layers,
+            "loader",
+        )
+        self.assertNotEqual(legacy, authored)
+
     def test_static_cache_reuses_across_atmosphere_time(self) -> None:
         route = {"far_parallax": 0.6, "far_max_offset": 64, "near_parallax": 1.0, "near_max_offset": 0}
         world_width = 700

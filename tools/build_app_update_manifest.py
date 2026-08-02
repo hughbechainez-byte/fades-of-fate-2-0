@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import ast
 import hashlib
 import json
 import re
@@ -19,11 +20,20 @@ def _sha256(path: Path) -> str:
 
 
 def _version(project_root: Path) -> str:
-    game_file = project_root / "src" / "game.py"
-    for line in game_file.read_text(encoding="utf-8").splitlines():
-        if line.strip().startswith("VERSION = "):
-            return line.split("=", 1)[1].strip().strip('"').strip("'")
-    raise RuntimeError("src/game.py does not declare FadesGame.VERSION")
+    """Read the single source-of-truth version without importing the game."""
+
+    version_file = project_root / "src" / "version.py"
+    tree = ast.parse(version_file.read_text(encoding="utf-8"), filename=str(version_file))
+    for node in tree.body:
+        if not isinstance(node, (ast.Assign, ast.AnnAssign)):
+            continue
+        targets = node.targets if isinstance(node, ast.Assign) else [node.target]
+        if not any(isinstance(target, ast.Name) and target.id == "VERSION" for target in targets):
+            continue
+        value = ast.literal_eval(node.value)
+        if isinstance(value, str) and value.strip():
+            return value.strip()
+    raise RuntimeError("src/version.py does not declare a literal VERSION")
 
 
 def main() -> None:

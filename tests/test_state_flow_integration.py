@@ -530,6 +530,25 @@ class StateFlowIntegrationTests(unittest.TestCase):
             game.close()
             manager.close()
 
+    def test_f4_opens_fixed_cross_platform_visual_evidence_scene(self) -> None:
+        manager = InputManager(max_players=4, discover_controllers=False)
+        game = FadesGame(manager, mute=True)
+        try:
+            game.handle_events([pygame.event.Event(pygame.KEYDOWN, {"key": pygame.K_F4})])
+
+            self.assertEqual(game.state, "gameplay")
+            self.assertEqual(game.level_id, "chapter_1_level_1")
+            self.assertEqual(game.camera_x, 800.0)
+            self.assertEqual(game._render_camera_x, 800.0)
+            self.assertEqual(game.encounter_index, len(game.data["encounters"]))
+            self.assertFalse(game.encounter_active)
+            self.assertFalse(game.debug)
+            self.assertEqual([player.character for player in game.players], ["black_dave", "shelly"])
+            self.assertFalse(game.enemies)
+        finally:
+            game.close()
+            manager.close()
+
     def test_treat_release_sound_event_and_art_change_share_one_milestone(self) -> None:
         manager = InputManager(max_players=4, discover_controllers=False)
         game = FadesGame(manager, mute=True)
