@@ -21,11 +21,16 @@ class AndroidPackagingTests(unittest.TestCase):
             / "patches"
             / "include-android-simd-sources.patch"
         ).read_text(encoding="utf-8")
+        workflow = (ROOT / ".github" / "workflows" / "android-apk-release.yml").read_text(
+            encoding="utf-8"
+        )
 
         self.assertIn("p4a.local_recipes = ./recipes", spec)
         self.assertIn("include-android-simd-sources.patch", recipe)
         self.assertIn("src_c/simd_blitters_sse2.c", patch)
         self.assertIn("src_c/simd_blitters_avx2.c", patch)
+        self.assertIn("android-ndk-r25b/toolchains/llvm", workflow)
+        self.assertIn("test -x \"$LLVM_READELF\"", workflow)
 
 
 if __name__ == "__main__":
