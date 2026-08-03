@@ -369,6 +369,8 @@ def enemy_frame(kind: object, state: object, tick: int) -> pygame.Surface | None
         enemy_kind = "whip"
     elif enemy_kind in {"broken_pipe", "thrower"}:
         enemy_kind = "pipe"
+    if enemy_kind == "homeless":
+        return None
     if enemy_kind not in {"stick", "cart", "whip", "pipe"}:
         enemy_kind = "stick"
     return animation_frame(enemy_kind, state, tick)

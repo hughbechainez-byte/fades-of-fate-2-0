@@ -749,7 +749,7 @@
                                  "score":  150,
                                  "token_cost":  1
                              },
-                     "pipe":  {
+                    "pipe":  {
                                   "display_name":  "PIPE TOSSER",
                                   "health":  58,
                                  "speed":  54,
@@ -763,6 +763,20 @@
                                   "score":  160,
                                   "token_cost":  2
                               },
+                    "homeless":  {
+                                     "display_name":  "ENCAMPMENT DRIFTER",
+                                     "health":  44,
+                                     "speed":  57,
+                                     "damage":  6,
+                                     "attack_range":  29,
+                                     "depth_range":  14,
+                                     "windup":  0.26,
+                                     "active":  0.12,
+                                     "recovery":  0.50,
+                                     "cooldown":  1.10,
+                                     "score":  95,
+                                     "token_cost":  1
+                                 },
                     "security":  {
                                      "display_name":  "SECOND STREET SECURITY",
                                      "health":  142,

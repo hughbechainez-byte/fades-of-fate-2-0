@@ -251,6 +251,9 @@ class FadesGame:
         self._content_optional_completed: set[str] = set()
         self._content_event_index = 0
         self._content_event_seen: set[str] = set()
+        self._content_event_props: list[dict[str, Any]] = []
+        self._content_event_ambush_active = False
+        self._content_event_ambush_name = ""
         self.save_repository = SaveRepository(_default_save_path())
         self.save_load_result = self.save_repository.load()
         self.save_data: SaveData = self.save_load_result.data
@@ -1273,6 +1276,9 @@ class FadesGame:
         self._content_optional_completed.clear()
         self._content_event_index = 0
         self._content_event_seen.clear()
+        self._content_event_props.clear()
+        self._content_event_ambush_active = False
+        self._content_event_ambush_name = ""
 
         landmarks = [
             item for item in self.level_data.get("landmarks", ())
@@ -1668,6 +1674,9 @@ class FadesGame:
         living_humans = [player for player in self.players if not player.is_cpu and player.alive]
         if not living_humans:
             return
+        if self.encounter_active:
+            self._content_optional_prompt = ""
+            return
         leader_x = max(player.x for player in living_humans)
         stage_width = max(float(LOGICAL_SIZE[0]), float(self.meta.get("stage_width", LOGICAL_SIZE[0])))
 
@@ -1679,7 +1688,7 @@ class FadesGame:
                     self._content_event_index += 1
                     continue
                 event_id = str(event.get("id", f"event_{self._content_event_index}"))
-                trigger = stage_width * (0.22 + 0.27 * self._content_event_index)
+                trigger = float(event.get("trigger_x", stage_width * (0.22 + 0.27 * self._content_event_index)))
                 if leader_x < trigger:
                     break
                 self._content_event_seen.add(event_id)
@@ -1700,6 +1709,22 @@ class FadesGame:
                     level_id=self.level_id,
                     content_event=event_id,
                 )
+                prop_kind = str(event.get("prop_kind", "")).strip()
+                if prop_kind:
+                    prop_x = float(event.get("x", trigger + 54.0))
+                    prop_depth = float(event.get("depth", 274.0))
+                    self._content_event_props.append(
+                        {
+                            "id": event_id,
+                            "kind": prop_kind,
+                            "x": prop_x,
+                            "depth": prop_depth,
+                            "smoke_phase": float(event.get("smoke_phase", self._content_event_index * 3.0)),
+                        }
+                    )
+                if event.get("spawn_groups"):
+                    self._begin_environment_event(event, leader_x)
+                    return
 
         optional = self._content_optional
         if (
@@ -1717,6 +1742,42 @@ class FadesGame:
         if not any("interact" in snapshot.pressed for snapshot in snapshots_by_slot.values()):
             return
         self._begin_optional_content(optional, leader_x)
+
+    def _begin_environment_event(self, event: dict[str, Any], leader_x: float) -> None:
+        """Launch a short invisible ambush from an authored environmental beat."""
+
+        wave = [
+            str(kind)
+            for group in event.get("spawn_groups", ())
+            if isinstance(group, dict)
+            for kind in group.get("runtime_kinds", ())
+        ]
+        if not wave:
+            return
+        self.encounter_active = True
+        self.active_gate = min(
+            float(self.meta["stage_width"]) - 12.0,
+            max(leader_x + 124.0, float(event.get("trigger_x", leader_x + 124.0)) + 120.0),
+        )
+        self._pending_camera_lock = None
+        self.camera.clear_encounter_lock()
+        self._post_clear_reinforcements.clear()
+        self._content_event_ambush_active = True
+        self._content_event_ambush_name = str(event.get("id", "encampment"))
+        self.spawn_queue = self._anti_clone_order(wave)
+        self.spawn_timer = 0.0
+        scaling = self.runtime_chapter_content.get("runtime_scaling", {})
+        self._encounter_enemy_durability_scale = float(scaling.get("enemy_health_multiplier", 1.0))
+        self._encounter_enemy_damage_scale = float(scaling.get("enemy_damage_multiplier", 1.0))
+        self._encounter_enemy_score_scale = float(scaling.get("reward_multiplier", 1.0))
+        self.stage_banner = f"SET PIECE • {str(event.get('id', 'encampment')).replace('_', ' ').upper()}"
+        self.stage_banner_timer = 1.35
+        self.log_breadcrumb(
+            "chapter_environment_ambush_started",
+            level_id=self.level_id,
+            content_event=str(event.get("id", "")),
+            enemies=self.spawn_queue,
+        )
 
     def _begin_optional_content(self, optional: dict[str, Any], leader_x: float) -> None:
         """Enter a short side encounter that always rejoins the main route."""
@@ -3083,6 +3144,18 @@ class FadesGame:
             if not self.spawn_queue and not any(enemy.alive for enemy in self.enemies):
                 if self._content_optional_active:
                     self._finish_optional_content()
+                    return
+                if self._content_event_ambush_active:
+                    name = self._content_event_ambush_name
+                    self._content_event_ambush_active = False
+                    self._content_event_ambush_name = ""
+                    self.encounter_active = False
+                    self.active_gate = None
+                    self._pending_camera_lock = None
+                    self.camera.clear_encounter_lock()
+                    self.stage_banner = f"{name.upper()} CLEAR"
+                    self.stage_banner_timer = 1.25
+                    self.log_breadcrumb("encounter_cleared", name=name, index=self.encounter_index)
                     return
                 if self._post_clear_reinforcements:
                     self._begin_post_clear_reinforcement()
@@ -4690,6 +4763,16 @@ class FadesGame:
             )
             for feature in self.location_route.get("physical_scene_objects", ())
         )
+        drawables.extend(
+            (
+                float(prop.get("depth", 274.0)),
+                1,
+                str(prop.get("id", "")),
+                "content_prop",
+                prop,
+            )
+            for prop in self._content_event_props
+        )
         security_bubbles: list[tuple[float, float, int, int]] = []
         for _, _, _, kind, obj in sorted(drawables, key=lambda item: (item[0], item[1], item[2])):
             mapping_object = kind in {"prop", "scene_object"}
@@ -4721,6 +4804,16 @@ class FadesGame:
                     y,
                     obj,
                     frame=self.frame // 4,
+                )
+                continue
+            if kind == "content_prop":
+                pixel_art.draw_tent_camp(
+                    surface,
+                    x,
+                    y,
+                    frame=self.frame,
+                    smoke_phase=float(obj.get("smoke_phase", 0.0)),
+                    prop_kind=str(obj.get("kind", "tent_camp")),
                 )
                 continue
             if kind == "player":
@@ -4864,7 +4957,7 @@ class FadesGame:
                         if obj.state in {"windup", "attack", "recovery"}
                         else obj.state
                     )
-                    actor_kind = "stick" if obj.kind in {"security", "security_guard", "guard"} else obj.kind
+                    actor_kind = "stick" if obj.kind in {"security", "security_guard", "guard", "homeless"} else obj.kind
                     if obj.state == "windup":
                         enemy_tick = action_segment_tick(
                             actor_kind,

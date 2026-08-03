@@ -1050,6 +1050,33 @@ def run_foundation_self_test(output_dir: Path | None = None) -> dict[str, Any]:
             report,
             "Sprouts Parking Lot, Town & Country, and El Cilantro at Madison are the complete Level 1 combat route",
         )
+        tent_event = next(
+            event
+            for event in game.runtime_chapter_content.get("environmental_events", ())
+            if isinstance(event, dict) and event.get("id") == "wells_drive_tent_camp"
+        )
+        _check(
+            any("homeless" in group.get("runtime_kinds", ()) for group in tent_event.get("spawn_groups", ())),
+            "level_one_tent_camp_runtime_homeless",
+            report,
+            "the tent camp environmental beat resolves to homeless runtime kinds",
+        )
+        game._begin_environment_event(tent_event, float(tent_event.get("trigger_x", 0.0)) + 16.0)
+        while game.spawn_queue:
+            game._spawn_enemy(game.spawn_queue.pop(0))
+        _check(
+            any(enemy.kind == "homeless" for enemy in game.enemies),
+            "level_one_tent_camp_spawns_homeless",
+            report,
+            "the tent camp ambush spawns a homeless enemy wave",
+        )
+        game.enemies.clear()
+        game.encounter_active = False
+        game.active_gate = None
+        game.spawn_queue.clear()
+        game._post_clear_reinforcements.clear()
+        game._content_event_ambush_active = False
+        game._content_event_ambush_name = ""
         for encounter_index, encounter in enumerate(encounters):
             _check(
                 game.encounter_index == encounter_index,
