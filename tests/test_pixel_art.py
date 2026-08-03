@@ -734,6 +734,17 @@ class PixelArtTests(unittest.TestCase):
         shifts = {plane: second[plane] - first[plane] for plane in first}
         self.assertEqual(shifts, {"far": -46, "mid": -74, "world": -100})
 
+    def test_physical_gameplay_props_use_crisp_nearest_pixel_scaling(self) -> None:
+        authored = pygame.Surface((11, 7), pygame.SRCALPHA)
+        authored.fill((0, 0, 0, 0))
+        authored.fill((224, 113, 72, 255), (2, 1, 7, 5))
+        sprite = pixel_art._pixel_scale(authored, (5, 3))
+        expected = pygame.transform.scale(authored, (5, 3))
+        self.assertEqual(
+            pygame.image.tobytes(sprite, "RGBA"),
+            pygame.image.tobytes(expected, "RGBA"),
+        )
+
     def test_each_route_has_fixed_camera_ambient_motion(self) -> None:
         for theme, stage_width in pixel_art._CHAPTER_ONE_THEME_ROUTE_WIDTHS.items():
             events = pixel_art._CHAPTER_ONE_AMBIENT_EVENTS[theme]

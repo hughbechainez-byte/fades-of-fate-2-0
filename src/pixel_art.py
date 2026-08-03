@@ -43,6 +43,15 @@ GROUND_Y = 292
 CANONICAL_STAGE_WIDTH = 4200
 
 
+def _pixel_scale(source: pygame.Surface, size: tuple[int, int]) -> pygame.Surface:
+    """Scale gameplay art without inventing soft pixels between authored cells."""
+
+    target = (max(1, int(size[0])), max(1, int(size[1])))
+    if source.get_size() == target:
+        return source.copy()
+    return pygame.transform.scale(source, target)
+
+
 class LocationArtError(RuntimeError):
     """Raised when required Chapter 1 art cannot be rendered faithfully."""
 
@@ -3461,7 +3470,8 @@ def _physical_scene_object_sprite(feature: Mapping[str, Any]) -> pygame.Surface:
         raise LocationArtError(f"physical scene object asset has no visible pixels: {asset}")
     visible = authored.subsurface(visible_bounds).copy()
     visible_width = max(1, int(round(visible.get_width() * visible_height / visible.get_height())))
-    sprite = pygame.transform.smoothscale(visible, (visible_width, visible_height))
+    # Match hand-authored homeless/tent art to the logical pixel grid.
+    sprite = _pixel_scale(visible, (visible_width, visible_height))
     if kind == "sedan":
         sprite = _vehicle_variant_surface(sprite, feature)
     if facing < 0:
