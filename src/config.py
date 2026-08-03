@@ -1018,7 +1018,24 @@ def validate_gameplay(
     for move_name in ("heavy", "air"):
         _validate_combat_move(moves.get(move_name), f"moves.{move_name}")
 
-    for character in ("black_dave", "shelly"):
+    jermaine = data["players"].get("jermaine", {})
+    for field in (
+        "height_scale",
+        "speed_scale",
+        "max_health",
+        "weapon_reach_bonus",
+        "weapon_damage_scale",
+        "super_damage",
+        "super_radius",
+        "super_hitstun",
+        "super_knockback",
+    ):
+        if float(jermaine.get(field, 0)) <= 0:
+            raise ConfigError(f"players.jermaine.{field} must be positive")
+    if str(jermaine.get("weapon", "")).upper() != "STICK":
+        raise ConfigError("players.jermaine.weapon must be STICK")
+
+    for character in ("black_dave", "shelly", "jermaine"):
         character_config = data["players"].get(character, {})
         sequence = character_config.get("light_combo_sequence")
         if sequence is None:

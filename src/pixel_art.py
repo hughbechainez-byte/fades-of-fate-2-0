@@ -72,6 +72,7 @@ __all__ = [
     "draw_sunset_epilogue",
     "shade_authored_sprite",
     "draw_player",
+    "draw_jermaine_loading",
     "draw_fist_flames",
     "draw_chief",
     "draw_enemy",
@@ -4459,7 +4460,7 @@ def draw_player(
     *,
     hit_flash: float = 0.0,
 ) -> pygame.Rect:
-    """Draw Black Dave or Shelly as a large, arcade-readable pixel sprite.
+    """Draw Black Dave, Shelly, or Jermaine as an arcade-readable pixel sprite.
 
     Fast authored cels get one restrained, direction-aware afterimage.  It is
     drawn beneath the current cel so the silhouette stays readable while
@@ -4468,7 +4469,13 @@ def draw_player(
 
     name = str(character or "black_dave").strip().lower().replace(" ", "_").replace("-", "_")
     state_name = _state_name(state)
-    accent_default = (217, 72, 64) if name in {"black_dave", "dave", "blackdave"} else (195, 74, 124)
+    accent_default = (
+        (217, 72, 64)
+        if name in {"black_dave", "dave", "blackdave"}
+        else (221, 177, 61)
+        if name == "jermaine"
+        else (195, 74, 124)
+    )
     accent = _rgb(player_color, accent_default)
     if name in {"black_dave", "dave", "blackdave"} and _ko_preview_enabled() and _ko_preview_sprite() is not None:
         ko = _ko_preview_sprite()
@@ -4536,6 +4543,20 @@ def draw_player(
             authored.get_height() - 4,
         )
 
+    if name == "jermaine":
+        _shadow(surface, x, y, 39, 8, elevation=z)
+        sprite = pygame.Surface((112, 112), pygame.SRCALPHA)
+        _draw_jermaine(sprite, state_name, int(frame), accent)
+        rendered = _state_rim_sprite(
+            _hit_flash_sprite(sprite, hit_flash, cache=False),
+            state_name,
+            accent,
+        )
+        _draw_footfall_ticks(surface, x, y, z, facing, state_name, int(frame))
+        _draw_action_ribbon(surface, x, y, z, facing, state_name, 104, int(frame))
+        draw_y = y - _walk_bob(int(frame)) if state_name in {"walk", "run", "move", "jog"} else y
+        return _blit_grounded(surface, rendered, x, draw_y, z, facing, 104)
+
     _shadow(
         surface,
         x,
@@ -4575,6 +4596,146 @@ def draw_player(
     _draw_motion_echo(surface, rendered, x, y, z, facing, 90, state_name, int(frame))
     draw_y = y - _walk_bob(int(frame)) if state_name in {"walk", "run", "move", "jog"} else y
     return _blit_grounded(surface, rendered, x, draw_y, z, facing, 90)
+
+
+def _draw_jermaine(
+    sprite: pygame.Surface,
+    state: str,
+    frame: int,
+    accent: tuple[int, int, int],
+) -> None:
+    """Author Jermaine's tall, narrow stick-fighter silhouette in native pixels."""
+
+    outline = (31, 26, 28)
+    skin_deep = (104, 61, 37)
+    skin = (191, 126, 75)
+    skin_light = (229, 166, 105)
+    white = (225, 223, 207)
+    white_light = (250, 246, 224)
+    pants = (22, 25, 31)
+    pants_light = (48, 52, 61)
+    blue = (31, 79, 137)
+    steel = (103, 106, 105)
+    steel_light = (183, 178, 157)
+    center = 51
+    moving = state in {"walk", "run", "dash", "dodge", "move", "jog"}
+    attacking = state.startswith("attack_") or state in {"light", "heavy", "air_attack", "super"}
+    downed = state in {"down", "downed", "dead", "eliminated"}
+    stride = 5 if moving and (frame // 2) % 2 else -4 if moving else 0
+
+    if downed:
+        pygame.draw.ellipse(sprite, outline, (10, 88, 91, 13))
+        pygame.draw.rect(sprite, pants, (18, 86, 51, 10))
+        pygame.draw.rect(sprite, white, (54, 81, 27, 12))
+        _toned_oval(sprite, (79, 77, 20, 20), outline, skin_deep, skin, skin_light)
+        _outlined_line(sprite, (16, 84), (91, 76), steel, 4, outline)
+        return
+
+    crouch = 7 if state == "dodge" else 0
+    foot_y = 104
+    for leg_x, offset in ((center - 11 + stride, -1), (center + 1 - stride, 1)):
+        pygame.draw.rect(sprite, outline, (leg_x, 69 + crouch, 10, 31 - crouch))
+        pygame.draw.rect(sprite, pants, (leg_x + 2, 70 + crouch, 6, 28 - crouch))
+        pygame.draw.rect(sprite, pants_light, (leg_x + 3 + offset, 73 + crouch, 2, 20 - crouch))
+        pygame.draw.rect(sprite, outline, (leg_x - 5, foot_y - 7, 18, 8))
+        pygame.draw.rect(sprite, white, (leg_x - 3, foot_y - 6, 16, 5))
+        pygame.draw.rect(sprite, white_light, (leg_x + 5, foot_y - 5, 6, 2))
+
+    torso = [(center - 10, 35 + crouch), (center - 6, 29 + crouch), (center + 7, 29 + crouch), (center + 12, 37 + crouch), (center + 9, 72 + crouch), (center - 8, 72 + crouch)]
+    _outlined_poly(sprite, torso, skin, outline, 2)
+    tank = [(center - 7, 31 + crouch), (center - 2, 31 + crouch), (center, 40 + crouch), (center + 4, 40 + crouch), (center + 6, 31 + crouch), (center + 9, 35 + crouch), (center + 8, 70 + crouch), (center - 7, 70 + crouch)]
+    _outlined_poly(sprite, tank, white, outline, 2)
+    pygame.draw.rect(sprite, white_light, (center - 4, 39 + crouch, 3, 23))
+    pygame.draw.rect(sprite, blue, (center + 7, 67 + crouch, 8, 22))
+    pygame.draw.polygon(sprite, _shade(blue, 35), [(center + 9, 72), (center + 15, 77), (center + 10, 88)])
+
+    rear_hand = (center - 15, 54 + crouch)
+    front_hand = (center + 13, 52 + crouch)
+    _outlined_line(sprite, (center - 7, 37 + crouch), rear_hand, skin, 7, outline)
+    _outlined_line(sprite, (center + 8, 37 + crouch), front_hand, skin, 7, outline)
+    _toned_oval(sprite, (rear_hand[0] - 5, rear_hand[1] - 5, 10, 10), outline, skin_deep, skin, skin_light)
+    _toned_oval(sprite, (front_hand[0] - 5, front_hand[1] - 5, 10, 10), outline, skin_deep, skin, skin_light)
+
+    if attacking:
+        heavy = state in {"heavy", "super"}
+        start = (center - 18, 62 if heavy else 55)
+        end = (center + 48, 21 if heavy else 48)
+    elif moving:
+        start = (center - 25, 43 + stride // 2)
+        end = (center + 39, 67 - stride // 2)
+    else:
+        start = (center - 25, 72)
+        end = (center + 27, 31)
+    _outlined_line(sprite, start, end, steel, 5, outline)
+    pygame.draw.line(sprite, steel_light, (start[0] + 2, start[1] - 1), (end[0] + 2, end[1] - 1), 1)
+
+    _toned_oval(sprite, (center - 12, 7 + crouch, 25, 28), outline, skin_deep, skin, skin_light)
+    pygame.draw.rect(sprite, skin_light, (center - 6, 10 + crouch, 8, 2))
+    # Angry brows, narrowed eyes, thin moustache, scraggly goatee, and crooked smile.
+    pygame.draw.line(sprite, outline, (center - 8, 18 + crouch), (center - 1, 20 + crouch), 2)
+    pygame.draw.line(sprite, outline, (center + 2, 20 + crouch), (center + 9, 17 + crouch), 2)
+    pygame.draw.rect(sprite, (238, 225, 188), (center - 7, 22 + crouch, 5, 2))
+    pygame.draw.rect(sprite, (238, 225, 188), (center + 3, 22 + crouch, 5, 2))
+    pygame.draw.rect(sprite, outline, (center - 6, 27 + crouch, 13, 2))
+    pygame.draw.line(sprite, outline, (center - 6, 30 + crouch), (center + 7, 28 + crouch), 2)
+    pygame.draw.rect(sprite, white_light, (center + 1, 29 + crouch, 5, 1))
+    pygame.draw.line(sprite, outline, (center - 3, 32 + crouch), (center + 3, 38 + crouch), 2)
+    pygame.draw.line(sprite, outline, (center + 2, 33 + crouch), (center + 5, 37 + crouch), 1)
+    # Neck/shoulder tattoo marks and cigarette.
+    pygame.draw.line(sprite, outline, (center - 6, 36 + crouch), (center - 2, 43 + crouch), 1)
+    pygame.draw.line(sprite, outline, (center + 5, 36 + crouch), (center + 2, 44 + crouch), 1)
+    pygame.draw.line(sprite, white, (center + 7, 29 + crouch), (center + 17, 31 + crouch), 2)
+    pygame.draw.rect(sprite, (255, 126, 54), (center + 17, 30 + crouch, 2, 2))
+
+
+def draw_jermaine_loading(
+    surface: pygame.Surface,
+    x: float,
+    y: float,
+    *,
+    frame: int = 0,
+) -> pygame.Rect:
+    """Draw Jermaine seated aside, counting money and smoking on the title/loading screen."""
+
+    sprite = pygame.Surface((104, 88), pygame.SRCALPHA)
+    outline = (26, 23, 27)
+    skin = (190, 125, 74)
+    skin_light = (226, 164, 104)
+    pants = (22, 24, 30)
+    white = (230, 226, 207)
+    blue = (33, 80, 139)
+    pygame.draw.ellipse(sprite, (9, 9, 14, 150), (8, 76, 90, 9))
+    # Seated long legs and white shoes.
+    _outlined_line(sprite, (48, 57), (22, 77), pants, 11, outline)
+    _outlined_line(sprite, (55, 58), (83, 77), pants, 11, outline)
+    pygame.draw.rect(sprite, outline, (8, 74, 25, 9))
+    pygame.draw.rect(sprite, white, (10, 75, 22, 6))
+    pygame.draw.rect(sprite, outline, (76, 74, 24, 9))
+    pygame.draw.rect(sprite, white, (77, 75, 21, 6))
+    pygame.draw.rect(sprite, outline, (35, 31, 31, 32))
+    pygame.draw.rect(sprite, white, (38, 33, 25, 29))
+    pygame.draw.rect(sprite, blue, (59, 55, 8, 17))
+    _toned_oval(sprite, (40, 6, 24, 27), outline, (104, 61, 37), skin, skin_light)
+    pygame.draw.rect(sprite, outline, (44, 25, 15, 2))
+    pygame.draw.line(sprite, outline, (47, 29), (53, 34), 2)
+    # Hands count a small animated fan of bills.
+    _outlined_line(sprite, (40, 39), (29, 53), skin, 7, outline)
+    _outlined_line(sprite, (62, 39), (72, 51), skin, 7, outline)
+    spread = int(frame) % 3
+    for index in range(3):
+        bill = pygame.Rect(58 + index * 3 + (spread if index == 2 else 0), 47 - index * 2, 18, 8)
+        pygame.draw.rect(sprite, outline, bill.inflate(2, 2))
+        pygame.draw.rect(sprite, (92, 148, 86), bill)
+        pygame.draw.rect(sprite, (184, 214, 142), bill.inflate(-6, -4))
+    pygame.draw.line(sprite, white, (59, 25), (69, 27), 2)
+    pygame.draw.rect(sprite, (255, 126, 54), (69, 26, 2, 2))
+    smoke = 2 + (int(frame) % 3)
+    pygame.draw.line(sprite, (194, 199, 204), (70, 24), (72 + smoke, 17), 1)
+    pygame.draw.line(sprite, (155, 163, 171), (72 + smoke, 17), (69 + smoke, 11), 1)
+    left = int(round(x)) - sprite.get_width() // 2
+    top = int(round(y)) - sprite.get_height()
+    surface.blit(sprite, (left, top))
+    return pygame.Rect(left, top, sprite.get_width(), sprite.get_height())
 
 
 def draw_fist_flames(

@@ -72,6 +72,7 @@ class StateFlowIntegrationTests(unittest.TestCase):
         portrait_paths = {
             "black_dave": "assets/portraits/dave_portrait_lean_young_v2.png",
             "shelly": "assets/portraits/shelly_portrait_curvy_v1.png",
+            "jermaine": "assets/portraits/jermaine_portrait_v1.png",
         }
         try:
             for character, relative in portrait_paths.items():
@@ -234,8 +235,8 @@ class StateFlowIntegrationTests(unittest.TestCase):
             self.assertEqual(game.state, "character_select")
             click((244, 120))  # Shelly card
             self.assertEqual(game.select_slots[0].character_index, 1)
-            click((400, 120))  # locked slot 3 ignores mouse selection
-            self.assertEqual(game.select_slots[0].character_index, 1)
+            click((400, 120))  # Jermaine is the newly unlocked third hero.
+            self.assertEqual(game.select_slots[0].character_index, 2)
             self.assertNotIn("DEFAULT", " ".join(game._selection_footer_lines()))
             canvas = pygame.Surface((640, 360))
             with mock.patch.object(game, "_text") as draw_text:
@@ -243,17 +244,18 @@ class StateFlowIntegrationTests(unittest.TestCase):
             rendered_labels = [call.args[2] for call in draw_text.call_args_list]
             self.assertIn("CHOOSE WHO YOU CONTROL", rendered_labels)
             self.assertIn("SHELLY + CHIEF", rendered_labels)
-            self.assertIn("YOU CONTROL: SHELLY  •  CPU COMPANION: BLACK DAVE", rendered_labels)
-            self.assertEqual(rendered_labels.count("LOCKED"), 2)
-            self.assertEqual(rendered_labels.count("?"), 2)
+            self.assertIn("JERMAINE", rendered_labels)
+            self.assertIn("YOU CONTROL: JERMAINE  •  CPU COMPANION: SHELLY", rendered_labels)
+            self.assertEqual(rendered_labels.count("LOCKED"), 1)
+            self.assertEqual(rendered_labels.count("?"), 1)
             click((86, 275))   # ready
             self.assertTrue(game.select_slots[0].confirmed)
             click((86, 275))   # start
             self.assertEqual(game.state, "gameplay")
             human = next(player for player in game.players if not player.is_cpu)
             companion = next(player for player in game.players if player.is_cpu)
-            self.assertEqual((human.character, companion.character), ("shelly", "black_dave"))
-            self.assertIs(game.chiefs[0].owner, human)
+            self.assertEqual((human.character, companion.character), ("jermaine", "shelly"))
+            self.assertIs(game.chiefs[0].owner, companion)
 
             game._open_pause_menu(source="test")
             game.handle_events([pygame.event.Event(pygame.MOUSEMOTION, {"pos": (320, 154), "rel": (0, 0), "buttons": (0, 0, 0)})])

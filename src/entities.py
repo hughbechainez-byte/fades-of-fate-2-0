@@ -18,6 +18,7 @@ _ANIMATION_PHASE_COUNT = 16
 # Shelly retains her existing quicker stride and authored timing.
 _HERO_STRIDE_DISTANCE = 120.96
 _SHELLY_STRIDE_DISTANCE = 84.0
+_JERMAINE_STRIDE_DISTANCE = 132.0
 _CHIEF_STRIDE_DISTANCE = 140.0
 _ENEMY_STRIDE_DISTANCE = 70.0
 _COUCH_STRIDE_DISTANCE = 106.0
@@ -53,7 +54,11 @@ def _distance_animation_tick(
 
 def _hero_stride_distance(character: str) -> float:
     normalized = str(character).strip().lower().replace("-", "_").replace(" ", "_")
-    return _SHELLY_STRIDE_DISTANCE if normalized in {"shelly", "shellie"} else _HERO_STRIDE_DISTANCE
+    if normalized in {"shelly", "shellie"}:
+        return _SHELLY_STRIDE_DISTANCE
+    if normalized == "jermaine":
+        return _JERMAINE_STRIDE_DISTANCE
+    return _HERO_STRIDE_DISTANCE
 
 
 def clamp(value: float, low: float, high: float) -> float:
@@ -157,6 +162,8 @@ class Player:
     fist_flame_presses: int = 0
     flaming_fists_timer: float = 0.0
     flaming_fists_ignitions: int = 0
+    jermaine_attack_count: int = 0
+    jermaine_bark_cooldown: float = 0.0
 
     def __post_init__(self) -> None:
         global_cfg = self.config["global"]
@@ -277,6 +284,7 @@ class Player:
         self.invulnerable = max(0.0, self.invulnerable - dt)
         self.hit_flash = max(0.0, self.hit_flash - dt)
         self.bb_cooldown = max(0.0, self.bb_cooldown - dt)
+        self.jermaine_bark_cooldown = max(0.0, self.jermaine_bark_cooldown - dt)
         self.combo_grace = max(0.0, self.combo_grace - dt)
         self.light_buffer_remaining = max(0.0, self.light_buffer_remaining - dt)
         self.heavy_buffer_remaining = max(0.0, self.heavy_buffer_remaining - dt)
@@ -394,6 +402,7 @@ class Player:
                 self.attack_fired = True
             else:
                 self.set_state("heavy", self._move_total(self.moves["heavy"]))
+            self._maybe_bark_as_jermaine(game)
             return
 
         if "alt_light" in snapshot.pressed:
@@ -403,6 +412,7 @@ class Player:
                 self.combo_step = self.combo_step if self.combo_grace > 0 else 0
                 self.combo_style = "z"
                 self.set_state("light", self._move_total(self._alt_light_move()))
+                self._maybe_bark_as_jermaine(game)
             return
 
         if "light" in snapshot.pressed:
@@ -412,6 +422,7 @@ class Player:
                 self.combo_step = self.combo_step if self.combo_grace > 0 else 0
                 self.combo_style = "x"
                 self.set_state("light", self._move_total(self._light_move()))
+                self._maybe_bark_as_jermaine(game)
             return
 
         if "jump" in snapshot.pressed and self.z <= 0.0:
@@ -571,6 +582,26 @@ class Player:
             self.light_buffer_remaining = 0.0
             self.heavy_buffer_remaining = 0.0
             self.set_state("jump" if self.z > 0 else "idle")
+
+    def _maybe_bark_as_jermaine(self, game: Any) -> None:
+        """Show Jermaine's recurring censored threat without spamming combat."""
+
+        if self.character != "jermaine":
+            return
+        self.jermaine_attack_count += 1
+        if self.jermaine_bark_cooldown > 0.0 or self.jermaine_attack_count % 3:
+            return
+        self.jermaine_bark_cooldown = 4.5
+        phrase = "IMA F*** CUZ UP"
+        game.add_effect(
+            "text",
+            self.x,
+            self.y - 82.0,
+            text=phrase,
+            color=(255, 221, 106),
+            duration=1.15,
+        )
+        game.log_breadcrumb("jermaine_combat_bark", player=self.slot + 1, phrase=phrase)
 
     def _update_propane(self, snapshot: InputSnapshot, game: Any, dt: float) -> None:
         """Sustain Shelly's costly secondary flame while the input is held."""
