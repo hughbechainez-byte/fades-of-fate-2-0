@@ -386,11 +386,11 @@ def run_foundation_self_test(output_dir: Path | None = None) -> dict[str, Any]:
                 animation_floor_failures.append(f"{clip.actor}:{clip.state}")
         _check(
             len(ANIMATION_CLIPS) == 91
-            and total_authored_poses() == 828
+            and total_authored_poses() == 836
             and not animation_floor_failures,
-            "animation_floor_91_clips_828_poses",
+            "animation_floor_91_clips_836_poses",
             report,
-            "all 91 active clips provide 8-16 rooted, translation-normalized authored keys (828 total) on a 30 Hz presentation clock",
+            "all 91 active clips provide 8-16 rooted, translation-normalized authored keys (836 total) on a 30 Hz presentation clock",
         )
         fist_cell_size, fist_metadata = sprite_atlas._load_dave_fist_metadata()
         _check(
