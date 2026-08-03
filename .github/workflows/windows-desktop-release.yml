@@ -68,6 +68,7 @@ jobs:
             --package-url "https://github.com/${{ github.repository }}/releases/download/$env:RELEASE_TAG/$(Split-Path -Leaf $env:WINDOWS_ARCHIVE)"
 
       - name: Upload workflow artifact
+        continue-on-error: true
         uses: actions/upload-artifact@v4
         with:
           name: fades-of-fate-windows-${{ env.RELEASE_TAG }}

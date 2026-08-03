@@ -36,6 +36,7 @@ jobs:
           cp dist/content/fades-of-fate-content-manifest.json data/content-manifest.json
 
       - name: Upload content feed artifact
+        continue-on-error: true
         uses: actions/upload-artifact@v4
         with:
           name: fades-content-feed
@@ -103,6 +104,7 @@ jobs:
 
       - name: Upload APK artifact
         if: always()
+        continue-on-error: true
         uses: actions/upload-artifact@v4
         with:
           name: fades-apk-debug
