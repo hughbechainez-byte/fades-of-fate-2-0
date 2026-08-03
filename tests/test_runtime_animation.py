@@ -224,9 +224,9 @@ class RuntimeAnimationClockTests(unittest.TestCase):
         transitions = sum(first != second for first, second in zip(signatures, signatures[1:]))
         expected = normal_speed * 12.0 / _HERO_STRIDE_DISTANCE
         exposure_ms = _HERO_STRIDE_DISTANCE / normal_speed / 12.0 * 1000.0
-        self.assertAlmostEqual(expected, 12.5, delta=0.01)
-        self.assertAlmostEqual(exposure_ms, 80.0, delta=0.01)
-        self.assertIn(transitions, {12, 13})
+        self.assertAlmostEqual(expected, 11.43, delta=0.02)
+        self.assertAlmostEqual(exposure_ms, 87.5, delta=0.05)
+        self.assertIn(transitions, {11, 12})
 
     def test_enemy_chase_clock_stops_cleanly_when_navigation_applies_no_motion(self) -> None:
         enemy = Enemy(77, "stick", 90.0, 260.0, self.game.data["enemies"]["stick"])

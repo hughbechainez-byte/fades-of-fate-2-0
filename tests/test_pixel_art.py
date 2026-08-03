@@ -1440,7 +1440,7 @@ class PixelArtTests(unittest.TestCase):
 
     def test_dave_walk_hold_does_not_add_frame_driven_detail_flicker(self) -> None:
         rendered = []
-        for tick in (0, 1, 2):
+        for tick in (0, 1, 2, 3):
             surface = pygame.Surface((192, 192), pygame.SRCALPHA)
             pixel_art.draw_player(
                 surface,
@@ -1455,7 +1455,8 @@ class PixelArtTests(unittest.TestCase):
             )
             rendered.append(pygame.image.tobytes(surface, "RGBA"))
         self.assertEqual(rendered[0], rendered[1], "one held pose must remain pixel-identical")
-        self.assertNotEqual(rendered[1], rendered[2], "the next deliberate gait pose must still advance")
+        self.assertEqual(rendered[1], rendered[2], "the longer planted contact should stay pixel-identical")
+        self.assertNotEqual(rendered[2], rendered[3], "the next deliberate gait pose must still advance")
 
     def test_character_identity_emblem_is_masked_and_profile_colored(self) -> None:
         authored = sprite_atlas.player_frame("black_dave", "idle", 4)

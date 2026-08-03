@@ -420,13 +420,17 @@ class SpriteAtlasTests(unittest.TestCase):
         self.assertTrue(all(frame is not None for frame in stable_timeline))
         stable_signatures = [_signature(frame) for frame in stable_timeline]
         self.assertEqual(len(set(stable_signatures)), 12, "Dave must use twelve stable gait poses")
-        for pose in range(12):
-            self.assertEqual(
-                stable_signatures[pose * 2],
-                stable_signatures[pose * 2 + 1],
-                "every Dave pose must receive one uniform two-tick hold",
-            )
-        stable_frames = [stable_timeline[pose * 2] for pose in range(12)]
+        expected_counts = {pose: 3 if pose in {0, 5, 6, 11} else 2 if pose in {1, 2, 7, 8} else 1 for pose in range(12)}
+        observed_counts = {pose: 0 for pose in range(12)}
+        pose_signatures: list[bytes] = []
+        stable_frames: list[pygame.Surface] = []
+        for signature in stable_signatures:
+            if signature not in pose_signatures:
+                pose_signatures.append(signature)
+                stable_frames.append(stable_timeline[stable_signatures.index(signature)])
+        for signature in stable_signatures:
+            observed_counts[pose_signatures.index(signature)] += 1
+        self.assertEqual(observed_counts, expected_counts, "Dave's weighted cadence must favor contact and toe-off beats")
         stable_bounds = [frame.get_bounding_rect(min_alpha=1) for frame in stable_frames]
         self.assertEqual({bounds.bottom for bounds in stable_bounds}, {stable_bounds[0].bottom})
         for phase in range(6):

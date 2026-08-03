@@ -13,10 +13,10 @@ from .input_manager import InputSnapshot
 # both 30 and 60 FPS presentation observe the same ordered authored keys.
 ANIMATION_TICKS_PER_SECOND = ANIMATION_PLAYBACK_HZ
 _ANIMATION_PHASE_COUNT = 16
-# Dave's twelve-pose gait travels 120.96 world pixels at the normal 126 px/s
-# pace: one deliberate 0.96-second cycle with an 80 ms exposure per pose.
+# Dave's twelve-pose gait now breathes slightly longer at the normal 126 px/s
+# pace so the approved cels read as one carried stride instead of a shuffle.
 # Shelly retains her existing quicker stride and authored timing.
-_HERO_STRIDE_DISTANCE = 120.96
+_HERO_STRIDE_DISTANCE = 132.30
 _SHELLY_STRIDE_DISTANCE = 84.0
 _CHIEF_STRIDE_DISTANCE = 140.0
 _ENEMY_STRIDE_DISTANCE = 70.0

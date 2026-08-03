@@ -88,7 +88,20 @@ SHELLY_PANTS_WINDOW = (int(ANIMATION_PLAYBACK_HZ * 2), int(ANIMATION_PLAYBACK_HZ
 DAVE_UNIFORM_RENDER_SCALE = 1.12
 COUCH_UNIFORM_RENDER_SCALE = 1.08
 DAVE_STABLE_WALK_POSES = 12
-DAVE_STABLE_WALK_HOLD_TICKS = 2
+DAVE_STABLE_WALK_TICK_MAP = (
+    0, 0, 0,
+    1, 1,
+    2, 2,
+    3,
+    4,
+    5, 5, 5,
+    6, 6, 6,
+    7, 7,
+    8, 8,
+    9,
+    10,
+    11, 11, 11,
+)
 DAVE_STABLE_WALK_STRIP = "assets/sprites/black_dave_walk_identity_v1.png"
 
 
@@ -190,7 +203,7 @@ def player_frame(character: object, state: object, tick: int) -> pygame.Surface 
     if name == "black_dave" and state_name == "walk":
         frames = _dave_stable_walk_frames()
         if frames:
-            return frames[(tick // DAVE_STABLE_WALK_HOLD_TICKS) % len(frames)]
+            return frames[DAVE_STABLE_WALK_TICK_MAP[tick % len(DAVE_STABLE_WALK_TICK_MAP)]]
     if name == "shelly" and state_name == "idle":
         # Shelly primarily uses the same restrained breathing language as Dave,
         # with two short personality beats folded into each idle cycle.
