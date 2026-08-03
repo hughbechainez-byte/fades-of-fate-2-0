@@ -1385,6 +1385,24 @@ class PixelArtTests(unittest.TestCase):
             pygame.image.tobytes(bollard_late, "RGBA"),
             "street props should carry deterministic reflector motion",
         )
+        cone_zero = pygame.Surface((180, 140), pygame.SRCALPHA)
+        cone_late = pygame.Surface((180, 140), pygame.SRCALPHA)
+        pixel_art.draw_stage_prop(cone_zero, 90, 120, "cone", frame=0)
+        pixel_art.draw_stage_prop(cone_late, 90, 120, "cone", frame=2)
+        self.assertNotEqual(
+            pygame.image.tobytes(cone_zero, "RGBA"),
+            pygame.image.tobytes(cone_late, "RGBA"),
+            "traffic cones should show a readable banded shape and micro motion",
+        )
+        cart_zero = pygame.Surface((180, 140), pygame.SRCALPHA)
+        cart_late = pygame.Surface((180, 140), pygame.SRCALPHA)
+        pixel_art.draw_stage_prop(cart_zero, 90, 120, "shopping_cart", frame=0)
+        pixel_art.draw_stage_prop(cart_late, 90, 120, "shopping_cart", frame=1)
+        self.assertNotEqual(
+            pygame.image.tobytes(cart_zero, "RGBA"),
+            pygame.image.tobytes(cart_late, "RGBA"),
+            "shopping carts should show denser basket detail and wheel motion",
+        )
 
     def test_charged_player_states_add_a_rim_without_changing_silhouette(self) -> None:
         authored = sprite_atlas.player_frame("black_dave", "super", 4)

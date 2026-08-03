@@ -9,6 +9,7 @@ os.environ.setdefault("PYGAME_HIDE_SUPPORT_PROMPT", "1")
 
 import pygame
 
+from src.combat_engine import HitBox
 from src.entities import Effect, Enemy
 from src.game import FadesGame, SelectSlot
 from src.input_manager import InputManager
@@ -63,6 +64,18 @@ class GameplayEngineIntegrationTests(unittest.TestCase):
                 float(self.game.data["engine"]["physics"]["player_radius_depth"]),
             )
         )
+
+    def test_light_punch_breaks_a_cone_and_heavier_props_need_two_hits(self) -> None:
+        human = next(player for player in self.game.players if not player.is_cpu)
+        cart = next(item for item in self.game.data["stage_geometry"]["obstacles"] if item["kind"] == "cart_return")
+        self.game._obstacle_health[cart["id"]] = 2
+
+        cart_hit = HitBox(("player_attack", human.slot, 2, "heavy", 2), ("player", human.slot), "player", float(cart["x"]), float(cart["depth"]), half_width=40.0, half_depth=12.0, damage=1.0)
+
+        self.assertEqual(self.game._damage_obstacles_from_attack(human, cart_hit, {"obstacle_damage": 1}), 1)
+        self.assertEqual(self.game._obstacle_health[cart["id"]], 1)
+        self.assertEqual(self.game._damage_obstacles_from_attack(human, cart_hit, {"obstacle_damage": 1}), 1)
+        self.assertEqual(self.game._obstacle_health[cart["id"]], 0)
 
     def test_ground_attack_misses_a_high_jumping_player(self) -> None:
         player = next(player for player in self.game.players if not player.is_cpu)

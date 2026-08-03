@@ -3671,6 +3671,17 @@ def draw_stage_prop(
         if int(frame) % 6 in {2, 3}:
             pygame.draw.rect(sprite, (226, 193, 100), (51, 34, 3, 2))
         bottom = 66
+    elif prop == "cone":
+        # Traffic cone with a weighted base and alternating reflective bands.
+        wobble = (int(frame) % 3) - 1
+        pygame.draw.polygon(sprite, outline, [(42 + wobble, 19), (57 + wobble, 58), (25 + wobble, 58)])
+        pygame.draw.polygon(sprite, (232, 114, 42), [(43 + wobble, 22), (56 + wobble, 56), (26 + wobble, 56)])
+        pygame.draw.polygon(sprite, (247, 204, 127), [(39 + wobble, 34), (60 + wobble, 34), (57 + wobble, 39), (42 + wobble, 39)])
+        pygame.draw.polygon(sprite, (247, 224, 183), [(36 + wobble, 45), (63 + wobble, 45), (60 + wobble, 50), (39 + wobble, 50)])
+        pygame.draw.polygon(sprite, (58, 49, 47), [(20 + wobble, 57), (67 + wobble, 57), (63 + wobble, 64), (24 + wobble, 64)])
+        pygame.draw.rect(sprite, (255, 237, 184), (34 + wobble, 32, 18, 3))
+        pygame.draw.rect(sprite, (255, 245, 220), (32 + wobble, 46, 20, 3))
+        bottom = 66
     elif prop == "cart_return":
         # Green-roofed Sprouts lot corral with nested carts and wheel detail.
         pygame.draw.rect(sprite, outline, (9, 18, 78, 8))
@@ -3697,6 +3708,24 @@ def draw_stage_prop(
                 )
         glint_x = 14 + (int(frame) * 5) % 60
         pygame.draw.rect(sprite, (225, 240, 225), (glint_x, 20, 5, 2))
+        bottom = 66
+    elif prop == "shopping_cart":
+        # Packed wire basket with a folded child seat and four tiny caster wheels.
+        basket_x = 14
+        basket_y = 18
+        sway = (int(frame) % 2) * 2 - 1
+        pygame.draw.polygon(sprite, outline, [(basket_x + 4 + sway, basket_y + 4), (basket_x + 48 + sway, basket_y + 8), (basket_x + 64 + sway, basket_y + 36), (basket_x + 22 + sway, basket_y + 34)])
+        pygame.draw.polygon(sprite, (176, 193, 190), [(basket_x + 7 + sway, basket_y + 7), (basket_x + 46 + sway, basket_y + 10), (basket_x + 60 + sway, basket_y + 33), (basket_x + 25 + sway, basket_y + 31)])
+        for wire_y in (27, 34):
+            pygame.draw.line(sprite, (205, 216, 211), (basket_x + 10 + sway, wire_y), (basket_x + 53 + sway, wire_y + 4), 1)
+        pygame.draw.rect(sprite, (139, 154, 151), (basket_x + 26 + sway, basket_y + 13, 11, 9))
+        pygame.draw.rect(sprite, (74, 87, 84), (basket_x + 29 + sway, basket_y + 14, 5, 4))
+        for wheel_x in (25 + sway, 45 + sway, 55 + sway, 72 + sway):
+            pygame.draw.ellipse(sprite, outline, (wheel_x - 4, 58, 8, 8))
+            pygame.draw.rect(sprite, (120, 129, 129), (wheel_x - 1, 60, 2, 2))
+        pygame.draw.line(sprite, outline, (59 + sway, 20), (79 + sway, 10), 4)
+        pygame.draw.line(sprite, (193, 204, 200), (59 + sway, 20), (79 + sway, 10), 2)
+        pygame.draw.rect(sprite, (229, 240, 229), (18 + sway, 22, 9, 2))
         bottom = 66
     elif prop in {"barrier", "road_barrier"}:
         # Bright construction barrier doubles as a readable arena rail.

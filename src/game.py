@@ -252,6 +252,7 @@ class FadesGame:
         self._content_event_index = 0
         self._content_event_seen: set[str] = set()
         self._content_event_props: list[dict[str, Any]] = []
+        self._obstacle_health: dict[str, int] = {}
         self._content_event_ambush_active = False
         self._content_event_ambush_name = ""
         self.save_repository = SaveRepository(_default_save_path())
@@ -1277,6 +1278,11 @@ class FadesGame:
         self._content_event_index = 0
         self._content_event_seen.clear()
         self._content_event_props.clear()
+        self._obstacle_health = {
+            str(obstacle.get("id", "")): int(obstacle.get("health", self._obstacle_default_health(obstacle)))
+            for obstacle in self.data["stage_geometry"].get("obstacles", ())
+            if str(obstacle.get("id", ""))
+        }
         self._content_event_ambush_active = False
         self._content_event_ambush_name = ""
 
@@ -2968,6 +2974,74 @@ class FadesGame:
             ))
         return tuple(boxes)
 
+    def _obstacle_default_health(self, obstacle: Mapping[str, Any]) -> int:
+        kind = str(obstacle.get("kind", "")).strip().lower()
+        if kind == "cone":
+            return 1
+        if kind in {"cart_return", "shopping_cart"}:
+            return 2
+        if kind == "bollards":
+            return 2
+        return 3
+
+    def _obstacle_health_remaining(self, obstacle: Mapping[str, Any]) -> int:
+        obstacle_id = str(obstacle.get("id", ""))
+        if not obstacle_id:
+            return 0
+        return self._obstacle_health.get(obstacle_id, self._obstacle_default_health(obstacle))
+
+    def _damage_obstacles_from_attack(self, player: Player, attack: HitBox, move: Mapping[str, Any]) -> int:
+        hits = 0
+        attack_half_width = float(attack.half_width)
+        attack_half_depth = float(attack.half_depth) + float(attack.depth_tolerance)
+        attack_x_min = attack.x - attack_half_width
+        attack_x_max = attack.x + attack_half_width
+        attack_y_min = attack.depth - attack_half_depth
+        attack_y_max = attack.depth + attack_half_depth
+        for obstacle in self.data["stage_geometry"].get("obstacles", ()):
+            obstacle_id = str(obstacle.get("id", ""))
+            if not obstacle_id or self._obstacle_health_remaining(obstacle) <= 0:
+                continue
+            obstacle_x = float(obstacle["x"])
+            obstacle_y = float(obstacle["depth"])
+            half_x = float(obstacle["half_width"])
+            half_y = float(obstacle["half_depth"])
+            if attack_x_max < obstacle_x - half_x or attack_x_min > obstacle_x + half_x:
+                continue
+            if attack_y_max < obstacle_y - half_y or attack_y_min > obstacle_y + half_y:
+                continue
+            facing = 1 if player.facing >= 0 else -1
+            if facing > 0 and obstacle_x + half_x < player.x - 8.0:
+                continue
+            if facing < 0 and obstacle_x - half_x > player.x + 8.0:
+                continue
+            damage = max(1, int(round(float(move.get("obstacle_damage", 1.0)))))
+            health = self._obstacle_health_remaining(obstacle) - damage
+            self._obstacle_health[obstacle_id] = max(0, health)
+            hits += 1
+            self.add_effect(
+                "impact",
+                obstacle_x,
+                obstacle_y,
+                color=(255, 224, 113),
+                radius=18 if health > 0 else 28,
+                duration=0.16 if health > 0 else 0.24,
+                projected=True,
+                elevation=8.0,
+            )
+            if health <= 0:
+                self.add_effect(
+                    "shock",
+                    obstacle_x,
+                    obstacle_y,
+                    color=(255, 206, 72),
+                    radius=34,
+                    duration=0.26,
+                    projected=True,
+                    elevation=4.0,
+                )
+        return hits
+
     def _player_hurtboxes(self) -> tuple[HurtBox, ...]:
         boxes: list[HurtBox] = []
         for player in self.players:
@@ -4259,6 +4333,7 @@ class FadesGame:
                         projected=True,
                         elevation=45.0,
                     )
+        hits += self._damage_obstacles_from_attack(player, attack, move)
         if hits:
             self.audio.play("heavy" if heavy_impact else "punch")
         elif play_whiff:
@@ -4793,6 +4868,8 @@ class FadesGame:
         security_bubbles: list[tuple[float, float, int, int]] = []
         for _, _, _, kind, obj in sorted(drawables, key=lambda item: (item[0], item[1], item[2])):
             mapping_object = kind in {"prop", "scene_object", "content_prop"}
+            if kind == "prop" and self._obstacle_health_remaining(obj) <= 0:
+                continue
             world_x = (
                 float(obj.get("world_x", obj.get("x")))
                 if mapping_object
@@ -4804,6 +4881,7 @@ class FadesGame:
                 if kind == "scene_object"
                 else 0.0
             )
+            prop_health = self._obstacle_health_remaining(obj) if kind == "prop" else 0
             projected = self.projection.project(
                 WorldPoint(world_x, world_depth, elevation),
                 camera_x=self._render_camera_x,
@@ -4813,6 +4891,10 @@ class FadesGame:
             x, y = projected.xy
             if kind == "prop":
                 pixel_art.draw_stage_prop(surface, x, y, obj.get("kind", "planter"), self.frame // 4)
+                if prop_health == 1:
+                    pygame.draw.lines(surface, (250, 217, 97), False, [(x - 8, y - 2), (x - 2, y + 5), (x + 7, y - 1)], 2)
+                elif prop_health > 1 and prop_health < self._obstacle_default_health(obj):
+                    pygame.draw.lines(surface, (232, 193, 86), False, [(x - 10, y + 4), (x + 2, y - 3), (x + 11, y + 6)], 2)
                 continue
             if kind == "scene_object":
                 pixel_art.draw_physical_scene_object(
