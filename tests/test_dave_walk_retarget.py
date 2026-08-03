@@ -80,6 +80,9 @@ class DaveWalkRetargetTests(unittest.TestCase):
         self.poses = self.pose_data["poses"]
         self.model = load_character_animation_skin(ART_MODEL)
 
+    def test_pose_data_uses_manifest_stable_lf_bytes(self) -> None:
+        self.assertNotIn(b"\r", POSE_DATA.read_bytes())
+
     def test_character_specific_art_model_wraps_the_reusable_motion_clip(self) -> None:
         self.assertIsInstance(self.model, CharacterAnimationSkin)
         self.assertIsInstance(self.model.motion, GenericMotionClip)

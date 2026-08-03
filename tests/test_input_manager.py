@@ -14,6 +14,7 @@ from src.input_manager import (
     ACTION_BACK,
     ACTION_BB_GUN,
     ACTION_CHIEF,
+    ACTION_ALT_LIGHT,
     ACTION_CONFIRM,
     ACTION_DODGE,
     ACTION_HEAVY,
@@ -151,7 +152,7 @@ class InputManagerTests(unittest.TestCase):
     def test_non_conflicting_keyboard_compatibility_aliases(self) -> None:
         expected = {
             pygame.K_j: ACTION_LIGHT,
-            pygame.K_z: ACTION_LIGHT,
+            pygame.K_z: ACTION_ALT_LIGHT,
             pygame.K_k: ACTION_HEAVY,
             pygame.K_l: ACTION_DODGE,
             pygame.K_v: ACTION_DODGE,
@@ -493,7 +494,8 @@ class InputManagerTests(unittest.TestCase):
 
         self.assertEqual(ACTION_LABELS[ACTION_LIGHT], "Light Attack")
         self.assertEqual(keyboard[ACTION_LIGHT]["primary"], "X")
-        self.assertEqual(keyboard[ACTION_LIGHT]["aliases"], ("J", "Z"))
+        self.assertEqual(keyboard[ACTION_LIGHT]["aliases"], ("J",))
+        self.assertEqual(keyboard[ACTION_ALT_LIGHT]["primary"], "Z")
         self.assertEqual(keyboard[ACTION_HEAVY]["primary"], "C")
         self.assertEqual(keyboard[ACTION_DODGE]["primary"], "Left Shift")
         self.assertEqual(keyboard[ACTION_CHIEF]["primary"], "R")

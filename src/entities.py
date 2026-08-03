@@ -107,8 +107,10 @@ class Player:
     propane_tick: float = 0.0
     invulnerable: float = 0.0
     combo_step: int = 0
+    combo_style: str = "x"
     combo_grace: float = 0.0
     queued_light: bool = False
+    queued_alt_light: bool = False
     queued_heavy: bool = False
     light_buffer_remaining: float = 0.0
     heavy_buffer_remaining: float = 0.0
@@ -197,8 +199,10 @@ class Player:
             # here caused one later button press to launch an unrequested
             # second strike after the player recovered.
             self.combo_step = 0
+            self.combo_style = "x"
             self.combo_grace = 0.0
             self.queued_light = False
+            self.queued_alt_light = False
             self.queued_heavy = False
             self.light_buffer_remaining = 0.0
             self.heavy_buffer_remaining = 0.0
@@ -323,7 +327,7 @@ class Player:
             self._update_jump(game, dt)
             return
 
-        if self.character == "black_dave" and "light" in snapshot.pressed:
+        if self.character == "black_dave" and snapshot.pressed & {"light", "alt_light"}:
             self._record_dave_flame_press(game)
 
         if self.state == "pet":
@@ -384,6 +388,7 @@ class Player:
 
         if "heavy" in snapshot.pressed and self.z <= 1.0:
             game.audio.play_character(self.character, "grunt")
+            self.combo_style = "c"
             if game.try_throw(self):
                 self.set_state("heavy", 0.52)
                 self.attack_fired = True
@@ -391,11 +396,21 @@ class Player:
                 self.set_state("heavy", self._move_total(self.moves["heavy"]))
             return
 
+        if "alt_light" in snapshot.pressed:
+            if self.z > 1.0:
+                self.set_state("air_attack", self._move_total(self.moves["air"]))
+            else:
+                self.combo_step = self.combo_step if self.combo_grace > 0 else 0
+                self.combo_style = "z"
+                self.set_state("light", self._move_total(self._alt_light_move()))
+            return
+
         if "light" in snapshot.pressed:
             if self.z > 1.0:
                 self.set_state("air_attack", self._move_total(self.moves["air"]))
             else:
                 self.combo_step = self.combo_step if self.combo_grace > 0 else 0
+                self.combo_style = "x"
                 self.set_state("light", self._move_total(self._light_move()))
             return
 
@@ -482,8 +497,8 @@ class Player:
             return
 
         if self.state == "light":
-            move = self._light_move()
-            if "light" in snapshot.pressed:
+            move = self._combo_move()
+            if snapshot.pressed & {"light", "alt_light"}:
                 self.queued_light = True
                 self.light_buffer_remaining = float(move.get("buffer_window", 0.22))
             if "heavy" in snapshot.pressed and bool(move.get("heavy_cancel", True)):
@@ -541,7 +556,7 @@ class Player:
                     self.light_buffer_remaining = 0.0
                     self.heavy_buffer_remaining = 0.0
                     self.combo_grace = float(move.get("combo_grace", 0.52))
-                    next_move = self._light_move()
+                    next_move = self._combo_move()
                     self.set_state("light", self._move_total(next_move))
                     return
 
@@ -589,18 +604,30 @@ class Player:
     def _light_sequence(self) -> tuple[int, ...]:
         """Return character-specific indices into the shared light move table."""
 
-        configured = self.config[self.character].get("light_combo_sequence")
+        configured = self.config[self.character].get(f"{self.combo_style}_combo_sequence")
+        key = self._combo_move_key()
         if configured is None:
-            return tuple(range(len(self.moves["light_combo"])))
+            return tuple(range(len(self.moves[key])))
         sequence = tuple(int(index) for index in configured)
-        if not sequence or any(index < 0 or index >= len(self.moves["light_combo"]) for index in sequence):
-            return tuple(range(len(self.moves["light_combo"])))
+        if not sequence or any(index < 0 or index >= len(self.moves[key]) for index in sequence):
+            return tuple(range(len(self.moves[key])))
         return sequence
 
-    def _light_move(self) -> dict[str, Any]:
+    def _combo_move_key(self) -> str:
+        return "alt_light_combo" if self.combo_style == "z" else "heavy_combo" if self.combo_style == "c" else "light_combo"
+
+    def _combo_move(self) -> dict[str, Any]:
         sequence = self._light_sequence()
         chain_index = min(max(0, self.combo_step), len(sequence) - 1)
-        return self.moves["light_combo"][sequence[chain_index]]
+        return self.moves[self._combo_move_key()][sequence[chain_index]]
+
+    def _light_move(self) -> dict[str, Any]:
+        self.combo_style = "x"
+        return self._combo_move()
+
+    def _alt_light_move(self) -> dict[str, Any]:
+        self.combo_style = "z"
+        return self._combo_move()
 
     @staticmethod
     def _move_total(move: dict[str, Any]) -> float:
