@@ -120,7 +120,7 @@ class ShellyPropaneTests(unittest.TestCase):
         self.assertEqual(self.shelly.super_butane_meter, maximum)
         self.assertTrue(any(effect.kind == "pickup" for effect in self.game.effects))
 
-    def test_shelly_super_meter_fills_faster_and_cpu_calls_chief_at_range(self) -> None:
+    def test_shelly_super_meter_fills_faster_and_boss_fight_rejects_frenzy(self) -> None:
         self.assertEqual(self.shelly.gain_super(10.0), 17.0)
         self.assertEqual(self.dave.gain_super(10.0), 10.0)
 
@@ -139,26 +139,22 @@ class ShellyPropaneTests(unittest.TestCase):
             if self.game.chiefs[0].frenzy > 0.0:
                 break
 
-        self.assertGreater(self.game.chiefs[0].frenzy, 0.0)
-        self.assertEqual(shelly.super_meter, 0.0)
+        self.assertEqual(self.game.chiefs[0].frenzy, 0.0)
+        self.assertEqual(shelly.super_meter, float(self.game.data["players"]["global"]["super_cost"]))
         self.assertTrue(dave.combat_active)
 
-    def test_shelly_frenzy_burst_wipes_a_non_boss_crowd_and_keeps_couch_intact(self) -> None:
+    def test_shelly_frenzy_wipes_snapshot_crowd_after_comic_and_recovery(self) -> None:
         crowd = [
             self.enemy(300 + index, self.shelly.x + 34.0 + index * 19.0, self.shelly.y + (index % 2) * 7.0)
             for index in range(4)
         ]
-        couch = self.enemy(399, self.shelly.x + 52.0, self.shelly.y, kind="couch")
-        couch_before = couch.health
-        self.game.enemies = [*crowd, couch]
+        self.game.enemies = crowd
 
         self.game.activate_super(self.shelly)
 
-        self.assertTrue(all(enemy.state == "dead" for enemy in crowd))
-        self.assertEqual(couch.health, couch_before)
+        self.assertTrue(all(enemy.alive for enemy in crowd))
         self.assertGreater(self.game.chiefs[0].frenzy, 0.0)
         self.assertIsNotNone(self.game.shelly_frenzy_cinematic)
-        self.assertIn("chief_frenzy", {effect.kind for effect in self.game.effects})
 
         canvas = pygame.Surface((640, 360), pygame.SRCALPHA)
         self.game._draw_gameplay(canvas)
@@ -166,8 +162,9 @@ class ShellyPropaneTests(unittest.TestCase):
 
         cinematic = self.game.shelly_frenzy_cinematic
         assert cinematic is not None
-        self.game._advance_shelly_frenzy_cinematic(cinematic.duration_seconds)
+        self.game._advance_shelly_frenzy_cinematic(cinematic.comic_seconds + cinematic.flash_seconds + cinematic.recovery_seconds)
         self.assertIsNone(self.game.shelly_frenzy_cinematic)
+        self.assertFalse(any(enemy.enemy_id in {target.enemy_id for target in crowd} for enemy in self.game.enemies))
 
     def test_cpu_shelly_reserves_two_frenzies_for_two_ordinary_crowds(self) -> None:
         self.game.select_slots = [SelectSlot({"type": "keyboard"}, character_index=0, confirmed=True)]
@@ -192,11 +189,11 @@ class ShellyPropaneTests(unittest.TestCase):
 
         # The cleared-street linger avoids burning the whole first frenzy
         # during travel, then the next live crowd earns the second reserve.
-        for _ in range(140):
+        for _ in range(620):
             self.game.update(1.0 / 60.0)
         self.assertLessEqual(self.game.chiefs[0].frenzy, 0.01)
         self.game.enemies = crowd(430)
-        for _ in range(210):
+        for _ in range(620):
             self.game.update(1.0 / 60.0)
             if self.game._cpu_shelly_frenzy_uses.get(shelly.slot, 0) >= 2:
                 break

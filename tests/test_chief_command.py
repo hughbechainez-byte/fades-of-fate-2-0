@@ -210,6 +210,7 @@ class ChiefCommandTests(unittest.TestCase):
             / float(self.game.data["chief"]["frenzy_cooldown"])
         )
         self.assertLess(command_damage, frenzy_total * 0.15)
+        self.game.enemies = [self.enemy(39, self.shelly.x + 48.0, self.shelly.y)]
         self.game.activate_super(self.shelly)
         self.assertGreater(self.chief.frenzy, 7.5)
 
@@ -231,7 +232,7 @@ class ChiefCommandTests(unittest.TestCase):
             places=5,
         )
 
-    def test_cpu_shelly_supers_against_a_single_boss_when_charged(self) -> None:
+    def test_cpu_shelly_super_is_refunded_against_a_single_boss(self) -> None:
         boss = self.enemy(41, self.shelly.x + 28.0, self.shelly.y, kind="couch")
         boss.cooldown = 99.0
         self.game.enemies = [boss]
@@ -239,11 +240,11 @@ class ChiefCommandTests(unittest.TestCase):
 
         for _ in range(14):
             self.game.update(1.0 / 60.0)
-            if self.chief.frenzy > 0.0:
+            if self.shelly.state == "idle":
                 break
 
-        self.assertGreater(self.chief.frenzy, 0.0)
-        self.assertEqual(self.shelly.super_meter, 0.0)
+        self.assertEqual(self.chief.frenzy, 0.0)
+        self.assertEqual(self.shelly.super_meter, float(self.game.data["players"]["global"]["super_cost"]))
 
     def test_autonomous_bite_lands_then_chief_guards_during_cooldown(self) -> None:
         self.dave.x = 400.0
