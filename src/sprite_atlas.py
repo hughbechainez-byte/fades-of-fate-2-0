@@ -79,11 +79,12 @@ _ATLAS_COLUMNS = {
     for relative in {clip.atlas for clip in ANIMATION_CLIPS}
 }
 
-# Keep Shelly's 60-second personality cycle in real time on the shared 30 Hz
-# animation clock, independent of the renderer's 30/60 FPS presentation rate.
-SHELLY_IDLE_CYCLE_TICKS = int(ANIMATION_PLAYBACK_HZ * 60)
-SHELLY_REFILL_WINDOW = (int(ANIMATION_PLAYBACK_HZ * 24), int(ANIMATION_PLAYBACK_HZ * 30))
-SHELLY_PANTS_WINDOW = (int(ANIMATION_PLAYBACK_HZ * 48), int(ANIMATION_PLAYBACK_HZ * 53))
+# Keep Shelly's personality cycle in real time on the shared 30 Hz animation
+# clock, independent of the renderer's 30/60 FPS presentation rate. The cycle
+# starts the waistband beat early enough to be observed during ordinary pauses.
+SHELLY_IDLE_CYCLE_TICKS = int(ANIMATION_PLAYBACK_HZ * 12)
+SHELLY_REFILL_WINDOW = (int(ANIMATION_PLAYBACK_HZ * 7), int(ANIMATION_PLAYBACK_HZ * 9.5))
+SHELLY_PANTS_WINDOW = (int(ANIMATION_PLAYBACK_HZ * 2), int(ANIMATION_PLAYBACK_HZ * 5.5))
 DAVE_UNIFORM_RENDER_SCALE = 1.12
 COUCH_UNIFORM_RENDER_SCALE = 1.08
 
@@ -165,9 +166,8 @@ def player_frame(character: object, state: object, tick: int) -> pygame.Surface 
     state_name = _state_name(state)
     tick = max(0, int(tick))
     if name == "shelly" and state_name == "idle":
-        # Shelly primarily uses the same restrained breathing language as Dave.
-        # Her butane refill and waistband adjustment are long personality beats,
-        # but together occupy less than one fifth of this sixty-second cycle.
+        # Shelly primarily uses the same restrained breathing language as Dave,
+        # with two short personality beats folded into each idle cycle.
         idle_phase = tick % SHELLY_IDLE_CYCLE_TICKS
         refill_start, refill_end = SHELLY_REFILL_WINDOW
         pants_start, pants_end = SHELLY_PANTS_WINDOW

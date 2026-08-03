@@ -34,8 +34,11 @@ from tools.build_animation_library import (  # noqa: E402
     HERO_SOURCES,
     JERRY_SOURCES,
     PROFILES,
+    SHELLY_MICROTORCH_ANCHORS,
     SHELLY_EXTRA_SOURCES,
+    SHELLY_REFILL_TORCH_ANCHORS,
     PoseTransform,
+    _add_shelly_microtorch,
     _canonicalize,
     _profile_for,
     _remove_tiny_alpha_components,
@@ -63,7 +66,7 @@ ATLAS_SPECS = {
 
 ANIMATION_ATLAS_SPECS = {
     "assets/sprites/black_dave_animation_atlas.png": (1536, 2176),
-    "assets/sprites/shelly_animation_atlas.png": (1536, 2176),
+    "assets/sprites/shelly_animation_atlas.png": (2048, 2176),
     "assets/sprites/chief_animation_atlas.png": (2048, 704),
     "assets/sprites/chief_maul_animation_strip.png": (2048, 128),
     "assets/sprites/enemies_animation_atlas.png": (1920, 4096),
@@ -125,7 +128,7 @@ class SpriteAtlasTests(unittest.TestCase):
 
     def test_every_active_animation_uses_meaningful_capture_safe_authored_keys(self) -> None:
         self.assertEqual(len(ANIMATION_CLIPS), 91)
-        self.assertEqual(total_authored_poses(), 828)
+        self.assertEqual(total_authored_poses(), 836)
         self.assertEqual(ANIMATION_TICKS_PER_SECOND, 30.0)
         for clip in ANIMATION_CLIPS:
             with self.subTest(actor=clip.actor, state=clip.state):
@@ -210,9 +213,15 @@ class SpriteAtlasTests(unittest.TestCase):
             _signature(sprite_atlas.player_frame("shelly", "idle", tick)) in breath_signatures
             for tick in range(sprite_atlas.SHELLY_IDLE_CYCLE_TICKS)
         )
-        self.assertEqual(refill_count, 180)
-        self.assertEqual(pants_count, 150)
-        self.assertGreaterEqual(breathing_count, 1_470, "subtle breathing must remain Shelly's default idle")
+        self.assertEqual(refill_count, sprite_atlas.SHELLY_REFILL_WINDOW[1] - sprite_atlas.SHELLY_REFILL_WINDOW[0])
+        self.assertEqual(pants_count, sprite_atlas.SHELLY_PANTS_WINDOW[1] - sprite_atlas.SHELLY_PANTS_WINDOW[0])
+        self.assertGreaterEqual(
+            breathing_count,
+            sprite_atlas.SHELLY_IDLE_CYCLE_TICKS
+            - (sprite_atlas.SHELLY_REFILL_WINDOW[1] - sprite_atlas.SHELLY_REFILL_WINDOW[0])
+            - (sprite_atlas.SHELLY_PANTS_WINDOW[1] - sprite_atlas.SHELLY_PANTS_WINDOW[0]),
+            "subtle breathing must remain Shelly's default idle",
+        )
 
         extended_refill = {
             _signature(sprite_atlas.player_frame("shelly", "refill", tick))
@@ -222,8 +231,8 @@ class SpriteAtlasTests(unittest.TestCase):
             _signature(sprite_atlas.player_frame("shelly", "pants_pull", tick))
             for tick in range(120)
         }
-        self.assertEqual(len(extended_refill), 12)
-        self.assertEqual(len(extended_pants), 12)
+        self.assertEqual(len(extended_refill), 16)
+        self.assertEqual(len(extended_pants), 16)
 
         chief_signatures = {
             tuple(_signature(frame) for frame in sprite_atlas.animation_frames("chief", state))
@@ -658,8 +667,15 @@ class SpriteAtlasTests(unittest.TestCase):
     def test_every_shelly_non_idle_cell_has_one_anatomy_source_and_keeps_fire(self) -> None:
         sprite_root = resource_path("assets/sprites")
         reference_root = resource_path("assets/reference")
-        base_sources = _split(sprite_root / "shelly_atlas.png", 5, 4)
-        extra_sources = _split(sprite_root / "shelly_idle_extended.png", 8, 2)
+        base_sources = [
+            _add_shelly_microtorch(frame, SHELLY_MICROTORCH_ANCHORS[index])
+            for index, frame in enumerate(_split(sprite_root / "shelly_atlas.png", 5, 4))
+        ]
+        extra_sources = [
+            _add_shelly_microtorch(frame, SHELLY_REFILL_TORCH_ANCHORS[index])
+            if index < len(SHELLY_REFILL_TORCH_ANCHORS) else frame
+            for index, frame in enumerate(_split(sprite_root / "shelly_idle_extended.png", 8, 2))
+        ]
         walk_sources = [
             _remove_distant_walk_ghosts(frame)
             for frame in _split(reference_root / "shelly_walk_reference_v2.png", 6, 2)

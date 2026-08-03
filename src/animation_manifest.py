@@ -21,6 +21,7 @@ import math
 BASE_POSES_PER_CLIP = 8
 BASE_EXTENDED_HERO_POSES = 12
 BASE_EXPANDED_PARTY_IDLE_POSES = 16
+SHELLY_PERSONALITY_POSES = 16
 # Combat simulation remains fixed at 60 Hz.  Sprite selection deliberately
 # quantizes time to 30 Hz so a 30 FPS recording and a 60 FPS display observe
 # the same ordered pose stream instead of two different halves of it.
@@ -307,6 +308,24 @@ BASE_PHASES = {
 # holds belong to the clip; the atlas must never manufacture count-padding.
 PHASES = {name: tuple(keyframes) for name, keyframes in BASE_PHASES.items()}
 
+# Shelly's two idle personality beats get a denser authored cadence than the
+# ordinary combat clips. The extra registered poses keep the gesture readable
+# at both 30 and 60 FPS without changing any gameplay timing.
+SHELLY_PERSONALITY_PHASES = {
+    "refill": (
+        "inspect", "raise_can", "raise_can_hold", "align_valve",
+        "align_valve_hold", "connect", "press_fill_start", "press_fill",
+        "press_fill_hold", "release", "remove_can_start", "remove_can",
+        "lower_can", "ready_transition", "ready_hold", "ready",
+    ),
+    "pants": (
+        "notice", "reach_back_start", "reach_back", "grip_waist",
+        "grip_waist_hold", "pull_start", "pull_mid", "pull_high_start",
+        "pull_high", "settle_band_start", "settle_band", "release_start",
+        "release", "reset_posture", "ready_transition", "ready",
+    ),
+}
+
 
 PLAYER_STATES = (
     "idle",
@@ -456,7 +475,11 @@ ANIMATION_CLIPS: tuple[AnimationClip, ...] = tuple(
             128,
             128,
             *_loop_and_hold(actor, state),
-            PHASES[_player_phase(actor, state)],
+            (
+                SHELLY_PERSONALITY_PHASES[state]
+                if actor == "shelly" and state in SHELLY_PERSONALITY_PHASES
+                else PHASES[_player_phase(actor, state)]
+            ),
         )
         for actor in ("black_dave", "shelly")
         for row, state in enumerate(PLAYER_STATES)
@@ -847,6 +870,8 @@ __all__ = [
     "BASE_EXTENDED_HERO_POSES",
     "BASE_PHASES",
     "BASE_POSES_PER_CLIP",
+    "SHELLY_PERSONALITY_PHASES",
+    "SHELLY_PERSONALITY_POSES",
     "CHIEF_ATLAS_STATES",
     "CHIEF_STATES",
     "COUCH_STATES",

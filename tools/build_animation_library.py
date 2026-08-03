@@ -200,20 +200,24 @@ PROFILES: dict[str, tuple[PoseTransform, ...]] = {
         PoseTransform(0, 1.01, 0.98, 0, 2), PoseTransform(0, 1.00, 1.00),
     ),
     "refill_extended": (
-        PoseTransform(0.0, 1.000, 1.000), PoseTransform(-1.5, 1.012, 0.992, -1),
+        PoseTransform(0.0, 1.000, 1.000), PoseTransform(-0.8, 1.006, 0.996, -1),
+        PoseTransform(-1.5, 1.012, 0.992, -1), PoseTransform(-1.1, 1.010, 0.994, -1),
         PoseTransform(-0.8, 1.008, 0.996, -1), PoseTransform(-1.1, 1.012, 0.992, -1, 1),
-        PoseTransform(-1.3, 1.016, 0.988, 0, 1), PoseTransform(-1.0, 1.020, 0.986, 0, 2),
-        PoseTransform(-0.6, 1.018, 0.988, 1, 2), PoseTransform(-0.2, 1.014, 0.992, 1, 1),
-        PoseTransform(0.3, 1.010, 0.996, 1, 1), PoseTransform(0.7, 1.008, 0.998, 1),
-        PoseTransform(0.4, 1.004, 1.000), PoseTransform(1.4, 1.008, 0.996, 1),
+        PoseTransform(-1.3, 1.016, 0.988, 0, 1), PoseTransform(-1.2, 1.018, 0.987, 0, 2),
+        PoseTransform(-1.0, 1.020, 0.986, 0, 2), PoseTransform(-0.6, 1.018, 0.988, 1, 2),
+        PoseTransform(-0.2, 1.014, 0.992, 1, 1), PoseTransform(0.3, 1.010, 0.996, 1, 1),
+        PoseTransform(0.7, 1.008, 0.998, 1), PoseTransform(0.4, 1.004, 1.000),
+        PoseTransform(0.9, 1.006, 0.998, 1), PoseTransform(1.4, 1.008, 0.996, 1),
     ),
     "pants_extended": (
-        PoseTransform(0.0, 1.000, 1.000), PoseTransform(1.1, 1.012, 0.992, 1, 1),
-        PoseTransform(0.8, 1.008, 0.994, 1, 2), PoseTransform(1.2, 1.012, 0.988, 1, 3),
-        PoseTransform(1.5, 1.016, 0.982, 2, 4), PoseTransform(1.2, 1.020, 0.978, 2, 5),
-        PoseTransform(0.8, 1.022, 0.976, 1, 6), PoseTransform(0.3, 1.018, 0.980, 1, 5),
-        PoseTransform(-1.4, 1.008, 0.995, -1, 3), PoseTransform(-0.6, 1.010, 0.992, 0, 3),
-        PoseTransform(-0.3, 1.006, 0.996, 0, 1), PoseTransform(1.4, 1.012, 0.992, 1),
+        PoseTransform(0.0, 1.000, 1.000), PoseTransform(0.6, 1.006, 0.996, 1),
+        PoseTransform(1.1, 1.012, 0.992, 1, 1), PoseTransform(0.8, 1.008, 0.994, 1, 2),
+        PoseTransform(1.2, 1.012, 0.988, 1, 3), PoseTransform(1.4, 1.014, 0.985, 2, 3),
+        PoseTransform(1.5, 1.016, 0.982, 2, 4), PoseTransform(1.9, 1.026, 0.972, 2, 6),
+        PoseTransform(1.2, 1.020, 0.978, 2, 5), PoseTransform(0.8, 1.022, 0.976, 1, 6),
+        PoseTransform(0.3, 1.018, 0.980, 1, 5), PoseTransform(-0.5, 1.012, 0.987, 0, 4),
+        PoseTransform(-1.4, 1.008, 0.995, -1, 3), PoseTransform(-0.9, 1.008, 0.994, -1, 3),
+        PoseTransform(-0.6, 1.010, 0.992, 0, 3), PoseTransform(-0.3, 1.006, 0.996, 0, 1),
     ),
     "sit": (
         PoseTransform(0, 1.00, 1.00), PoseTransform(0, 1.03, 0.91, 0, 5),
@@ -371,8 +375,11 @@ HERO_WALK_TORSO_ROOT_X: dict[str, tuple[float, ...]] = {
     "shelly": (161.0, 142.0, 142.0, 125.0, 113.0, 125.0, 159.0, 145.0, 141.0, 123.0, 108.0, 116.0),
 }
 SHELLY_EXTRA_SOURCES = {
-    "refill": (0, 1, 2, 3, 3, 4, 4, 5, 5, 6, 7, 7),
-    "pants": (8, 8, 9, 9, 10, 11, 12, 13, 13, 14, 15, 15),
+    # Each source drawing gets a registered approach/settle in-between. The
+    # paired keys are intentionally transformed by the 16-pose profiles above,
+    # so they do not become identical atlas cells.
+    "refill": (0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7),
+    "pants": (8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15),
 }
 CHIEF_SOURCES = {
     "idle": (0, 1, 2, 3, 4, 3, 2, 1, 0, 2, 4, 1),
@@ -825,6 +832,44 @@ def _canonicalize(frames: list[Image.Image], preserved: set[int]) -> list[Image.
     return [frame if index in preserved else frame.transpose(transpose) for index, frame in enumerate(frames)]
 
 
+SHELLY_MICROTORCH_ANCHORS: tuple[tuple[int, int], ...] = (
+    (90, 42), (90, 42), (80, 38), (96, 43), (96, 60),
+    (94, 47), (94, 47), (94, 47), (94, 47), (94, 47),
+    (95, 42), (108, 42), (109, 50), (91, 28), (108, 42),
+    (47, 29), (105, 46), (53, 49), (80, 35), (57, 43),
+)
+SHELLY_REFILL_TORCH_ANCHORS: tuple[tuple[int, int], ...] = (
+    (94, 41), (94, 41), (79, 38), (94, 43),
+    (94, 43), (94, 43), (94, 43), (94, 43),
+)
+
+
+def _add_shelly_microtorch(source: Image.Image, anchor: tuple[int, int]) -> Image.Image:
+    """Replace the old grenade-like hand prop with a compact R-shaped torch."""
+
+    frame = source.copy()
+    draw = ImageDraw.Draw(frame)
+    x, y = anchor
+    outline = (31, 27, 31, 255)
+    metal_dark = (54, 65, 70, 255)
+    metal = (117, 139, 141, 255)
+    metal_light = (202, 218, 205, 255)
+    cyan = (63, 183, 193, 255)
+    silhouette = [
+        (x - 4, y + 2), (x - 4, y - 12), (x - 1, y - 16),
+        (x + 3, y - 16), (x + 5, y - 13), (x + 5, y - 9),
+        (x + 3, y - 7), (x + 6, y - 3), (x + 6, y + 2),
+    ]
+    draw.polygon(silhouette, fill=outline)
+    draw.rectangle((x - 2, y - 10, x + 2, y), fill=metal_dark)
+    draw.rectangle((x - 1, y - 9, x + 1, y - 1), fill=metal)
+    draw.rectangle((x - 1, y - 7, x + 1, y - 5), fill=cyan)
+    draw.line((x + 1, y - 14, x + 5, y - 18), fill=outline, width=3)
+    draw.line((x + 2, y - 15, x + 5, y - 18), fill=metal_light, width=1)
+    draw.line((x + 3, y - 6, x + 5, y - 3), fill=metal_light, width=1)
+    return frame
+
+
 def _render_pose(
     source: Image.Image,
     transform: PoseTransform,
@@ -1085,7 +1130,10 @@ def _make_atlases(output_root: Path) -> dict[tuple[str, str], list[Image.Image]]
     sprite_root = PROJECT_ROOT / "assets" / "sprites"
     source_sets: dict[str, list[Image.Image]] = {
         "black_dave": _split(sprite_root / "black_dave_atlas.png", 5, 4),
-        "shelly": _split(sprite_root / "shelly_atlas.png", 5, 4),
+        "shelly": [
+            _add_shelly_microtorch(frame, SHELLY_MICROTORCH_ANCHORS[index])
+            for index, frame in enumerate(_split(sprite_root / "shelly_atlas.png", 5, 4))
+        ],
         "black_dave_walk": [
             _remove_distant_walk_ghosts(frame)
             for frame in _split(PROJECT_ROOT / "assets" / "reference" / "black_dave_walk_reference_v2.png", 6, 2)
@@ -1094,7 +1142,11 @@ def _make_atlases(output_root: Path) -> dict[tuple[str, str], list[Image.Image]]
             _remove_distant_walk_ghosts(frame)
             for frame in _split(PROJECT_ROOT / "assets" / "reference" / "shelly_walk_reference_v2.png", 6, 2)
         ],
-        "shelly_extras": _split(sprite_root / "shelly_idle_extended.png", 8, 2),
+        "shelly_extras": [
+            _add_shelly_microtorch(frame, SHELLY_REFILL_TORCH_ANCHORS[index])
+            if index < len(SHELLY_REFILL_TORCH_ANCHORS) else frame
+            for index, frame in enumerate(_split(sprite_root / "shelly_idle_extended.png", 8, 2))
+        ],
         "chief": _split(sprite_root / "chief_atlas.png", 5, 3),
         "enemies": _canonicalize(_split(sprite_root / "enemies_atlas.png", 5, 4), {8, 18}),
         "couch": [

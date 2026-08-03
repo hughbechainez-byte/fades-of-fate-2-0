@@ -4056,17 +4056,23 @@ def _draw_shelly(sprite: pygame.Surface, state: str, frame: int, accent: tuple[i
         arm = [(center + 8, 32 + crouch), (center + 18, 34 + crouch), (center + reach, 26 + crouch), (center + reach + 7, 30 + crouch), (center + 18, 44 + crouch), (center + 9, 42 + crouch)]
         _outlined_poly(sprite, arm, skin, outline, 2)
         pygame.draw.polygon(sprite, skin_light, [(center + 16, 35 + crouch), (center + reach, 28 + crouch), (center + reach + 3, 30 + crouch), (center + 18, 39 + crouch)])
-        # Metal torch lighter has nozzle, fuel window, ignition and a large plume.
+        # Compact R-shaped micro-torch: a short fuel body, side trigger and
+        # angled nozzle. Keep the prop small so it reads as a tool, not a grenade.
         torch_x = center + reach + 5
-        pygame.draw.rect(sprite, outline, (torch_x, 19 + crouch, 9, 17))
-        pygame.draw.rect(sprite, (71, 78, 84), (torch_x + 2, 22 + crouch, 5, 12))
-        pygame.draw.rect(sprite, (83, 177, 186), (torch_x + 3, 27 + crouch, 3, 5))
-        pygame.draw.rect(sprite, (190, 198, 194), (torch_x + 2, 18 + crouch, 7, 5))
-        flame = [(torch_x + 3, 19 + crouch), (torch_x - 1, 11 + crouch), (torch_x + 3, 3 + crouch), (torch_x + 8, 11 + crouch), (torch_x + 7, 19 + crouch)]
+        torch_y = 36 + crouch
+        torch_outline = [(torch_x - 4, torch_y + 2), (torch_x - 4, torch_y - 12), (torch_x - 1, torch_y - 16), (torch_x + 3, torch_y - 16), (torch_x + 5, torch_y - 13), (torch_x + 5, torch_y - 9), (torch_x + 3, torch_y - 7), (torch_x + 6, torch_y - 3), (torch_x + 6, torch_y + 2)]
+        pygame.draw.polygon(sprite, outline, torch_outline)
+        pygame.draw.rect(sprite, (54, 65, 70), (torch_x - 2, torch_y - 10, 5, 11))
+        pygame.draw.rect(sprite, (117, 139, 141), (torch_x - 1, torch_y - 9, 3, 9))
+        pygame.draw.rect(sprite, (63, 183, 193), (torch_x - 1, torch_y - 7, 3, 3))
+        pygame.draw.line(sprite, outline, (torch_x + 1, torch_y - 14), (torch_x + 5, torch_y - 18), 3)
+        pygame.draw.line(sprite, (202, 218, 205), (torch_x + 2, torch_y - 15), (torch_x + 5, torch_y - 18), 1)
+        pygame.draw.line(sprite, (202, 218, 205), (torch_x + 3, torch_y - 6), (torch_x + 5, torch_y - 3), 1)
+        flame = [(torch_x + 3, torch_y - 16), (torch_x + 1, torch_y - 24), (torch_x + 5, torch_y - 30), (torch_x + 9, torch_y - 23), (torch_x + 7, torch_y - 16)]
         pygame.draw.polygon(sprite, (202, 52, 36), flame)
-        pygame.draw.polygon(sprite, (255, 116, 37), [(torch_x + 2, 17 + crouch), (torch_x + 2, 9 + crouch), (torch_x + 6, 13 + crouch), (torch_x + 6, 18 + crouch)])
-        pygame.draw.rect(sprite, (255, 239, 128), (torch_x + 3, 14 + crouch, 3, 6))
-        pygame.draw.rect(sprite, (255, 218, 133), (torch_x + 10, 8 + crouch, 5, 3))
+        pygame.draw.polygon(sprite, (255, 116, 37), [(torch_x + 3, torch_y - 17), (torch_x + 3, torch_y - 24), (torch_x + 6, torch_y - 20), (torch_x + 6, torch_y - 17)])
+        pygame.draw.rect(sprite, (255, 239, 128), (torch_x + 3, torch_y - 20, 3, 5))
+        pygame.draw.rect(sprite, (255, 218, 133), (torch_x + 10, torch_y - 26, 5, 3))
         if state == "air_attack":
             _outlined_line(sprite, (center + 5, 66), (center + 31, 70), cargo_light, 10, outline)
             pygame.draw.rect(sprite, (82, 67, 57), (center + 28, 67, 19, 9))
