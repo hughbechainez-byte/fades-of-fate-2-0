@@ -851,7 +851,10 @@ def _draw_arm_sections(
     if "upper" in sections:
         upper_mid = _lerp_point(shoulder, elbow, 0.58)
         upper_points = (shoulder, upper_mid, elbow)
-        upper_widths = (6.0 if near else 5.0, 6.8 if near else 5.7, 4.5 if near else 3.9)
+        # Keep the authored shoulder mass, then taper decisively through the
+        # upper arm. The landmarks remain fixed; only the visible silhouette
+        # is corrected to match Dave's compact concept-art proportions.
+        upper_widths = (5.7 if near else 4.8, 6.2 if near else 5.4, 4.0 if near else 3.6)
         _draw_ribbon(draw, upper_points, upper_widths, outline=outline, fill=skin)
         # Fill the insertion inside the already outlined ribbon. A standalone
         # outlined shoulder disc reads as a puppet joint and creates the exact
@@ -897,7 +900,7 @@ def _draw_arm_sections(
     if "lower" in sections:
         lower_mid = _lerp_point(elbow, wrist, 0.58)
         lower_points = (elbow, lower_mid, wrist)
-        lower_widths = (4.4 if near else 3.8, 5.0 if near else 4.2, 3.2 if near else 2.8)
+        lower_widths = (3.8 if near else 3.3, 4.3 if near else 3.8, 2.8 if near else 2.5)
         _draw_ribbon(draw, lower_points, lower_widths, outline=outline, fill=skin)
         draw.ellipse(_disc_box(elbow, 3, 3), fill=skin)
         draw.line(
@@ -938,7 +941,7 @@ def _draw_arm_sections(
             outline_padding=1.0,
         )
         fist_center = hand
-        fist_radius = 4 if near else 3
+        fist_radius = 3 if near else 2
         direction = 1 if hand[0] >= wrist[0] else -1
         fist_outer = (
             (fist_center[0] - direction * fist_radius, fist_center[1] - 3),
@@ -1060,11 +1063,11 @@ def _draw_leg(
     shadow = colors["denim_shadow"] if near else colors["denim_deep"]
     points = (hip, thigh_mid, knee, calf_mid, ankle)
     widths = (
-        8.0 if near else 7.0,
-        (10.5 if support else 9.5) if near else (9.0 if support else 8.0),
-        7.5 if near else 6.5,
-        8.2 if near else 7.0,
-        4.8 if near else 4.1,
+        7.0 if near else 6.2,
+        (8.8 if support else 8.2) if near else (7.8 if support else 7.2),
+        6.8 if near else 5.9,
+        7.2 if near else 6.3,
+        4.4 if near else 3.8,
     )
     draw = ImageDraw.Draw(image)
     _draw_ribbon(draw, points, widths, outline=colors["outline"], fill=fill)
@@ -1149,12 +1152,12 @@ def _draw_pelvis_and_belt(
     pelvis = lm["pelvis"]
     draw = ImageDraw.Draw(image)
     outer = (
-        (left_hip[0] - 7, left_hip[1] - 5),
-        (right_hip[0] + 7, right_hip[1] - 5),
-        (right_hip[0] + 8, right_hip[1] + 7),
-        (pelvis[0] + 3, pelvis[1] + 11),
-        (pelvis[0] - 4, pelvis[1] + 11),
-        (left_hip[0] - 8, left_hip[1] + 7),
+        (left_hip[0] - 5, left_hip[1] - 5),
+        (right_hip[0] + 5, right_hip[1] - 5),
+        (right_hip[0] + 6, right_hip[1] + 7),
+        (pelvis[0] + 2, pelvis[1] + 10),
+        (pelvis[0] - 3, pelvis[1] + 10),
+        (left_hip[0] - 6, left_hip[1] + 7),
     )
     draw.polygon(outer, fill=colors["outline"])
     inner = tuple(
@@ -1163,8 +1166,8 @@ def _draw_pelvis_and_belt(
     )
     draw.polygon(inner, fill=colors["denim_shadow"])
     belt_y = round((left_hip[1] + right_hip[1]) / 2) - 3
-    belt_left = pelvis[0] - 12
-    belt_right = pelvis[0] + 12
+    belt_left = pelvis[0] - 10
+    belt_right = pelvis[0] + 10
     draw.line((belt_left, belt_y, belt_right, belt_y), fill=colors["outline"], width=4)
     draw.line((belt_left + 1, belt_y - 1, belt_right - 1, belt_y - 1), fill=colors["belt"], width=2)
     draw.rectangle((pelvis[0] - 2, belt_y - 2, pelvis[0] + 2, belt_y + 2), fill=colors["gold"], outline=colors["outline"])
@@ -1198,8 +1201,8 @@ def _draw_torso_and_neck(
     pelvis = lm["pelvis"]
     yaw_shift = round(pose.torso_yaw * 4.0)
     waist_y = pelvis[1] - 5
-    waist_left = (pelvis[0] - 10 + yaw_shift, waist_y)
-    waist_right = (pelvis[0] + 10 + yaw_shift, waist_y)
+    waist_left = (pelvis[0] - 8 + yaw_shift, waist_y)
+    waist_right = (pelvis[0] + 8 + yaw_shift, waist_y)
     draw = ImageDraw.Draw(image)
 
     neck_outer = (
@@ -1220,12 +1223,12 @@ def _draw_torso_and_neck(
 
     chest_outer = (
         (neck[0] - 4, neck[1] + 2),
-        (left_shoulder[0] - 3, left_shoulder[1] - 3),
-        (left_shoulder[0] - 5, left_shoulder[1] + 8),
-        (waist_left[0] - 2, waist_left[1]),
-        (waist_right[0] + 2, waist_right[1]),
-        (right_shoulder[0] + 5, right_shoulder[1] + 8),
-        (right_shoulder[0] + 3, right_shoulder[1] - 3),
+        (left_shoulder[0] - 2, left_shoulder[1] - 3),
+        (left_shoulder[0] - 3, left_shoulder[1] + 8),
+        (waist_left[0] - 1, waist_left[1]),
+        (waist_right[0] + 1, waist_right[1]),
+        (right_shoulder[0] + 3, right_shoulder[1] + 8),
+        (right_shoulder[0] + 2, right_shoulder[1] - 3),
         (neck[0] + 4, neck[1] + 2),
     )
     draw.polygon(chest_outer, fill=colors["outline"])
@@ -1235,10 +1238,10 @@ def _draw_torso_and_neck(
     tank = (
         (neck[0] - 5 + yaw_shift, neck[1] + 4),
         (left_shoulder[0] + 1, left_shoulder[1] - 1),
-        (left_shoulder[0] - 1, left_shoulder[1] + 10),
+        (left_shoulder[0] - 1, left_shoulder[1] + 9),
         waist_left,
         waist_right,
-        (right_shoulder[0] + 1, right_shoulder[1] + 10),
+        (right_shoulder[0] + 1, right_shoulder[1] + 9),
         (right_shoulder[0] - 1, right_shoulder[1] - 1),
         (neck[0] + 5 + yaw_shift, neck[1] + 4),
         (neck[0] + yaw_shift, neck[1] + 10),
