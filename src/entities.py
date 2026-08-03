@@ -604,8 +604,10 @@ class Player:
     def _light_sequence(self) -> tuple[int, ...]:
         """Return character-specific indices into the shared light move table."""
 
-        configured = self.config[self.character].get(f"{self.combo_style}_combo_sequence")
         key = self._combo_move_key()
+        configured = self.config[self.character].get(f"{self.combo_style}_combo_sequence")
+        if key not in self.moves:
+            key = "light_combo"
         if configured is None:
             return tuple(range(len(self.moves[key])))
         sequence = tuple(int(index) for index in configured)
@@ -614,12 +616,21 @@ class Player:
         return sequence
 
     def _combo_move_key(self) -> str:
-        return "alt_light_combo" if self.combo_style == "z" else "heavy_combo" if self.combo_style == "c" else "light_combo"
+        if self.combo_style == "z":
+            return "alt_light_combo"
+        if self.combo_style == "c":
+            return "heavy_combo" if "heavy_combo" in self.moves else "heavy"
+        return "light_combo"
 
     def _combo_move(self) -> dict[str, Any]:
+        move_key = self._combo_move_key()
+        if self.combo_style == "c" and move_key == "heavy":
+            return self.moves["heavy"]
+        if move_key not in self.moves:
+            move_key = "light_combo"
         sequence = self._light_sequence()
         chain_index = min(max(0, self.combo_step), len(sequence) - 1)
-        return self.moves[self._combo_move_key()][sequence[chain_index]]
+        return self.moves[move_key][sequence[chain_index]]
 
     def _light_move(self) -> dict[str, Any]:
         self.combo_style = "x"
