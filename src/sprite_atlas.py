@@ -87,13 +87,8 @@ SHELLY_REFILL_WINDOW = (int(ANIMATION_PLAYBACK_HZ * 7), int(ANIMATION_PLAYBACK_H
 SHELLY_PANTS_WINDOW = (int(ANIMATION_PLAYBACK_HZ * 2), int(ANIMATION_PLAYBACK_HZ * 5.5))
 DAVE_UNIFORM_RENDER_SCALE = 1.12
 COUCH_UNIFORM_RENDER_SCALE = 1.08
-WALK_INTERLEAVE = 4
-
-
-def _blend_walk_frames(current: pygame.Surface, following: pygame.Surface, amount: float) -> pygame.Surface:
-    """Select a complete authored cel; never mix pixels between silhouettes."""
-
-    return following.copy() if amount >= 0.5 else current.copy()
+DAVE_SMOOTH_WALK_FRAMES = 24
+DAVE_SMOOTH_WALK_STRIP = "assets/sprites/black_dave_walk_24.png"
 
 
 @lru_cache(maxsize=128)
@@ -136,26 +131,23 @@ def _authored_animation_frames(actor: str, state: str) -> tuple[pygame.Surface, 
     )
 
 
-@lru_cache(maxsize=16)
-def _walk_interleaved_frames(actor: str) -> tuple[pygame.Surface, ...]:
-    """Build one crisp midpoint between each authored hero stride key.
+@lru_cache(maxsize=1)
+def _dave_smooth_walk_frames() -> tuple[pygame.Surface, ...]:
+    """Load Dave's balanced 24-cel gait without changing its crisp pixels."""
 
-    The source atlas stays authored at twelve intentional keys. The runtime
-    receives a 30 Hz presentation stream, so quarter-step transitions between
-    adjacent keys prevent the old two-tick hold from reading as a flip-book
-    while keeping the original silhouettes and cycle timing intact.
-    """
-
-    authored = _authored_animation_frames(actor, "walk")
-    if not authored:
+    frames = _load_frames(DAVE_SMOOTH_WALK_STRIP, DAVE_SMOOTH_WALK_FRAMES, 1)
+    if len(frames) != DAVE_SMOOTH_WALK_FRAMES:
         return ()
-    frames: list[pygame.Surface] = []
-    for index, current in enumerate(authored):
-        following = authored[(index + 1) % len(authored)]
-        for subphase in range(WALK_INTERLEAVE):
-            amount = subphase / WALK_INTERLEAVE
-            frames.append(current if subphase == 0 else _blend_walk_frames(current, following, amount))
-    return tuple(frames)
+    return tuple(
+        pygame.transform.scale(
+            frame,
+            (
+                max(1, round(frame.get_width() * DAVE_UNIFORM_RENDER_SCALE)),
+                max(1, round(frame.get_height() * DAVE_UNIFORM_RENDER_SCALE)),
+            ),
+        )
+        for frame in frames
+    )
 
 
 def animation_frames(actor: object, state: object) -> tuple[pygame.Surface, ...]:
@@ -194,6 +186,10 @@ def player_frame(character: object, state: object, tick: int) -> pygame.Surface 
     name = "shelly" if name in {"shelly", "shellie"} else "black_dave"
     state_name = _state_name(state)
     tick = max(0, int(tick))
+    if name == "black_dave" and state_name == "walk":
+        frames = _dave_smooth_walk_frames()
+        if frames:
+            return frames[tick % len(frames)]
     if name == "shelly" and state_name == "idle":
         # Shelly primarily uses the same restrained breathing language as Dave,
         # with two short personality beats folded into each idle cycle.
@@ -214,9 +210,6 @@ def player_frame(character: object, state: object, tick: int) -> pygame.Surface 
         if idle_phase >= pants_end:
             breath_tick -= pants_end - pants_start
         return _clip_frame(clip_for("shelly", "idle"), breath_tick)
-    if state_name == "walk" and name in {"black_dave", "shelly"}:
-        frames = _walk_interleaved_frames(name)
-        return frames[tick % len(frames)] if frames else None
     return animation_frame(name, state_name, tick)
 
 

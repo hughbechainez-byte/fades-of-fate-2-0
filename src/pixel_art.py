@@ -592,6 +592,11 @@ def _character_sheen_sprite(
     """Sweep a restrained material highlight through authored character art."""
 
     profile_name = str(profile)
+    # Dave's authored skin, denim, shoes, and vest already carry deliberate
+    # highlights. A frame-driven diagonal sweep reads as a flashing glare on
+    # his larger silhouette, so preserve his painted palette unchanged.
+    if profile_name == "dave":
+        return sprite
     phase = int(frame) % 6
     key = (id(sprite), profile_name, phase)
     cached = _CHARACTER_SHEEN_CACHE.get(key)
@@ -4242,12 +4247,6 @@ def _walk_bob(frame: int) -> int:
     return (0, 0, -1, -1, -2, -2, -3, -2, -2, -1, -1, 0, 0, 0, -1, -1, -2, -2, -3, -2, -2, -1, -1, 0)[int(frame) % 24]
 
 
-def _walk_stride_offset(frame: int) -> int:
-    """Shift the visible root by a single pixel as weight passes between feet."""
-
-    return (0, 0, 1, 1, 2, 1, 0, 0, -1, -1, -2, -1, 0, 0, 1, 1, 2, 1, 0, 0, -1, -1, -2, -1)[int(frame) % 24]
-
-
 def _draw_walk_followthrough(
     surface: pygame.Surface,
     x: float,
@@ -4408,16 +4407,16 @@ def draw_player(
         )
         _draw_footfall_ticks(surface, x, y, z, facing, state_name, int(frame))
         _draw_stride_accents(surface, x, y, z, facing, state_name, int(frame))
-        _draw_walk_followthrough(surface, x, y, z, facing, state_name, int(frame))
-        _draw_walk_echo(surface, rendered, x, y, z, facing, authored.get_height() - 4, state_name, int(frame))
+        if not (profile == "dave" and state_name == "walk"):
+            _draw_walk_followthrough(surface, x, y, z, facing, state_name, int(frame))
+            _draw_walk_echo(surface, rendered, x, y, z, facing, authored.get_height() - 4, state_name, int(frame))
         _draw_action_ribbon(surface, x, y, z, facing, state_name, authored.get_height() - 4, int(frame))
         _draw_motion_echo(surface, rendered, x, y, z, facing, authored.get_height() - 4, state_name, int(frame))
         draw_y = y - _walk_bob(int(frame)) if state_name in {"walk", "run", "move", "jog"} else y
-        draw_x = x + _walk_stride_offset(int(frame)) if state_name in {"walk", "run", "move", "jog"} else x
         return _blit_grounded(
             surface,
             rendered,
-            draw_x,
+            x,
             draw_y,
             z,
             facing,
@@ -4462,8 +4461,7 @@ def draw_player(
     _draw_action_ribbon(surface, x, y, z, facing, state_name, 90, int(frame))
     _draw_motion_echo(surface, rendered, x, y, z, facing, 90, state_name, int(frame))
     draw_y = y - _walk_bob(int(frame)) if state_name in {"walk", "run", "move", "jog"} else y
-    draw_x = x + _walk_stride_offset(int(frame)) if state_name in {"walk", "run", "move", "jog"} else x
-    return _blit_grounded(surface, rendered, draw_x, draw_y, z, facing, 90)
+    return _blit_grounded(surface, rendered, x, draw_y, z, facing, 90)
 
 
 def draw_fist_flames(

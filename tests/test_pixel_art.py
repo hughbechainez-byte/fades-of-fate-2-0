@@ -1321,6 +1321,11 @@ class PixelArtTests(unittest.TestCase):
         self.assertEqual(pixel_art._walk_bob(0), pixel_art._walk_bob(24))
         self.assertEqual(pixel_art._walk_bob(6), -3)
         self.assertEqual(pixel_art._walk_bob(22), -1)
+        self.assertEqual(
+            tuple(pixel_art._walk_bob(phase) for phase in range(12)),
+            tuple(pixel_art._walk_bob(phase + 12) for phase in range(12)),
+            "left and right steps must share one mirrored weight arc",
+        )
 
     def test_walk_followthrough_is_phase_driven(self) -> None:
         swing = pygame.Surface((180, 120), pygame.SRCALPHA)
@@ -1395,6 +1400,14 @@ class PixelArtTests(unittest.TestCase):
             pygame.image.tobytes(late, "RGB"),
             "character material sheen should travel across the authored cel",
         )
+
+    def test_dave_keeps_stable_authored_lighting_without_a_sheen_sweep(self) -> None:
+        authored = sprite_atlas.player_frame("black_dave", "walk", 0)
+        base = pixel_art._material_lit_sprite(authored, "dave")
+        early = pixel_art._character_sheen_sprite(base, "dave", 0)
+        late = pixel_art._character_sheen_sprite(base, "dave", 3)
+        self.assertEqual(pygame.image.tobytes(base, "RGBA"), pygame.image.tobytes(early, "RGBA"))
+        self.assertEqual(pygame.image.tobytes(base, "RGBA"), pygame.image.tobytes(late, "RGBA"))
 
     def test_character_identity_emblem_is_masked_and_profile_colored(self) -> None:
         authored = sprite_atlas.player_frame("black_dave", "idle", 4)

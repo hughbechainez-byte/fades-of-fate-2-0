@@ -416,6 +416,18 @@ class SpriteAtlasTests(unittest.TestCase):
                 )
                 self.assertEqual(foot_lines, {frames[0].get_bounding_rect(min_alpha=1).bottom})
 
+        smooth_dave = [sprite_atlas.player_frame("black_dave", "walk", tick) for tick in range(24)]
+        self.assertTrue(all(frame is not None for frame in smooth_dave))
+        smooth_signatures = {_signature(frame) for frame in smooth_dave}
+        self.assertEqual(len(smooth_signatures), 24, "Dave's runtime gait must expose 24 distinct crisp cels")
+        smooth_bounds = [frame.get_bounding_rect(min_alpha=1) for frame in smooth_dave]
+        self.assertEqual({bounds.bottom for bounds in smooth_bounds}, {smooth_bounds[0].bottom})
+        self.assertEqual(
+            _signature(sprite_atlas.player_frame("black_dave", "walk", 0)),
+            _signature(sprite_atlas.player_frame("black_dave", "walk", 24)),
+            "the 24-cel gait must loop without a timing seam",
+        )
+
         raw_dave = _split(resource_path("assets/reference/black_dave_walk_reference_v2.png"), 6, 2)
         for phase in (1, 9):
             with self.subTest(dave_phase=phase):
