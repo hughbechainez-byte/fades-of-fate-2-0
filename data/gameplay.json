@@ -473,7 +473,8 @@
                                                                     0,
                                                                     1,
                                                                     2,
-                                                                    3
+                                                                    3,
+                                                                    4
                                                                 ],
                                        "description":  "Slim and lean in a backward cap, black tank, gold-trim glasses and diamond studs; fists plus a Bluetooth-speaker shockwave."
                                    },
@@ -633,17 +634,51 @@
                                                                   {"at":  0.5, "reach_scale":  1.12, "depth_scale":  1.08, "height_scale":  1.10, "offset_x":  4.0},
                                                                   {"at":  1.0, "reach_scale":  1.02, "depth_scale":  1.12, "height_scale":  1.04, "offset_x":  2.0}
                                                               ]
+                                      },
+                                      {
+                                          "startup":  0.14,
+                                          "active":  0.10,
+                                          "recovery":  0.28,
+                                          "damage":  22,
+                                          "range_x":  52,
+                                          "range_y":  25,
+                                          "hitstun":  0.52,
+                                          "knockback":  60,
+                                          "knockdown":  true,
+                                          "meter":  14,
+                                          "buffer_window":  0.26,
+                                          "cancel_start":  0.48,
+                                          "combo_grace":  0.62,
+                                          "chain_on_whiff":  true,
+                                          "heavy_cancel":  false,
+                                          "max_targets":  4,
+                                          "max_hits_per_target":  1,
+                                          "rehit_delay":  0.0,
+                                          "hit_downed":  false,
+                                          "reach_forgiveness":  6.0,
+                                          "depth_forgiveness":  3.5,
+                                          "elevation_forgiveness":  5.0,
+                                          "lane_assist":  16.0,
+                                          "aim_range_bonus":  14.0,
+                                          "lunge":  7.0,
+                                          "combo_radius":  88,
+                                          "launch":  true,
+                                          "hitbox_frames":  [
+                                                                  {"at":  0.0, "reach_scale":  0.76, "depth_scale":  1.16, "height_scale":  1.02, "offset_x":  -2.0},
+                                                                  {"at":  0.5, "reach_scale":  1.16, "depth_scale":  1.08, "height_scale":  1.12, "offset_x":  5.0},
+                                                                  {"at":  1.0, "reach_scale":  1.02, "depth_scale":  1.14, "height_scale":  1.06, "offset_x":  2.0}
+                                                              ]
                                       }
                                   ],
                   "heavy":  {
-                                "startup":  0.23,
-                                "active":  0.11,
-                                "recovery":  0.34,
-                                "damage":  25,
-                                "range_x":  48,
+                                "startup":  0.24,
+                                "active":  0.12,
+                                "recovery":  0.36,
+                                "damage":  26,
+                                "range_x":  50,
                                 "range_y":  24,
-                                "hitstun":  0.45,
-                                "knockback":  50,
+                                "hitstun":  0.48,
+                                "knockback":  54,
                                 "knockdown":  true,
                                 "meter":  12,
                                 "max_targets":  3,
@@ -656,10 +691,11 @@
                                 "lane_assist":  12.0,
                                 "aim_range_bonus":  9.0,
                                 "lunge":  2.0,
+                                "launch":  true,
                                 "hitbox_frames":  [
-                                                        {"at":  0.0, "reach_scale":  0.78, "depth_scale":  1.12, "height_scale":  1.0, "offset_x":  -2.0},
-                                                        {"at":  0.55, "reach_scale":  1.10, "depth_scale":  1.04, "height_scale":  1.08, "offset_x":  4.0},
-                                                        {"at":  1.0, "reach_scale":  1.0, "depth_scale":  1.10, "height_scale":  1.02, "offset_x":  1.0}
+                                                        {"at":  0.0, "reach_scale":  0.76, "depth_scale":  1.10, "height_scale":  1.0, "offset_x":  -2.0},
+                                                        {"at":  0.55, "reach_scale":  1.12, "depth_scale":  1.04, "height_scale":  1.10, "offset_x":  4.0},
+                                                        {"at":  1.0, "reach_scale":  1.0, "depth_scale":  1.12, "height_scale":  1.04, "offset_x":  1.0}
                                                     ]
                             },
                   "air":  {
