@@ -89,7 +89,7 @@ DAVE_UNIFORM_RENDER_SCALE = 1.12
 COUCH_UNIFORM_RENDER_SCALE = 1.08
 DAVE_STABLE_WALK_POSES = 12
 DAVE_STABLE_WALK_HOLD_TICKS = 2
-DAVE_STABLE_WALK_STRIP = "assets/sprites/black_dave_walk_12.png"
+DAVE_STABLE_WALK_STRIP = "assets/sprites/black_dave_walk_identity_v1.png"
 
 
 @lru_cache(maxsize=128)

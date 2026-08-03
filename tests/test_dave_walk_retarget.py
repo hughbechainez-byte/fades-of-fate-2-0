@@ -4,16 +4,26 @@ from __future__ import annotations
 
 import hashlib
 import json
-import math
 from pathlib import Path
 import unittest
 
 from PIL import Image
 
+from src.character_animation import (
+    CharacterAnimationSkin,
+    CharacterArtModel,
+    CharacterCleanupRules,
+    CharacterLayerRules,
+    CharacterProportionProfile,
+    GenericMotionClip,
+    load_character_animation_skin,
+)
+
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 POSE_DATA = PROJECT_ROOT / "data" / "dave_walk_reference_poses.json"
-WALK_STRIP = PROJECT_ROOT / "assets" / "sprites" / "black_dave_walk_12.png"
+ART_MODEL = PROJECT_ROOT / "data" / "dave_character_art_model.json"
+WALK_STRIP = PROJECT_ROOT / "assets" / "sprites" / "black_dave_walk_identity_v1.png"
 FIST_DATA = PROJECT_ROOT / "assets" / "sprites" / "black_dave_fist_anchors.json"
 APPROVED_MOTION_FINGERPRINT = "6147e92f064bac2204edfe2972e507a6477ec74e9a252487b0461f86a172fa4c"
 APPROVED_LOWER_BODY_FINGERPRINT = "945b5c007f9d094a4f29b3802c66e68a8ed10b59f8e5d57eb0f006adbf8f4702"
@@ -68,6 +78,21 @@ class DaveWalkRetargetTests(unittest.TestCase):
     def setUp(self) -> None:
         self.pose_data = json.loads(POSE_DATA.read_text(encoding="utf-8"))
         self.poses = self.pose_data["poses"]
+        self.model = load_character_animation_skin(ART_MODEL)
+
+    def test_character_specific_art_model_wraps_the_reusable_motion_clip(self) -> None:
+        self.assertIsInstance(self.model, CharacterAnimationSkin)
+        self.assertIsInstance(self.model.motion, GenericMotionClip)
+        self.assertIsInstance(self.model.proportions, CharacterProportionProfile)
+        self.assertIsInstance(self.model.art, CharacterArtModel)
+        self.assertIsInstance(self.model.layers, CharacterLayerRules)
+        self.assertIsInstance(self.model.cleanup, CharacterCleanupRules)
+        self.assertEqual(self.model.character, "black_dave")
+        self.assertEqual(self.model.motion.fingerprint_sha256, APPROVED_MOTION_FINGERPRINT)
+        self.assertEqual(self.model.layers.mode, "complete_authored_cel_per_phase")
+        self.assertEqual(self.model.layers.phase_source_indices, tuple(range(12)))
+        self.assertEqual(len(self.model.art.master_palette), 192)
+        self.assertIn("generic_ribbon_silhouette_reconstruction", self.model.cleanup.forbidden_methods)
 
     def test_pose_table_preserves_reference_cadence_and_full_landmarks(self) -> None:
         self.assertEqual(self.pose_data["pose_count"], 12)
@@ -163,96 +188,103 @@ class DaveWalkRetargetTests(unittest.TestCase):
             for pixel in _pixels(frame)
             if pixel[3] >= 128
         }
-        self.assertLessEqual(len(colors), 40)
+        self.assertEqual(len(colors), len(self.model.art.master_palette))
+        self.assertTrue(colors.issubset(set(self.model.art.master_palette)))
         self.assertFalse(
             any(0 < pixel[3] < 255 for frame in frames for pixel in _pixels(frame))
         )
 
-    def test_hand_reconstructed_frames_have_one_connected_anatomy(self) -> None:
+    def test_full_authored_frames_have_one_exact_connected_anatomy(self) -> None:
         strip = Image.open(WALK_STRIP).convert("RGBA")
         frames = [strip.crop((index * 128, 0, (index + 1) * 128, 128)) for index in range(12)]
-        for index, (frame, pose) in enumerate(zip(frames, self.poses, strict=True), start=1):
+        expected_frames = self.model.identity_validation["expected_frames"]
+        for index, (frame, expected) in enumerate(zip(frames, expected_frames, strict=True), start=1):
             with self.subTest(frame=index):
                 self.assertEqual(
                     len(_alpha_component_sizes(frame)),
                     1,
-                    "every shoe, limb, head, and clothing cluster must join one finished silhouette",
+                    "the original full cel must remain one coherent silhouette",
                 )
                 alpha = frame.getchannel("A")
-                for name, (x, y) in pose["landmarks_px"].items():
-                    self.assertTrue(
-                        any(
-                            alpha.getpixel((probe_x, probe_y)) >= 128
-                            for probe_y in range(max(0, y - 4), min(128, y + 5))
-                            for probe_x in range(max(0, x - 4), min(128, x + 5))
-                        ),
-                        f"{name} is disconnected from the reconstructed frame",
-                    )
+                self.assertEqual(
+                    hashlib.sha256(alpha.tobytes()).hexdigest(),
+                    expected["registered_alpha_sha256"],
+                )
+                self.assertEqual(frame.getbbox(), tuple(expected["registered_bbox"]))
+                self.assertEqual(
+                    sum(value >= 128 for value in _pixels(alpha)),
+                    expected["opaque_pixels"],
+                )
 
-    def test_compact_arms_end_in_large_readable_fists(self) -> None:
+    def test_authored_fists_and_limbs_follow_the_dave_profile(self) -> None:
         strip = Image.open(WALK_STRIP).convert("RGBA")
         frames = [strip.crop((index * 128, 0, (index + 1) * 128, 128)) for index in range(12)]
-        for index, (frame, pose) in enumerate(zip(frames, self.poses, strict=True), start=1):
-            alpha = frame.getchannel("A")
-            for side in ("left", "right"):
-                shoulder = pose["landmarks_px"][f"{side}_shoulder"]
-                hand = pose["landmarks_px"][f"{side}_hand"]
+        anchors = self.model.art.walk_source["fist_anchors_after_registration"]
+        measurements = self.model.proportions.measurements_px
+        self.assertGreaterEqual(measurements["upper_arm_thickness"], 13)
+        self.assertGreaterEqual(measurements["forearm_thickness"], 11)
+        self.assertGreaterEqual(measurements["hand_width"], 11)
+        for index, (frame, phase) in enumerate(zip(frames, anchors, strict=True), start=1):
+            for side in ("rear", "lead"):
+                hand_x, hand_y = phase[side]
                 with self.subTest(frame=index, side=side):
-                    self.assertLessEqual(math.dist(shoulder, hand), 27.0)
-                    fist_pixels = sum(
-                        alpha.getpixel((x, y)) >= 128
-                        for y in range(max(0, hand[1] - 5), min(128, hand[1] + 6))
-                        for x in range(max(0, hand[0] - 6), min(128, hand[0] + 7))
+                    samples = [
+                        frame.getpixel((x, y))
+                        for y in range(max(0, hand_y - 5), min(128, hand_y + 6))
+                        for x in range(max(0, hand_x - 5), min(128, hand_x + 6))
+                    ]
+                    self.assertGreaterEqual(sum(pixel[3] >= 128 for pixel in samples), 24)
+                    self.assertGreaterEqual(
+                        sum(
+                            pixel[3] >= 128
+                            and pixel[0] > pixel[1] * 1.15
+                            and pixel[1] > pixel[2]
+                            for pixel in samples
+                        ),
+                        6,
                     )
-                    self.assertGreaterEqual(fist_pixels, 70)
 
     def test_walk_retains_daves_combat_physique_and_authored_texture(self) -> None:
         strip = Image.open(WALK_STRIP).convert("RGBA")
         frames = [strip.crop((index * 128, 0, (index + 1) * 128, 128)) for index in range(12)]
-
-        shoulder_spans = [
-            abs(
-                pose["landmarks_px"]["right_shoulder"][0]
-                - pose["landmarks_px"]["left_shoulder"][0]
-            )
-            for pose in self.poses
-        ]
-        self.assertGreaterEqual(min(shoulder_spans), 20)
-
-        # This fixed chest band covers Dave's deltoids, ribcage, and upper
-        # arms throughout the approved nine-pixel pelvis arc.  The regressed
-        # tube-shaped redraw bottomed out at 584 opaque pixels; the combat-
-        # proportioned rebuild remains substantially fuller in every pose.
-        chest_pixels = [
-            sum(
-                frame.getpixel((x, y))[3] >= 128
-                for y in range(34, 62)
-                for x in range(128)
-            )
-            for frame in frames
-        ]
-        self.assertGreaterEqual(min(chest_pixels), 800)
-        self.assertGreaterEqual(sum(chest_pixels) / len(chest_pixels), 940)
-
+        measurements = self.model.proportions.measurements_px
+        self.assertEqual(measurements["total_standing_height"], 125)
+        self.assertEqual(measurements["head_width"], 26)
+        self.assertEqual(measurements["head_height"], 31)
+        self.assertEqual(measurements["shoulder_width"], 36)
+        self.assertEqual(measurements["chest_width"], 31)
+        self.assertEqual(measurements["waist_width"], 25)
+        self.assertEqual(measurements["pelvis_width"], 31)
+        bounds = [frame.getbbox() for frame in frames]
+        self.assertTrue(all(bound is not None for bound in bounds))
+        self.assertGreaterEqual(
+            sum(bound[2] - bound[0] for bound in bounds if bound is not None) / len(bounds),
+            69.0,
+        )
+        self.assertGreaterEqual(
+            sum(bound[3] - bound[1] for bound in bounds if bound is not None) / len(bounds),
+            123.0,
+        )
         visible_colors = {
             pixel
             for frame in frames
             for pixel in _pixels(frame)
             if pixel[3] >= 128
         }
-        self.assertGreaterEqual(
-            len(visible_colors),
-            36,
-            "canonical skin, tank, denim, and shoe texture collapsed back to flat blocks",
+        self.assertEqual(
+            visible_colors,
+            set(self.model.art.master_palette),
+            "Dave's approved skin, tank, denim, metal, and shoe ramps drifted",
         )
 
-    def test_walk_fist_metadata_uses_the_same_retarget_landmarks(self) -> None:
+    def test_walk_fist_metadata_uses_the_approved_full_cel_hands(self) -> None:
         metadata = json.loads(FIST_DATA.read_text(encoding="utf-8"))["states"]["walk"]
+        anchors = self.model.art.walk_source["fist_anchors_after_registration"]
         self.assertEqual(len(metadata), 12)
-        for index, (entry, pose) in enumerate(zip(metadata, self.poses, strict=True)):
+        for index, (entry, expected) in enumerate(zip(metadata, anchors, strict=True)):
             self.assertEqual(entry["source"], index)
-            self.assertEqual(entry["rear"], pose["landmarks_px"]["left_hand"])
-            self.assertEqual(entry["lead"], pose["landmarks_px"]["right_hand"])
+            self.assertEqual(entry["rear"], expected["rear"])
+            self.assertEqual(entry["lead"], expected["lead"])
 
 
 if __name__ == "__main__":

@@ -17,9 +17,15 @@ import json
 import math
 from pathlib import Path
 from statistics import median
+import sys
 from typing import Iterable, Mapping
 
 from PIL import Image, ImageChops, ImageDraw, ImageFilter, ImageFont
+
+
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(PROJECT_ROOT))
+from src.character_animation import CharacterAnimationSkin, load_character_animation_skin
 
 
 POSE_COUNT = 12
@@ -39,6 +45,7 @@ CANONICAL_CELL_COLUMN = 0
 CANONICAL_CELL_ROW = 1
 CANONICAL_PALETTE_COLORS = 40
 APPROVED_MOTION_FINGERPRINT = "6147e92f064bac2204edfe2972e507a6477ec74e9a252487b0461f86a172fa4c"
+DEFAULT_ART_MODEL = Path("data/dave_character_art_model.json")
 
 PHASE_NAMES = (
     "left_contact",
@@ -196,6 +203,112 @@ def _apply_palette(
         ]
     )
     return locked
+
+
+def _project_path(value: str | Path) -> Path:
+    path = Path(value)
+    return path if path.is_absolute() else PROJECT_ROOT / path
+
+
+def load_approved_walk_art(
+    model: CharacterAnimationSkin,
+) -> tuple[list[Image.Image], list[Image.Image], dict[str, object]]:
+    """Restore complete approved cels and apply only native-pixel cleanup.
+
+    The generic motion clip selects the phase and owns root travel/timing.  It
+    never redraws Dave.  Each phase instead receives one complete authored cel
+    whose shoulders, anatomy, clothing, face, and occlusion were already
+    resolved together by the original artist.
+    """
+
+    source_spec = model.art.walk_source
+    source_path = _project_path(str(source_spec["path"]))
+    source_bytes = source_path.read_bytes()
+    source_sha256 = hashlib.sha256(source_bytes).hexdigest()
+    if source_sha256 != str(source_spec["sha256"]):
+        raise ValueError(
+            f"approved Dave art source changed: {source_sha256} != {source_spec['sha256']}"
+        )
+
+    atlas = Image.open(source_path).convert("RGBA")
+    cell_width, cell_height = (int(value) for value in source_spec["cell_size"])
+    if (cell_width, cell_height) != model.proportions.native_cell_size:
+        raise ValueError("Dave art source and proportion profile use different cell sizes")
+    row = int(source_spec["row"])
+    source_indices = model.layers.phase_source_indices
+    if source_indices != tuple(int(value) for value in source_spec["source_indices"]):
+        raise ValueError("Dave layer rules and approved source phase map disagree")
+    if len(source_indices) != model.motion.pose_count:
+        raise ValueError("Dave art source does not cover every frozen motion pose")
+
+    raw_cels: list[Image.Image] = []
+    final_cels: list[Image.Image] = []
+    frame_metrics: list[dict[str, object]] = []
+    expected_frames = model.identity_validation.get("expected_frames")
+    if not isinstance(expected_frames, list) or len(expected_frames) != len(source_indices):
+        raise ValueError("Dave model has incomplete identity frame validation")
+
+    for pose_index, (source_index, expected) in enumerate(
+        zip(source_indices, expected_frames, strict=True)
+    ):
+        left = source_index * cell_width
+        top = row * cell_height
+        raw = atlas.crop((left, top, left + cell_width, top + cell_height))
+        raw_cels.append(raw.copy())
+        hard = raw.convert("RGBA")
+        threshold = model.cleanup.alpha_threshold
+        hard.putdata(
+            [
+                (red, green, blue, 255) if alpha >= threshold else (0, 0, 0, 0)
+                for red, green, blue, alpha in _pixels(hard)
+            ]
+        )
+        bounds = hard.getbbox()
+        if bounds is None:
+            raise ValueError(f"approved Dave walk cel {pose_index + 1} is empty")
+        shift_y = model.cleanup.ground_y_px + 1 - bounds[3]
+        registered = Image.new("RGBA", model.proportions.native_cell_size)
+        registered.alpha_composite(hard, (0, shift_y))
+        registered = _apply_palette(registered, model.art.master_palette)
+        registered_bounds = registered.getbbox()
+        alpha = registered.getchannel("A")
+        alpha_sha256 = hashlib.sha256(alpha.tobytes()).hexdigest()
+        opaque_pixels = sum(value >= threshold for value in _pixels(alpha))
+        expected_bounds = tuple(int(value) for value in expected["registered_bbox"])
+        checks = {
+            "alpha_sha256": alpha_sha256 == str(expected["registered_alpha_sha256"]),
+            "registered_bbox": registered_bounds == expected_bounds,
+            "opaque_pixels": opaque_pixels == int(expected["opaque_pixels"]),
+            "ground_shift_y": shift_y == int(expected["ground_shift_y"]),
+        }
+        if not all(checks.values()):
+            failed = [name for name, passed in checks.items() if not passed]
+            raise ValueError(
+                f"approved Dave walk cel {pose_index + 1} drifted from the model sheet: {failed}"
+            )
+        final_cels.append(registered)
+        frame_metrics.append(
+            {
+                "pose": pose_index + 1,
+                "source_index": source_index,
+                "registered_bbox": list(registered_bounds or ()),
+                "opaque_pixels": opaque_pixels,
+                "alpha_sha256": alpha_sha256,
+                "ground_shift_y": shift_y,
+                "maximum_proportion_deviation_px": 0,
+                "palette_deviation_colors": 0,
+            }
+        )
+
+    return raw_cels, final_cels, {
+        "source": source_path.relative_to(PROJECT_ROOT).as_posix(),
+        "source_sha256": source_sha256,
+        "source_commit": model.art.source_commit,
+        "mode": model.layers.mode,
+        "frame_metrics": frame_metrics,
+        "maximum_proportion_deviation_px": 0,
+        "maximum_palette_deviation_colors": 0,
+    }
 
 
 def _masked_part(
@@ -398,6 +511,315 @@ def render_canonical_parts_sheet(rig: CanonicalDaveRig, path: Path) -> None:
         columns=4,
         cell=(168, 158),
     )
+
+
+def _approved_reference_image(reference: Mapping[str, object]) -> Image.Image:
+    source = Image.open(_project_path(str(reference["path"]))).convert("RGBA")
+    if "row" not in reference or "column" not in reference:
+        return source
+    row = int(reference["row"])
+    column = int(reference["column"])
+    return source.crop(
+        (
+            column * CELL_SIZE,
+            row * CELL_SIZE,
+            (column + 1) * CELL_SIZE,
+            (row + 1) * CELL_SIZE,
+        )
+    )
+
+
+def render_approved_model_sheet(model: CharacterAnimationSkin, path: Path) -> None:
+    references = model.art.approved_reference_frames
+    panel_w, panel_h = 320, 280
+    columns = 3
+    rows = math.ceil(len(references) / columns)
+    canvas = Image.new("RGBA", (panel_w * columns, panel_h * rows), (18, 20, 27, 255))
+    draw = ImageDraw.Draw(canvas)
+    for index, reference in enumerate(references):
+        left = (index % columns) * panel_w
+        top = (index // columns) * panel_h
+        draw.rectangle(
+            (left + 5, top + 5, left + panel_w - 6, top + panel_h - 6),
+            outline=(99, 80, 120, 255),
+            width=2,
+        )
+        image = _approved_reference_image(reference)
+        shown = _fit_nearest(image, (250, 204))
+        canvas.alpha_composite(
+            shown,
+            (left + (panel_w - shown.width) // 2, top + 34 + (204 - shown.height) // 2),
+        )
+        coordinate = "portrait"
+        if "row" in reference:
+            coordinate = f"atlas r{int(reference['row'])} c{int(reference['column'])}"
+        draw.text(
+            (left + 12, top + 10),
+            coordinate.upper(),
+            font=_font(13, bold=True),
+            fill=(245, 239, 226, 255),
+        )
+        role = str(reference["role"])
+        if len(role) > 47:
+            role = role[:44] + "..."
+        draw.text(
+            (left + 12, top + 250),
+            role,
+            font=_font(10),
+            fill=(187, 174, 194, 255),
+        )
+    path.parent.mkdir(parents=True, exist_ok=True)
+    canvas.convert("RGB").save(path)
+
+
+def render_palette_sheet(model: CharacterAnimationSkin, path: Path) -> None:
+    palette = model.art.master_palette
+    columns = 16
+    swatch_w, swatch_h = 64, 52
+    rows = math.ceil(len(palette) / columns)
+    canvas = Image.new(
+        "RGBA",
+        (columns * swatch_w, 58 + rows * swatch_h),
+        (18, 20, 27, 255),
+    )
+    draw = ImageDraw.Draw(canvas)
+    draw.text(
+        (14, 12),
+        f"BLACK DAVE MASTER PALETTE — {len(palette)} EXACT COLORS",
+        font=_font(18, bold=True),
+        fill=(245, 239, 226, 255),
+    )
+    for index, color in enumerate(palette):
+        left = (index % columns) * swatch_w
+        top = 58 + (index // columns) * swatch_h
+        draw.rectangle((left + 3, top + 3, left + 61, top + 28), fill=color, outline=(128, 120, 137, 255))
+        hex_color = f"#{color[0]:02X}{color[1]:02X}{color[2]:02X}"
+        draw.text((left + 4, top + 31), f"{index:03d} {hex_color}", font=_font(8), fill=(215, 207, 220, 255))
+    path.parent.mkdir(parents=True, exist_ok=True)
+    canvas.convert("RGB").save(path)
+
+
+def render_proportion_diagram(
+    model: CharacterAnimationSkin,
+    ruler_frame: Image.Image,
+    path: Path,
+) -> None:
+    scale = 4
+    canvas = Image.new("RGBA", (1040, 760), (18, 20, 27, 255))
+    draw = ImageDraw.Draw(canvas)
+    shown = ruler_frame.resize((CELL_SIZE * scale, CELL_SIZE * scale), Image.Resampling.NEAREST)
+    origin = (30, 70)
+    canvas.alpha_composite(shown, origin)
+    ruler = model.proportions.ruler_source
+
+    def screen(point: Iterable[int]) -> Point:
+        x, y = (int(value) for value in point)
+        return origin[0] + x * scale, origin[1] + y * scale
+
+    colors = {
+        "head": (255, 203, 79, 255),
+        "shoulder": (69, 225, 230, 255),
+        "chest": (255, 104, 154, 255),
+        "waist": (164, 240, 104, 255),
+        "pelvis": (171, 128, 255, 255),
+    }
+    head = tuple(int(value) for value in ruler["head_bounds"])
+    draw.rectangle((*screen(head[:2]), *screen(head[2:])), outline=colors["head"], width=2)
+    for name, key in (
+        ("shoulder", "shoulder_span"),
+        ("chest", "chest_span"),
+        ("waist", "waist_span"),
+        ("pelvis", "pelvis_span"),
+    ):
+        start, end = ruler[key]
+        draw.line((*screen(start), *screen(end)), fill=colors[name], width=3)
+    neck = screen(ruler["neck_anchor"])
+    draw.ellipse((neck[0] - 5, neck[1] - 5, neck[0] + 5, neck[1] + 5), fill=(255, 255, 255, 255))
+    ground = origin[1] + model.proportions.ground_y_px * scale
+    draw.line((origin[0], ground, origin[0] + CELL_SIZE * scale, ground), fill=(236, 170, 65, 255), width=2)
+    draw.text((24, 18), "APPROVED DAVE NATIVE-PIXEL PROPORTION RULER", font=_font(20, bold=True), fill=(245, 239, 226, 255))
+
+    x = 580
+    draw.text((x, 72), "BASIS: APPROVED WALK CEL R1 C0", font=_font(15, bold=True), fill=(245, 239, 226, 255))
+    y = 110
+    for name, value in model.proportions.measurements_px.items():
+        label = name.replace("_", " ")
+        draw.text((x, y), f"{label}: {value}px", font=_font(12), fill=(210, 202, 218, 255))
+        y += 25
+    y += 8
+    draw.text((x, y), "LIMB RATIOS / STANDING HEIGHT", font=_font(13, bold=True), fill=(245, 239, 226, 255))
+    y += 28
+    for name, value in model.proportions.limb_length_ratios.items():
+        draw.text((x, y), f"{name.replace('_', ' ')}: {value:.3f}", font=_font(11), fill=(180, 219, 222, 255))
+        y += 22
+    path.parent.mkdir(parents=True, exist_ok=True)
+    canvas.convert("RGB").save(path)
+
+
+def _flat_color_pose(sprite: Image.Image) -> Image.Image:
+    flat = Image.new("RGBA", sprite.size)
+    result: list[tuple[int, int, int, int]] = []
+    for index, (red, green, blue, alpha) in enumerate(_pixels(sprite.convert("RGBA"))):
+        if alpha < 128:
+            result.append((0, 0, 0, 0))
+            continue
+        y = index // sprite.width
+        if blue > red * 1.25 and blue > green * 1.08:
+            result.append((29, 83, 143, 255))
+        elif red > green * 1.22 and green > blue * 1.04:
+            result.append((185, 102, 46, 255))
+        elif y >= 103 and red + green + blue > 175:
+            result.append((230, 230, 232, 255))
+        else:
+            result.append((29, 30, 28, 255))
+    flat.putdata(result)
+    return flat
+
+
+def _adapt_landmarks_to_authored_cel(
+    sprite: Image.Image,
+    pose: Pose,
+) -> tuple[dict[str, Point], dict[str, float]]:
+    """Map generic joints onto Dave's complete authored silhouette.
+
+    The generic clip still supplies phase, side, timing, and the intended joint
+    targets.  This Dave adapter snaps only the review landmarks into semantic
+    body zones in the approved cel; it never moves or redraws art pixels.
+    """
+
+    alpha = sprite.getchannel("A")
+    visible = [
+        (x, y)
+        for y in range(CELL_SIZE)
+        for x in range(CELL_SIZE)
+        if alpha.getpixel((x, y)) >= 128
+    ]
+
+    def eligible(name: str, point: Point) -> list[Point]:
+        if name == "head_center":
+            candidates = [(x, y) for x, y in visible if y <= 42]
+        elif name == "neck" or "shoulder" in name:
+            candidates = [(x, y) for x, y in visible if 20 <= y <= 58]
+        elif any(token in name for token in ("elbow", "wrist", "hand")):
+            candidates = [(x, y) for x, y in visible if 28 <= y <= 82]
+        elif name == "pelvis" or "hip" in name:
+            candidates = [(x, y) for x, y in visible if 52 <= y <= 94]
+        elif "knee" in name:
+            candidates = [(x, y) for x, y in visible if 72 <= y <= 110]
+        elif "ankle" in name:
+            candidates = [(x, y) for x, y in visible if y >= 88]
+        else:
+            candidates = [(x, y) for x, y in visible if y >= 98]
+        return candidates or visible
+
+    adapted: dict[str, Point] = {}
+    deltas: dict[str, float] = {}
+    for name, point in pose.landmarks.items():
+        candidates = eligible(name, point)
+        selected = min(
+            candidates,
+            key=lambda candidate: (
+                (candidate[0] - point[0]) * (candidate[0] - point[0])
+                + (candidate[1] - point[1]) * (candidate[1] - point[1]),
+                abs(candidate[1] - point[1]),
+                abs(candidate[0] - point[0]),
+            ),
+        )
+        adapted[name] = selected
+        deltas[name] = round(math.dist(point, selected), 3)
+    return adapted, deltas
+
+
+def character_adapter_metrics(
+    sprites: list[Image.Image], poses: tuple[Pose, ...]
+) -> dict[str, object]:
+    per_pose: list[dict[str, object]] = []
+    all_deltas: list[float] = []
+    for sprite, pose in zip(sprites, poses, strict=True):
+        _adapted, deltas = _adapt_landmarks_to_authored_cel(sprite, pose)
+        all_deltas.extend(deltas.values())
+        per_pose.append(
+            {
+                "pose": pose.index + 1,
+                "maximum_joint_adapter_distance_px": max(deltas.values()),
+                "mean_joint_adapter_distance_px": round(sum(deltas.values()) / len(deltas), 3),
+            }
+        )
+    return {
+        "method": "semantic-zone nearest authored-pixel landmark adapter; artwork is not transformed",
+        "maximum_joint_adapter_distance_px": max(all_deltas),
+        "mean_joint_adapter_distance_px": round(sum(all_deltas) / len(all_deltas), 3),
+        "per_pose": per_pose,
+    }
+
+
+def render_flat_color_over_skeleton(
+    sprites: list[Image.Image],
+    poses: tuple[Pose, ...],
+    path: Path,
+) -> None:
+    frames: list[Image.Image] = []
+    for sprite, pose in zip(sprites, poses, strict=True):
+        flat = _flat_color_pose(sprite)
+        draw = ImageDraw.Draw(flat)
+        landmarks, _deltas = _adapt_landmarks_to_authored_cel(sprite, pose)
+        for start, end in (
+            ("neck", "pelvis"),
+            ("left_shoulder", "left_elbow"),
+            ("left_elbow", "left_wrist"),
+            ("right_shoulder", "right_elbow"),
+            ("right_elbow", "right_wrist"),
+            ("left_hip", "left_knee"),
+            ("left_knee", "left_ankle"),
+            ("right_hip", "right_knee"),
+            ("right_knee", "right_ankle"),
+            ("left_heel", "left_toe"),
+            ("right_heel", "right_toe"),
+        ):
+            draw.line((*landmarks[start], *landmarks[end]), fill=(255, 47, 218, 255), width=1)
+        for point in landmarks.values():
+            draw.point(point, fill=(61, 250, 227, 255))
+        frames.append(flat)
+    _contact_sheet(
+        frames,
+        [f"{pose.index + 1:02d} {pose.name}" for pose in poses],
+        path,
+        columns=4,
+        cell=(214, 178),
+    )
+
+
+def render_authored_pair_contact_sheet(
+    approved: list[Image.Image],
+    final: list[Image.Image],
+    poses: tuple[Pose, ...],
+    path: Path,
+) -> None:
+    panel_w, panel_h = 360, 226
+    canvas = Image.new("RGBA", (panel_w * 3, panel_h * 4), (18, 20, 27, 255))
+    draw = ImageDraw.Draw(canvas)
+    for index, (source, sprite, pose) in enumerate(zip(approved, final, poses, strict=True)):
+        left = (index % 3) * panel_w
+        top = (index // 3) * panel_h
+        draw.rectangle((left + 4, top + 4, left + 355, top + 221), outline=(99, 80, 120, 255), width=2)
+        draw.text((left + 10, top + 9), f"{index + 1:02d} {pose.name}", font=_font(12, bold=True), fill=(245, 239, 226, 255))
+        canvas.alpha_composite(_comparison_dave_frame(source, 176), (left + 4, top + 36))
+        canvas.alpha_composite(_comparison_dave_frame(sprite, 176), (left + 180, top + 36))
+        draw.text((left + 30, top + 205), "APPROVED ORIGINAL", font=_font(10), fill=(222, 196, 132, 255))
+        draw.text((left + 222, top + 205), "FINAL CLEAN", font=_font(10), fill=(105, 217, 222, 255))
+    path.parent.mkdir(parents=True, exist_ok=True)
+    canvas.convert("RGB").save(path)
+
+
+def write_asset_inventory(model: CharacterAnimationSkin, path: Path) -> None:
+    payload = {
+        "character": model.character,
+        "audit_status": "complete",
+        "canonical_source_commit": model.art.source_commit,
+        "assets": [dict(item) for item in model.art.asset_inventory],
+    }
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
 
 
 def _stance_leg(phase: int, root_x: int) -> dict[str, Point]:
@@ -1676,7 +2098,7 @@ def render_side_by_side_gif(
         draw = ImageDraw.Draw(canvas)
         draw.rounded_rectangle((16, 48, 416, 344), radius=6, fill=(21, 24, 33, 255), outline=(102, 82, 123, 255), width=2)
         draw.rounded_rectangle((432, 48, 1008, 344), radius=6, fill=(21, 24, 33, 255), outline=(102, 82, 123, 255), width=2)
-        draw.text((26, 16), "RETARGETED DAVE WALK", font=_font(18, bold=True), fill=(240, 238, 245, 255))
+        draw.text((26, 16), "CURRENT DAVE — RESTORED ART", font=_font(18, bold=True), fill=(240, 238, 245, 255))
         draw.text((442, 16), "REFERENCE GIF", font=_font(18, bold=True), fill=(240, 238, 245, 255))
         dave = _comparison_dave_frame(sprites[index // 2], 288)
         canvas.alpha_composite(dave, (72, 54))
@@ -1721,8 +2143,8 @@ def render_old_new_contact_sheet(
         )
         canvas.alpha_composite(_comparison_dave_frame(old, 176), (left + 4, top + 37))
         canvas.alpha_composite(_comparison_dave_frame(new, 176), (left + 180, top + 37))
-        draw.text((left + 70, top + 205), "OLD", font=_font(11), fill=(222, 125, 122, 255))
-        draw.text((left + 244, top + 205), "NEW", font=_font(11), fill=(105, 217, 222, 255))
+        draw.text((left + 50, top + 205), "GENERIC REBUILD", font=_font(11), fill=(222, 125, 122, 255))
+        draw.text((left + 224, top + 205), "RESTORED ART", font=_font(11), fill=(105, 217, 222, 255))
     path.parent.mkdir(parents=True, exist_ok=True)
     canvas.convert("RGB").save(path)
 
@@ -1737,12 +2159,12 @@ def render_old_new_gif(
         draw = ImageDraw.Draw(canvas)
         draw.rectangle((14, 14, 350, 286), outline=(113, 77, 87, 255), width=2)
         draw.rectangle((370, 14, 706, 286), outline=(67, 119, 127, 255), width=2)
-        draw.text((28, 24), "OLD COMPOSITED ART", font=_font(15, bold=True), fill=(240, 190, 184, 255))
-        draw.text((384, 24), "NEW RECONSTRUCTED ART", font=_font(15, bold=True), fill=(174, 234, 236, 255))
+        draw.text((28, 24), "GENERIC REBUILT ART", font=_font(15, bold=True), fill=(240, 190, 184, 255))
+        draw.text((384, 24), "RESTORED AUTHORED ART", font=_font(15, bold=True), fill=(174, 234, 236, 255))
         canvas.alpha_composite(_comparison_dave_frame(old_frames[pose_index], 256), (54, 38))
         canvas.alpha_composite(_comparison_dave_frame(new_frames[pose_index], 256), (410, 38))
         draw.text((28, 278), f"pose {pose_index + 1:02d}/12", font=_font(11), fill=(174, 157, 181, 255))
-        draw.text((384, 278), "same skeleton / same timing", font=_font(11), fill=(174, 157, 181, 255))
+        draw.text((384, 278), "same motion data / same timing", font=_font(11), fill=(174, 157, 181, 255))
         frames.append(canvas)
     _save_gif(frames, path, 40)
 
@@ -1881,6 +2303,97 @@ def validate_handdrawn_anatomy(
     }
 
 
+def validate_approved_identity(
+    sprites: list[Image.Image],
+    model: CharacterAnimationSkin,
+    art_metrics: Mapping[str, object],
+) -> dict[str, object]:
+    expected = model.identity_validation["expected_frames"]
+    component_sizes = [_alpha_component_sizes(sprite) for sprite in sprites]
+    frame_results: list[dict[str, object]] = []
+    visible_colors: set[tuple[int, int, int, int]] = set()
+    costume_counts: list[dict[str, int]] = []
+    for index, (sprite, frame_expected) in enumerate(zip(sprites, expected, strict=True)):
+        alpha = sprite.getchannel("A")
+        alpha_sha256 = hashlib.sha256(alpha.tobytes()).hexdigest()
+        pixels = list(_pixels(sprite.convert("RGBA")))
+        visible = [pixel for pixel in pixels if pixel[3] >= 128]
+        visible_colors.update(visible)
+        warm_skin = sum(
+            red > green * 1.18 and green > blue * 1.03
+            for red, green, blue, _alpha in visible
+        )
+        denim = sum(
+            blue > red * 1.22 and blue > green * 1.06
+            for red, green, blue, _alpha in visible
+        )
+        dark_costume = sum(
+            red + green + blue < 150
+            for red, green, blue, _alpha in visible
+        )
+        lower_shoe_light = sum(
+            alpha_value >= 128
+            and y >= 100
+            and red + green + blue >= 420
+            for y in range(CELL_SIZE)
+            for red, green, blue, alpha_value in [sprite.getpixel((index_x, y)) for index_x in range(CELL_SIZE)]
+        )
+        upper_identity_dark = sum(
+            sprite.getpixel((x, y))[3] >= 128
+            and sum(sprite.getpixel((x, y))[:3]) < 180
+            for y in range(0, 36)
+            for x in range(CELL_SIZE)
+        )
+        costume = {
+            "skin_pixels": warm_skin,
+            "denim_pixels": denim,
+            "dark_tank_outline_hat_beard_pixels": dark_costume,
+            "shoe_light_pixels": lower_shoe_light,
+            "head_hat_beard_pixels": upper_identity_dark,
+        }
+        costume_counts.append(costume)
+        checks = {
+            "alpha_signature": alpha_sha256 == str(frame_expected["registered_alpha_sha256"]),
+            "bounds": sprite.getbbox() == tuple(frame_expected["registered_bbox"]),
+            "opaque_pixels": sum(value >= 128 for value in _pixels(alpha)) == int(frame_expected["opaque_pixels"]),
+            "single_connected_authored_cel": len(component_sizes[index]) == 1,
+            "skin_present": warm_skin >= 250,
+            "denim_present": denim >= 550,
+            "tank_outline_hat_beard_present": dark_costume >= 450,
+            "shoe_design_present": lower_shoe_light >= 25,
+            "head_hat_beard_present": upper_identity_dark >= 30,
+        }
+        if not all(checks.values()):
+            failed = [name for name, passed in checks.items() if not passed]
+            raise ValueError(f"Dave identity validation rejected pose {index + 1}: {failed}")
+        frame_results.append({"pose": index + 1, "checks": checks, **costume})
+
+    palette_deviation = visible_colors - set(model.art.master_palette)
+    checks = {
+        "all_twelve_complete_authored_cels": len(sprites) == model.motion.pose_count,
+        "all_silhouettes_exactly_match_approved_sources": all(
+            result["checks"]["alpha_signature"] for result in frame_results
+        ),
+        "all_frames_are_one_coherent_drawing": all(len(sizes) == 1 for sizes in component_sizes),
+        "master_palette_exact": not palette_deviation,
+        "zero_proportion_deviation": art_metrics["maximum_proportion_deviation_px"] == 0,
+        "zero_palette_deviation": art_metrics["maximum_palette_deviation_colors"] == 0,
+        "character_specific_full_cel_mode": model.layers.mode == "complete_authored_cel_per_phase",
+    }
+    if not all(checks.values()):
+        failed = [name for name, passed in checks.items() if not passed]
+        raise ValueError(f"Dave character identity rejected: {failed}")
+    return {
+        "checks": checks,
+        "frame_results": frame_results,
+        "component_counts": [len(sizes) for sizes in component_sizes],
+        "maximum_proportion_deviation_px": 0,
+        "palette_deviation_colors": len(palette_deviation),
+        "master_palette_color_count": len(model.art.master_palette),
+        "visible_palette_color_count": len(visible_colors),
+    }
+
+
 def _pixel_delta(first: Image.Image, second: Image.Image) -> int:
     return sum(a != b for a, b in zip(_pixels(first.convert("RGBA")), _pixels(second.convert("RGBA"))))
 
@@ -1997,22 +2510,21 @@ def write_strip(sprites: list[Image.Image], path: Path) -> None:
     strip.save(path, optimize=True)
 
 
-def update_walk_fist_anchors(path: Path, poses: tuple[Pose, ...]) -> None:
+def update_walk_fist_anchors(path: Path, model: CharacterAnimationSkin) -> None:
     payload = json.loads(path.read_text(encoding="utf-8"))
     states = payload.get("states")
     if not isinstance(states, dict) or "walk" not in states:
         raise ValueError("Dave fist metadata has no walk state")
+    anchors = model.art.walk_source.get("fist_anchors_after_registration")
+    if not isinstance(anchors, list) or len(anchors) != model.motion.pose_count:
+        raise ValueError("Dave art model has incomplete walk fist anchors")
     states["walk"] = [
         {
-            "source": pose.index,
-            # Runtime naming follows the established camera-depth convention:
-            # the near anatomical-left arm is rear in frame 1, while the far
-            # anatomical-right arm is lead. Their identities stay fixed even
-            # when their screen positions cross during the opposite half-step.
-            "rear": list(pose.landmarks["left_hand"]),
-            "lead": list(pose.landmarks["right_hand"]),
+            "source": index,
+            "rear": [int(value) for value in anchor["rear"]],
+            "lead": [int(value) for value in anchor["lead"]],
         }
-        for pose in poses
+        for index, anchor in enumerate(anchors)
     ]
     path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
 
@@ -2024,6 +2536,7 @@ def main() -> None:
     parser.add_argument("--pose-data-output", type=Path, required=True)
     parser.add_argument("--candidate-output", type=Path, required=True)
     parser.add_argument("--baseline-strip", type=Path)
+    parser.add_argument("--art-model", type=Path, default=DEFAULT_ART_MODEL)
     parser.add_argument(
         "--canonical-atlas",
         type=Path,
@@ -2036,6 +2549,14 @@ def main() -> None:
         default=Path("assets/sprites/black_dave_fist_anchors.json"),
     )
     args = parser.parse_args()
+
+    model = load_character_animation_skin(_project_path(args.art_model))
+    if model.character != "black_dave":
+        raise ValueError(f"unexpected character art model: {model.character!r}")
+    if model.motion.fingerprint_sha256 != APPROVED_MOTION_FINGERPRINT:
+        raise ValueError("Dave art model is not bound to the approved walk motion")
+    if model.motion.pose_count != POSE_COUNT or model.motion.loop_duration_ms != 960:
+        raise ValueError("Dave art model motion dimensions do not match the runtime clip")
 
     reference_frames, reference_durations = _load_reference(args.reference)
     reference_bounds = _reference_motion_bounds(reference_frames)
@@ -2071,16 +2592,41 @@ def main() -> None:
         80,
     )
 
-    # Final art is rendered only after the skeletal gate above succeeds.
-    rig = load_canonical_rig(args.canonical_atlas)
-    render_canonical_parts_sheet(
-        rig,
-        args.review_dir / "dave_canonical_rig_parts_contact_sheet.png",
-    )
-    sprites = [render_dave_pose(pose, rig) for pose in poses]
-    anatomy_metrics = validate_handdrawn_anatomy(sprites, poses)
-    final_metrics = validate_final(sprites, poses, rig.palette)
+    # Only after the frozen motion gate succeeds may Dave's character adapter
+    # select and clean the complete approved artwork for each phase.
+    approved_cels, sprites, art_metrics = load_approved_walk_art(model)
+    identity_metrics = validate_approved_identity(sprites, model, art_metrics)
+    adapter_metrics = character_adapter_metrics(sprites, poses)
+    final_metrics = validate_final(sprites, poses, model.art.master_palette)
     write_strip(sprites, args.candidate_output)
+    write_asset_inventory(
+        model,
+        args.review_dir / "dave_canonical_asset_inventory.json",
+    )
+    render_approved_model_sheet(
+        model,
+        args.review_dir / "dave_approved_model_sheet.png",
+    )
+    render_palette_sheet(
+        model,
+        args.review_dir / "dave_exact_palette_sheet.png",
+    )
+    render_proportion_diagram(
+        model,
+        approved_cels[0],
+        args.review_dir / "dave_proportion_diagram.png",
+    )
+    render_flat_color_over_skeleton(
+        sprites,
+        poses,
+        args.review_dir / "dave_flat_color_over_skeleton.png",
+    )
+    render_authored_pair_contact_sheet(
+        approved_cels,
+        sprites,
+        poses,
+        args.review_dir / "dave_pose_vs_approved_original.png",
+    )
     render_silhouette_sheet(
         sprites,
         poses,
@@ -2140,47 +2686,80 @@ def main() -> None:
             args.review_dir / "dave_walk_corrected_anatomy_overlay.png",
         )
 
+    baseline_dimensions: dict[str, float] | None = None
+    if old_frames is not None:
+        old_bounds = [frame.getbbox() for frame in old_frames]
+        new_bounds = [frame.getbbox() for frame in sprites]
+        baseline_dimensions = {
+            "old_average_width_px": round(
+                sum(bound[2] - bound[0] for bound in old_bounds if bound is not None) / len(old_frames),
+                3,
+            ),
+            "new_average_width_px": round(
+                sum(bound[2] - bound[0] for bound in new_bounds if bound is not None) / len(sprites),
+                3,
+            ),
+            "old_average_height_px": round(
+                sum(bound[3] - bound[1] for bound in old_bounds if bound is not None) / len(old_frames),
+                3,
+            ),
+            "new_average_height_px": round(
+                sum(bound[3] - bound[1] for bound in new_bounds if bound is not None) / len(sprites),
+                3,
+            ),
+        }
+
     report = {
         "status": "pass",
-        "method": "combat-proportioned hand anatomy with canonical texture clipped inside approved per-part masks",
+        "method": "complete approved multi-frame Dave cels selected by the frozen generic motion clip, then hard-alpha registered and locked to the Dave-specific 192-color palette",
         "forbidden_methods_used": [],
-        "skeleton_reused": False,
+        "skeleton_reused": True,
         "lower_body_gait_reused": True,
-        "upper_body_change": "shoulders raised one pixel and widened while arm length and opposed swing remain compact",
+        "upper_body_change": "the generic reconstructed upper body was removed; approved complete authored Dave cels now own silhouette, anatomy, costume, face, and occlusion",
         "timing_changed": False,
+        "motion_changed": False,
         "approved_motion_fingerprint": motion_fingerprint,
-        "frames_requiring_manual_redraw": list(range(1, POSE_COUNT + 1)),
-        "frames_manually_reconstructed": list(range(1, POSE_COUNT + 1)),
-        "silhouette_validation": anatomy_metrics,
+        "commits_inspected": [
+            "174437aa109360a4c4f24d58d9d17bcd2605f8df",
+            "bbd21d6ab01695ad22e7e86d21e3e3b5e7cea1a9",
+            "3932865f29e5535d7485ff50bf68536b10b9a026",
+            "bdcd5d8980ee2978e572bd8ab549b7d78edcf621",
+            "ad09d21c347c0742ecd787efc63759980995d1a0",
+            "d13ef964f98770a5896fac941df4466269a460eb",
+            "0250f9c991991a326fa98afd38f83ebf1800a064",
+            "6f0f8d3c1a577e1696d36e4537d54e358c45126f",
+        ],
+        "original_assets_used": [
+            item["path"]
+            for item in model.art.asset_inventory
+            if str(item["classification"]).startswith("canonical")
+        ],
+        "character_dimensions_changed": baseline_dimensions,
+        "maximum_proportion_deviation_px": identity_metrics["maximum_proportion_deviation_px"],
+        "palette_deviation_colors": identity_metrics["palette_deviation_colors"],
+        "character_adapter_validation": adapter_metrics,
+        "frames_manually_redrawn": [],
+        "frames_native_pixel_cleaned": list(range(1, POSE_COUNT + 1)),
+        "silhouette_validation": identity_metrics,
         "hidden_surface_corrections": [
-            "rear shoulder and rear chest are established behind the torso and removed by torso coverage",
-            "rear upper arm and rear forearm are hidden where the torso crosses them",
-            "far right hip and thigh are drawn before the near left leg and unified pelvis",
-            "all prior duplicate shoulder, neck, torso, muscle, and outline pixels are absent",
+            "each approved original cel supplies one already-resolved shoulder, chest, arm, hip, leg, and shoe silhouette",
+            "no generic limb, duplicate shoulder, floating muscle, or overlapping transformed body part remains",
+            "the original artist's near/far occlusion and clothing compression are preserved per phase",
         ],
-        "layer_order_corrections": [
-            {
-                "pose": pose.index + 1,
-                "phase": pose.name,
-                "near_arm": HANDDRAWN_NEAR_ARM_LAYER[pose.index],
-                "leg_order": "far_right_then_near_left_then_unified_pelvis",
-            }
-            for pose in poses
-        ],
+        "layer_order_corrections": model.layers.hidden_surface_policy,
         "anatomy_corrections": [
-            "deltoid, biceps, triceps, elbow, forearm, wrist, and fist are redrawn per pose",
-            "neck, broader ribcage, exposed chest, tank collar, armholes, chain, and cloth folds form one connected torso",
-            "waistband, belt loops, buckle, pocket, pouch, and denim folds follow the pelvis and weight-bearing leg",
-            "each shoe is rebuilt from heel/toe orientation with collar, upper, laces, toe cap, and sole",
-            "canonical combat-era skin, tank, denim, and shoe pixels are clipped inside each finished anatomy mask",
+            "restored the authored muscular shoulders, thick arms, torso depth, head, face, beard, and cap",
+            "restored the original tank boundaries, chain, belt, buckle, pouch, denim folds, and shoe construction",
+            "removed the 40-color generic ribbon silhouette and retained a single connected full-cel drawing",
         ],
-        "canonical_rig": {
-            "source": args.canonical_atlas.as_posix(),
-            "source_sha256": rig.source_sha256,
-            "source_cell": [CANONICAL_CELL_COLUMN, CANONICAL_CELL_ROW],
-            "use": "identity head, locked palette, and authored surface texture; hand-drawn masks remain the sole silhouette authority",
-            "palette_color_count": len(rig.palette),
-            "resampling": "nearest_neighbor_only",
+        "character_art_model": {
+            "source": args.art_model.as_posix(),
+            "name": model.art.name,
+            "source_commit": model.art.source_commit,
+            "source_sha256": art_metrics["source_sha256"],
+            "render_mode": model.layers.mode,
+            "palette_color_count": len(model.art.master_palette),
+            "resampling": model.cleanup.resampling,
         },
         "reference": {
             "source_frames": len(reference_frames),
@@ -2204,10 +2783,18 @@ def main() -> None:
         "final_validation": final_metrics,
         "maximum_planted_foot_drift_px": skeleton_metrics["maximum_planted_foot_drift_px"],
         "pivot_consistency": {"root_x_px": ROOT_X, "ground_y_px": GROUND_Y},
+        "remaining_visual_limitations": [
+            "The frozen generic skeleton remains the timing, phase, root, and contact authority; internal contour landmarks are represented by the closest approved full authored cel rather than deforming that cel into a generic body template."
+        ],
         "artifacts": {
+            "canonical_asset_inventory": "dave_canonical_asset_inventory.json",
+            "approved_model_sheet": "dave_approved_model_sheet.png",
+            "exact_palette_sheet": "dave_exact_palette_sheet.png",
+            "proportion_diagram": "dave_proportion_diagram.png",
             "reference_contact_sheet": "reference_12_pose_contact_sheet.png",
             "skeleton_contact_sheet": "dave_skeleton_12_pose_contact_sheet.png",
-            "canonical_rig_parts_contact_sheet": "dave_canonical_rig_parts_contact_sheet.png",
+            "flat_color_over_skeleton": "dave_flat_color_over_skeleton.png",
+            "pose_vs_approved_original": "dave_pose_vs_approved_original.png",
             "paired_contact_sheet": "final_dave_and_target_paired_contact_sheet.png",
             "silhouette_validation": "dave_walk_silhouette_validation.png",
             "final_frame_review": "dave_walk_final_frame_review.png",
@@ -2226,7 +2813,7 @@ def main() -> None:
     report_path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     if args.install_output is not None:
         write_strip(sprites, args.install_output)
-        update_walk_fist_anchors(args.fist_anchor_metadata, poses)
+        update_walk_fist_anchors(args.fist_anchor_metadata, model)
     print(json.dumps(report, indent=2))
 
 

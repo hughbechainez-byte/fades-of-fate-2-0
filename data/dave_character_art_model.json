@@ -1,0 +1,293 @@
+{
+  "schema_version": 1,
+  "character": "black_dave",
+  "generic_motion_clip": {
+    "name": "compact_walk_v1",
+    "pose_data_path": "data/dave_walk_reference_poses.json",
+    "fingerprint_sha256": "6147e92f064bac2204edfe2972e507a6477ec74e9a252487b0461f86a172fa4c",
+    "pose_count": 12,
+    "loop_duration_ms": 960,
+    "frozen_fields": [
+      "frame_timing",
+      "cadence",
+      "contact_sequence",
+      "root_trajectory",
+      "pelvis_bounce",
+      "stride_progression",
+      "arm_swing_timing",
+      "leg_trajectories",
+      "loop_structure"
+    ]
+  },
+  "proportion_profile": {
+    "name": "black_dave_authored_native_128_v1",
+    "native_cell_size": [128, 128],
+    "root_x_px": 64,
+    "ground_y_px": 126,
+    "ruler_source": {
+      "path": "assets/sprites/black_dave_animation_atlas.png",
+      "row": 1,
+      "column": 0,
+      "raw_standing_bounds": [27, 1, 107, 126],
+      "registered_standing_bounds": [27, 2, 107, 127],
+      "head_bounds": [56, 1, 82, 32],
+      "neck_anchor": [67, 30],
+      "shoulder_span": [[45, 33], [81, 33]],
+      "chest_span": [[49, 42], [80, 42]],
+      "waist_span": [[49, 55], [74, 55]],
+      "pelvis_span": [[46, 73], [77, 73]]
+    },
+    "measurements_px": {
+      "total_standing_height": 125,
+      "head_height": 31,
+      "head_width": 26,
+      "shoulder_width": 36,
+      "chest_width": 31,
+      "waist_width": 25,
+      "pelvis_width": 31,
+      "upper_arm_thickness": 13,
+      "forearm_thickness": 11,
+      "hand_width": 11,
+      "hand_height": 10,
+      "thigh_thickness": 19,
+      "calf_thickness": 17,
+      "shoe_length": 26,
+      "shoe_height": 16,
+      "neck_x": 67,
+      "neck_y": 30,
+      "ground_line_offset_from_cell_bottom": 1
+    },
+    "limb_length_ratios": {
+      "head_to_height": 0.248,
+      "upper_arm_to_height": 0.176,
+      "forearm_to_height": 0.144,
+      "thigh_to_height": 0.24,
+      "calf_to_height": 0.224,
+      "leg_to_height": 0.464,
+      "shoulder_to_waist_to_height": 0.24
+    }
+  },
+  "art_model": {
+    "name": "black_dave_approved_multi_frame_v1",
+    "source_commit": "174437aa109360a4c4f24d58d9d17bcd2605f8df",
+    "light_direction": "upper-left key light with lower-right form shadow",
+    "asset_inventory": [
+      {
+        "path": "assets/portraits/dave_portrait_lean_young_v1.png",
+        "commit": "174437aa109360a4c4f24d58d9d17bcd2605f8df",
+        "state": "portrait identity",
+        "resolution": [1254, 1254],
+        "frame_dimensions": [1254, 1254],
+        "palette": "high-color concept raster",
+        "classification": "canonical supporting reference",
+        "sha256": "042c0a1eb04320fbb96019d596beacb58e528a0f7a07f210fa5388c9272e02cc"
+      },
+      {
+        "path": "assets/portraits/dave_portrait_lean_young_v2.png",
+        "commit": "174437aa109360a4c4f24d58d9d17bcd2605f8df",
+        "state": "approved face beard hat torso and costume portrait",
+        "resolution": [1254, 1254],
+        "frame_dimensions": [1254, 1254],
+        "palette": "high-color concept raster",
+        "classification": "canonical identity reference",
+        "sha256": "dd71cce14c7321e3ae96217eab3bf5b83865bd11a776a1323389af6dee3573aa"
+      },
+      {
+        "path": "assets/reference/black_dave_walk_reference_v2.png",
+        "commit": "174437aa109360a4c4f24d58d9d17bcd2605f8df",
+        "state": "twelve authored side-walk poses",
+        "resolution": [1717, 916],
+        "frame_dimensions": "six by two source grid with variable transparent gutters",
+        "palette": "high-color authored raster; master-palette donor",
+        "classification": "canonical editable art source",
+        "sha256": "e2782138205789b6c09e09260e7aab2fdd09952561ffcc9fd041fe7405bb19a3"
+      },
+      {
+        "path": "assets/reference/black_dave_walk_reference_v2_chroma.png",
+        "commit": "174437aa109360a4c4f24d58d9d17bcd2605f8df",
+        "state": "chroma-backed source of the twelve walk poses",
+        "resolution": [1717, 916],
+        "frame_dimensions": "six by two source grid",
+        "palette": "unrestricted source raster",
+        "classification": "canonical source precursor",
+        "sha256": "eb8c3a5504e8bbf63ee92072e25968f34d0260c632f0e7e948920322817b3c44"
+      },
+      {
+        "path": "assets/sprites/black_dave_atlas.png",
+        "commit": "174437aa109360a4c4f24d58d9d17bcd2605f8df",
+        "state": "idle walk combat and special source poses",
+        "resolution": [640, 512],
+        "frame_dimensions": [128, 128],
+        "palette": "high-color approved runtime raster",
+        "classification": "canonical runtime source atlas",
+        "sha256": "b36dc8fdb73e072464af1298ffb593a962b5f1c31dd9a17bde064efde537dbfa"
+      },
+      {
+        "path": "assets/sprites/black_dave_animation_atlas.png",
+        "commit": "174437aa109360a4c4f24d58d9d17bcd2605f8df",
+        "state": "idle walk attacks heavy ranged dodge hurt down super air jump pet refill pants",
+        "resolution": [1536, 2176],
+        "frame_dimensions": [128, 128],
+        "palette": "high-color approved runtime raster; 192-color master-palette donor",
+        "classification": "canonical approved animation atlas",
+        "sha256": "db2315068e870b0be5955d8424f194567b8cfde23bf0a8fe03609d3c25ae0c4d"
+      },
+      {
+        "path": "assets/sprites/victory_animation_strip.png",
+        "commit": "174437aa109360a4c4f24d58d9d17bcd2605f8df",
+        "state": "group victory poses containing Dave",
+        "resolution": [2048, 144],
+        "frame_dimensions": [256, 144],
+        "palette": "composite high-color runtime raster",
+        "classification": "canonical derivative supporting reference",
+        "sha256": "44eca916acfe0ae2ffed9ec791b4c08cf0d94437ddb729cbd057a8192410d7d1"
+      },
+      {
+        "path": "assets/sprites/victory_hug_treats.png",
+        "commit": "174437aa109360a4c4f24d58d9d17bcd2605f8df",
+        "state": "group hug poses containing Dave",
+        "resolution": [1024, 144],
+        "frame_dimensions": [256, 144],
+        "palette": "composite high-color runtime raster",
+        "classification": "canonical derivative supporting reference",
+        "sha256": "fe57425575acf222c0b24479cc8378d87daf6de6040144e09fd48f09c518a7b6"
+      },
+      {
+        "path": "assets/sprites/sunset_bmx_animation_strip.png",
+        "commit": "174437aa109360a4c4f24d58d9d17bcd2605f8df",
+        "state": "BMX epilogue poses containing Dave",
+        "resolution": [2048, 144],
+        "frame_dimensions": [256, 144],
+        "palette": "composite high-color runtime raster",
+        "classification": "canonical derivative supporting reference",
+        "sha256": "ecb049ad9b80833652cbad2e3a74a21adbe98b979c029c1fda7c52c5dcac7ce4"
+      },
+      {
+        "path": "assets/sprites/black_dave_walk_12.png",
+        "commit": "6f0f8d3c1a577e1696d36e4537d54e358c45126f",
+        "state": "procedurally reconstructed compact walk",
+        "resolution": [1536, 128],
+        "frame_dimensions": [128, 128],
+        "palette": "40-color generated lock",
+        "classification": "obsolete derivative baseline",
+        "sha256": "17c705a592c9478d7602ccbb8431deb4a8b004232fb438930d82b5b92944b3d0"
+      },
+      {
+        "path": "assets/sprites/black_dave_walk_24.png",
+        "commit": "bbd21d6ab01695ad22e7e86d21e3e3b5e7cea1a9",
+        "state": "balanced synthetic twenty-four-frame walk",
+        "resolution": [3072, 128],
+        "frame_dimensions": [128, 128],
+        "palette": "generated derivative palette",
+        "classification": "historical obsolete derivative",
+        "sha256": "bcb750d640c66102b217c6ce736ad97995f79bf62ec1adb72197b3b3e30a8b1c"
+      },
+      {
+        "path": "assets/reference/black_dave_walk_stable_reference_v3.png",
+        "commit": "3932865f29e5535d7485ff50bf68536b10b9a026",
+        "state": "stable-walk construction reference",
+        "resolution": [1536, 1024],
+        "frame_dimensions": "reference sheet",
+        "palette": "generated derivative palette",
+        "classification": "historical obsolete derivative",
+        "sha256": "d8f5c5057a51b3e96ebc5f8bd48e484cd621511c772812df9339c23d8da4be0a"
+      }
+    ],
+    "approved_reference_frames": [
+      {"path": "assets/sprites/black_dave_animation_atlas.png", "row": 0, "column": 0, "role": "neutral head face beard cap shoulders and front torso"},
+      {"path": "assets/sprites/black_dave_animation_atlas.png", "row": 1, "column": 0, "role": "side-facing contact pose and native proportion ruler"},
+      {"path": "assets/sprites/black_dave_animation_atlas.png", "row": 1, "column": 3, "role": "side-facing passing pose and leg occlusion"},
+      {"path": "assets/sprites/black_dave_animation_atlas.png", "row": 2, "column": 0, "role": "combat guard shoulder arm fist and torso mass"},
+      {"path": "assets/sprites/black_dave_animation_atlas.png", "row": 2, "column": 4, "role": "extended arm elbow fist pelvis and shoe construction"},
+      {"path": "assets/sprites/black_dave_animation_atlas.png", "row": 6, "column": 4, "role": "heavy kick thigh calf shoe and bent-arm construction"},
+      {"path": "assets/sprites/black_dave_animation_atlas.png", "row": 7, "column": 3, "role": "ranged three-quarter torso belt and pouch"},
+      {"path": "assets/sprites/black_dave_animation_atlas.png", "row": 9, "column": 2, "role": "hurt pose anatomy under compression"},
+      {"path": "assets/portraits/dave_portrait_lean_young_v2.png", "role": "high-resolution face beard cap chain tank belt jeans and pouch identity"}
+    ],
+    "walk_source": {
+      "path": "assets/sprites/black_dave_animation_atlas.png",
+      "sha256": "db2315068e870b0be5955d8424f194567b8cfde23bf0a8fe03609d3c25ae0c4d",
+      "row": 1,
+      "cell_size": [128, 128],
+      "columns": 12,
+      "source_indices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+      "registration": "preserve authored torso root; integer-shift each complete cel to ground_y 126",
+      "fist_anchors_after_registration": [
+        {"rear": [39, 62], "lead": [91, 60]},
+        {"rear": [51, 68], "lead": [84, 68]},
+        {"rear": [45, 61], "lead": [86, 59]},
+        {"rear": [57, 61], "lead": [84, 61]},
+        {"rear": [67, 67], "lead": [82, 61]},
+        {"rear": [48, 70], "lead": [87, 61]},
+        {"rear": [42, 65], "lead": [87, 59]},
+        {"rear": [53, 76], "lead": [81, 68]},
+        {"rear": [48, 68], "lead": [84, 59]},
+        {"rear": [63, 74], "lead": [84, 61]},
+        {"rear": [51, 58], "lead": [90, 60]},
+        {"rear": [55, 69], "lead": [86, 63]}
+      ]
+    },
+    "master_palette_derivation": {
+      "method": "Pillow median-cut without dithering over opaque pixels from all 12 walk cels plus selected idle attack heavy ranged and hurt cels",
+      "color_count": 192,
+      "palette_text_sha256": "4c2d351ade869024950c2954da18873f0ca77f1fe7f393a973408316745c179c",
+      "sample_cells": [[0, 0], [0, 3], [0, 6], [0, 9], [1, 0], [1, 1], [1, 2], [1, 3], [1, 4], [1, 5], [1, 6], [1, 7], [1, 8], [1, 9], [1, 10], [1, 11], [2, 0], [2, 2], [2, 4], [2, 6], [6, 0], [6, 4], [6, 7], [7, 0], [7, 3], [7, 6], [9, 0], [9, 2], [9, 4], [9, 7]]
+    },
+    "master_palette_hex": ["#F8FCFC", "#F4F3EC", "#E6E6E8", "#E6E1D3", "#D8D3D5", "#D9CFBE", "#D3C0B0", "#DB9851", "#C0C4C4", "#BCB1B0", "#AFB2AF", "#8EB3C3", "#A79DA0", "#AB947E", "#949391", "#6592B2", "#D2823F", "#CE7939", "#C77B3C", "#C67437", "#C07A3A", "#C07438", "#BF7035", "#B27949", "#B57432", "#B46F34", "#887E77", "#4D789B", "#BB6C32", "#B46B32", "#B9662E", "#B2652D", "#AD6933", "#AD672A", "#AC6029", "#A46633", "#A2602D", "#A26125", "#9F5A28", "#9E571F", "#7D6353", "#66615F", "#945822", "#885824", "#565B5E", "#355B85", "#27568C", "#195FAA", "#1C589E", "#1A569D", "#1D5891", "#1D5591", "#1D538F", "#9D4E1D", "#944C1C", "#8F4E1D", "#8F4617", "#864C20", "#874A15", "#864319", "#86410F", "#7A4521", "#5E4739", "#7D4110", "#713F0F", "#24518A", "#245187", "#255083", "#215082", "#244D84", "#214D82", "#224980", "#4B4B4E", "#484741", "#45403F", "#324556", "#3A3C3C", "#15509B", "#185091", "#1C4E88", "#154E8A", "#11478F", "#154783", "#1E4C7D", "#1E487B", "#194A7C", "#11487D", "#16447C", "#15417A", "#0D417B", "#1A4873", "#194473", "#154273", "#1B446D", "#14426D", "#174264", "#173D6B", "#173D5F", "#113D6A", "#0B3D6B", "#7E3712", "#743610", "#6B3516", "#6B340A", "#5E3314", "#50331C", "#3E383B", "#3F352B", "#6A2B0F", "#562A0F", "#58200C", "#452918", "#44210F", "#43170A", "#36373D", "#373635", "#363633", "#343333", "#34342E", "#32302D", "#312D30", "#302D2C", "#312B23", "#331F17", "#331109", "#193763", "#143861", "#1C3449", "#1C2846", "#25282E", "#282828", "#282924", "#262522", "#242320", "#241F1D", "#1D1E1C", "#1E1927", "#1D1A1C", "#1D1919", "#171818", "#24180F", "#1B1712", "#161613", "#191116", "#1F1009", "#210807", "#160709", "#0A3872", "#0B3767", "#103761", "#083661", "#123656", "#0B3557", "#082D6C", "#092F5B", "#0A2E56", "#0C3050", "#092950", "#0E3148", "#0C2D47", "#0E2B44", "#082B46", "#0E2841", "#072742", "#0C223F", "#062240", "#0C2032", "#061F33", "#08193A", "#06103C", "#081829", "#060F28", "#0B161E", "#08101C", "#07091B", "#111311", "#0F0F0F", "#0F0D0E", "#090C0E", "#09080E", "#07020E", "#0C0C06", "#090706", "#080505", "#0A0304", "#040304", "#010302", "#080003", "#020002", "#000003", "#000100", "#000000"],
+    "palette_ramps": {
+      "outline": ["#000000", "#090C0E", "#171818", "#282828", "#363633"],
+      "skin": ["#43170A", "#6A2B0F", "#7E3712", "#9D4E1D", "#B9662E", "#C77B3C", "#DB9851", "#D3C0B0"],
+      "denim": ["#06103C", "#0A2E56", "#0B3D6B", "#15417A", "#1D538F", "#195FAA", "#6592B2", "#8EB3C3"],
+      "shirt": ["#0F0F0F", "#1D1E1C", "#282828", "#363633", "#4B4B4E", "#66615F"],
+      "shoe": ["#0F0F0F", "#36373D", "#565B5E", "#949391", "#C0C4C4", "#F4F3EC", "#F8FCFC"],
+      "gold_and_belt": ["#713F0F", "#9E571F", "#B57432", "#DB9851", "#E6E1D3"]
+    }
+  },
+  "layer_rules": {
+    "mode": "complete_authored_cel_per_phase",
+    "phase_source_indices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+    "near_side": "left",
+    "layer_order": ["complete_authored_source_cel"],
+    "hidden_surface_policy": "Preserve the artist-authored occlusion already resolved inside each complete cel; never split shoulders, hips, arms, or legs into overlapping generic parts."
+  },
+  "cleanup_rules": {
+    "alpha_threshold": 128,
+    "resampling": "nearest_neighbor_only",
+    "hard_alpha": true,
+    "integer_coordinates": true,
+    "palette_lock": true,
+    "root_x_px": 64,
+    "ground_y_px": 126,
+    "forbidden_methods": [
+      "antialiasing",
+      "optical_flow",
+      "ai_frame_morphing",
+      "blurred_rotation",
+      "semitransparent_edge_pixels",
+      "bilinear_scaling",
+      "bicubic_scaling",
+      "unrestricted_palette_generation",
+      "generic_ribbon_silhouette_reconstruction",
+      "independently_rotated_overlapping_limbs"
+    ]
+  },
+  "identity_validation": {
+    "comparison_basis": "registered hard-alpha silhouette of each approved full walk cel",
+    "maximum_proportion_deviation_px": 0,
+    "maximum_palette_deviation_colors": 0,
+    "expected_frames": [
+      {"pose": 1, "registered_alpha_sha256": "9d92402ebb11d338afea35ca6e31f672f70a406e775e474dfaa480f2a0a3c738", "registered_bbox": [27, 2, 107, 127], "opaque_pixels": 4755, "ground_shift_y": 1},
+      {"pose": 2, "registered_alpha_sha256": "bc09c10c8316e76eda0d5cbf06f7081b3eb34f25a54cdc611ebe44f542fd1555", "registered_bbox": [30, 12, 92, 127], "opaque_pixels": 3970, "ground_shift_y": 1},
+      {"pose": 3, "registered_alpha_sha256": "23a893b3260be9431bf3efae4993b8793f46615b9fb42c53b44fea375bb4d83d", "registered_bbox": [27, 1, 104, 127], "opaque_pixels": 4535, "ground_shift_y": 1},
+      {"pose": 4, "registered_alpha_sha256": "39410efa24478c6019d187563188497da741c774759363677b8194941a26aaee", "registered_bbox": [42, 2, 88, 127], "opaque_pixels": 3503, "ground_shift_y": 1},
+      {"pose": 5, "registered_alpha_sha256": "50c636e3b69a1b37a9f42a3870a51d7e7b5a99eea47e7cf3a3f2fc6eafc6db5a", "registered_bbox": [15, 4, 97, 127], "opaque_pixels": 4296, "ground_shift_y": 1},
+      {"pose": 6, "registered_alpha_sha256": "e608675c915fa0a344d8ecd533433a069ad4a0dd0ac963174db53f50adaad37c", "registered_bbox": [31, 5, 95, 127], "opaque_pixels": 3992, "ground_shift_y": 1},
+      {"pose": 7, "registered_alpha_sha256": "ac657ba9fc55ea1d3c2bbe08894fa88982b23fc0f9efbb2e7d977d8add5c2365", "registered_bbox": [28, 2, 116, 127], "opaque_pixels": 4550, "ground_shift_y": 1},
+      {"pose": 8, "registered_alpha_sha256": "137428a05c35cfd413e45ee3060c6db1b1556da52da294b62efda380e134fd56", "registered_bbox": [32, 12, 89, 127], "opaque_pixels": 3800, "ground_shift_y": 1},
+      {"pose": 9, "registered_alpha_sha256": "5cfabad11269857e6d29680b856357e42dbd4b1df90d4db256ad4269a52affce", "registered_bbox": [22, 1, 105, 127], "opaque_pixels": 4282, "ground_shift_y": 1},
+      {"pose": 10, "registered_alpha_sha256": "e05f1b16f60b7fab11a4bad4eb8f33b52e92b9ea729b9c3bb968c8d4050585f3", "registered_bbox": [47, 1, 88, 127], "opaque_pixels": 3404, "ground_shift_y": 1},
+      {"pose": 11, "registered_alpha_sha256": "5ed7fd472c3847def2933a31afcaac1a6ed5f3ed1044407fdb01cb33025d7fe0", "registered_bbox": [30, 2, 120, 127], "opaque_pixels": 4439, "ground_shift_y": 1},
+      {"pose": 12, "registered_alpha_sha256": "55e3804bb2e9783737c0aa46bc9218db73953b0538dbb14acfabd08026387442", "registered_bbox": [24, 3, 93, 127], "opaque_pixels": 3986, "ground_shift_y": 1}
+    ]
+  }
+}

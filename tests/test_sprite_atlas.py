@@ -441,7 +441,7 @@ class SpriteAtlasTests(unittest.TestCase):
             for x in range(frame.get_width())
             if frame.get_at((x, y)).a >= 128
         }
-        self.assertLessEqual(len(locked_palette), 40, "Dave's walk must use one locked master palette")
+        self.assertEqual(len(locked_palette), 192, "Dave's walk must use the approved identity palette")
         self.assertEqual(
             _signature(sprite_atlas.player_frame("black_dave", "walk", 0)),
             _signature(sprite_atlas.player_frame("black_dave", "walk", 24)),
@@ -534,7 +534,7 @@ class SpriteAtlasTests(unittest.TestCase):
         # predicate: the old shoe/bicep points also looked "skin colored".
         semantic_goldens = {
             ("idle", 4): ((50, 48), (85, 49)),
-            ("walk", 1): ((49, 76), (96, 74)),
+            ("walk", 1): ((57, 76), (94, 76)),
             ("attack_1", 2): ((53, 41), (133, 43)),
             ("attack_3", 4): ((39, 62), (93, 30)),
             ("heavy", 4): ((39, 62), (93, 30)),
