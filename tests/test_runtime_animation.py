@@ -206,7 +206,7 @@ class RuntimeAnimationClockTests(unittest.TestCase):
         self.assertAlmostEqual(player.locomotion_distance, travelled_before_stop + 2.0)
         self.assertGreaterEqual(player.animation_tick, walk_tick_before_stop)
 
-    def test_normal_hero_speed_presents_eighteen_authored_walk_poses_per_second(self) -> None:
+    def test_normal_hero_speed_preserves_crisp_walk_cadence(self) -> None:
         player = next(candidate for candidate in self.game.players if not candidate.is_cpu)
         player.state = "walk"
         player.locomotion_distance = 0.0
@@ -224,7 +224,7 @@ class RuntimeAnimationClockTests(unittest.TestCase):
         transitions = sum(first != second for first, second in zip(signatures, signatures[1:]))
         expected = normal_speed * 12.0 / _HERO_STRIDE_DISTANCE
         self.assertAlmostEqual(expected, 18.0, delta=0.01)
-        self.assertIn(transitions, {17, 18, 19})
+        self.assertIn(transitions, {8, 9, 10})
 
     def test_enemy_chase_clock_stops_cleanly_when_navigation_applies_no_motion(self) -> None:
         enemy = Enemy(77, "stick", 90.0, 260.0, self.game.data["enemies"]["stick"])

@@ -1320,7 +1320,7 @@ class PixelArtTests(unittest.TestCase):
     def test_hero_stride_bob_is_integer_and_periodic(self) -> None:
         self.assertEqual(pixel_art._walk_bob(0), pixel_art._walk_bob(24))
         self.assertEqual(pixel_art._walk_bob(6), -3)
-        self.assertEqual(pixel_art._walk_bob(22), -2)
+        self.assertEqual(pixel_art._walk_bob(22), -1)
 
     def test_walk_followthrough_is_phase_driven(self) -> None:
         swing = pygame.Surface((180, 120), pygame.SRCALPHA)

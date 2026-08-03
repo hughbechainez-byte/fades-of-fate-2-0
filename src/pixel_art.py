@@ -4237,9 +4237,15 @@ def _draw_footfall_ticks(
 def _walk_bob(frame: int) -> int:
     """Return a one-pixel weight arc without moving the grounded shadow."""
 
-    # Heel strike, compression, passing, and toe-off form a gentle arc.  It is
-    # intentionally integer-only so the pixel silhouette never gets blurred.
-    return (0, -1, -2, -3, -2, -1, 0, 0, -1, -2, -3, -2)[(int(frame) // 2) % 12]
+    # Heel strike, compression, passing, and toe-off form a gentle arc.  The
+    # 24-step stream gives the new in-between cels their own weight transfer.
+    return (0, 0, -1, -1, -2, -2, -3, -2, -2, -1, -1, 0, 0, 0, -1, -1, -2, -2, -3, -2, -2, -1, -1, 0)[int(frame) % 24]
+
+
+def _walk_stride_offset(frame: int) -> int:
+    """Shift the visible root by a single pixel as weight passes between feet."""
+
+    return (0, 0, 1, 1, 2, 1, 0, 0, -1, -1, -2, -1, 0, 0, 1, 1, 2, 1, 0, 0, -1, -1, -2, -1)[int(frame) % 24]
 
 
 def _draw_walk_followthrough(
@@ -4303,6 +4309,12 @@ def _draw_stride_accents(
         # the lane while keeping the authored body silhouette untouched.
         cx = _i(x) - direction * 7
         pygame.draw.line(surface, (77, 71, 75), (cx - direction * 5, ground_y), (cx + direction * 4, ground_y), 1)
+    elif phase in {3, 9, 15, 21}:
+        # The raised foot crosses the lane between the major keys. A single
+        # warm pixel pair keeps that arc readable without drawing a second
+        # false contact or changing the collision root.
+        cx = _i(x) + direction * (3 if phase in {3, 15} else -3)
+        pygame.draw.rect(surface, (157, 128, 99), (cx, ground_y - 3, 2, 1))
 
 
 def _draw_walk_echo(
@@ -4401,10 +4413,11 @@ def draw_player(
         _draw_action_ribbon(surface, x, y, z, facing, state_name, authored.get_height() - 4, int(frame))
         _draw_motion_echo(surface, rendered, x, y, z, facing, authored.get_height() - 4, state_name, int(frame))
         draw_y = y - _walk_bob(int(frame)) if state_name in {"walk", "run", "move", "jog"} else y
+        draw_x = x + _walk_stride_offset(int(frame)) if state_name in {"walk", "run", "move", "jog"} else x
         return _blit_grounded(
             surface,
             rendered,
-            x,
+            draw_x,
             draw_y,
             z,
             facing,
@@ -4449,7 +4462,8 @@ def draw_player(
     _draw_action_ribbon(surface, x, y, z, facing, state_name, 90, int(frame))
     _draw_motion_echo(surface, rendered, x, y, z, facing, 90, state_name, int(frame))
     draw_y = y - _walk_bob(int(frame)) if state_name in {"walk", "run", "move", "jog"} else y
-    return _blit_grounded(surface, rendered, x, draw_y, z, facing, 90)
+    draw_x = x + _walk_stride_offset(int(frame)) if state_name in {"walk", "run", "move", "jog"} else x
+    return _blit_grounded(surface, rendered, draw_x, draw_y, z, facing, 90)
 
 
 def draw_fist_flames(
