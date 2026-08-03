@@ -81,6 +81,13 @@ PLAYER_COLORS = (
     (139, 255, 116),
 )
 
+PLAYABLE_CHARACTERS = ("black_dave", "shelly", "jermaine")
+CHARACTER_LABELS = {
+    "black_dave": "BLACK DAVE",
+    "shelly": "SHELLY",
+    "jermaine": "JERMAINE",
+}
+
 PAUSE_MENU_ITEMS = (
     ("resume", "RESUME"),
     ("controls", "CONTROLS"),
@@ -310,10 +317,12 @@ class FadesGame:
         portrait_rects = {
             "black_dave": pygame.Rect(455, 170, 405, 750),
             "shelly": pygame.Rect(715, 165, 450, 755),
+            "jermaine": pygame.Rect(455, 170, 405, 750),
         }
         portrait_assets = {
             "black_dave": "assets/portraits/dave_portrait_lean_young_v2.png",
             "shelly": "assets/portraits/shelly_portrait_curvy_v1.png",
+            "jermaine": "assets/portraits/jermaine_portrait_v1.png",
         }
         self.character_portraits: dict[str, pygame.Surface] = {}
         for name, rect in portrait_rects.items():
@@ -721,13 +730,13 @@ class FadesGame:
                 self._open_character_select_from_mouse()
             return
         if self.state == "character_select":
-            for index in range(2):
+            for index in range(len(PLAYABLE_CHARACTERS)):
                 if pygame.Rect(16 + index * 156, 39, 144, 177).collidepoint(point):
                     slot = self._keyboard_select_slot()
                     slot.character_index = index
                     slot.confirmed = False
                     self.audio.play("menu")
-                    self.log_breadcrumb("character_selected", player=1, character=("black_dave", "shelly")[index], source="mouse")
+                    self.log_breadcrumb("character_selected", player=1, character=PLAYABLE_CHARACTERS[index], source="mouse")
                     return
             if pygame.Rect(16, 229, 144, 91).collidepoint(point):
                 slot = self._keyboard_select_slot()
@@ -736,7 +745,7 @@ class FadesGame:
                 else:
                     slot.confirmed = True
                     self.audio.play("menu")
-                    self.log_breadcrumb("character_confirmed", player=1, character=("black_dave", "shelly")[slot.character_index], source="mouse")
+                    self.log_breadcrumb("character_confirmed", player=1, character=PLAYABLE_CHARACTERS[slot.character_index], source="mouse")
             return
         if self.state == "complete":
             if self.victory_frame.show_results:
@@ -1231,7 +1240,7 @@ class FadesGame:
             return
         if len(self.select_slots) >= 4:
             return
-        self.select_slots.append(SelectSlot(dict(source), character_index=len(self.select_slots) % 2))
+        self.select_slots.append(SelectSlot(dict(source), character_index=len(self.select_slots) % len(PLAYABLE_CHARACTERS)))
         self.audio.play("menu")
         self.log_breadcrumb("player_joined", player=len(self.select_slots), binding=source)
 
@@ -1241,8 +1250,10 @@ class FadesGame:
         controller_line = f"{self.input.controller_count} CONTROLLER(S) DETECTED"
         if len(self.select_slots) == 1:
             controlled_index = self.select_slots[0].character_index
-            controlled = ("BLACK DAVE", "SHELLY")[controlled_index]
-            companion = ("SHELLY", "BLACK DAVE")[controlled_index]
+            controlled_character = PLAYABLE_CHARACTERS[controlled_index]
+            controlled = CHARACTER_LABELS[controlled_character]
+            companion_character = "black_dave" if controlled_character == "shelly" else "shelly"
+            companion = CHARACTER_LABELS[companion_character]
             return (
                 f"YOU CONTROL: {controlled}  •  CPU COMPANION: {companion}",
                 f"CHIEF IS SHARED AI SUPPORT  •  {controller_line}",
@@ -1318,7 +1329,7 @@ class FadesGame:
             slot.nav_cooldown = max(0.0, slot.nav_cooldown - dt)
             snapshot = self.input.snapshot(slot.binding)
             if not slot.confirmed and slot.nav_cooldown <= 0.0 and abs(snapshot.move_x) > 0.55:
-                slot.character_index = (slot.character_index + (1 if snapshot.move_x > 0 else -1)) % 2
+                slot.character_index = (slot.character_index + (1 if snapshot.move_x > 0 else -1)) % len(PLAYABLE_CHARACTERS)
                 slot.nav_cooldown = 0.22
                 self.audio.play("menu")
             if snapshot.pressed & {"confirm", "light", "jump"}:
@@ -1327,7 +1338,7 @@ class FadesGame:
                 else:
                     slot.confirmed = True
                     self.audio.play("menu")
-                    self.log_breadcrumb("character_confirmed", player=index + 1, character=("black_dave", "shelly")[slot.character_index])
+                    self.log_breadcrumb("character_confirmed", player=index + 1, character=PLAYABLE_CHARACTERS[slot.character_index])
             if "back" in snapshot.pressed or "dodge" in snapshot.pressed:
                 if slot.confirmed:
                     slot.confirmed = False
@@ -1417,7 +1428,7 @@ class FadesGame:
         self.level_outro = None
         self.level_outro_frame = None
 
-        characters = ("black_dave", "shelly")
+        characters = PLAYABLE_CHARACTERS
         for index, slot in enumerate(self.select_slots):
             character = characters[slot.character_index]
             player = Player(
@@ -1437,7 +1448,7 @@ class FadesGame:
         # available and swaps in CPU Dave, preserving both playable options.
         if len(self.select_slots) == 1:
             human = self.players[0]
-            companion_character = "shelly" if human.character == "black_dave" else "black_dave"
+            companion_character = "black_dave" if human.character == "shelly" else "shelly"
             companion = Player(
                 slot=1,
                 character=companion_character,
@@ -2232,7 +2243,7 @@ class FadesGame:
     def alert_chief(self, threatened_player: Player, source: Any) -> None:
         """Have Chief immediately respond when Dave or Shelly is struck."""
 
-        if threatened_player.character not in {"black_dave", "shelly"}:
+        if threatened_player.character not in set(PLAYABLE_CHARACTERS):
             return
         for chief in self.chiefs:
             chief.protect(source)
@@ -3963,10 +3974,12 @@ class FadesGame:
             else (float(attack_time) - float(move.get("startup", 0.0))) / active_duration
         )
         sampled = self._sample_move_hitbox(move, active_progress)
+        character_cfg = self.data["players"].get(player.character, {})
         range_x = (
             float(move["range_x"])
             + float(physics.get("player_attack_reach_bonus", 0.0))
             + float(move.get("reach_forgiveness", 0.0))
+            + float(character_cfg.get("weapon_reach_bonus", 0.0))
         ) * sampled["reach_scale"]
         range_depth = float(move["range_y"]) * sampled["depth_scale"]
         attack_depth = player.y + sampled["offset_depth"]
@@ -4087,7 +4100,11 @@ class FadesGame:
             height=(34.0 if attack_kind == "air_attack" else 46.0)
             * sampled["height_scale"],
             elevation_tolerance=elevation_tolerance,
-            damage=float(move["damage"]) * player.fist_damage_multiplier(),
+            damage=(
+                float(move["damage"])
+                * player.fist_damage_multiplier()
+                * max(0.1, float(character_cfg.get("weapon_damage_scale", 1.0)))
+            ),
             stun=float(move["hitstun"]),
             knockback_x=player.facing * float(move["knockback"]),
             hit_grounded=True,
@@ -4155,7 +4172,10 @@ class FadesGame:
             # emitted a trail, so successful visual work was easy to miss when
             # playing Shelly or when a strike did not connect.
             accent = (
-                (255, 137, 191) if player.character == "shelly"
+                (255, 137, 191)
+                if player.character == "shelly"
+                else (255, 210, 86)
+                if player.character == "jermaine"
                 else (108, 226, 255)
             )
             trail_length = 24.0 if attack_kind == "light" else 34.0
@@ -4436,7 +4456,7 @@ class FadesGame:
                 queued_cleared=cleared_queued,
                 boss_hit=any(enemy.kind == "couch" for enemy in targets),
             )
-        else:
+        elif player.character == "shelly":
             cfg = self.data["players"]["shelly"]
             bosses = [enemy for enemy in self.enemies if enemy.alive and enemy.kind == "couch"]
             if bosses:
@@ -4491,6 +4511,47 @@ class FadesGame:
                     burst_targets=len(targets),
                     boss_excluded=True,
                 )
+        else:
+            cfg = self.data["players"]["jermaine"]
+            radius = float(cfg.get("super_radius", 180.0))
+            damage = float(cfg.get("super_damage", 42.0))
+            targets = [
+                enemy
+                for enemy in self.enemies
+                if enemy.targetable
+                and math.hypot(enemy.x - player.x, (enemy.y - player.y) * 1.7) <= radius
+            ]
+            self.add_effect(
+                "shock",
+                player.x,
+                player.y,
+                radius=radius,
+                color=(255, 206, 73),
+                duration=0.48,
+            )
+            self.add_effect(
+                "text",
+                player.x,
+                player.y - 84.0,
+                text="STICK SWEEP!",
+                color=(255, 225, 126),
+                duration=0.82,
+            )
+            for enemy in targets:
+                enemy.take_damage(
+                    damage,
+                    self,
+                    player,
+                    hitstun=float(cfg.get("super_hitstun", 0.58)),
+                    knockback=float(cfg.get("super_knockback", 72.0)),
+                    knockdown=True,
+                )
+            self.camera.trigger_shake(
+                7.0 * self.options.shake_intensity,
+                0.28,
+                vertical_strength=3.0 * self.options.shake_intensity,
+            )
+            self.log_breadcrumb("jermaine_stick_sweep", player=player.slot + 1, enemies_hit=len(targets))
 
     def enemy_attack(
         self,
@@ -4752,6 +4813,7 @@ class FadesGame:
 
     def _draw_title(self, surface: pygame.Surface) -> None:
         surface.blit(self.key_art, (0, 0))
+        pixel_art.draw_jermaine_loading(surface, 548, 303, frame=int(self.elapsed * 8.0))
         overlay = pygame.Surface(LOGICAL_SIZE, pygame.SRCALPHA)
         overlay.fill((5, 4, 16, 35))
         surface.blit(overlay, (0, 0))
@@ -4773,15 +4835,15 @@ class FadesGame:
         shade.fill((4, 6, 17, 190))
         surface.blit(shade, (0, 0))
         self._text(surface, self.font_big, "CHOOSE WHO YOU CONTROL", (255, 222, 99), (320, 17), center=True)
-        card_names = ("BLACK DAVE", "SHELLY + CHIEF", "LOCKED", "LOCKED")
-        card_colors = ((45, 150, 190), (174, 75, 127), (25, 27, 36), (25, 27, 36))
+        card_names = ("BLACK DAVE", "SHELLY + CHIEF", "JERMAINE", "LOCKED")
+        card_colors = ((45, 150, 190), (174, 75, 127), (139, 104, 40), (25, 27, 36))
         for index in range(4):
             x = 16 + index * 156
             rect = pygame.Rect(x, 39, 144, 177)
             hovered = self.mouse_position is not None and rect.collidepoint(self.mouse_position)
-            border = (255, 222, 99) if hovered and index < 2 else ((104, 229, 255) if index < 2 else (75, 76, 88))
+            border = (255, 222, 99) if hovered and index < 3 else ((104, 229, 255) if index < 3 else (75, 76, 88))
             self._panel(surface, rect, card_colors[index], border)
-            self._text(surface, self.font_small, card_names[index], (255, 246, 210) if index < 2 else (112, 113, 125), (x + 72, 50), center=True)
+            self._text(surface, self.font_small, card_names[index], (255, 246, 210) if index < 3 else (112, 113, 125), (x + 72, 50), center=True)
             if index == 0:
                 surface.blit(self.character_portraits["black_dave"], (x + 27, 59))
                 pygame.draw.rect(surface, (105, 229, 255), (x + 25, 57, 94, 149), 2)
@@ -4790,6 +4852,10 @@ class FadesGame:
                 surface.blit(self.character_portraits["shelly"], (x + 27, 59))
                 pygame.draw.rect(surface, (255, 143, 204), (x + 25, 57, 94, 149), 2)
                 self._text(surface, self.font_tiny, "TORCH • CHIEF SUPPORT", (255, 188, 218), (x + 72, 205), center=True)
+            elif index == 2:
+                surface.blit(self.character_portraits["jermaine"], (x + 27, 59))
+                pygame.draw.rect(surface, (255, 216, 92), (x + 25, 57, 94, 149), 2)
+                self._text(surface, self.font_tiny, "STICK • CROWD SWEEP", (255, 226, 137), (x + 72, 205), center=True)
             else:
                 pygame.draw.rect(surface, (10, 11, 16), (x + 27, 70, 90, 112))
                 pygame.draw.ellipse(surface, (2, 3, 6), (x + 56, 82, 32, 36))
@@ -4809,7 +4875,7 @@ class FadesGame:
             self._panel(surface, rect, (29, 35, 54) if hovered else (13, 16, 29), (255, 222, 99) if hovered else color)
             if index < len(self.select_slots):
                 slot = self.select_slots[index]
-                character = ("BLACK DAVE", "SHELLY")[slot.character_index]
+                character = CHARACTER_LABELS[PLAYABLE_CHARACTERS[slot.character_index]]
                 status = "YOU CONTROL • READY" if slot.confirmed else "YOU CONTROL • SELECTING"
                 self._text(surface, self.font, f"P{index + 1}  {character}", color, (x + 72, 244), center=True)
                 self._text(surface, self.font_tiny, status, (255, 240, 174), (x + 72, 267), center=True)

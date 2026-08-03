@@ -478,6 +478,22 @@
                                                                 ],
                                        "description":  "Slim and lean in a backward cap, black tank, gold-trim glasses and diamond studs; fists plus a Bluetooth-speaker shockwave."
                                    },
+                    "jermaine":  {
+                                      "display_name":  "JERMAINE",
+                                      "height_scale":  1.13,
+                                      "speed_scale":  0.98,
+                                      "max_health":  102,
+                                      "weapon":  "STICK",
+                                      "weapon_reach_bonus":  20,
+                                      "weapon_damage_scale":  1.08,
+                                      "super_name":  "STICK SWEEP",
+                                      "super_damage":  46,
+                                      "super_radius":  190,
+                                      "super_hitstun":  0.62,
+                                      "super_knockback":  76,
+                                      "light_combo_sequence":  [0, 1, 2, 3, 4],
+                                      "description":  "Taller and skinnier than Black Dave; an angry, crooked-smiling stick fighter with long reach."
+                                  },
                     "shelly":  {
                                    "display_name":  "SHELLY",
                                    "height_scale":  0.92,
