@@ -1757,7 +1757,10 @@ class FadesGame:
         self.encounter_active = True
         self.active_gate = min(
             float(self.meta["stage_width"]) - 12.0,
-            max(leader_x + 124.0, float(event.get("trigger_x", leader_x + 124.0)) + 120.0),
+            # Keep the route open through the spawn side of an environmental
+            # ambush; the old short gate made a false invisible wall before
+            # players could reach the tent fighters.
+            max(leader_x + 640.0, float(event.get("gate_x", leader_x + 640.0))),
         )
         self._pending_camera_lock = None
         self.camera.clear_encounter_lock()
