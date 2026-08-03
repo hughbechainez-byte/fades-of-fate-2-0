@@ -68,6 +68,16 @@ class DaveCombatTests(unittest.TestCase):
         self.assertEqual(self.dave._light_move(), self.game.data["moves"]["light_combo"][4])
         self.assertEqual(self.game.data["moves"]["heavy"]["launch"], True)
 
+    def test_alt_light_combo_falls_back_to_the_standard_chain_when_no_alt_table_exists(self) -> None:
+        self.dave.combo_style = "z"
+        self.dave.combo_step = 2
+        self.assertEqual(self.dave._alt_light_move(), self.game.data["moves"]["light_combo"][2])
+
+    def test_heavy_combo_falls_back_to_the_standard_heavy_move_when_no_combo_table_exists(self) -> None:
+        self.dave.combo_style = "c"
+        self.dave.combo_step = 0
+        self.assertEqual(self.dave._combo_move(), self.game.data["moves"]["heavy"])
+
     def test_one_light_press_remains_one_punch(self) -> None:
         target = self.enemy(202, self.dave.x + 32.0, self.dave.y)
         self.game.enemies = [target]
