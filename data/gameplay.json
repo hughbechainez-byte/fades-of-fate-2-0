@@ -295,7 +295,7 @@
                                    "chief_radius_x":  12,
                                    "chief_radius_depth":  6,
                                    "separation_iterations":  8,
-                                   "player_attack_reach_bonus":  10,
+                                   "player_attack_reach_bonus":  14,
                                    "player_attack_aim_range_bonus":  14,
                                    "player_attack_lane_assist":  11,
                                    "player_attack_depth_tolerance":  8,
