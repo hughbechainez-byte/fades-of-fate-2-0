@@ -44,6 +44,7 @@ InputBinding = Mapping[str, object]
 KEYBOARD_BINDING: dict[str, str] = {"type": "keyboard"}
 
 ACTION_LIGHT = "light"
+ACTION_ALT_LIGHT = "alt_light"
 ACTION_HEAVY = "heavy"
 ACTION_JUMP = "jump"
 ACTION_DODGE = "dodge"
@@ -62,7 +63,8 @@ ACTION_BACK = "back"
 
 
 KEYBOARD_ACTION_KEYS: dict[str, frozenset[int]] = {
-    ACTION_LIGHT: frozenset((pygame.K_x, pygame.K_j, pygame.K_z)),
+    ACTION_LIGHT: frozenset((pygame.K_x, pygame.K_j)),
+    ACTION_ALT_LIGHT: frozenset((pygame.K_z,)),
     ACTION_HEAVY: frozenset((pygame.K_c, pygame.K_k)),
     ACTION_JUMP: frozenset((pygame.K_SPACE,)),
     ACTION_DODGE: frozenset((pygame.K_LSHIFT, pygame.K_l, pygame.K_v)),
@@ -116,7 +118,8 @@ ACTION_LABELS: dict[str, str] = {
 _CONTROL_MAPPING_METADATA: dict[str, tuple[dict[str, object], ...]] = {
     "keyboard": (
         {"action": "move", "label": ACTION_LABELS["move"], "primary": "WASD / Arrow Keys", "aliases": ()},
-        {"action": ACTION_LIGHT, "label": ACTION_LABELS[ACTION_LIGHT], "primary": "X", "aliases": ("J", "Z")},
+        {"action": ACTION_LIGHT, "label": ACTION_LABELS[ACTION_LIGHT], "primary": "X", "aliases": ("J",)},
+        {"action": ACTION_ALT_LIGHT, "label": "Alt Light Attack", "primary": "Z", "aliases": ()},
         {"action": ACTION_HEAVY, "label": ACTION_LABELS[ACTION_HEAVY], "primary": "C", "aliases": ("K",)},
         {"action": ACTION_JUMP, "label": ACTION_LABELS[ACTION_JUMP], "primary": "Space", "aliases": ("Enter",)},
         {"action": ACTION_DODGE, "label": ACTION_LABELS[ACTION_DODGE], "primary": "Left Shift", "aliases": ("L", "V")},

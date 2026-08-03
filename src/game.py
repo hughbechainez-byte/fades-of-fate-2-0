@@ -4107,11 +4107,12 @@ class FadesGame:
             fist_cfg = self.data["players"]["black_dave"].get("fist_effects", {})
             trail_x = player.x + player.facing * (range_x * 0.72)
             trail_elevation = player.z + 33.0
+            combo_tint = (255, 232, 132) if player.combo_style == "c" else (170, 235, 255) if player.combo_style == "z" else (105, 225, 255)
             self.add_effect(
                 "fist",
                 trail_x,
                 player.y,
-                color=tuple(fist_cfg.get("color", (105, 225, 255))),
+                color=combo_tint,
                 radius=float(fist_cfg.get("trail_radius", 16.0)),
                 duration=0.16,
                 projected=True,
@@ -4122,11 +4123,22 @@ class FadesGame:
                     "shock",
                     attack_x,
                     attack_depth,
-                    color=tuple(fist_cfg.get("combo_color", (151, 244, 255))),
+                    color=combo_tint,
                     radius=min(combo_radius, 30.0 + player.combo_step * 5.0),
                     duration=0.16 + player.combo_step * 0.02,
                     projected=True,
                     elevation=8.0,
+                )
+            if finisher:
+                self.add_effect(
+                    "shock",
+                    attack_x,
+                    attack_depth,
+                    color=(255, 232, 132) if player.combo_style == "c" else (176, 242, 255) if player.combo_style == "z" else (255, 224, 148),
+                    radius=max(combo_radius, 84.0 if player.combo_style == "c" else 76.0),
+                    duration=0.30,
+                    projected=True,
+                    elevation=6.0,
                 )
             if flaming_fists:
                 self.add_effect(
@@ -4159,6 +4171,8 @@ class FadesGame:
             ):
                 continue
             hits += 1
+            if finisher and enemy.kind == "homeless":
+                enemy.knockback_vx += player.facing * max(40.0, float(move["knockback"]) * 1.1)
             hit_memory.add(contact.target_id)
             counts[contact.target_id] = counts.get(contact.target_id, 0) + 1
             times[contact.target_id] = (
