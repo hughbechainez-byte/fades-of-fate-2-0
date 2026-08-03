@@ -59,7 +59,7 @@ class DaveCombatTests(unittest.TestCase):
         self.assertEqual(target.state, "down")
         self.assertGreaterEqual(target.knockback_vx, 0.0)
 
-    def test_combo_finisher_and_heavy_use_kick_launcher_pose(self) -> None:
+    def test_combo_finisher_and_heavy_keep_the_uppercut_launcher_pose(self) -> None:
         self.assertEqual(
             self.game.data["moves"]["light_combo"][4]["launch"],
             True,

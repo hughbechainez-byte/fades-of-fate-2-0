@@ -4819,7 +4819,7 @@ class FadesGame:
             if kind == "player":
                 action_states = {"light", "heavy", "air_attack", "jump", "hurt", "downed", "super", "dodge", "pet", "ranged", "propane"}
                 visual_state = (
-                    "attack_4"
+                    "attack_3"
                     if obj.state == "heavy"
                     else f"attack_{min(obj.combo_step + 1, 4)}"
                     if obj.state == "light"
