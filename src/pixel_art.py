@@ -4239,7 +4239,38 @@ def _walk_bob(frame: int) -> int:
 
     # Heel strike, compression, passing, and toe-off form a gentle arc.  It is
     # intentionally integer-only so the pixel silhouette never gets blurred.
-    return (0, 0, -1, -1, -2, -1, 0, 0, -1, -1, -2, -1)[(int(frame) // 2) % 12]
+    return (0, -1, -2, -3, -2, -1, 0, 0, -1, -2, -3, -2)[(int(frame) // 2) % 12]
+
+
+def _draw_walk_followthrough(
+    surface: pygame.Surface,
+    x: float,
+    y: float,
+    z: float,
+    facing: object,
+    state: str,
+    frame: int,
+) -> None:
+    """Give the leading hand and shoulder a small counter-swing between keys."""
+
+    if state not in {"walk", "run", "move", "jog"}:
+        return
+    phase = int(frame) % 24
+    if phase not in {3, 4, 5, 15, 16, 17}:
+        return
+    direction = _face_sign(facing)
+    center_x = _i(x) + direction * (11 if phase < 12 else -11)
+    shoulder_y = _i(y - z) - 52
+    weight = 2 if phase in {4, 16} else 1
+    pygame.draw.line(
+        surface,
+        (104, 82, 84),
+        (center_x - direction * 5, shoulder_y + weight),
+        (center_x + direction * 3, shoulder_y - 2),
+        1,
+    )
+    if phase in {4, 16}:
+        pygame.draw.rect(surface, (184, 129, 101), (center_x + direction * 5, shoulder_y - 4, 2, 2))
 
 
 def _draw_stride_accents(
@@ -4265,11 +4296,41 @@ def _draw_stride_accents(
         cx = _i(x) + side * 11
         pygame.draw.line(surface, (110, 94, 90), (cx - 4, ground_y - 1), (cx - 1, ground_y - 3), 1)
         pygame.draw.line(surface, (177, 145, 112), (cx + 1, ground_y - 1), (cx + 5, ground_y - 4), 1)
+        pygame.draw.rect(surface, (196, 161, 121), (cx - 7, ground_y - 5, 2, 2))
+        pygame.draw.rect(surface, (139, 117, 103), (cx + 7, ground_y - 3, 2, 2))
     elif phase in {6, 18}:
         # Passing phase: a short low sweep implies the leg is moving through
         # the lane while keeping the authored body silhouette untouched.
         cx = _i(x) - direction * 7
         pygame.draw.line(surface, (77, 71, 75), (cx - direction * 5, ground_y), (cx + direction * 4, ground_y), 1)
+
+
+def _draw_walk_echo(
+    surface: pygame.Surface,
+    sprite: pygame.Surface,
+    x: float,
+    y: float,
+    z: float,
+    facing: object,
+    bottom: int,
+    state: str,
+    frame: int,
+) -> None:
+    """Carry a low-alpha passing echo through the fastest stride phases."""
+
+    if state not in {"walk", "run", "move", "jog"}:
+        return
+    phase = int(frame) % 24
+    if phase not in {4, 5, 6, 7, 16, 17, 18, 19}:
+        return
+    direction = _face_sign(facing)
+    lead = 4 + ((phase // 2) % 3)
+    echo = sprite.copy()
+    echo.set_alpha(42 if phase in {4, 16} else 62)
+    _blit_grounded(surface, echo, x - direction * lead, y, z, facing, bottom)
+    if phase in {6, 18}:
+        echo.set_alpha(22)
+        _blit_grounded(surface, echo, x - direction * (lead + 4), y, z, facing, bottom)
 
 
 def draw_player(
@@ -4335,6 +4396,8 @@ def draw_player(
         )
         _draw_footfall_ticks(surface, x, y, z, facing, state_name, int(frame))
         _draw_stride_accents(surface, x, y, z, facing, state_name, int(frame))
+        _draw_walk_followthrough(surface, x, y, z, facing, state_name, int(frame))
+        _draw_walk_echo(surface, rendered, x, y, z, facing, authored.get_height() - 4, state_name, int(frame))
         _draw_action_ribbon(surface, x, y, z, facing, state_name, authored.get_height() - 4, int(frame))
         _draw_motion_echo(surface, rendered, x, y, z, facing, authored.get_height() - 4, state_name, int(frame))
         draw_y = y - _walk_bob(int(frame)) if state_name in {"walk", "run", "move", "jog"} else y
@@ -4381,6 +4444,8 @@ def draw_player(
     )
     _draw_footfall_ticks(surface, x, y, z, facing, state_name, int(frame))
     _draw_stride_accents(surface, x, y, z, facing, state_name, int(frame))
+    _draw_walk_followthrough(surface, x, y, z, facing, state_name, int(frame))
+    _draw_walk_echo(surface, rendered, x, y, z, facing, 90, state_name, int(frame))
     _draw_action_ribbon(surface, x, y, z, facing, state_name, 90, int(frame))
     _draw_motion_echo(surface, rendered, x, y, z, facing, 90, state_name, int(frame))
     draw_y = y - _walk_bob(int(frame)) if state_name in {"walk", "run", "move", "jog"} else y

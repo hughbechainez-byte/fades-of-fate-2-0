@@ -1307,10 +1307,28 @@ class PixelArtTests(unittest.TestCase):
             "contact effects must travel with the facing direction",
         )
 
+    def test_walk_echo_only_appears_during_passing_phases(self) -> None:
+        passing = pygame.Surface((180, 120), pygame.SRCALPHA)
+        contact = pygame.Surface((180, 120), pygame.SRCALPHA)
+        sprite = pygame.Surface((40, 70), pygame.SRCALPHA)
+        pygame.draw.rect(sprite, (220, 180, 120), (10, 10, 20, 50))
+        pixel_art._draw_walk_echo(passing, sprite, 90, 100, 0, 1, 60, "walk", 6)
+        pixel_art._draw_walk_echo(contact, sprite, 90, 100, 0, 1, 60, "walk", 0)
+        self.assertGreater(sum(passing.get_at((x, y)).a for x in range(180) for y in range(120)), 0)
+        self.assertEqual(sum(contact.get_at((x, y)).a for x in range(180) for y in range(120)), 0)
+
     def test_hero_stride_bob_is_integer_and_periodic(self) -> None:
         self.assertEqual(pixel_art._walk_bob(0), pixel_art._walk_bob(24))
-        self.assertEqual(pixel_art._walk_bob(8), -2)
-        self.assertEqual(pixel_art._walk_bob(16), -1)
+        self.assertEqual(pixel_art._walk_bob(6), -3)
+        self.assertEqual(pixel_art._walk_bob(22), -2)
+
+    def test_walk_followthrough_is_phase_driven(self) -> None:
+        swing = pygame.Surface((180, 120), pygame.SRCALPHA)
+        settle = pygame.Surface((180, 120), pygame.SRCALPHA)
+        pixel_art._draw_walk_followthrough(swing, 90, 100, 0, 1, "walk", 4)
+        pixel_art._draw_walk_followthrough(settle, 90, 100, 0, 1, "walk", 10)
+        self.assertGreater(sum(swing.get_at((x, y)).a for x in range(180) for y in range(120)), 0)
+        self.assertEqual(sum(settle.get_at((x, y)).a for x in range(180) for y in range(120)), 0)
 
     def test_cart_return_props_have_deterministic_micro_motion(self) -> None:
         frame_zero = pygame.Surface((180, 140), pygame.SRCALPHA)
