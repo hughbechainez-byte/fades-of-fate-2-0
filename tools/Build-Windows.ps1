@@ -15,6 +15,16 @@ if (-not (Test-Path -LiteralPath $python -PathType Leaf)) {
 
 Push-Location $projectRoot
 try {
+    $sourceCommitSha = (& git -C $projectRoot rev-parse HEAD).Trim()
+    $sourceBranchName = (& git -C $projectRoot branch --show-current).Trim()
+    if ([string]::IsNullOrWhiteSpace($sourceBranchName)) {
+        $sourceBranchName = 'detached'
+    }
+    $sourceWorkingTreeClean = [string]::IsNullOrWhiteSpace(
+        (& git -C $projectRoot status --porcelain=v1 --untracked-files=normal | Out-String)
+    )
+    $buildTimestampUtc = (Get-Date).ToUniversalTime().ToString('o')
+
     $savedVideoDriver = $env:SDL_VIDEODRIVER
     $savedAudioDriver = $env:SDL_AUDIODRIVER
     $env:SDL_VIDEODRIVER = 'dummy'
@@ -134,6 +144,15 @@ try {
         throw "Packaged executable was not created: $exe"
     }
     $packageExeHash = (Get-FileHash -Algorithm SHA256 -LiteralPath $exe).Hash
+
+    $buildSourceCommitPath = Join-Path $packageDir 'BUILD_SOURCE_COMMIT.txt'
+    @(
+        "commit_sha=$sourceCommitSha"
+        "branch=$sourceBranchName"
+        "build_timestamp_utc=$buildTimestampUtc"
+        "repository_source_path=$projectRoot"
+        "working_tree_clean=$($sourceWorkingTreeClean.ToString().ToLowerInvariant())"
+    ) | Set-Content -LiteralPath $buildSourceCommitPath -Encoding UTF8
 
     Copy-Item -LiteralPath (Join-Path $projectRoot 'data') -Destination $packageDir -Recurse -Force
     Copy-Item -LiteralPath (Join-Path $projectRoot 'assets') -Destination $packageDir -Recurse -Force
