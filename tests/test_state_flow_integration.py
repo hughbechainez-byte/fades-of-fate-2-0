@@ -73,6 +73,7 @@ class StateFlowIntegrationTests(unittest.TestCase):
             "black_dave": "assets/portraits/dave_portrait_lean_young_v2.png",
             "shelly": "assets/portraits/shelly_portrait_curvy_v1.png",
             "jermaine": "assets/portraits/jermaine_portrait_v1.png",
+            "white_dave": "assets/portraits/white_dave_portrait_v1.png",
         }
         try:
             for character, relative in portrait_paths.items():
@@ -237,6 +238,8 @@ class StateFlowIntegrationTests(unittest.TestCase):
             self.assertEqual(game.select_slots[0].character_index, 1)
             click((400, 120))  # Jermaine is the newly unlocked third hero.
             self.assertEqual(game.select_slots[0].character_index, 2)
+            click((556, 120))  # White Dave is the fourth hero.
+            self.assertEqual(game.select_slots[0].character_index, 3)
             self.assertNotIn("DEFAULT", " ".join(game._selection_footer_lines()))
             canvas = pygame.Surface((640, 360))
             with mock.patch.object(game, "_text") as draw_text:
@@ -245,16 +248,16 @@ class StateFlowIntegrationTests(unittest.TestCase):
             self.assertIn("CHOOSE WHO YOU CONTROL", rendered_labels)
             self.assertIn("SHELLY + CHIEF", rendered_labels)
             self.assertIn("JERMAINE", rendered_labels)
-            self.assertIn("YOU CONTROL: JERMAINE  •  CPU COMPANION: SHELLY", rendered_labels)
-            self.assertEqual(rendered_labels.count("LOCKED"), 1)
-            self.assertEqual(rendered_labels.count("?"), 1)
+            self.assertIn("WHITE DAVE", rendered_labels)
+            self.assertIn("YOU CONTROL: WHITE DAVE  •  CPU COMPANION: SHELLY", rendered_labels)
+            self.assertNotIn("LOCKED", rendered_labels)
             click((86, 275))   # ready
             self.assertTrue(game.select_slots[0].confirmed)
             click((86, 275))   # start
             self.assertEqual(game.state, "gameplay")
             human = next(player for player in game.players if not player.is_cpu)
             companion = next(player for player in game.players if player.is_cpu)
-            self.assertEqual((human.character, companion.character), ("jermaine", "shelly"))
+            self.assertEqual((human.character, companion.character), ("white_dave", "shelly"))
             self.assertIs(game.chiefs[0].owner, companion)
 
             game._open_pause_menu(source="test")

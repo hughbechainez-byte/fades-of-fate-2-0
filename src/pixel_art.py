@@ -73,6 +73,7 @@ __all__ = [
     "shade_authored_sprite",
     "draw_player",
     "draw_jermaine_loading",
+    "draw_white_dave_loading",
     "draw_fist_flames",
     "draw_chief",
     "draw_enemy",
@@ -4460,7 +4461,7 @@ def draw_player(
     *,
     hit_flash: float = 0.0,
 ) -> pygame.Rect:
-    """Draw Black Dave, Shelly, or Jermaine as an arcade-readable pixel sprite.
+    """Draw a selectable hero as an arcade-readable pixel sprite.
 
     Fast authored cels get one restrained, direction-aware afterimage.  It is
     drawn beneath the current cel so the silhouette stays readable while
@@ -4474,6 +4475,8 @@ def draw_player(
         if name in {"black_dave", "dave", "blackdave"}
         else (221, 177, 61)
         if name == "jermaine"
+        else (190, 77, 54)
+        if name == "white_dave"
         else (195, 74, 124)
     )
     accent = _rgb(player_color, accent_default)
@@ -4555,6 +4558,18 @@ def draw_player(
         _draw_footfall_ticks(surface, x, y, z, facing, state_name, int(frame))
         _draw_action_ribbon(surface, x, y, z, facing, state_name, 104, int(frame))
         draw_y = y - _walk_bob(int(frame)) if state_name in {"walk", "run", "move", "jog"} else y
+        return _blit_grounded(surface, rendered, x, draw_y, z, facing, 104)
+
+    if name == "white_dave":
+        _shadow(surface, x, y, 58, 11, elevation=z)
+        sprite = pygame.Surface((124, 112), pygame.SRCALPHA)
+        _draw_white_dave(sprite, state_name, int(frame), accent)
+        rendered = _state_rim_sprite(
+            _hit_flash_sprite(sprite, hit_flash, cache=False), state_name, accent
+        )
+        _draw_footfall_ticks(surface, x, y, z, facing, state_name, int(frame))
+        _draw_action_ribbon(surface, x, y, z, facing, state_name, 104, int(frame))
+        draw_y = y - (_walk_bob(int(frame)) // 2) if state_name in {"walk", "run", "move", "jog"} else y
         return _blit_grounded(surface, rendered, x, draw_y, z, facing, 104)
 
     _shadow(
@@ -4734,6 +4749,77 @@ def draw_jermaine_loading(
     pygame.draw.line(sprite, (155, 163, 171), (72 + smoke, 17), (69 + smoke, 11), 1)
     left = int(round(x)) - sprite.get_width() // 2
     top = int(round(y)) - sprite.get_height()
+    surface.blit(sprite, (left, top))
+    return pygame.Rect(left, top, sprite.get_width(), sprite.get_height())
+
+
+def _draw_white_dave(
+    sprite: pygame.Surface,
+    state: str,
+    frame: int,
+    accent: tuple[int, int, int],
+) -> None:
+    """Author White Dave's tall, broad bolt-cutter silhouette in native pixels."""
+
+    outline = (31, 25, 25)
+    skin_deep, skin, skin_light = (128, 78, 58), (210, 151, 116), (239, 190, 151)
+    shirt, shirt_light = (34, 34, 36), (65, 61, 61)
+    pants, boot = (25, 27, 31), (48, 37, 31)
+    steel, steel_light, handles = (91, 98, 101), (184, 192, 188), (151, 52, 39)
+    center = 61
+    moving = state in {"walk", "run", "dash", "dodge", "move", "jog"}
+    attacking = state.startswith("attack_") or state in {"light", "heavy", "air_attack", "super"}
+    downed = state in {"down", "downed", "dead", "eliminated"}
+    stride = 3 if moving and (frame // 3) % 2 else -3 if moving else 0
+    if downed:
+        pygame.draw.ellipse(sprite, outline, (8, 89, 108, 14))
+        pygame.draw.rect(sprite, pants, (18, 84, 63, 14))
+        _toned_oval(sprite, (78, 77, 27, 25), outline, skin_deep, skin, skin_light)
+        _outlined_line(sprite, (14, 83), (108, 73), handles, 6, outline)
+        return
+    crouch = 5 if state == "dodge" else 0
+    for leg_x in (center - 22 + stride, center + 7 - stride):
+        pygame.draw.rect(sprite, outline, (leg_x, 69 + crouch, 15, 32 - crouch))
+        pygame.draw.rect(sprite, pants, (leg_x + 2, 70 + crouch, 11, 29 - crouch))
+        pygame.draw.rect(sprite, outline, (leg_x - 4, 97, 24, 8))
+        pygame.draw.rect(sprite, boot, (leg_x - 2, 98, 21, 5))
+    torso = [(center - 25, 34 + crouch), (center - 19, 28 + crouch), (center + 18, 28 + crouch), (center + 27, 37 + crouch), (center + 22, 73 + crouch), (center - 22, 73 + crouch)]
+    _outlined_poly(sprite, torso, shirt, outline, 2)
+    pygame.draw.polygon(sprite, shirt_light, [(center - 16, 33 + crouch), (center - 8, 30 + crouch), (center - 6, 68 + crouch), (center - 15, 68 + crouch)])
+    rear_hand, front_hand = (center - 29, 55 + crouch), (center + 29, 52 + crouch)
+    _outlined_line(sprite, (center - 20, 38 + crouch), rear_hand, skin, 11, outline)
+    _outlined_line(sprite, (center + 20, 38 + crouch), front_hand, skin, 11, outline)
+    _toned_oval(sprite, (rear_hand[0] - 6, rear_hand[1] - 6, 13, 13), outline, skin_deep, skin, skin_light)
+    _toned_oval(sprite, (front_hand[0] - 6, front_hand[1] - 6, 13, 13), outline, skin_deep, skin, skin_light)
+    if attacking:
+        pivot, jaw = (center + 8, 47), (center + 48, 20)
+        grip_a, grip_b = (center - 34, 72), (center - 28, 78)
+    else:
+        pivot, jaw = (center + 10, 46), (center + 43, 24)
+        grip_a, grip_b = (center - 30, 71), (center - 23, 78)
+    _outlined_line(sprite, grip_a, pivot, handles, 6, outline)
+    _outlined_line(sprite, grip_b, (pivot[0] + 3, pivot[1] + 4), handles, 6, outline)
+    pygame.draw.circle(sprite, steel_light, pivot, 5)
+    _outlined_line(sprite, pivot, jaw, steel, 7, outline)
+    pygame.draw.polygon(sprite, outline, [(jaw[0] - 2, jaw[1] - 5), (jaw[0] + 10, jaw[1] - 9), (jaw[0] + 5, jaw[1] + 4)])
+    pygame.draw.line(sprite, steel_light, pivot, jaw, 2)
+    _toned_oval(sprite, (center - 15, 5 + crouch, 31, 30), outline, skin_deep, skin, skin_light)
+    pygame.draw.rect(sprite, (94, 60, 45), (center - 11, 7 + crouch, 23, 5))
+    pygame.draw.line(sprite, outline, (center - 10, 18 + crouch), (center - 2, 21 + crouch), 2)
+    pygame.draw.line(sprite, outline, (center + 2, 21 + crouch), (center + 11, 18 + crouch), 2)
+    pygame.draw.rect(sprite, outline, (center - 6, 27 + crouch, 14, 3))
+    pygame.draw.line(sprite, skin_light, (center - 3, 30 + crouch), (center + 7, 28 + crouch), 1)
+
+
+def draw_white_dave_loading(
+    surface: pygame.Surface, x: float, y: float, *, frame: int = 0
+) -> pygame.Rect:
+    """Draw White Dave waiting at the title edge with bolt cutters shouldered."""
+
+    sprite = pygame.Surface((124, 112), pygame.SRCALPHA)
+    _draw_white_dave(sprite, "idle", frame, (190, 77, 54))
+    left = int(round(x)) - sprite.get_width() // 2
+    top = int(round(y)) - 104
     surface.blit(sprite, (left, top))
     return pygame.Rect(left, top, sprite.get_width(), sprite.get_height())
 

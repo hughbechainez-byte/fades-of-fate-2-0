@@ -19,6 +19,7 @@ _ANIMATION_PHASE_COUNT = 16
 _HERO_STRIDE_DISTANCE = 132.30
 _SHELLY_STRIDE_DISTANCE = 84.0
 _JERMAINE_STRIDE_DISTANCE = 132.0
+_WHITE_DAVE_STRIDE_DISTANCE = 146.0
 _CHIEF_STRIDE_DISTANCE = 140.0
 _ENEMY_STRIDE_DISTANCE = 70.0
 _COUCH_STRIDE_DISTANCE = 106.0
@@ -58,6 +59,8 @@ def _hero_stride_distance(character: str) -> float:
         return _SHELLY_STRIDE_DISTANCE
     if normalized == "jermaine":
         return _JERMAINE_STRIDE_DISTANCE
+    if normalized == "white_dave":
+        return _WHITE_DAVE_STRIDE_DISTANCE
     return _HERO_STRIDE_DISTANCE
 
 
