@@ -105,18 +105,55 @@ def render(reference_path: Path, output_path: Path, iteration: int) -> None:
     _save(frames, output_path, durations)
 
 
+def render_appearance(reference_path: Path, output_path: Path) -> None:
+    """Compare the moving runtime walk with Dave's approved combat physique."""
+
+    runtime = _runtime_frames(24)
+    reference = Image.open(reference_path).convert("RGBA")
+    font = ImageFont.load_default()
+    frames: list[Image.Image] = []
+    for index, runtime_frame in enumerate(runtime):
+        canvas = Image.new("RGBA", (720, 300), (27, 24, 32, 255))
+        draw = ImageDraw.Draw(canvas)
+        draw.rectangle((14, 14, 350, 286), outline=(91, 77, 105, 255), width=2)
+        draw.rectangle((370, 14, 706, 286), outline=(91, 77, 105, 255), width=2)
+        draw.text((28, 24), "DAVE WALK — REBUILT", fill=(245, 238, 226, 255), font=font)
+        draw.text((384, 24), "APPROVED DAVE PHYSIQUE", fill=(245, 238, 226, 255), font=font)
+        draw.text((28, 42), "current runtime frame", fill=(174, 157, 181, 255), font=font)
+        draw.text((384, 42), "fire-hands reference", fill=(174, 157, 181, 255), font=font)
+        shown = runtime_frame.resize((256, 256), Image.Resampling.NEAREST)
+        canvas.alpha_composite(shown, (55, 38))
+        scale = min(306 / reference.width, 220 / reference.height)
+        approved = reference.resize(
+            (max(1, round(reference.width * scale)), max(1, round(reference.height * scale))),
+            Image.Resampling.NEAREST,
+        )
+        canvas.alpha_composite(approved, (538 - approved.width // 2, 164 - approved.height // 2))
+        draw.text((28, 278), f"frame {index + 1:02d}/{len(runtime)}", fill=(174, 157, 181, 255), font=font)
+        draw.text((384, 278), "upper-body and costume reference", fill=(174, 157, 181, 255), font=font)
+        frames.append(canvas)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    _save(frames, output_path, [40] * len(frames))
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--reference", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--iteration", type=int, required=True)
     parser.add_argument("--dave-output", type=Path)
+    parser.add_argument("--appearance-reference", type=Path)
+    parser.add_argument("--appearance-output", type=Path)
     args = parser.parse_args()
     pygame.init()
     try:
         render(args.reference, args.output, args.iteration)
         if args.dave_output is not None:
             render_dave(args.dave_output)
+        if args.appearance_reference is not None or args.appearance_output is not None:
+            if args.appearance_reference is None or args.appearance_output is None:
+                parser.error("--appearance-reference and --appearance-output must be provided together")
+            render_appearance(args.appearance_reference, args.appearance_output)
     finally:
         pygame.quit()
 

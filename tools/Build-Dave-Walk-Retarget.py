@@ -38,7 +38,7 @@ CANONICAL_ATLAS_ROWS = 4
 CANONICAL_CELL_COLUMN = 0
 CANONICAL_CELL_ROW = 1
 CANONICAL_PALETTE_COLORS = 40
-APPROVED_MOTION_FINGERPRINT = "9cda9ff11756ee753f981efb0bb7c3751421df682f58473eb6b1f5dd50df734e"
+APPROVED_MOTION_FINGERPRINT = "6147e92f064bac2204edfe2972e507a6477ec74e9a252487b0461f86a172fa4c"
 
 PHASE_NAMES = (
     "left_contact",
@@ -460,9 +460,13 @@ def build_pose(index: int) -> Pose:
     hip_tilt = round(HIP_ANGLE_DEG[index] / 3.0)
 
     neck = _point(ROOT_X + yaw * 4.0, pelvis_y - 42)
-    shoulder_spread = 7 + round(abs(yaw) * 5)
-    left_shoulder = _point(neck[0] - shoulder_spread, neck[1] + 6 - shoulder_tilt)
-    right_shoulder = _point(neck[0] + shoulder_spread, neck[1] + 6 + shoulder_tilt)
+    # Preserve the approved gait below the pelvis while restoring the combat
+    # atlas' compact upper-body ruler.  The former seven-pixel half-span and
+    # low shoulder line produced a long neck, collapsed ribcage, and legs that
+    # appeared to belong to a much larger character.
+    shoulder_spread = 10 + round(abs(yaw) * 4)
+    left_shoulder = _point(neck[0] - shoulder_spread, neck[1] + 5 - shoulder_tilt)
+    right_shoulder = _point(neck[0] + shoulder_spread, neck[1] + 5 + shoulder_tilt)
     left_hip = _point(ROOT_X - 4, pelvis_y - hip_tilt)
     right_hip = _point(ROOT_X + 4, pelvis_y + hip_tilt)
 
@@ -1153,12 +1157,12 @@ def _draw_pelvis_and_belt(
     pelvis = lm["pelvis"]
     draw = ImageDraw.Draw(image)
     outer = (
-        (left_hip[0] - 5, left_hip[1] - 5),
-        (right_hip[0] + 5, right_hip[1] - 5),
-        (right_hip[0] + 6, right_hip[1] + 7),
-        (pelvis[0] + 2, pelvis[1] + 10),
-        (pelvis[0] - 3, pelvis[1] + 10),
-        (left_hip[0] - 6, left_hip[1] + 7),
+        (left_hip[0] - 7, left_hip[1] - 6),
+        (right_hip[0] + 7, right_hip[1] - 6),
+        (right_hip[0] + 8, right_hip[1] + 7),
+        (pelvis[0] + 4, pelvis[1] + 11),
+        (pelvis[0] - 5, pelvis[1] + 11),
+        (left_hip[0] - 8, left_hip[1] + 7),
     )
     draw.polygon(outer, fill=colors["outline"])
     inner = tuple(
@@ -1167,15 +1171,15 @@ def _draw_pelvis_and_belt(
     )
     draw.polygon(inner, fill=colors["denim_shadow"])
     belt_y = round((left_hip[1] + right_hip[1]) / 2) - 3
-    belt_left = pelvis[0] - 10
-    belt_right = pelvis[0] + 10
+    belt_left = pelvis[0] - 12
+    belt_right = pelvis[0] + 12
     draw.line((belt_left, belt_y, belt_right, belt_y), fill=colors["outline"], width=4)
     draw.line((belt_left + 1, belt_y - 1, belt_right - 1, belt_y - 1), fill=colors["belt"], width=2)
     draw.rectangle((pelvis[0] - 2, belt_y - 2, pelvis[0] + 2, belt_y + 2), fill=colors["gold"], outline=colors["outline"])
     draw.line((pelvis[0] - 8, belt_y - 2, pelvis[0] - 8, belt_y + 3), fill=colors["gold"], width=1)
     draw.line((pelvis[0] + 8, belt_y - 2, pelvis[0] + 8, belt_y + 3), fill=colors["gold"], width=1)
 
-    pouch_x = right_hip[0] + 5
+    pouch_x = right_hip[0] + 7
     pouch_y = right_hip[1] + 4
     draw.rounded_rectangle(
         (pouch_x - 4, pouch_y - 3, pouch_x + 4, pouch_y + 7),
@@ -1202,8 +1206,11 @@ def _draw_torso_and_neck(
     pelvis = lm["pelvis"]
     yaw_shift = round(pose.torso_yaw * 4.0)
     waist_y = pelvis[1] - 5
-    waist_left = (pelvis[0] - 8 + yaw_shift, waist_y)
-    waist_right = (pelvis[0] + 8 + yaw_shift, waist_y)
+    # Dave's combat art has a broad ribcage tapering into a visible but not
+    # pinched waist.  The previous walk redraw narrowed this to a tube and
+    # made his pants and arms look borrowed from a larger character.
+    waist_left = (pelvis[0] - 10 + yaw_shift, waist_y)
+    waist_right = (pelvis[0] + 10 + yaw_shift, waist_y)
     draw = ImageDraw.Draw(image)
 
     neck_outer = (
@@ -1224,27 +1231,27 @@ def _draw_torso_and_neck(
 
     chest_outer = (
         (neck[0] - 4, neck[1] + 2),
-        (left_shoulder[0] - 2, left_shoulder[1] - 3),
-        (left_shoulder[0] - 3, left_shoulder[1] + 8),
-        (waist_left[0] - 1, waist_left[1]),
-        (waist_right[0] + 1, waist_right[1]),
-        (right_shoulder[0] + 3, right_shoulder[1] + 8),
-        (right_shoulder[0] + 2, right_shoulder[1] - 3),
+        (left_shoulder[0] - 5, left_shoulder[1] - 4),
+        (left_shoulder[0] - 5, left_shoulder[1] + 9),
+        (waist_left[0] - 2, waist_left[1]),
+        (waist_right[0] + 2, waist_right[1]),
+        (right_shoulder[0] + 5, right_shoulder[1] + 9),
+        (right_shoulder[0] + 5, right_shoulder[1] - 4),
         (neck[0] + 4, neck[1] + 2),
     )
     draw.polygon(chest_outer, fill=colors["outline"])
-    chest_inner = tuple(_lerp_point(point, (neck[0] + yaw_shift, neck[1] + 18), 0.08) for point in chest_outer)
+    chest_inner = tuple(_lerp_point(point, (neck[0] + yaw_shift, neck[1] + 18), 0.05) for point in chest_outer)
     draw.polygon(chest_inner, fill=colors["tank"])
 
     tank = (
-        (neck[0] - 5 + yaw_shift, neck[1] + 4),
-        (left_shoulder[0] + 1, left_shoulder[1] - 1),
-        (left_shoulder[0] - 1, left_shoulder[1] + 9),
+        (neck[0] - 6 + yaw_shift, neck[1] + 4),
+        (left_shoulder[0] - 2, left_shoulder[1] - 2),
+        (left_shoulder[0] - 3, left_shoulder[1] + 10),
         waist_left,
         waist_right,
-        (right_shoulder[0] + 1, right_shoulder[1] + 9),
-        (right_shoulder[0] - 1, right_shoulder[1] - 1),
-        (neck[0] + 5 + yaw_shift, neck[1] + 4),
+        (right_shoulder[0] + 3, right_shoulder[1] + 10),
+        (right_shoulder[0] + 2, right_shoulder[1] - 2),
+        (neck[0] + 6 + yaw_shift, neck[1] + 4),
         (neck[0] + yaw_shift, neck[1] + 10),
     )
     draw.polygon(tank, fill=colors["tank_shadow"])
@@ -1283,6 +1290,44 @@ def _draw_torso_and_neck(
     draw.line(
         (neck[0] - 3, neck[1] + 10, neck[0] + 3 + yaw_shift, neck[1] + 12),
         fill=colors["tank_light"],
+        width=1,
+    )
+    # Keep the same chain, ribbed tank, and abdominal read as Dave's authored
+    # attack poses.  These marks are locked to body landmarks, so they move
+    # with the torso instead of boiling from frame to frame.
+    chain_left = (neck[0] - 4 + yaw_shift, neck[1] + 5)
+    chain_low = (neck[0] + yaw_shift, neck[1] + 13)
+    chain_right = (neck[0] + 4 + yaw_shift, neck[1] + 5)
+    draw.line((*chain_left, *chain_low, *chain_right), fill=colors["outline"], width=3, joint="curve")
+    draw.line((*chain_left, *chain_low, *chain_right), fill=colors["gold"], width=1, joint="curve")
+    draw.point((chain_low[0], chain_low[1] + 1), fill=colors["gold"])
+    chest_center_x = pelvis[0] + yaw_shift
+    upper_fold_y = neck[1] + 18
+    middle_fold_y = neck[1] + 25
+    lower_fold_y = neck[1] + 32
+    draw.line(
+        (chest_center_x - 8, upper_fold_y, chest_center_x - 2, upper_fold_y + 1),
+        fill=colors["tank_light"],
+        width=2,
+    )
+    draw.line(
+        (chest_center_x + 2, upper_fold_y + 1, chest_center_x + 9, upper_fold_y),
+        fill=colors["tank_shadow"],
+        width=2,
+    )
+    draw.line(
+        (chest_center_x - 7, middle_fold_y, chest_center_x + 5, middle_fold_y + 1),
+        fill=colors["tank_light"],
+        width=1,
+    )
+    draw.line(
+        (chest_center_x - 5, lower_fold_y, chest_center_x + 7, lower_fold_y - 1),
+        fill=colors["tank_shadow"],
+        width=2,
+    )
+    draw.line(
+        (chest_center_x, neck[1] + 15, chest_center_x + 1, waist_y - 2),
+        fill=colors["tank_shadow"],
         width=1,
     )
     left_armhole = (
@@ -1337,6 +1382,100 @@ def _composite_head_template(image: Image.Image, pose: Pose, rig: CanonicalDaveR
     image.alpha_composite(stamp, (bounds[0] + dx, bounds[1] + dy))
 
 
+def _canonical_texture_layer(
+    base: Image.Image,
+    rig: CanonicalDaveRig,
+    transforms: tuple[tuple[str, Point, Point], ...],
+) -> Image.Image:
+    """Put authored Dave texture inside one already-approved anatomy mask.
+
+    The old rigid compositor allowed every source part to establish its own
+    silhouette, which duplicated shoulders and opened seams.  Here the
+    hand-drawn layer remains the sole silhouette authority: canonical pixels
+    can add shading, fabric grain, and muscle definition only where that
+    finished anatomical layer is already opaque.
+    """
+
+    texture = Image.new("RGBA", (CELL_SIZE, CELL_SIZE))
+    for name, target_start, target_end in transforms:
+        texture.alpha_composite(_transform_bone(rig.parts[name], target_start, target_end))
+    texture.putalpha(
+        ImageChops.multiply(texture.getchannel("A"), base.getchannel("A"))
+    )
+    textured = base.copy()
+    textured.alpha_composite(texture)
+    return _hard_alpha(textured)
+
+
+def _render_arm_layer(
+    pose: Pose,
+    rig: CanonicalDaveRig,
+    side: str,
+    colors: Mapping[str, tuple[int, int, int, int]],
+    *,
+    depth: str,
+    sections: tuple[str, ...] = ("upper", "lower", "hand"),
+    shoulder_insertion: bool = False,
+) -> Image.Image:
+    layer = Image.new("RGBA", (CELL_SIZE, CELL_SIZE))
+    _draw_arm_sections(layer, pose, side, colors, depth=depth, sections=sections)
+    if shoulder_insertion:
+        _draw_near_shoulder_insertion(layer, pose, colors)
+    prefix = "near" if depth == "near" else "far"
+    transforms: list[tuple[str, Point, Point]] = []
+    if "upper" in sections:
+        transforms.append(
+            (
+                f"{prefix}_upper_arm",
+                pose.landmarks[f"{side}_shoulder"],
+                pose.landmarks[f"{side}_elbow"],
+            )
+        )
+    if "lower" in sections or "hand" in sections:
+        transforms.append(
+            (
+                f"{prefix}_lower_arm",
+                pose.landmarks[f"{side}_elbow"],
+                pose.landmarks[f"{side}_hand"],
+            )
+        )
+    return _canonical_texture_layer(layer, rig, tuple(transforms))
+
+
+def _render_leg_layer(
+    pose: Pose,
+    rig: CanonicalDaveRig,
+    side: str,
+    colors: Mapping[str, tuple[int, int, int, int]],
+    *,
+    depth: str,
+) -> Image.Image:
+    layer = Image.new("RGBA", (CELL_SIZE, CELL_SIZE))
+    _draw_leg(layer, pose, side, colors, depth=depth)
+    prefix = "near" if depth == "near" else "far"
+    return _canonical_texture_layer(
+        layer,
+        rig,
+        (
+            (
+                f"{prefix}_upper_leg",
+                pose.landmarks[f"{side}_hip"],
+                pose.landmarks[f"{side}_knee"],
+            ),
+            (
+                f"{prefix}_lower_leg",
+                pose.landmarks[f"{side}_knee"],
+                pose.landmarks[f"{side}_ankle"],
+            ),
+            (
+                f"{prefix}_shoe",
+                pose.landmarks[f"{side}_heel"],
+                pose.landmarks[f"{side}_toe"],
+            ),
+        ),
+    )
+
+
 def render_dave_pose(pose: Pose, rig: CanonicalDaveRig) -> Image.Image:
     image = Image.new("RGBA", (CELL_SIZE, CELL_SIZE))
     colors = _handdrawn_colors(rig)
@@ -1344,30 +1483,68 @@ def render_dave_pose(pose: Pose, rig: CanonicalDaveRig) -> Image.Image:
 
     # Far anatomy is completely established before the body, so the torso and
     # pelvis naturally remove hidden shoulders, chest, hip, and thigh pixels.
-    _draw_arm_sections(image, pose, "right", colors, depth="far")
+    image.alpha_composite(
+        _render_arm_layer(pose, rig, "right", colors, depth="far")
+    )
     if near_arm_layer == "behind":
-        _draw_arm_sections(image, pose, "left", colors, depth="near")
+        image.alpha_composite(
+            _render_arm_layer(pose, rig, "left", colors, depth="near")
+        )
     elif near_arm_layer == "split":
-        _draw_arm_sections(image, pose, "left", colors, depth="near", sections=("upper",))
+        image.alpha_composite(
+            _render_arm_layer(
+                pose,
+                rig,
+                "left",
+                colors,
+                depth="near",
+                sections=("upper",),
+            )
+        )
 
-    _draw_leg(image, pose, "right", colors, depth="far")
-    _draw_leg(image, pose, "left", colors, depth="near")
-    _draw_pelvis_and_belt(image, pose, colors)
-    _draw_torso_and_neck(image, pose, colors)
+    image.alpha_composite(_render_leg_layer(pose, rig, "right", colors, depth="far"))
+    image.alpha_composite(_render_leg_layer(pose, rig, "left", colors, depth="near"))
+
+    pelvis_layer = Image.new("RGBA", (CELL_SIZE, CELL_SIZE))
+    _draw_pelvis_and_belt(pelvis_layer, pose, colors)
+    # Keep one clean authored pouch and waistband. The canonical pelvis donor
+    # also contains a full pouch, so texturing this already detailed layer
+    # would duplicate the accessory and make Dave's hips look swollen.
+    image.alpha_composite(pelvis_layer)
+
+    torso_layer = Image.new("RGBA", (CELL_SIZE, CELL_SIZE))
+    _draw_torso_and_neck(torso_layer, pose, colors)
+    image.alpha_composite(
+        _canonical_texture_layer(
+            torso_layer,
+            rig,
+            (("torso", pose.landmarks["neck"], pose.landmarks["pelvis"]),),
+        )
+    )
 
     if near_arm_layer == "front":
-        _draw_arm_sections(image, pose, "left", colors, depth="near")
-        _draw_near_shoulder_insertion(image, pose, colors)
-    elif near_arm_layer == "split":
-        _draw_arm_sections(
-            image,
-            pose,
-            "left",
-            colors,
-            depth="near",
-            sections=("lower", "hand"),
+        image.alpha_composite(
+            _render_arm_layer(
+                pose,
+                rig,
+                "left",
+                colors,
+                depth="near",
+                shoulder_insertion=True,
+            )
         )
-        _draw_near_shoulder_insertion(image, pose, colors)
+    elif near_arm_layer == "split":
+        image.alpha_composite(
+            _render_arm_layer(
+                pose,
+                rig,
+                "left",
+                colors,
+                depth="near",
+                sections=("lower", "hand"),
+                shoulder_insertion=True,
+            )
+        )
 
     _composite_head_template(image, pose, rig)
 
@@ -1965,9 +2142,11 @@ def main() -> None:
 
     report = {
         "status": "pass",
-        "method": "per-pose hand-reconstructed pixel anatomy around the approved landmark skeleton",
+        "method": "combat-proportioned hand anatomy with canonical texture clipped inside approved per-part masks",
         "forbidden_methods_used": [],
-        "skeleton_reused": True,
+        "skeleton_reused": False,
+        "lower_body_gait_reused": True,
+        "upper_body_change": "shoulders raised one pixel and widened while arm length and opposed swing remain compact",
         "timing_changed": False,
         "approved_motion_fingerprint": motion_fingerprint,
         "frames_requiring_manual_redraw": list(range(1, POSE_COUNT + 1)),
@@ -1990,15 +2169,16 @@ def main() -> None:
         ],
         "anatomy_corrections": [
             "deltoid, biceps, triceps, elbow, forearm, wrist, and fist are redrawn per pose",
-            "neck, exposed chest, tank collar, armholes, and cloth folds form one connected torso",
+            "neck, broader ribcage, exposed chest, tank collar, armholes, chain, and cloth folds form one connected torso",
             "waistband, belt loops, buckle, pocket, pouch, and denim folds follow the pelvis and weight-bearing leg",
             "each shoe is rebuilt from heel/toe orientation with collar, upper, laces, toe cap, and sole",
+            "canonical combat-era skin, tank, denim, and shoe pixels are clipped inside each finished anatomy mask",
         ],
         "canonical_rig": {
             "source": args.canonical_atlas.as_posix(),
             "source_sha256": rig.source_sha256,
             "source_cell": [CANONICAL_CELL_COLUMN, CANONICAL_CELL_ROW],
-            "use": "identity head template and locked master palette only; limbs and torso are redrawn",
+            "use": "identity head, locked palette, and authored surface texture; hand-drawn masks remain the sole silhouette authority",
             "palette_color_count": len(rig.palette),
             "resampling": "nearest_neighbor_only",
         },

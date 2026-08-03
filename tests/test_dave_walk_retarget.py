@@ -15,7 +15,21 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 POSE_DATA = PROJECT_ROOT / "data" / "dave_walk_reference_poses.json"
 WALK_STRIP = PROJECT_ROOT / "assets" / "sprites" / "black_dave_walk_12.png"
 FIST_DATA = PROJECT_ROOT / "assets" / "sprites" / "black_dave_fist_anchors.json"
-APPROVED_MOTION_FINGERPRINT = "9cda9ff11756ee753f981efb0bb7c3751421df682f58473eb6b1f5dd50df734e"
+APPROVED_MOTION_FINGERPRINT = "6147e92f064bac2204edfe2972e507a6477ec74e9a252487b0461f86a172fa4c"
+APPROVED_LOWER_BODY_FINGERPRINT = "945b5c007f9d094a4f29b3802c66e68a8ed10b59f8e5d57eb0f006adbf8f4702"
+LOWER_BODY_LANDMARKS = (
+    "pelvis",
+    "left_hip",
+    "right_hip",
+    "left_knee",
+    "right_knee",
+    "left_ankle",
+    "right_ankle",
+    "left_heel",
+    "right_heel",
+    "left_toe",
+    "right_toe",
+)
 
 
 def _pixels(image: Image.Image):
@@ -81,6 +95,28 @@ class DaveWalkRetargetTests(unittest.TestCase):
             ).encode("utf-8")
         ).hexdigest()
         self.assertEqual(fingerprint, APPROVED_MOTION_FINGERPRINT)
+
+    def test_compact_gait_below_the_pelvis_is_byte_for_byte_preserved(self) -> None:
+        lower_body = [
+            {
+                "index": pose["index"],
+                "duration_ms": pose["duration_ms"],
+                "root_distance_px": pose["root_distance_px"],
+                "support_foot": pose["support_foot"],
+                "contact_landmark": pose["contact_landmark"],
+                "foot_contact": pose["foot_contact"],
+                "pelvis_height_px": pose["pelvis_height_px"],
+                "landmarks_px": {
+                    name: pose["landmarks_px"][name]
+                    for name in LOWER_BODY_LANDMARKS
+                },
+            }
+            for pose in self.poses
+        ]
+        fingerprint = hashlib.sha256(
+            json.dumps(lower_body, sort_keys=True, separators=(",", ":")).encode("utf-8")
+        ).hexdigest()
+        self.assertEqual(fingerprint, APPROVED_LOWER_BODY_FINGERPRINT)
 
     def test_counter_motion_pelvis_arcs_and_world_foot_lock(self) -> None:
         for side in ("left", "right"):
@@ -169,6 +205,46 @@ class DaveWalkRetargetTests(unittest.TestCase):
                         for x in range(max(0, hand[0] - 6), min(128, hand[0] + 7))
                     )
                     self.assertGreaterEqual(fist_pixels, 70)
+
+    def test_walk_retains_daves_combat_physique_and_authored_texture(self) -> None:
+        strip = Image.open(WALK_STRIP).convert("RGBA")
+        frames = [strip.crop((index * 128, 0, (index + 1) * 128, 128)) for index in range(12)]
+
+        shoulder_spans = [
+            abs(
+                pose["landmarks_px"]["right_shoulder"][0]
+                - pose["landmarks_px"]["left_shoulder"][0]
+            )
+            for pose in self.poses
+        ]
+        self.assertGreaterEqual(min(shoulder_spans), 20)
+
+        # This fixed chest band covers Dave's deltoids, ribcage, and upper
+        # arms throughout the approved nine-pixel pelvis arc.  The regressed
+        # tube-shaped redraw bottomed out at 584 opaque pixels; the combat-
+        # proportioned rebuild remains substantially fuller in every pose.
+        chest_pixels = [
+            sum(
+                frame.getpixel((x, y))[3] >= 128
+                for y in range(34, 62)
+                for x in range(128)
+            )
+            for frame in frames
+        ]
+        self.assertGreaterEqual(min(chest_pixels), 800)
+        self.assertGreaterEqual(sum(chest_pixels) / len(chest_pixels), 940)
+
+        visible_colors = {
+            pixel
+            for frame in frames
+            for pixel in _pixels(frame)
+            if pixel[3] >= 128
+        }
+        self.assertGreaterEqual(
+            len(visible_colors),
+            36,
+            "canonical skin, tank, denim, and shoe texture collapsed back to flat blocks",
+        )
 
     def test_walk_fist_metadata_uses_the_same_retarget_landmarks(self) -> None:
         metadata = json.loads(FIST_DATA.read_text(encoding="utf-8"))["states"]["walk"]
