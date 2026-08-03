@@ -716,6 +716,7 @@ def _security_uniform_frame(authored: pygame.Surface, state_name: str) -> pygame
         pygame.draw.rect(guard, (167, 215, 232), (gear_x + 23, gear_y - 9, 4, 4))
         pygame.draw.rect(guard, (245, 255, 238), (gear_x + 25, gear_y - 8, 3, 2))
         pygame.draw.line(guard, (87, 133, 183), (head_x - 8, head_y - 8), (head_x + 8, head_y - 8), 4)
+        pygame.draw.rect(guard, (17, 24, 37), (gear_x - 10, gear_y - 12, 20, 3))
     else:
         shoulder_y = torso_top + max(2, bounds.h // 25)
         shoulder_span = max(13, bounds.h // 6)
@@ -759,9 +760,57 @@ def _security_uniform_frame(authored: pygame.Surface, state_name: str) -> pygame
         pygame.draw.line(guard, (36, 65, 102), (head_x - 9, cap_y - 1), (head_x + 7, cap_y - 1), 3)
         pygame.draw.rect(guard, (11, 22, 40), (head_x + 5, cap_y + 2, 11, 3))
         pygame.draw.rect(guard, (226, 184, 72), (head_x - 1, cap_y - 2, 3, 3))
+        pygame.draw.rect(guard, (220, 189, 69), (body_x - 11, shoulder_y + 1, 22, 20))
+        pygame.draw.rect(guard, (247, 236, 170), (body_x - 9, shoulder_y + 4, 18, 3))
 
     _SECURITY_UNIFORM_CACHE[cache_key] = (authored, guard)
     return guard
+
+
+def draw_tent_camp(
+    surface: pygame.Surface,
+    x: float,
+    y: float,
+    frame: int = 0,
+    *,
+    smoke_phase: float = 0.0,
+    prop_kind: str = "tent_camp",
+) -> pygame.Rect:
+    """Draw a small roadside tent with smoke so the ambush reads at a glance."""
+
+    _ = prop_kind
+    cx = _i(x)
+    cy = _i(y)
+    phase = int(frame) // 4 + int(smoke_phase)
+    tent = pygame.Surface((92, 58), pygame.SRCALPHA)
+    outline = (29, 26, 30)
+    tarp = (121, 99, 78)
+    tarp_dark = (83, 67, 52)
+    tarp_light = (171, 145, 118)
+    smoke_base = (80, 73, 76)
+    pygame.draw.polygon(tent, outline, [(10, 41), (30, 14), (64, 14), (82, 41), (74, 43), (26, 43)])
+    pygame.draw.polygon(tent, tarp_dark, [(13, 40), (31, 17), (62, 17), (79, 40), (72, 41), (29, 41)])
+    pygame.draw.polygon(tent, tarp, [(17, 39), (32, 20), (61, 20), (75, 39), (69, 40), (31, 40)])
+    pygame.draw.rect(tent, (39, 31, 27), (27, 24, 20, 13))
+    pygame.draw.rect(tent, (19, 21, 24), (31, 25, 12, 7))
+    pygame.draw.rect(tent, tarp_light, (22, 31, 10, 2))
+    pygame.draw.rect(tent, tarp_light, (62, 31, 8, 2))
+    pygame.draw.line(tent, (186, 165, 138), (21, 39), (17, 50), 2)
+    pygame.draw.line(tent, (186, 165, 138), (71, 39), (76, 50), 2)
+    pygame.draw.line(tent, (186, 165, 138), (42, 20), (42, 7), 2)
+    pygame.draw.line(tent, (186, 165, 138), (47, 20), (50, 8), 2)
+    pygame.draw.rect(tent, (145, 122, 86), (39, 34, 7, 8))
+    pygame.draw.rect(tent, (89, 72, 58), (36, 36, 13, 3))
+    pygame.draw.rect(tent, (63, 54, 47), (32, 39, 22, 3))
+    pygame.draw.rect(tent, (92, 78, 61), (19, 41, 54, 5))
+    for smoke_index, (dx, dy, size) in enumerate(((6, -9, 7), (15, -18, 6), (26, -13, 5))):
+        wobble = ((phase + smoke_index) % 4) - 1
+        puff = pygame.Rect(20 + dx + wobble, 7 + dy - phase * 2 + smoke_index * 3, size, max(3, size - 2))
+        pygame.draw.ellipse(tent, smoke_base, puff)
+        pygame.draw.ellipse(tent, (124 + smoke_index * 8, 115 + smoke_index * 4, 116 + smoke_index * 4), puff.inflate(-2, -1))
+    rect = tent.get_rect(midbottom=(cx, cy))
+    surface.blit(tent, rect)
+    return rect.inflate(6, 8)
 
 
 def _face_sign(facing: object) -> int:
@@ -4561,13 +4610,14 @@ def draw_enemy(
         enemy_kind = "whip"
     elif enemy_kind in {"broken_pipe", "thrower"}:
         enemy_kind = "pipe"
+    homeless = enemy_kind == "homeless"
     security = enemy_kind in {"security", "security_guard", "guard"}
     state_name = _state_name(state)
     # Security guards deliberately reuse the authored sixteen-pose stick
     # motion strip. Their uniform overlay makes the role readable without
     # introducing a low-frame-count exception to the animation-floor rule.
     authored_kind = "stick" if security else enemy_kind
-    authored = sprite_atlas.enemy_frame(authored_kind, state_name, int(frame)) if sprite_atlas is not None else None
+    authored = None if homeless else sprite_atlas.enemy_frame(authored_kind, state_name, int(frame)) if sprite_atlas is not None else None
     if authored is not None:
         _shadow(surface, x, y, 67 if enemy_kind == "cart" else 47, 9, elevation=z)
         sprite = _security_uniform_frame(authored, state_name) if security else authored
@@ -4687,6 +4737,28 @@ def draw_enemy(
         _outlined_line(sprite, arm_end, pipe_end, (125, 139, 143), 5, outline)
         pygame.draw.rect(sprite, (197, 207, 201), (pipe_end[0] - 4, pipe_end[1] - 3, 9, 3))
         pygame.draw.rect(sprite, (165, 75, 54), (pipe_end[0] + 1, pipe_end[1], 5, 3))
+    elif enemy_kind == "homeless":
+        crawl = state_name in {"spawn", "down", "hitstun"}
+        blanket = _rgb(tint, (89, 78, 67))
+        tarp = (66, 61, 54)
+        bag = (51, 47, 43)
+        if crawl:
+            pygame.draw.ellipse(sprite, outline, (center - 19, 57, 58, 20))
+            pygame.draw.polygon(sprite, blanket, [(center - 13, 52), (center + 6, 44), (center + 27, 50), (center + 19, 67), (center - 3, 70)])
+            pygame.draw.rect(sprite, tarp, (center + 10, 49, 15, 12))
+            pygame.draw.rect(sprite, bag, (center - 8, 61, 12, 10))
+            _outlined_line(sprite, (center - 3, 47), (center + 21, 35), skin, 7, outline)
+            _outlined_line(sprite, (center + 19, 40), (center + 42, 31), (118, 95, 61), 5, outline)
+            pygame.draw.rect(sprite, (144, 119, 83), (center + 39, 28, 6, 10))
+        else:
+            pygame.draw.rect(sprite, outline, (center - 14, 49, 29, 20))
+            pygame.draw.rect(sprite, blanket, (center - 12, 51, 25, 16))
+            pygame.draw.rect(sprite, tarp, (center - 16, 59, 18, 8))
+            pygame.draw.polygon(sprite, (78, 66, 51), [(center - 8, 44), (center + 7, 41), (center + 16, 49), (center + 7, 53), (center - 5, 50)])
+            _outlined_line(sprite, (center + 8, 41), (center + 29, 29), skin, 7, outline)
+            _outlined_line(sprite, (center + 27, 31), (center + 43, 18), (118, 95, 61), 5, outline)
+            pygame.draw.rect(sprite, bag, (center + 37, 16, 7, 12))
+            pygame.draw.rect(sprite, (147, 127, 102), (center + 39, 18, 3, 7))
     else:
         arm_end = (center + 21, 48)
         _outlined_line(sprite, (center + 10, 38), arm_end, skin, 8, outline)

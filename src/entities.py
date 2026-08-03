@@ -728,7 +728,7 @@ class Enemy:
                 "couch"
                 if self.kind == "couch"
                 else "stick"
-                if self.kind in {"security", "security_guard", "guard"}
+                if self.kind in {"security", "security_guard", "guard", "homeless"}
                 else self.kind
             )
             return _distance_animation_tick(

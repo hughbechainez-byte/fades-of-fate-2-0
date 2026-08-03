@@ -71,6 +71,30 @@
       "behavior_note": "uses a blocked lane only after a warning marker appears"
     },
     {
+      "id": "encampment_crawler",
+      "runtime_kind": "homeless",
+      "fictional_role": "encampment crawler",
+      "behavior_note": "crawls out of a tent and lunges at the first open lane"
+    },
+    {
+      "id": "encampment_drifter",
+      "runtime_kind": "homeless",
+      "fictional_role": "encampment drifter",
+      "behavior_note": "shuffles forward from a smoking tent with a slow, readable swing"
+    },
+    {
+      "id": "underpass_camp_runner",
+      "runtime_kind": "homeless",
+      "fictional_role": "underpass camp runner",
+      "behavior_note": "breaks from camp cover to pressure the flank line"
+    },
+    {
+      "id": "cart_tent_lurker",
+      "runtime_kind": "homeless",
+      "fictional_role": "cart tent lurker",
+      "behavior_note": "uses the tent edge and a low crawl to re-enter the lane"
+    },
+    {
       "id": "parking_security",
       "runtime_kind": "security",
       "fictional_role": "uniformed parking security",
@@ -209,6 +233,25 @@
         {
           "id": "cart_return_throwable",
           "description": "A marked cart can be pushed, thrown, or used as lane cover, and returns safely after the encounter."
+        },
+        {
+          "id": "wells_drive_tent_camp",
+          "description": "A pair of smoking sidewalk tents and a low shopping cart shelter force the lane open before the Town & Country fight.",
+          "trigger_x": 1110,
+          "x": 1148,
+          "depth": 273,
+          "prop_kind": "tent_camp",
+          "spawn_groups": [
+            {
+              "id": "wells_drive_tent_wave",
+              "variants": ["encampment_crawler", "encampment_drifter"],
+              "player_count_additions": {
+                "2": ["cart_tent_lurker"],
+                "3": ["underpass_camp_runner"],
+                "4": ["cart_tent_lurker", "underpass_camp_runner"]
+              }
+            }
+          ]
         },
         {
           "id": "town_country_alarm",
@@ -359,6 +402,25 @@
           "description": "Fuel islands and bollards bend approach lines while preserving a visible safe route around every obstacle."
         },
         {
+          "id": "madison_plaza_tent_camp",
+          "description": "A smoking tent row under the plaza awning spills new fighters into the lane before the underpass shadow.",
+          "trigger_x": 1125,
+          "x": 1178,
+          "depth": 274,
+          "prop_kind": "tent_camp",
+          "spawn_groups": [
+            {
+              "id": "madison_tent_wave",
+              "variants": ["encampment_drifter", "underpass_camp_runner"],
+              "player_count_additions": {
+                "2": ["cart_tent_lurker"],
+                "3": ["encampment_crawler"],
+                "4": ["cart_tent_lurker", "encampment_crawler"]
+              }
+            }
+          ]
+        },
+        {
           "id": "freeway_ramp_escalation",
           "description": "Ramp traffic shadows, concrete pillars, and a passing headlight sweep increase pressure as the party enters I-8."
         }
@@ -507,6 +569,25 @@
           "description": "Reflective runoff, canopy light sweeps, and soap foam add motion without creating hidden hazards or muddy collision."
         },
         {
+          "id": "broadway_tent_camp",
+          "description": "A cramped tent line by the service lane smokes up and coughs new bodies into the Broadway turn.",
+          "trigger_x": 1115,
+          "x": 1162,
+          "depth": 273,
+          "prop_kind": "tent_camp",
+          "spawn_groups": [
+            {
+              "id": "broadway_tent_wave",
+              "variants": ["encampment_crawler", "cart_tent_lurker"],
+              "player_count_additions": {
+                "2": ["encampment_drifter"],
+                "3": ["underpass_camp_runner"],
+                "4": ["encampment_drifter", "underpass_camp_runner"]
+              }
+            }
+          ]
+        },
+        {
           "id": "broadway_signal_change",
           "description": "A traffic-signal cycle and passing vehicle light turn the CVS corner into a readable directional change."
         }
@@ -632,6 +713,25 @@
         {
           "id": "awaken_floodlight_sweep",
           "description": "A floodlight sweep, gate rattle, and parked-bike shine make the confrontation feel staged without hiding player silhouettes."
+        },
+        {
+          "id": "awaken_tent_camp",
+          "description": "A final tent cluster smokes behind the south lot and lets the last camp fighters crawl into the approach lane.",
+          "trigger_x": 620,
+          "x": 666,
+          "depth": 274,
+          "prop_kind": "tent_camp",
+          "spawn_groups": [
+            {
+              "id": "awaken_tent_wave",
+              "variants": ["encampment_drifter", "cart_tent_lurker"],
+              "player_count_additions": {
+                "2": ["encampment_crawler"],
+                "3": ["underpass_camp_runner"],
+                "4": ["encampment_crawler", "underpass_camp_runner"]
+              }
+            }
+          ]
         },
         {
           "id": "bmx_retreat_path",

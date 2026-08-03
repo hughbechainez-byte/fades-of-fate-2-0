@@ -39,7 +39,7 @@ _LEVEL_IDS = (
 )
 _PROFILE_NAMES = ("normal", "experienced", "minimum")
 _PLAYER_COUNTS = (1, 2, 3, 4)
-_RUNTIME_ENEMY_KINDS = {"stick", "cart", "whip", "pipe", "security", "couch"}
+_RUNTIME_ENEMY_KINDS = {"stick", "cart", "whip", "pipe", "security", "homeless", "couch"}
 
 
 @dataclass(frozen=True)
@@ -152,22 +152,16 @@ def compile_level_content(
     variants = enemy_variants(data)
     scale = deepcopy(data["player_count_scaling"][str(int(player_count))])
 
+    scale["player_count"] = int(player_count)
     all_encounters = [
         *compiled.get("major_fights", ()),
         *compiled.get("ambush_or_optional", ()),
+        *compiled.get("environmental_events", ()),
     ]
     for encounter in all_encounters:
         if not isinstance(encounter, dict):
             continue
-        for group in encounter.get("spawn_groups", ()):  # pragma: no branch - validator owns shape
-            base_ids = list(group["variants"])
-            additions = group.get("player_count_additions", {}).get(str(int(player_count)), [])
-            resolved_ids = [*base_ids, *additions]
-            group["resolved_variant_ids"] = tuple(resolved_ids)
-            group["runtime_kinds"] = tuple(str(variants[variant_id]["runtime_kind"]) for variant_id in resolved_ids)
-            group["max_live_enemies"] = int(scale["max_live_enemies"])
-            group["health_multiplier"] = float(scale["enemy_health_multiplier"])
-            group["damage_multiplier"] = float(scale["enemy_damage_multiplier"])
+        _compile_spawn_groups(encounter, variants, scale)
 
     compiled["runtime_player_count"] = int(player_count)
     compiled["runtime_scaling"] = scale
@@ -194,6 +188,12 @@ def compile_couch_contract(data: Mapping[str, Any], player_count: int) -> dict[s
     compiled = deepcopy(data["couch_boss_contract"])
     variants = enemy_variants(data)
     scale = data["player_count_scaling"][str(int(player_count))]
+    scale = {
+        "player_count": int(player_count),
+        "max_live_enemies": scale["max_live_enemies"],
+        "enemy_health_multiplier": scale["enemy_health_multiplier"],
+        "enemy_damage_multiplier": scale["enemy_damage_multiplier"],
+    }
     for phase in compiled["phases"]:
         retreat = phase.get("retreat")
         if not isinstance(retreat, dict):
@@ -277,6 +277,27 @@ def _validate_spawn_groups(
                 )
 
 
+def _compile_spawn_groups(
+    encounter: Mapping[str, Any],
+    variants: Mapping[str, Mapping[str, Any]],
+    scale: Mapping[str, Any],
+) -> None:
+    groups = encounter.get("spawn_groups", ())
+    if not isinstance(groups, list):
+        return
+    for group in groups:
+        if not isinstance(group, dict):
+            continue
+        base_ids = list(group["variants"])
+        additions = group.get("player_count_additions", {}).get(str(int(scale["player_count"])), [])
+        resolved_ids = [*base_ids, *additions]
+        group["resolved_variant_ids"] = tuple(resolved_ids)
+        group["runtime_kinds"] = tuple(str(variants[variant_id]["runtime_kind"]) for variant_id in resolved_ids)
+        group["max_live_enemies"] = int(scale["max_live_enemies"])
+        group["health_multiplier"] = float(scale["enemy_health_multiplier"])
+        group["damage_multiplier"] = float(scale["enemy_damage_multiplier"])
+
+
 def _validate_encounter(
     encounter: Any,
     known_variants: Mapping[str, Mapping[str, Any]],
@@ -339,7 +360,18 @@ def _validate_level(
         _require_text(encounter_map.get("reward"), f"{optional_label}.reward")
         _require_text(encounter_map.get("risk"), f"{optional_label}.risk")
 
-    for field in ("environmental_events", "story_beats", "landmark_set_pieces", "traversal_gaps"):
+    environmental_events = level.get("environmental_events", ())
+    if not isinstance(environmental_events, list) or not environmental_events:
+        raise ChapterContentError(f"{label}.environmental_events must contain at least one authored beat")
+    for index, entry in enumerate(environmental_events):
+        entry_label = f"{label}.environmental_events[{index}]"
+        entry = _require_mapping(entry, entry_label)
+        _require_text(entry.get("id"), f"{entry_label}.id")
+        _require_text(entry.get("description"), f"{entry_label}.description")
+        if entry.get("spawn_groups") is not None:
+            _validate_spawn_groups(entry, known_variants, entry_label)
+
+    for field in ("story_beats", "landmark_set_pieces", "traversal_gaps"):
         entries = level.get(field, ())
         if not isinstance(entries, list) or not entries:
             raise ChapterContentError(f"{label}.{field} must contain at least one authored beat")
