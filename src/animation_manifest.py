@@ -431,8 +431,9 @@ def _loop_and_hold(actor: str, state: str) -> tuple[bool, int]:
     if state == "command":
         return True, 3
     if actor in {"black_dave", "shelly"} and state == "walk":
-        # Twelve true gait keys at fifteen poses per second produce a natural
-        # 0.8-second full stride and survive both 30 and 60 FPS presentation.
+        # Twelve true gait keys are each held for two 30 Hz ticks. Runtime
+        # locomotion maps this 24-tick timeline to applied travel distance;
+        # Dave's normal stride is calibrated to a deliberate 0.96 seconds.
         return True, 2
     if actor in {"black_dave", "shelly"} and state == "idle":
         return True, 5

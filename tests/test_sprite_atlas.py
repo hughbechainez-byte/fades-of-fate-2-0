@@ -416,16 +416,36 @@ class SpriteAtlasTests(unittest.TestCase):
                 )
                 self.assertEqual(foot_lines, {frames[0].get_bounding_rect(min_alpha=1).bottom})
 
-        smooth_dave = [sprite_atlas.player_frame("black_dave", "walk", tick) for tick in range(24)]
-        self.assertTrue(all(frame is not None for frame in smooth_dave))
-        smooth_signatures = {_signature(frame) for frame in smooth_dave}
-        self.assertEqual(len(smooth_signatures), 24, "Dave's runtime gait must expose 24 distinct crisp cels")
-        smooth_bounds = [frame.get_bounding_rect(min_alpha=1) for frame in smooth_dave]
-        self.assertEqual({bounds.bottom for bounds in smooth_bounds}, {smooth_bounds[0].bottom})
+        stable_timeline = [sprite_atlas.player_frame("black_dave", "walk", tick) for tick in range(24)]
+        self.assertTrue(all(frame is not None for frame in stable_timeline))
+        stable_signatures = [_signature(frame) for frame in stable_timeline]
+        self.assertEqual(len(set(stable_signatures)), 12, "Dave must use twelve stable gait poses")
+        for pose in range(12):
+            self.assertEqual(
+                stable_signatures[pose * 2],
+                stable_signatures[pose * 2 + 1],
+                "every Dave pose must receive one uniform two-tick hold",
+            )
+        stable_frames = [stable_timeline[pose * 2] for pose in range(12)]
+        stable_bounds = [frame.get_bounding_rect(min_alpha=1) for frame in stable_frames]
+        self.assertEqual({bounds.bottom for bounds in stable_bounds}, {stable_bounds[0].bottom})
+        for phase in range(6):
+            first = stable_bounds[phase]
+            opposite = stable_bounds[phase + 6]
+            self.assertLessEqual(abs(first.w - opposite.w), 10)
+            self.assertLessEqual(abs(first.top - opposite.top), 3)
+        locked_palette = {
+            tuple(frame.get_at((x, y)))[:3]
+            for frame in stable_frames
+            for y in range(frame.get_height())
+            for x in range(frame.get_width())
+            if frame.get_at((x, y)).a >= 128
+        }
+        self.assertLessEqual(len(locked_palette), 40, "Dave's walk must use one locked master palette")
         self.assertEqual(
             _signature(sprite_atlas.player_frame("black_dave", "walk", 0)),
             _signature(sprite_atlas.player_frame("black_dave", "walk", 24)),
-            "the 24-cel gait must loop without a timing seam",
+            "the 12-pose, 24-tick gait must loop without a timing seam",
         )
 
         raw_dave = _split(resource_path("assets/reference/black_dave_walk_reference_v2.png"), 6, 2)

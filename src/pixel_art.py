@@ -4392,27 +4392,38 @@ def draw_player(
             elevation=z,
         )
         profile = "dave" if name in {"black_dave", "dave", "blackdave"} else "shelly"
-        rendered = _state_rim_sprite(
-            _character_sheen_sprite(
-                _character_emblem_sprite(
-                    _hit_flash_sprite(_material_lit_sprite(authored, profile), hit_flash),
+        clean_dave_walk = profile == "dave" and state_name == "walk"
+        if clean_dave_walk:
+            # The stable walk strip owns Dave's palette, light direction,
+            # landmarks and weight arc. Frame-driven embellishments made the
+            # same held pose shimmer, so walking uses only the authored pixels
+            # plus the intentional combat hit flash.
+            rendered = _hit_flash_sprite(authored, hit_flash)
+        else:
+            rendered = _state_rim_sprite(
+                _character_sheen_sprite(
+                    _character_emblem_sprite(
+                        _hit_flash_sprite(_material_lit_sprite(authored, profile), hit_flash),
+                        profile,
+                        int(frame),
+                    ),
                     profile,
                     int(frame),
                 ),
-                profile,
-                int(frame),
-            ),
-            state_name,
-            accent,
-        )
-        _draw_footfall_ticks(surface, x, y, z, facing, state_name, int(frame))
-        _draw_stride_accents(surface, x, y, z, facing, state_name, int(frame))
-        if not (profile == "dave" and state_name == "walk"):
+                state_name,
+                accent,
+            )
+            _draw_footfall_ticks(surface, x, y, z, facing, state_name, int(frame))
+            _draw_stride_accents(surface, x, y, z, facing, state_name, int(frame))
             _draw_walk_followthrough(surface, x, y, z, facing, state_name, int(frame))
             _draw_walk_echo(surface, rendered, x, y, z, facing, authored.get_height() - 4, state_name, int(frame))
         _draw_action_ribbon(surface, x, y, z, facing, state_name, authored.get_height() - 4, int(frame))
         _draw_motion_echo(surface, rendered, x, y, z, facing, authored.get_height() - 4, state_name, int(frame))
-        draw_y = y - _walk_bob(int(frame)) if state_name in {"walk", "run", "move", "jog"} else y
+        draw_y = (
+            y - _walk_bob(int(frame))
+            if not clean_dave_walk and state_name in {"walk", "run", "move", "jog"}
+            else y
+        )
         return _blit_grounded(
             surface,
             rendered,

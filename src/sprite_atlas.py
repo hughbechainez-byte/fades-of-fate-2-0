@@ -87,8 +87,9 @@ SHELLY_REFILL_WINDOW = (int(ANIMATION_PLAYBACK_HZ * 7), int(ANIMATION_PLAYBACK_H
 SHELLY_PANTS_WINDOW = (int(ANIMATION_PLAYBACK_HZ * 2), int(ANIMATION_PLAYBACK_HZ * 5.5))
 DAVE_UNIFORM_RENDER_SCALE = 1.12
 COUCH_UNIFORM_RENDER_SCALE = 1.08
-DAVE_SMOOTH_WALK_FRAMES = 24
-DAVE_SMOOTH_WALK_STRIP = "assets/sprites/black_dave_walk_24.png"
+DAVE_STABLE_WALK_POSES = 12
+DAVE_STABLE_WALK_HOLD_TICKS = 2
+DAVE_STABLE_WALK_STRIP = "assets/sprites/black_dave_walk_12.png"
 
 
 @lru_cache(maxsize=128)
@@ -132,11 +133,11 @@ def _authored_animation_frames(actor: str, state: str) -> tuple[pygame.Surface, 
 
 
 @lru_cache(maxsize=1)
-def _dave_smooth_walk_frames() -> tuple[pygame.Surface, ...]:
-    """Load Dave's balanced 24-cel gait without changing its crisp pixels."""
+def _dave_stable_walk_frames() -> tuple[pygame.Surface, ...]:
+    """Load Dave's locked-palette 12-pose gait without changing its pixels."""
 
-    frames = _load_frames(DAVE_SMOOTH_WALK_STRIP, DAVE_SMOOTH_WALK_FRAMES, 1)
-    if len(frames) != DAVE_SMOOTH_WALK_FRAMES:
+    frames = _load_frames(DAVE_STABLE_WALK_STRIP, DAVE_STABLE_WALK_POSES, 1)
+    if len(frames) != DAVE_STABLE_WALK_POSES:
         return ()
     return tuple(
         pygame.transform.scale(
@@ -187,9 +188,9 @@ def player_frame(character: object, state: object, tick: int) -> pygame.Surface 
     state_name = _state_name(state)
     tick = max(0, int(tick))
     if name == "black_dave" and state_name == "walk":
-        frames = _dave_smooth_walk_frames()
+        frames = _dave_stable_walk_frames()
         if frames:
-            return frames[tick % len(frames)]
+            return frames[(tick // DAVE_STABLE_WALK_HOLD_TICKS) % len(frames)]
     if name == "shelly" and state_name == "idle":
         # Shelly primarily uses the same restrained breathing language as Dave,
         # with two short personality beats folded into each idle cycle.
@@ -406,6 +407,7 @@ def clear_cache() -> None:
 
     _load_frames.cache_clear()
     _authored_animation_frames.cache_clear()
+    _dave_stable_walk_frames.cache_clear()
     _load_dave_fist_metadata.cache_clear()
     _dave_fist_anchors.cache_clear()
 

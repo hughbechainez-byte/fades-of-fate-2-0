@@ -13,10 +13,11 @@ from .input_manager import InputSnapshot
 # both 30 and 60 FPS presentation observe the same ordered authored keys.
 ANIMATION_TICKS_PER_SECOND = ANIMATION_PLAYBACK_HZ
 _ANIMATION_PHASE_COUNT = 16
-# One twelve-pose hero gait over 84 world pixels presents about 18 authored
-# poses/second at the normal 126 px/s pace.  The former 101 px cycle exposed
-# only about 15 poses/second and made otherwise valid keys read as stepping.
-_HERO_STRIDE_DISTANCE = 84.0
+# Dave's twelve-pose gait travels 120.96 world pixels at the normal 126 px/s
+# pace: one deliberate 0.96-second cycle with an 80 ms exposure per pose.
+# Shelly retains her existing quicker stride and authored timing.
+_HERO_STRIDE_DISTANCE = 120.96
+_SHELLY_STRIDE_DISTANCE = 84.0
 _CHIEF_STRIDE_DISTANCE = 140.0
 _ENEMY_STRIDE_DISTANCE = 70.0
 _COUCH_STRIDE_DISTANCE = 106.0
@@ -48,6 +49,11 @@ def _distance_animation_tick(
     timeline_ticks = clip.frame_count * max(1, clip.hold)
     cycles = max(0.0, distance) / max(1.0, stride_distance)
     return int(cycles * timeline_ticks + 1e-6)
+
+
+def _hero_stride_distance(character: str) -> float:
+    normalized = str(character).strip().lower().replace("-", "_").replace(" ", "_")
+    return _SHELLY_STRIDE_DISTANCE if normalized in {"shelly", "shellie"} else _HERO_STRIDE_DISTANCE
 
 
 def clamp(value: float, low: float, high: float) -> float:
@@ -216,7 +222,7 @@ class Player:
                 self.locomotion_distance,
                 self.character,
                 "walk",
-                _HERO_STRIDE_DISTANCE,
+                _hero_stride_distance(self.character),
             )
         return _animation_tick(self.animation_clock)
 
@@ -242,7 +248,7 @@ class Player:
             _animation_tick(_animation_phase_offset(identity, "walk"))
             % _ANIMATION_PHASE_COUNT
         ) / _ANIMATION_PHASE_COUNT
-        self.locomotion_distance = phase_fraction * _HERO_STRIDE_DISTANCE
+        self.locomotion_distance = phase_fraction * _hero_stride_distance(self.character)
 
     def advance_animation(self, dt: float) -> None:
         """Advance only presentation time; combat continues to use state_clock."""

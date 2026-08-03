@@ -47,7 +47,9 @@ def _save(frames: list[Image.Image], path: Path, durations: list[int]) -> None:
 def render_dave(output_path: Path) -> None:
     frames = _runtime_frames(24)
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    _save(frames, output_path, [33] * len(frames))
+    # Twelve stable poses, each repeated for two uniform 40 ms exposures,
+    # produce the same 0.96-second cadence as the supplied reference.
+    _save(frames, output_path, [40] * len(frames))
 
 
 def render(reference_path: Path, output_path: Path, iteration: int) -> None:
@@ -61,7 +63,7 @@ def render(reference_path: Path, output_path: Path, iteration: int) -> None:
         draw = ImageDraw.Draw(canvas)
         draw.rectangle((14, 14, 350, 286), outline=(91, 77, 105, 255), width=2)
         draw.rectangle((370, 14, 706, 286), outline=(91, 77, 105, 255), width=2)
-        draw.text((28, 24), f"DAVE WALK — ITERATION {iteration}", fill=(245, 238, 226, 255), font=font)
+        draw.text((28, 24), "DAVE WALK — CURRENT BUILD", fill=(245, 238, 226, 255), font=font)
         draw.text((384, 24), "TARGET GIF", fill=(245, 238, 226, 255), font=font)
         draw.text((28, 42), "current runtime frame", fill=(174, 157, 181, 255), font=font)
         draw.text((384, 42), "reference frame", fill=(174, 157, 181, 255), font=font)
