@@ -148,6 +148,15 @@
                 "3": ["road_raider_stick", "road_raider_cart"],
                 "4": ["road_raider_stick", "road_raider_cart", "road_raider_pipe"]
               }
+            },
+            {
+              "id": "sprouts_tent_homeless_preview",
+              "variants": ["encampment_crawler", "encampment_drifter"],
+              "player_count_additions": {
+                "2": ["cart_tent_lurker"],
+                "3": ["underpass_camp_runner"],
+                "4": ["cart_tent_lurker", "underpass_camp_runner"]
+              }
             }
           ],
           "completion_note": "Unlocks the cart interaction prompt after the first clean hit, without a full-screen tutorial panel."
@@ -231,8 +240,28 @@
       ],
       "environmental_events": [
         {
+          "id": "sprouts_tent_camp",
+          "description": "A smoking sidewalk tent and a low cart shelter open the Sprouts lane right at the opening stretch so the new homeless ambush is visible immediately.",
+          "trigger_x": 144,
+          "x": 184,
+          "depth": 260,
+          "prop_kind": "tent_camp",
+          "spawn_groups": [
+            {
+              "id": "sprouts_tent_wave",
+              "variants": ["encampment_crawler", "encampment_drifter"],
+              "player_count_additions": {
+                "2": ["cart_tent_lurker"],
+                "3": ["underpass_camp_runner"],
+                "4": ["cart_tent_lurker", "underpass_camp_runner"]
+              }
+            }
+          ]
+        },
+        {
           "id": "cart_return_throwable",
-          "description": "A marked cart can be pushed, thrown, or used as lane cover, and returns safely after the encounter."
+          "description": "A marked cart can be pushed, thrown, or used as lane cover, and returns safely after the encounter.",
+          "trigger_x": 900
         },
         {
           "id": "wells_drive_tent_camp",
