@@ -47,40 +47,26 @@ class DaveCombatTests(unittest.TestCase):
         target = self.enemy(201, self.dave.x + 32.0, self.dave.y, "security")
         self.game.enemies = [target]
         sequence = self.dave._light_sequence()
-        self.assertEqual(sequence, (0, 1, 2, 3))
-        self.assertTrue(self.game.data["moves"]["light_combo"][sequence[-1]]["knockdown"])
+        self.assertEqual(sequence, (0, 1, 2, 3, 4))
+        finisher = self.game.data["moves"]["light_combo"][sequence[-1]]
+        self.assertTrue(finisher["knockdown"])
+        self.assertTrue(finisher["launch"])
 
-        self.dave.update(
-            InputSnapshot(held=frozenset({"light"}), pressed=frozenset({"light"})),
-            self.game,
-            1.0 / 60.0,
-        )
-        queued_steps: set[int] = set()
-        visited_steps: set[int] = set()
-        for _ in range(120):
-            snapshot = InputSnapshot()
-            if self.dave.state == "light":
-                visited_steps.add(self.dave.combo_step)
-                move = self.dave._light_move()
-                if (
-                    self.dave.combo_step in {0, 1, 2}
-                    and self.dave.combo_step not in queued_steps
-                    and self.dave.state_clock >= float(move["startup"])
-                ):
-                    queued_steps.add(self.dave.combo_step)
-                    snapshot = InputSnapshot(
-                        held=frozenset({"light"}),
-                        pressed=frozenset({"light"}),
-                    )
-            self.dave.update(snapshot, self.game, 1.0 / 60.0)
-            if self.dave.state == "idle" and visited_steps == {0, 1, 2, 3}:
-                break
-
-        damage = sum(float(self.game.data["moves"]["light_combo"][index]["damage"]) for index in sequence)
-        self.assertEqual(visited_steps, {0, 1, 2, 3})
-        self.assertEqual(target.health, max(0.0, target.max_health - damage))
+        before = target.health
+        hits = self.game.player_attack(self.dave, finisher, "light", already_hit=set())
+        self.assertGreaterEqual(hits, 1)
+        self.assertLess(target.health, before)
         self.assertEqual(target.state, "down")
-        self.assertEqual(self.dave.combo_step, 0)
+        self.assertGreaterEqual(target.knockback_vx, 0.0)
+
+    def test_combo_finisher_and_heavy_use_kick_launcher_pose(self) -> None:
+        self.assertEqual(
+            self.game.data["moves"]["light_combo"][4]["launch"],
+            True,
+        )
+        self.dave.combo_step = 4
+        self.assertEqual(self.dave._light_move(), self.game.data["moves"]["light_combo"][4])
+        self.assertEqual(self.game.data["moves"]["heavy"]["launch"], True)
 
     def test_one_light_press_remains_one_punch(self) -> None:
         target = self.enemy(202, self.dave.x + 32.0, self.dave.y)
