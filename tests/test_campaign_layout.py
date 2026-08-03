@@ -281,6 +281,32 @@ class ChapterOneLayoutTests(unittest.TestCase):
             game.close()
             manager.close()
 
+    def test_content_props_render_as_dicts_without_actor_attribute_access(self) -> None:
+        manager = InputManager(max_players=4, discover_controllers=False)
+        game = FadesGame(manager, mute=True)
+        try:
+            game.select_slots = [SelectSlot({"type": "keyboard"}, character_index=0, confirmed=True)]
+            game._start_stage()
+            game._content_event_props = [
+                {
+                    "id": "test_tent",
+                    "depth": 280.0,
+                    "x": 240.0,
+                    "y": 300.0,
+                    "kind": "tent_camp",
+                    "smoke_phase": 0.25,
+                }
+            ]
+            surface = pygame.Surface((640, 360), pygame.SRCALPHA)
+
+            with patch("src.game.pixel_art.draw_tent_camp") as draw_tent_camp:
+                game._draw_gameplay(surface)
+
+            draw_tent_camp.assert_called_once()
+        finally:
+            game.close()
+            manager.close()
+
     def test_collision_props_and_near_occluders_render_in_depth_order(self) -> None:
         manager = InputManager(max_players=4, discover_controllers=False)
         game = FadesGame(manager, mute=True)
