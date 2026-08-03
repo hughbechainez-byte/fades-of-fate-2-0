@@ -119,6 +119,16 @@ class Pose:
 
 
 @dataclass(frozen=True)
+class ReferenceAnalysis:
+    path: str
+    sha256: str
+    size: tuple[int, int]
+    frame_count: int
+    durations_ms: tuple[int, ...]
+    pair_changed_pixels: tuple[int, ...]
+
+
+@dataclass(frozen=True)
 class RigPart:
     layer: Image.Image
     source_start: Point
@@ -1013,10 +1023,12 @@ def _pose_json(poses: Iterable[Pose]) -> dict[str, object]:
     }
 
 
-def _load_reference(path: Path) -> tuple[list[Image.Image], list[int]]:
+def _load_reference(path: Path) -> tuple[list[Image.Image], list[int], ReferenceAnalysis]:
     source = Image.open(path)
+    source_bytes = path.read_bytes()
     frames: list[Image.Image] = []
     durations: list[int] = []
+    pair_changed_pixels: list[int] = []
     for index in range(source.n_frames):
         source.seek(index)
         frames.append(source.convert("RGBA").copy())
@@ -1030,11 +1042,19 @@ def _load_reference(path: Path) -> tuple[list[Image.Image], list[int]]:
             frames[pair * 2].convert("RGB"), frames[pair * 2 + 1].convert("RGB")
         )
         changed = sum(1 for pixel in _pixels(difference) if pixel != (0, 0, 0))
+        pair_changed_pixels.append(changed)
         if changed > REFERENCE_PAIR_MAX_CHANGED_PIXELS:
             raise ValueError(
                 f"reference frame pair {pair} changed {changed} pixels; no longer a repeated pose"
             )
-    return frames, durations
+    return frames, durations, ReferenceAnalysis(
+        path=path.as_posix(),
+        sha256=hashlib.sha256(source_bytes).hexdigest(),
+        size=(frames[0].width, frames[0].height),
+        frame_count=len(frames),
+        durations_ms=tuple(durations),
+        pair_changed_pixels=tuple(pair_changed_pixels),
+    )
 
 
 def _reference_motion_bounds(frames: list[Image.Image]) -> tuple[int, int, int, int]:
@@ -2564,7 +2584,7 @@ def main() -> None:
     if model.motion.pose_count != POSE_COUNT or model.motion.loop_duration_ms != 960:
         raise ValueError("Dave art model motion dimensions do not match the runtime clip")
 
-    reference_frames, reference_durations = _load_reference(args.reference)
+    reference_frames, reference_durations, reference_analysis = _load_reference(args.reference)
     reference_bounds = _reference_motion_bounds(reference_frames)
     unique_reference = render_reference_contact_sheet(
         reference_frames,
@@ -2767,12 +2787,16 @@ def main() -> None:
             "resampling": model.cleanup.resampling,
         },
         "reference": {
+            "path": reference_analysis.path,
+            "sha256": reference_analysis.sha256,
+            "size": list(reference_analysis.size),
             "source_frames": len(reference_frames),
             "unique_pose_count": len(unique_reference),
             "frame_duration_ms": sorted(set(reference_durations)),
             "paired_pose_duration_ms": 80,
             "loop_duration_ms": sum(reference_durations),
             "motion_bounds": list(reference_bounds),
+            "pair_changed_pixels": list(reference_analysis.pair_changed_pixels),
         },
         "runtime": {
             "unique_pose_count": POSE_COUNT,
