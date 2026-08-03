@@ -30,7 +30,7 @@ GROUND_Y = 126
 DAVE_HEIGHT = 112.0
 LEG_LENGTH = 50.0
 SHOULDER_WIDTH = 18.0
-STRIDE_DISTANCE = 120.96
+STRIDE_DISTANCE = 78.0
 ROOT_STEP = STRIDE_DISTANCE / POSE_COUNT
 REFERENCE_PAIR_MAX_CHANGED_PIXELS = 2048
 CANONICAL_ATLAS_COLUMNS = 5
@@ -38,7 +38,7 @@ CANONICAL_ATLAS_ROWS = 4
 CANONICAL_CELL_COLUMN = 0
 CANONICAL_CELL_ROW = 1
 CANONICAL_PALETTE_COLORS = 40
-APPROVED_MOTION_FINGERPRINT = "3e14f770c606a86da3a2ee6d30b2f19f256257acfff60c26eba579426259e96d"
+APPROVED_MOTION_FINGERPRINT = "9cda9ff11756ee753f981efb0bb7c3751421df682f58473eb6b1f5dd50df734e"
 
 PHASE_NAMES = (
     "left_contact",
@@ -401,20 +401,20 @@ def render_canonical_parts_sheet(rig: CanonicalDaveRig, path: Path) -> None:
 
 
 def _stance_leg(phase: int, root_x: int) -> dict[str, Point]:
-    contact_x = 28.0 - ROOT_STEP * phase
+    contact_x = 20.0 - ROOT_STEP * phase
     heel_y = (126, 126, 126, 126, 120, 116)[phase]
     toe_y = (126, 126, 126, 126, 126, 126)[phase]
     if phase <= 3:
         heel_x = contact_x
-        toe_x = contact_x + (22, 23, 23, 22)[phase]
-        ankle_x = contact_x + (6, 9, 11, 12)[phase]
+        toe_x = contact_x + (20, 20, 20, 19)[phase]
+        ankle_x = contact_x + (5, 7, 8, 9)[phase]
         ankle_y = (113, 112, 111, 111)[phase]
     else:
         toe_x = contact_x
-        heel_x = contact_x - 18
-        ankle_x = contact_x + (-8, -9)[phase - 4]
+        heel_x = contact_x - 16
+        ankle_x = contact_x + (-6, -7)[phase - 4]
         ankle_y = (107, 104)[phase - 4]
-    knee_x = (15, 17, 12, 5, -5, -12)[phase]
+    knee_x = (11, 12, 8, 3, -3, -8)[phase]
     knee_y = (98, 103, 99, 96, 91, 90)[phase]
     return {
         "knee": _point(root_x + knee_x, knee_y),
@@ -425,13 +425,13 @@ def _stance_leg(phase: int, root_x: int) -> dict[str, Point]:
 
 
 def _swing_leg(phase: int, root_x: int) -> dict[str, Point]:
-    heel_x = (-42, -36, -22, -8, 10, 27)[phase]
+    heel_x = (-26, -22, -15, -6, 5, 20)[phase]
     heel_y = (124, 119, 114, 112, 116, 124)[phase]
-    toe_x = (-20, -14, 0, 15, 34, 49)[phase]
+    toe_x = (-7, -3, 4, 13, 24, 40)[phase]
     toe_y = (126, 122, 118, 115, 120, 126)[phase]
-    ankle_x = (-31, -27, -11, 3, 19, 35)[phase]
+    ankle_x = (-17, -14, -6, 2, 13, 28)[phase]
     ankle_y = (111, 108, 104, 101, 104, 111)[phase]
-    knee_x = (-19, -16, -8, 4, 14, 20)[phase]
+    knee_x = (-12, -10, -5, 2, 8, 12)[phase]
     knee_y = (98, 95, 91, 88, 91, 96)[phase]
     return {
         "knee": _point(root_x + knee_x, knee_y),
@@ -443,9 +443,9 @@ def _swing_leg(phase: int, root_x: int) -> dict[str, Point]:
 
 def _arm_landmarks(shoulder: Point, swing: float, lag: float) -> tuple[Point, Point, Point]:
     sx, sy = shoulder
-    elbow = _point(sx + swing * 9.0, sy + 15.0 - abs(swing))
-    wrist = _point(sx + swing * 15.0 + lag * 4.0, sy + 29.0 - abs(swing) * 2.0)
-    hand = _point(wrist[0] + (2 if swing >= 0 else -2), wrist[1] + 2)
+    elbow = _point(sx + swing * 7.0, sy + 13.0 - abs(swing))
+    wrist = _point(sx + swing * 11.0 + lag * 2.5, sy + 24.0 - abs(swing) * 2.0)
+    hand = _point(wrist[0] + (1 if swing >= 0 else -1), wrist[1] + 1)
     return elbow, wrist, hand
 
 
@@ -854,7 +854,7 @@ def _draw_arm_sections(
         # Keep the authored shoulder mass, then taper decisively through the
         # upper arm. The landmarks remain fixed; only the visible silhouette
         # is corrected to match Dave's compact concept-art proportions.
-        upper_widths = (5.7 if near else 4.8, 6.2 if near else 5.4, 4.0 if near else 3.6)
+        upper_widths = (5.2 if near else 4.5, 5.8 if near else 5.0, 3.6 if near else 3.2)
         _draw_ribbon(draw, upper_points, upper_widths, outline=outline, fill=skin)
         # Fill the insertion inside the already outlined ribbon. A standalone
         # outlined shoulder disc reads as a puppet joint and creates the exact
@@ -900,7 +900,7 @@ def _draw_arm_sections(
     if "lower" in sections:
         lower_mid = _lerp_point(elbow, wrist, 0.58)
         lower_points = (elbow, lower_mid, wrist)
-        lower_widths = (3.8 if near else 3.3, 4.3 if near else 3.8, 2.8 if near else 2.5)
+        lower_widths = (3.3 if near else 2.9, 3.8 if near else 3.3, 2.4 if near else 2.1)
         _draw_ribbon(draw, lower_points, lower_widths, outline=outline, fill=skin)
         draw.ellipse(_disc_box(elbow, 3, 3), fill=skin)
         draw.line(
@@ -941,15 +941,16 @@ def _draw_arm_sections(
             outline_padding=1.0,
         )
         fist_center = hand
-        fist_radius = 3 if near else 2
+        fist_radius_x = 5 if near else 4
+        fist_radius_y = 4 if near else 3
         direction = 1 if hand[0] >= wrist[0] else -1
         fist_outer = (
-            (fist_center[0] - direction * fist_radius, fist_center[1] - 3),
-            (fist_center[0] + direction * 2, fist_center[1] - 4),
-            (fist_center[0] + direction * 4, fist_center[1] - 1),
-            (fist_center[0] + direction * 3, fist_center[1] + 3),
-            (fist_center[0] - direction * 2, fist_center[1] + 4),
-            (fist_center[0] - direction * 4, fist_center[1] + 1),
+            (fist_center[0] - direction * fist_radius_x, fist_center[1] - 1),
+            (fist_center[0] - direction * 2, fist_center[1] - fist_radius_y),
+            (fist_center[0] + direction * 3, fist_center[1] - fist_radius_y),
+            (fist_center[0] + direction * fist_radius_x, fist_center[1]),
+            (fist_center[0] + direction * 2, fist_center[1] + fist_radius_y),
+            (fist_center[0] - direction * 3, fist_center[1] + fist_radius_y - 1),
         )
         draw.polygon(fist_outer, fill=outline)
         fist_inner = tuple(_lerp_point(point, fist_center, 0.22) for point in fist_outer)
@@ -1711,6 +1712,13 @@ def validate_skeleton(poses: tuple[Pose, ...]) -> dict[str, object]:
     left_hand_x = [pose.landmarks["left_hand"][0] for pose in poses]
     right_hand_x = [pose.landmarks["right_hand"][0] for pose in poses]
     pelvis_y = [pose.landmarks["pelvis"][1] for pose in poses]
+    foot_center_spacing = [
+        abs(
+            (pose.landmarks["left_heel"][0] + pose.landmarks["left_toe"][0]) / 2.0
+            - (pose.landmarks["right_heel"][0] + pose.landmarks["right_toe"][0]) / 2.0
+        )
+        for pose in poses
+    ]
     contact_world: dict[str, list[float]] = {"left": [], "right": []}
     for pose in poses:
         point = pose.landmarks[pose.contact_landmark]
@@ -1722,7 +1730,8 @@ def validate_skeleton(poses: tuple[Pose, ...]) -> dict[str, object]:
     checks = {
         "pose_count": len(poses) == 12,
         "all_landmarks_present": all(set(pose.landmarks) == set(LANDMARK_NAMES) for pose in poses),
-        "opposed_arm_swing": max(left_hand_x) - min(left_hand_x) >= 36 and max(right_hand_x) - min(right_hand_x) >= 36,
+        "opposed_arm_swing": max(left_hand_x) - min(left_hand_x) >= 24 and max(right_hand_x) - min(right_hand_x) >= 24,
+        "compact_step_spacing": max(foot_center_spacing) <= 52.0,
         "two_pelvis_arcs": pelvis_y[:6] == pelvis_y[6:] and max(pelvis_y[:6]) - min(pelvis_y[:6]) >= 8,
         "down_is_lowest": pelvis_y[1] == max(pelvis_y[:6]) and pelvis_y[7] == max(pelvis_y[6:]),
         "up_is_highest": pelvis_y[4] == min(pelvis_y[:6]) and pelvis_y[10] == min(pelvis_y[6:]),
@@ -1742,6 +1751,7 @@ def validate_skeleton(poses: tuple[Pose, ...]) -> dict[str, object]:
         "checks": checks,
         "left_hand_range_px": max(left_hand_x) - min(left_hand_x),
         "right_hand_range_px": max(right_hand_x) - min(right_hand_x),
+        "maximum_foot_center_spacing_px": max(foot_center_spacing),
         "pelvis_vertical_range_px": max(pelvis_y) - min(pelvis_y),
         "maximum_planted_foot_drift_px": max(drift.values()),
     }

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 from pathlib import Path
 import unittest
 
@@ -14,7 +15,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 POSE_DATA = PROJECT_ROOT / "data" / "dave_walk_reference_poses.json"
 WALK_STRIP = PROJECT_ROOT / "assets" / "sprites" / "black_dave_walk_12.png"
 FIST_DATA = PROJECT_ROOT / "assets" / "sprites" / "black_dave_fist_anchors.json"
-APPROVED_MOTION_FINGERPRINT = "3e14f770c606a86da3a2ee6d30b2f19f256257acfff60c26eba579426259e96d"
+APPROVED_MOTION_FINGERPRINT = "9cda9ff11756ee753f981efb0bb7c3751421df682f58473eb6b1f5dd50df734e"
 
 
 def _pixels(image: Image.Image):
@@ -84,7 +85,15 @@ class DaveWalkRetargetTests(unittest.TestCase):
     def test_counter_motion_pelvis_arcs_and_world_foot_lock(self) -> None:
         for side in ("left", "right"):
             hand_x = [pose["landmarks_px"][f"{side}_hand"][0] for pose in self.poses]
-            self.assertGreaterEqual(max(hand_x) - min(hand_x), 36)
+            self.assertGreaterEqual(max(hand_x) - min(hand_x), 24)
+
+        foot_spacing = []
+        for pose in self.poses:
+            points = pose["landmarks_px"]
+            left_center = (points["left_heel"][0] + points["left_toe"][0]) / 2
+            right_center = (points["right_heel"][0] + points["right_toe"][0]) / 2
+            foot_spacing.append(abs(left_center - right_center))
+        self.assertLessEqual(max(foot_spacing), 52.0)
 
         pelvis_y = [pose["landmarks_px"]["pelvis"][1] for pose in self.poses]
         self.assertEqual(pelvis_y[:6], pelvis_y[6:])
@@ -143,6 +152,23 @@ class DaveWalkRetargetTests(unittest.TestCase):
                         ),
                         f"{name} is disconnected from the reconstructed frame",
                     )
+
+    def test_compact_arms_end_in_large_readable_fists(self) -> None:
+        strip = Image.open(WALK_STRIP).convert("RGBA")
+        frames = [strip.crop((index * 128, 0, (index + 1) * 128, 128)) for index in range(12)]
+        for index, (frame, pose) in enumerate(zip(frames, self.poses, strict=True), start=1):
+            alpha = frame.getchannel("A")
+            for side in ("left", "right"):
+                shoulder = pose["landmarks_px"][f"{side}_shoulder"]
+                hand = pose["landmarks_px"][f"{side}_hand"]
+                with self.subTest(frame=index, side=side):
+                    self.assertLessEqual(math.dist(shoulder, hand), 27.0)
+                    fist_pixels = sum(
+                        alpha.getpixel((x, y)) >= 128
+                        for y in range(max(0, hand[1] - 5), min(128, hand[1] + 6))
+                        for x in range(max(0, hand[0] - 6), min(128, hand[0] + 7))
+                    )
+                    self.assertGreaterEqual(fist_pixels, 70)
 
     def test_walk_fist_metadata_uses_the_same_retarget_landmarks(self) -> None:
         metadata = json.loads(FIST_DATA.read_text(encoding="utf-8"))["states"]["walk"]
