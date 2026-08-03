@@ -996,14 +996,27 @@ def run_foundation_self_test(output_dir: Path | None = None) -> dict[str, Any]:
         frenzy_cinematic = game.shelly_frenzy_cinematic
         cinematic_canvas = pygame.Surface(LOGICAL_SIZE, pygame.SRCALPHA)
         game._draw_gameplay(cinematic_canvas)
+        frenzy_started = game.chiefs[0].frenzy > 7.5
+        if frenzy_cinematic is not None:
+            game._advance_shelly_frenzy_cinematic(frenzy_cinematic.comic_seconds)
+            game._advance_shelly_frenzy_cinematic(frenzy_cinematic.flash_seconds)
         _check(
-            game.chiefs[0].frenzy > 7.5
+            frenzy_started
             and all(target.state == "dead" for target in shelly_burst_targets)
             and frenzy_cinematic is not None
+            and game.chiefs[0].state == "pet"
             and pygame.mask.from_surface(cinematic_canvas).count() > 1_000,
             "chief_frenzy_super_cinematic_burst",
             report,
-            "Shelly's super darkens/focuses the screen and wipes a four-enemy non-boss crowd",
+            "Shelly's super plays the approved comic strip, flashes to a downed crowd, then pets Chief",
+        )
+        if frenzy_cinematic is not None:
+            game._advance_shelly_frenzy_cinematic(frenzy_cinematic.recovery_seconds)
+        _check(
+            game.shelly_frenzy_cinematic is None and not game.enemies,
+            "chief_frenzy_recovery_cleanup",
+            report,
+            "dust reveal removes the exact pre-super non-boss crowd before combat resumes",
         )
 
         for _ in range(180):
@@ -1299,13 +1312,13 @@ def run_foundation_self_test(output_dir: Path | None = None) -> dict[str, Any]:
             manager.process_events([])
             game.update(1.0 / 60.0)
             manager.consume_pressed()
-            if finale_chief.frenzy > 0.0:
+            if finale_shelly.state == "idle":
                 break
         _check(
-            finale_chief.frenzy > 0.0 and finale_shelly.super_meter == 0.0,
-            "cpu_shelly_awaken_boss_super",
+            finale_chief.frenzy == 0.0 and finale_shelly.super_meter == float(game.data["players"]["global"]["super_cost"]),
+            "cpu_shelly_awaken_boss_super_rejected",
             report,
-            "charged CPU Shelly activates Chief frenzy against Couch at Awaken Church",
+            "charged CPU Shelly keeps Chief frenzy unavailable during the Couch boss fight",
         )
         finale_chief.frenzy = 0.0
         game.enemies.clear()

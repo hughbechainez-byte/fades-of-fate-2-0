@@ -139,20 +139,38 @@ class SelectSlot:
 
 @dataclass(slots=True)
 class ShellyFrenzyCinematic:
-    """A brief comic-book emphasis frame for Shelly and Chief's super."""
+    """The full comic-strip crowd-clear and its playable recovery beat."""
 
     player_slot: int
     chief_owner_slot: int
-    duration_seconds: float
+    enemy_ids: tuple[int, ...]
+    comic_seconds: float = 7.0
+    flash_seconds: float = 0.20
+    recovery_seconds: float = 1.45
     elapsed_seconds: float = 0.0
+    revealed: bool = False
+    recovery_started: bool = False
 
     @property
     def progress(self) -> float:
-        return clamp(self.elapsed_seconds / max(0.001, self.duration_seconds), 0.0, 1.0)
+        return clamp(self.elapsed_seconds / max(0.001, self.comic_seconds), 0.0, 1.0)
+
+    @property
+    def comic_active(self) -> bool:
+        return self.elapsed_seconds < self.comic_seconds
+
+    @property
+    def flash_active(self) -> bool:
+        return self.comic_seconds <= self.elapsed_seconds < self.comic_seconds + self.flash_seconds
+
+    @property
+    def recovery_active(self) -> bool:
+        start = self.comic_seconds + self.flash_seconds
+        return start <= self.elapsed_seconds < start + self.recovery_seconds
 
     @property
     def active(self) -> bool:
-        return self.elapsed_seconds < self.duration_seconds
+        return self.elapsed_seconds < self.comic_seconds + self.flash_seconds + self.recovery_seconds
 
     def advance(self, dt: float) -> None:
         self.elapsed_seconds += max(0.0, dt)
@@ -370,6 +388,7 @@ class FadesGame:
         self._debug_last_query_frame = -1
         self._debug_logged_rejections: set[tuple[Any, Any, str]] = set()
         self.shelly_frenzy_cinematic: ShellyFrenzyCinematic | None = None
+        self._shelly_frenzy_panel_cache: dict[int, pygame.Surface] = {}
         # CPU Shelly has a small, per-level showtime reserve. It only charges
         # while a real non-boss crowd is present, so the companion earns two
         # useful Chief frenzies across an ordinary route instead of wasting
@@ -1497,6 +1516,12 @@ class FadesGame:
             return
         self.level_stats.advance(dt)
         self._advance_shelly_frenzy_cinematic(dt)
+        # Shelly's approved comic strip owns the action until the dust has
+        # settled and Chief has received his pet and treat.  Inputs remain
+        # latched by the input manager, but no combat simulation advances.
+        if self.shelly_frenzy_cinematic is not None:
+            self._update_camera(dt)
+            return
 
         # Support actions are dispatched before hitstop so a valid trigger edge
         # cannot be consumed while combat is temporarily frozen.
@@ -1762,14 +1787,54 @@ class FadesGame:
         self.log_breadcrumb("chapter_optional_cleared", level_id=self.level_id, optional_id=optional_id)
 
     def _advance_shelly_frenzy_cinematic(self, dt: float) -> None:
-        """Expire the presentation-only focus card on the fixed 60 Hz clock."""
-
         cinematic = self.shelly_frenzy_cinematic
         if cinematic is None:
             return
+        was_comic = cinematic.comic_active
+        was_recovery = cinematic.recovery_active
         cinematic.advance(dt)
+        if was_comic and not cinematic.comic_active and not cinematic.revealed:
+            cinematic.revealed = True
+            self._reveal_shelly_frenzy_targets(cinematic)
+            self.audio.play("heavy")
+        if not was_recovery and cinematic.recovery_active and not cinematic.recovery_started:
+            cinematic.recovery_started = True
+            self._start_shelly_frenzy_recovery(cinematic)
         if not cinematic.active:
+            self._finish_shelly_frenzy_cinematic(cinematic)
             self.shelly_frenzy_cinematic = None
+
+    def _reveal_shelly_frenzy_targets(self, cinematic: ShellyFrenzyCinematic) -> None:
+        """Floor the exact pre-cut-in normal-enemy snapshot after the flash."""
+
+        ids = set(cinematic.enemy_ids)
+        caller = next((player for player in self.players if player.slot == cinematic.player_slot), None)
+        for enemy in self.enemies:
+            if enemy.enemy_id in ids and enemy.alive:
+                enemy.take_damage(enemy.health + 1.0, self, caller, hitstun=0.9, knockback=84.0, knockdown=True)
+                self.add_effect("chief_frenzy", enemy.x, enemy.y - 28.0, radius=48.0, color=(255, 221, 82), duration=0.45)
+
+    def _start_shelly_frenzy_recovery(self, cinematic: ShellyFrenzyCinematic) -> None:
+        shelly = next((player for player in self.players if player.slot == cinematic.player_slot and player.alive), None)
+        chief = next((candidate for candidate in self.chiefs if candidate.owner.slot == cinematic.chief_owner_slot), None)
+        if shelly is not None and chief is not None:
+            chief.frenzy = 0.0
+            chief.start_pet(shelly, self, seconds=cinematic.recovery_seconds, force=True)
+        self.audio.play("pickup")
+
+    def _finish_shelly_frenzy_cinematic(self, cinematic: ShellyFrenzyCinematic) -> None:
+        ids = set(cinematic.enemy_ids)
+        self.enemies = [enemy for enemy in self.enemies if enemy.enemy_id not in ids]
+        for player in self.players:
+            if player.state == "pet":
+                player.set_state("idle")
+        for chief in self.chiefs:
+            if chief.owner.slot == cinematic.chief_owner_slot:
+                chief.pet_timer = 0.0
+                chief.pet_partner = None
+                chief.state = "follow"
+                chief.animation_moving = False
+        self.log_breadcrumb("shelly_chief_frenzy_finished", enemies_cleared=len(ids))
 
     def _advance_cpu_shelly_frenzy_reserve(
         self,
@@ -4208,7 +4273,20 @@ class FadesGame:
             )
         else:
             cfg = self.data["players"]["shelly"]
-            seconds = float(cfg["chief_frenzy_seconds"])
+            bosses = [enemy for enemy in self.enemies if enemy.alive and enemy.kind == "couch"]
+            if bosses:
+                # This is a crowd-clear, never a boss skip.  Restore the
+                # meter spent when the super wind-up began and keep the fight
+                # completely unchanged.
+                player.super_meter = min(
+                    float(self.data["players"]["global"]["super_cost"]),
+                    player.super_meter + float(self.data["players"]["global"]["super_cost"]),
+                )
+                player.set_state("idle")
+                self.add_effect("text", player.x, player.y - 64.0, text="NO FRENZY ON BOSS!", color=(255, 174, 96), duration=0.9)
+                self.audio.play("menu")
+                self.log_breadcrumb("shelly_chief_frenzy_rejected", player=player.slot + 1, reason="boss_present")
+                return
             if self.chiefs:
                 chief = min(
                     self.chiefs,
@@ -4216,81 +4294,24 @@ class FadesGame:
                 )
                 if self._chief_needs_recall(chief, player, urgent=True):
                     self.recall_chief_near(chief, player, reason="frenzy_super")
-                chief.activate_frenzy(seconds, self)
+                # Snapshot every normal, live enemy before the comic begins.
+                # They remain visible and downed during the dust reveal, then
+                # are removed together as gameplay resumes.
+                targets = tuple(
+                    enemy.enemy_id
+                    for enemy in self.enemies
+                    if enemy.alive and enemy.kind != "couch"
+                )
+                if not targets:
+                    self.add_effect("text", player.x, player.y - 64.0, text="NO CROWD", color=(255, 211, 112), duration=0.7)
+                    return
+                chief.activate_frenzy(float(cfg["chief_frenzy_seconds"]), self)
                 self.audio.play_character(player.character, "chief")
-                burst_radius = max(1.0, float(cfg.get("frenzy_burst_radius", 390.0)))
-                burst_limit = max(1, int(cfg.get("frenzy_burst_targets", 4)))
-                burst_targets = sorted(
-                    (
-                        enemy
-                        for enemy in self.enemies
-                        if enemy.targetable
-                        and enemy.kind != "couch"
-                        and min(
-                            math.hypot(enemy.x - player.x, (enemy.y - player.y) * 1.55),
-                            math.hypot(enemy.x - chief.x, (enemy.y - chief.y) * 1.55),
-                        )
-                        <= burst_radius
-                    ),
-                    key=lambda enemy: (
-                        min(
-                            math.hypot(enemy.x - player.x, (enemy.y - player.y) * 1.55),
-                            math.hypot(enemy.x - chief.x, (enemy.y - chief.y) * 1.55),
-                        ),
-                        enemy.enemy_id,
-                    ),
-                )[:burst_limit]
-                burst_damage = max(1.0, float(cfg.get("frenzy_burst_damage", 260.0)))
-                for enemy in burst_targets:
-                    enemy.take_damage(
-                        burst_damage,
-                        self,
-                        player,
-                        hitstun=float(cfg.get("frenzy_burst_hitstun", 0.72)),
-                        knockback=float(cfg.get("frenzy_burst_knockback", 78.0)),
-                        knockdown=True,
-                    )
-                    self.add_effect(
-                        "chief_frenzy",
-                        enemy.x,
-                        enemy.y - 28.0,
-                        radius=float(cfg.get("frenzy_burst_enemy_radius", 48.0)),
-                        color=(255, 221, 82),
-                        duration=0.46,
-                    )
-                cinematic_seconds = max(0.10, float(cfg.get("frenzy_cinematic_seconds", 0.62)))
                 self.shelly_frenzy_cinematic = ShellyFrenzyCinematic(
                     player_slot=player.slot,
                     chief_owner_slot=chief.owner.slot,
-                    duration_seconds=cinematic_seconds,
+                    enemy_ids=targets,
                 )
-                self.add_effect(
-                    "chief_frenzy",
-                    player.x,
-                    player.y - 24.0,
-                    radius=float(cfg.get("frenzy_burst_screen_radius", 182.0)),
-                    color=(255, 209, 71),
-                    duration=0.72,
-                )
-                self.add_effect(
-                    "text",
-                    player.x,
-                    player.y - 78.0,
-                    text=str(cfg.get("super_name", "CHIEF, SIC 'EM!")),
-                    color=(255, 227, 115),
-                    duration=1.0,
-                )
-                shake_strength = float(cfg.get("frenzy_camera_strength", 9.0))
-                self.camera.trigger_shake(
-                    shake_strength * self.options.shake_intensity,
-                    0.38,
-                    vertical_strength=shake_strength * 0.45 * self.options.shake_intensity,
-                )
-                self.hitstop_remaining = max(
-                    self.hitstop_remaining,
-                    float(cfg.get("frenzy_hitstop_seconds", 0.08)),
-                )
-                self.impact_flash = max(self.impact_flash, float(cfg.get("frenzy_flash_seconds", 0.16)))
                 if player.is_cpu:
                     self._cpu_shelly_frenzy_uses[player.slot] = self._cpu_shelly_frenzy_uses.get(player.slot, 0) + 1
                     self._cpu_shelly_frenzy_charge[player.slot] = 0.0
@@ -4301,10 +4322,9 @@ class FadesGame:
                 self.log_breadcrumb(
                     "shelly_chief_frenzy",
                     player=player.slot + 1,
-                    seconds=round(seconds, 2),
                     cpu=player.is_cpu,
-                    burst_targets=len(burst_targets),
-                    boss_excluded=any(enemy.kind == "couch" for enemy in self.enemies),
+                    burst_targets=len(targets),
+                    boss_excluded=True,
                 )
 
     def enemy_attack(
@@ -4978,94 +4998,72 @@ class FadesGame:
         )
 
     def _draw_shelly_frenzy_cinematic(self, surface: pygame.Surface) -> None:
-        """Darken the street briefly while Shelly and Chief stay fully lit."""
-
         cinematic = self.shelly_frenzy_cinematic
         if cinematic is None:
             return
-        shelly = next(
-            (player for player in self.players if player.slot == cinematic.player_slot and player.alive),
-            None,
-        )
-        chief = next(
-            (candidate for candidate in self.chiefs if candidate.owner.slot == cinematic.chief_owner_slot),
-            None,
-        )
-        if shelly is None or chief is None:
-            self.shelly_frenzy_cinematic = None
+        if cinematic.comic_active:
+            self._draw_shelly_frenzy_comic_panel(surface, cinematic)
             return
+        if cinematic.flash_active:
+            flash = pygame.Surface(LOGICAL_SIZE, pygame.SRCALPHA)
+            flash.fill((255, 255, 255, 255))
+            surface.blit(flash, (0, 0))
+            return
+        self._draw_shelly_frenzy_recovery_overlay(surface, cinematic)
 
-        cfg = self.data["players"]["shelly"]
-        pulse = 1.0 - abs(cinematic.progress * 2.0 - 1.0)
-        dark_alpha = int(max(0, min(235, float(cfg.get("frenzy_cinematic_dark_alpha", 166)) * (0.78 + pulse * 0.22))))
-        shade = pygame.Surface(LOGICAL_SIZE, pygame.SRCALPHA)
-        shade.fill((3, 5, 14, dark_alpha))
-        surface.blit(shade, (0, 0))
+    def _draw_shelly_frenzy_comic_panel(self, surface: pygame.Surface, cinematic: ShellyFrenzyCinematic) -> None:
+        panel_ends = (1.45, 2.70, 4.05, 5.30, cinematic.comic_seconds)
+        panel_index = next((index for index, end in enumerate(panel_ends) if cinematic.elapsed_seconds < end), 4)
+        image = self._shelly_frenzy_panel(panel_index)
+        if image is None:
+            return
+        phase_start = 0.0 if panel_index == 0 else panel_ends[panel_index - 1]
+        phase_length = max(0.01, panel_ends[panel_index] - phase_start)
+        local = clamp((cinematic.elapsed_seconds - phase_start) / phase_length, 0.0, 1.0)
+        scale = 1.02 + local * 0.055
+        width, height = int(LOGICAL_SIZE[0] * scale), int(LOGICAL_SIZE[1] * scale)
+        panel = pygame.transform.smoothscale(image, (width, height))
+        drift = int((local - 0.5) * 10.0)
+        surface.blit(panel, ((LOGICAL_SIZE[0] - width) // 2 + drift, (LOGICAL_SIZE[1] - height) // 2))
+        # Cinemascope bars hold the comic-strip read and hide scale edges.
+        pygame.draw.rect(surface, (3, 4, 8), (0, 0, LOGICAL_SIZE[0], 24))
+        pygame.draw.rect(surface, (3, 4, 8), (0, LOGICAL_SIZE[1] - 24, LOGICAL_SIZE[0], 24))
+        if panel_index == 0:
+            smoke_y = 93 + int(math.sin(cinematic.elapsed_seconds * 8.0) * 3.0)
+            pygame.draw.circle(surface, (225, 225, 215, 90), (491, smoke_y), 7)
+            pygame.draw.circle(surface, (235, 235, 225, 66), (497, smoke_y - 10), 5)
 
-        def project_actor(actor: Any) -> tuple[float, float]:
-            point = self.projection.project(
-                WorldPoint(float(actor.x), float(actor.y)),
-                camera_x=self._render_camera_x,
-                camera_depth=self._projection_depth_origin,
-                screen_shake=(0.0, self._camera_shake_y),
-            )
-            return point.xy
+    def _shelly_frenzy_panel(self, panel_index: int) -> pygame.Surface | None:
+        if panel_index in self._shelly_frenzy_panel_cache:
+            return self._shelly_frenzy_panel_cache[panel_index]
+        names = ("01_command_day.png", "02_transform_day.png", "03_sprint_day.png", "04_maul_day.png", "05_flee_day.png")
+        try:
+            panel = pygame.image.load(str(resource_path(f"assets/cinematics/shelly_chief_frenzy/{names[panel_index]}"))).convert()
+        except (pygame.error, FileNotFoundError, IndexError):
+            return None
+        self._shelly_frenzy_panel_cache[panel_index] = panel
+        return panel
 
-        shelly_x, shelly_y = project_actor(shelly)
-        chief_x, chief_y = project_actor(chief)
-        focus = pygame.Surface(LOGICAL_SIZE, pygame.SRCALPHA)
-        radius = int(58 + pulse * 18)
-        for x, y, vertical in ((shelly_x, shelly_y - 34.0, 1.15), (chief_x, chief_y - 22.0, 0.78)):
-            rect = pygame.Rect(int(x - radius), int(y - radius * vertical), radius * 2, int(radius * vertical * 2))
-            pygame.draw.ellipse(focus, (255, 211, 84, 36), rect)
-            pygame.draw.ellipse(focus, (255, 239, 170, 195), rect, 2)
-        surface.blit(focus, (0, 0))
-
-        # Repaint the paired heroes above the tint so the eye reads a focused
-        # comic panel instead of a generic global flash.
-        action_states = {"light", "heavy", "air_attack", "jump", "hurt", "downed", "super", "dodge", "pet", "ranged", "propane"}
-        shelly_tick = (
-            999
-            if shelly.state == "dead"
-            else int(shelly.state_clock * ANIMATION_PLAYBACK_HZ)
-            if shelly.state in action_states
-            else shelly.animation_tick
-        )
-        shelly_state = (
-            f"attack_{shelly.combo_step + 1}"
-            if shelly.state == "light"
-            else "super" if shelly.state == "propane" else shelly.state
-        )
-        pixel_art.draw_player(
-            surface,
-            shelly_x,
-            shelly_y,
-            shelly.z,
-            shelly.facing,
-            shelly_state,
-            shelly.character,
-            shelly_tick,
-            PLAYER_COLORS[shelly.color_index],
-        )
-        chief_tick = (
-            int(max(0.0, 0.22 - min(0.22, chief.bite_flash)) * ANIMATION_PLAYBACK_HZ)
-            if chief.bite_flash > 0.0
-            else chief.animation_tick
-        )
-        pixel_art.draw_chief(
-            surface,
-            chief_x,
-            chief_y,
-            z=0,
-            facing=chief.facing,
-            state=chief.visual_animation_state,
-            frame=chief_tick,
-        )
-
-        panel = pygame.Rect(182, 18, 276, 40)
-        self._panel(surface, panel, (13, 9, 20), (255, 218, 91))
-        self._text(surface, self.font_big, "CHIEF, SIC 'EM!", (255, 232, 129), (320, 23), center=True)
-        self._text(surface, self.font_tiny, "SHELLY + CHIEF  •  FRENZY BREAK", (255, 184, 218), (320, 47), center=True)
+    def _draw_shelly_frenzy_recovery_overlay(self, surface: pygame.Surface, cinematic: ShellyFrenzyCinematic) -> None:
+        local = clamp((cinematic.elapsed_seconds - cinematic.comic_seconds - cinematic.flash_seconds) / cinematic.recovery_seconds, 0.0, 1.0)
+        dust = pygame.Surface(LOGICAL_SIZE, pygame.SRCALPHA)
+        alpha = int(178 * (1.0 - local))
+        dust.fill((214, 184, 126, alpha))
+        for index in range(38):
+            x = (index * 73 + int(local * 180)) % LOGICAL_SIZE[0]
+            y = 198 + (index * 29) % 142 - int(local * 26)
+            pygame.draw.circle(dust, (239, 215, 164, max(0, alpha - 28)), (x, y), 3 + index % 5)
+        surface.blit(dust, (0, 0))
+        dave = next((player for player in self.players if player.character == "black_dave" and player.alive), None)
+        chief = next((candidate for candidate in self.chiefs if candidate.owner.slot == cinematic.chief_owner_slot), None)
+        if dave is not None and chief is not None:
+            start = self.projection.project(WorldPoint(dave.x + dave.facing * 12.0, dave.y - 42.0), camera_x=self._render_camera_x, camera_depth=self._projection_depth_origin).xy
+            end = self.projection.project(WorldPoint(chief.x, chief.y - 35.0), camera_x=self._render_camera_x, camera_depth=self._projection_depth_origin).xy
+            arc = local * (1.0 - local) * 42.0
+            x = start[0] + (end[0] - start[0]) * local
+            y = start[1] + (end[1] - start[1]) * local - arc
+            pygame.draw.circle(surface, (232, 174, 73), (int(x), int(y)), 4)
+        self._text(surface, self.font_small, "GOOD BOY!", (255, 236, 127), (320, 64), center=True)
 
     def _draw_level_outro_overlay(self, surface: pygame.Surface) -> None:
         """Render Jerry's Level 1 warning with authored sprite poses and dialogue."""
