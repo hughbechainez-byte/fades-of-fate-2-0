@@ -4755,7 +4755,7 @@ class FadesGame:
         )
         security_bubbles: list[tuple[float, float, int, int]] = []
         for _, _, _, kind, obj in sorted(drawables, key=lambda item: (item[0], item[1], item[2])):
-            mapping_object = kind in {"prop", "scene_object"}
+            mapping_object = kind in {"prop", "scene_object", "content_prop"}
             world_x = (
                 float(obj.get("world_x", obj.get("x")))
                 if mapping_object
