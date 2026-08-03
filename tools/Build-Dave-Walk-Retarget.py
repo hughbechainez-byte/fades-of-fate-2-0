@@ -93,6 +93,13 @@ LANDMARK_NAMES = (
 Point = tuple[int, int]
 
 
+def _write_json_lf(path: Path, payload: object) -> None:
+    """Write deterministic JSON bytes that match the content manifest."""
+
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes((json.dumps(payload, indent=2) + "\n").encode("utf-8"))
+
+
 @dataclass(frozen=True)
 class Pose:
     index: int
@@ -818,8 +825,7 @@ def write_asset_inventory(model: CharacterAnimationSkin, path: Path) -> None:
         "canonical_source_commit": model.art.source_commit,
         "assets": [dict(item) for item in model.art.asset_inventory],
     }
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+    _write_json_lf(path, payload)
 
 
 def _stance_leg(phase: int, root_x: int) -> dict[str, Point]:
@@ -2526,7 +2532,7 @@ def update_walk_fist_anchors(path: Path, model: CharacterAnimationSkin) -> None:
         }
         for index, anchor in enumerate(anchors)
     ]
-    path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+    _write_json_lf(path, payload)
 
 
 def main() -> None:
@@ -2576,8 +2582,7 @@ def main() -> None:
             "approved Dave skeleton/timing changed: "
             f"{motion_fingerprint} != {APPROVED_MOTION_FINGERPRINT}"
         )
-    args.pose_data_output.parent.mkdir(parents=True, exist_ok=True)
-    args.pose_data_output.write_text(json.dumps(pose_data, indent=2) + "\n", encoding="utf-8")
+    _write_json_lf(args.pose_data_output, pose_data)
 
     skeletons = [render_skeleton_pose(pose) for pose in poses]
     _contact_sheet(
@@ -2810,7 +2815,7 @@ def main() -> None:
         },
     }
     report_path = args.review_dir / "dave_walk_validation_report.json"
-    report_path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+    _write_json_lf(report_path, report)
     if args.install_output is not None:
         write_strip(sprites, args.install_output)
         update_walk_fist_anchors(args.fist_anchor_metadata, model)
