@@ -1035,7 +1035,24 @@ def validate_gameplay(
     if str(jermaine.get("weapon", "")).upper() != "STICK":
         raise ConfigError("players.jermaine.weapon must be STICK")
 
-    for character in ("black_dave", "shelly", "jermaine"):
+    white_dave = data["players"].get("white_dave", {})
+    for field in (
+        "height_scale", "speed_scale", "max_health", "weapon_reach_bonus",
+        "weapon_damage_scale", "super_damage", "super_radius", "super_hitstun",
+        "super_knockback",
+    ):
+        if float(white_dave.get(field, 0)) <= 0:
+            raise ConfigError(f"players.white_dave.{field} must be positive")
+    if str(white_dave.get("weapon", "")).upper() != "BOLT CUTTERS":
+        raise ConfigError("players.white_dave.weapon must be BOLT CUTTERS")
+    if float(white_dave["height_scale"]) != float(jermaine["height_scale"]):
+        raise ConfigError("players.white_dave.height_scale must match Jermaine")
+    if float(white_dave["speed_scale"]) >= float(jermaine["speed_scale"]):
+        raise ConfigError("players.white_dave.speed_scale must be slower than Jermaine")
+    if float(white_dave["weapon_damage_scale"]) <= float(jermaine["weapon_damage_scale"]):
+        raise ConfigError("players.white_dave.weapon_damage_scale must exceed Jermaine")
+
+    for character in ("black_dave", "shelly", "jermaine", "white_dave"):
         character_config = data["players"].get(character, {})
         sequence = character_config.get("light_combo_sequence")
         if sequence is None:

@@ -197,7 +197,7 @@ def player_frame(character: object, state: object, tick: int) -> pygame.Surface 
     """Return one of the hero's authored phase poses."""
 
     name = str(character or "black_dave").strip().lower().replace("-", "_").replace(" ", "_")
-    if name == "jermaine":
+    if name in {"jermaine", "white_dave"}:
         return None
     name = "shelly" if name in {"shelly", "shellie"} else "black_dave"
     state_name = _state_name(state)

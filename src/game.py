@@ -81,11 +81,12 @@ PLAYER_COLORS = (
     (139, 255, 116),
 )
 
-PLAYABLE_CHARACTERS = ("black_dave", "shelly", "jermaine")
+PLAYABLE_CHARACTERS = ("black_dave", "shelly", "jermaine", "white_dave")
 CHARACTER_LABELS = {
     "black_dave": "BLACK DAVE",
     "shelly": "SHELLY",
     "jermaine": "JERMAINE",
+    "white_dave": "WHITE DAVE",
 }
 
 PAUSE_MENU_ITEMS = (
@@ -318,11 +319,13 @@ class FadesGame:
             "black_dave": pygame.Rect(455, 170, 405, 750),
             "shelly": pygame.Rect(715, 165, 450, 755),
             "jermaine": pygame.Rect(455, 170, 405, 750),
+            "white_dave": pygame.Rect(455, 170, 405, 750),
         }
         portrait_assets = {
             "black_dave": "assets/portraits/dave_portrait_lean_young_v2.png",
             "shelly": "assets/portraits/shelly_portrait_curvy_v1.png",
             "jermaine": "assets/portraits/jermaine_portrait_v1.png",
+            "white_dave": "assets/portraits/white_dave_portrait_v1.png",
         }
         self.character_portraits: dict[str, pygame.Surface] = {}
         for name, rect in portrait_rects.items():
@@ -4176,6 +4179,8 @@ class FadesGame:
                 if player.character == "shelly"
                 else (255, 210, 86)
                 if player.character == "jermaine"
+                else (255, 128, 91)
+                if player.character == "white_dave"
                 else (108, 226, 255)
             )
             trail_length = 24.0 if attack_kind == "light" else 34.0
@@ -4512,7 +4517,8 @@ class FadesGame:
                     boss_excluded=True,
                 )
         else:
-            cfg = self.data["players"]["jermaine"]
+            cfg = self.data["players"][player.character]
+            is_white_dave = player.character == "white_dave"
             radius = float(cfg.get("super_radius", 180.0))
             damage = float(cfg.get("super_damage", 42.0))
             targets = [
@@ -4526,15 +4532,15 @@ class FadesGame:
                 player.x,
                 player.y,
                 radius=radius,
-                color=(255, 206, 73),
-                duration=0.48,
+                color=(255, 111, 78) if is_white_dave else (255, 206, 73),
+                duration=0.56 if is_white_dave else 0.48,
             )
             self.add_effect(
                 "text",
                 player.x,
                 player.y - 84.0,
-                text="STICK SWEEP!",
-                color=(255, 225, 126),
+                text="BOLT BREAKER!" if is_white_dave else "STICK SWEEP!",
+                color=(255, 177, 143) if is_white_dave else (255, 225, 126),
                 duration=0.82,
             )
             for enemy in targets:
@@ -4546,12 +4552,14 @@ class FadesGame:
                     knockback=float(cfg.get("super_knockback", 72.0)),
                     knockdown=True,
                 )
+            shake = 10.0 if is_white_dave else 7.0
             self.camera.trigger_shake(
-                7.0 * self.options.shake_intensity,
-                0.28,
-                vertical_strength=3.0 * self.options.shake_intensity,
+                shake * self.options.shake_intensity,
+                0.36 if is_white_dave else 0.28,
+                vertical_strength=(5.0 if is_white_dave else 3.0) * self.options.shake_intensity,
             )
-            self.log_breadcrumb("jermaine_stick_sweep", player=player.slot + 1, enemies_hit=len(targets))
+            event = "white_dave_bolt_breaker" if is_white_dave else "jermaine_stick_sweep"
+            self.log_breadcrumb(event, player=player.slot + 1, enemies_hit=len(targets))
 
     def enemy_attack(
         self,
@@ -4813,6 +4821,7 @@ class FadesGame:
 
     def _draw_title(self, surface: pygame.Surface) -> None:
         surface.blit(self.key_art, (0, 0))
+        pixel_art.draw_white_dave_loading(surface, 92, 303, frame=int(self.elapsed * 6.0))
         pixel_art.draw_jermaine_loading(surface, 548, 303, frame=int(self.elapsed * 8.0))
         overlay = pygame.Surface(LOGICAL_SIZE, pygame.SRCALPHA)
         overlay.fill((5, 4, 16, 35))
@@ -4835,15 +4844,15 @@ class FadesGame:
         shade.fill((4, 6, 17, 190))
         surface.blit(shade, (0, 0))
         self._text(surface, self.font_big, "CHOOSE WHO YOU CONTROL", (255, 222, 99), (320, 17), center=True)
-        card_names = ("BLACK DAVE", "SHELLY + CHIEF", "JERMAINE", "LOCKED")
-        card_colors = ((45, 150, 190), (174, 75, 127), (139, 104, 40), (25, 27, 36))
+        card_names = ("BLACK DAVE", "SHELLY + CHIEF", "JERMAINE", "WHITE DAVE")
+        card_colors = ((45, 150, 190), (174, 75, 127), (139, 104, 40), (105, 54, 42))
         for index in range(4):
             x = 16 + index * 156
             rect = pygame.Rect(x, 39, 144, 177)
             hovered = self.mouse_position is not None and rect.collidepoint(self.mouse_position)
-            border = (255, 222, 99) if hovered and index < 3 else ((104, 229, 255) if index < 3 else (75, 76, 88))
+            border = (255, 222, 99) if hovered else (104, 229, 255)
             self._panel(surface, rect, card_colors[index], border)
-            self._text(surface, self.font_small, card_names[index], (255, 246, 210) if index < 3 else (112, 113, 125), (x + 72, 50), center=True)
+            self._text(surface, self.font_small, card_names[index], (255, 246, 210), (x + 72, 50), center=True)
             if index == 0:
                 surface.blit(self.character_portraits["black_dave"], (x + 27, 59))
                 pygame.draw.rect(surface, (105, 229, 255), (x + 25, 57, 94, 149), 2)
@@ -4857,15 +4866,9 @@ class FadesGame:
                 pygame.draw.rect(surface, (255, 216, 92), (x + 25, 57, 94, 149), 2)
                 self._text(surface, self.font_tiny, "STICK • CROWD SWEEP", (255, 226, 137), (x + 72, 205), center=True)
             else:
-                pygame.draw.rect(surface, (10, 11, 16), (x + 27, 70, 90, 112))
-                pygame.draw.ellipse(surface, (2, 3, 6), (x + 56, 82, 32, 36))
-                pygame.draw.polygon(
-                    surface,
-                    (2, 3, 6),
-                    ((x + 42, 174), (x + 47, 132), (x + 61, 115), (x + 83, 115), (x + 97, 132), (x + 102, 174)),
-                )
-                self._text(surface, self.font_huge, "?", (74, 76, 88), (x + 72, 137), center=True)
-                self._text(surface, self.font_tiny, "COMING SOON", (91, 93, 106), (x + 72, 195), center=True)
+                surface.blit(self.character_portraits["white_dave"], (x + 27, 59))
+                pygame.draw.rect(surface, (255, 151, 112), (x + 25, 57, 94, 149), 2)
+                self._text(surface, self.font_tiny, "CUTTERS • BOLT BREAKER", (255, 188, 155), (x + 72, 205), center=True)
 
         for index in range(4):
             x = 16 + index * 156

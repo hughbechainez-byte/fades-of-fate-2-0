@@ -80,6 +80,12 @@ CHARACTER_VOICE_SFX: dict[str, dict[str, tuple[str, ...]]] = {
         "downed": ("dave_downed",),
         "chief": ("dave_chief",),
     },
+    "white_dave": {
+        "grunt": ("dave_grunt_2", "dave_grunt_1"),
+        "hurt": ("dave_grunt_2", "dave_grunt_1"),
+        "downed": ("dave_downed",),
+        "chief": ("dave_chief",),
+    },
 }
 
 # Loud transient effects and voices are trimmed independently before the

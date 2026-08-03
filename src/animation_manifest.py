@@ -681,7 +681,7 @@ def clip_for(actor: str, state: str) -> AnimationClip:
     normalized_state = str(state).strip().lower().replace("-", "_").replace(" ", "_")
     if normalized_actor in {"dave", "blackdave"}:
         normalized_actor = "black_dave"
-    elif normalized_actor == "jermaine":
+    elif normalized_actor in {"jermaine", "white_dave"}:
         normalized_actor = "black_dave"
     elif normalized_actor == "shellie":
         normalized_actor = "shelly"

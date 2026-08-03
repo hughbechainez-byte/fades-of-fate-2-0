@@ -494,6 +494,22 @@
                                       "light_combo_sequence":  [0, 1, 2, 3, 4],
                                       "description":  "Taller and skinnier than Black Dave; an angry, crooked-smiling stick fighter with long reach."
                                   },
+                    "white_dave":  {
+                                           "display_name":  "WHITE DAVE",
+                                           "height_scale":  1.13,
+                                           "speed_scale":  0.72,
+                                           "max_health":  132,
+                                           "weapon":  "BOLT CUTTERS",
+                                           "weapon_reach_bonus":  26,
+                                           "weapon_damage_scale":  1.42,
+                                           "super_name":  "BOLT BREAKER",
+                                           "super_damage":  74,
+                                           "super_radius":  170,
+                                           "super_hitstun":  0.78,
+                                           "super_knockback":  96,
+                                           "light_combo_sequence":  [0, 1, 2, 3, 4],
+                                           "description":  "As tall as Jermaine but much wider; a slow, durable powerhouse who swings oversized bolt cutters."
+                                       },
                     "shelly":  {
                                    "display_name":  "SHELLY",
                                    "height_scale":  0.92,
