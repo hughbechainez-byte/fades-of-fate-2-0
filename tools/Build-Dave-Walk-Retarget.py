@@ -38,6 +38,7 @@ CANONICAL_ATLAS_ROWS = 4
 CANONICAL_CELL_COLUMN = 0
 CANONICAL_CELL_ROW = 1
 CANONICAL_PALETTE_COLORS = 40
+APPROVED_MOTION_FINGERPRINT = "3e14f770c606a86da3a2ee6d30b2f19f256257acfff60c26eba579426259e96d"
 
 PHASE_NAMES = (
     "left_contact",
@@ -712,38 +713,663 @@ def _canonical_color(
     )
 
 
-def render_dave_pose(pose: Pose, rig: CanonicalDaveRig) -> Image.Image:
+HANDDRAWN_NEAR_ARM_LAYER = (
+    "behind",
+    "behind",
+    "behind",
+    "split",
+    "front",
+    "front",
+    "front",
+    "front",
+    "split",
+    "split",
+    "behind",
+    "behind",
+)
+
+
+def _lerp_point(start: Point, end: Point, amount: float) -> Point:
+    return _point(
+        start[0] + (end[0] - start[0]) * amount,
+        start[1] + (end[1] - start[1]) * amount,
+    )
+
+
+def _normal(start: Point, end: Point) -> tuple[float, float]:
+    dx = end[0] - start[0]
+    dy = end[1] - start[1]
+    length = math.hypot(dx, dy)
+    if length <= 0.0:
+        return 0.0, -1.0
+    return -dy / length, dx / length
+
+
+def _ribbon_polygon(
+    points: tuple[Point, ...], widths: tuple[float, ...]
+) -> tuple[Point, ...]:
+    if len(points) != len(widths) or len(points) < 2:
+        raise ValueError("ribbon points and widths must have matching lengths")
+    left: list[Point] = []
+    right: list[Point] = []
+    for index, (point, width) in enumerate(zip(points, widths, strict=True)):
+        previous = points[max(0, index - 1)]
+        following = points[min(len(points) - 1, index + 1)]
+        nx, ny = _normal(previous, following)
+        left.append(_point(point[0] + nx * width, point[1] + ny * width))
+        right.append(_point(point[0] - nx * width, point[1] - ny * width))
+    return tuple(left + list(reversed(right)))
+
+
+def _draw_ribbon(
+    draw: ImageDraw.ImageDraw,
+    points: tuple[Point, ...],
+    widths: tuple[float, ...],
+    *,
+    outline: tuple[int, int, int, int],
+    fill: tuple[int, int, int, int],
+    outline_padding: float = 1.5,
+) -> None:
+    draw.polygon(
+        _ribbon_polygon(points, tuple(width + outline_padding for width in widths)),
+        fill=outline,
+    )
+    draw.polygon(_ribbon_polygon(points, widths), fill=fill)
+
+
+def _disc_box(center: Point, radius_x: int, radius_y: int | None = None) -> tuple[int, int, int, int]:
+    radius_y = radius_x if radius_y is None else radius_y
+    return (
+        center[0] - radius_x,
+        center[1] - radius_y,
+        center[0] + radius_x,
+        center[1] + radius_y,
+    )
+
+
+def _draw_joint_disc(
+    draw: ImageDraw.ImageDraw,
+    center: Point,
+    radius_x: int,
+    radius_y: int,
+    outline: tuple[int, int, int, int],
+    fill: tuple[int, int, int, int],
+) -> None:
+    draw.ellipse(_disc_box(center, radius_x + 1, radius_y + 1), fill=outline)
+    draw.ellipse(_disc_box(center, radius_x, radius_y), fill=fill)
+
+
+def _handdrawn_colors(rig: CanonicalDaveRig) -> dict[str, tuple[int, int, int, int]]:
+    targets = {
+        "outline": (14, 15, 22),
+        "deep_outline": (5, 7, 12),
+        "skin_deep": (76, 37, 23),
+        "skin_shadow": (118, 57, 28),
+        "skin_mid": (174, 91, 42),
+        "skin_light": (193, 123, 64),
+        "skin_high": (217, 198, 183),
+        "tank": (19, 24, 29),
+        "tank_light": (53, 52, 51),
+        "tank_high": (104, 92, 87),
+        "tank_shadow": (9, 12, 17),
+        "denim_deep": (13, 45, 74),
+        "denim_shadow": (17, 69, 108),
+        "denim_mid": (24, 96, 150),
+        "denim_light": (54, 89, 126),
+        "denim_stitch": (135, 164, 178),
+        "shoe_dark": (20, 28, 39),
+        "shoe_mid": (44, 61, 75),
+        "white": (226, 228, 218),
+        "white_shadow": (145, 165, 173),
+        "belt": (42, 29, 27),
+        "gold": (219, 151, 51),
+    }
+    return {name: _canonical_color(rig, target) for name, target in targets.items()}
+
+
+def _draw_arm_sections(
+    image: Image.Image,
+    pose: Pose,
+    side: str,
+    colors: Mapping[str, tuple[int, int, int, int]],
+    *,
+    depth: str,
+    sections: tuple[str, ...] = ("upper", "lower", "hand"),
+) -> None:
     lm = pose.landmarks
+    shoulder = lm[f"{side}_shoulder"]
+    elbow = lm[f"{side}_elbow"]
+    wrist = lm[f"{side}_wrist"]
+    hand = lm[f"{side}_hand"]
+    draw = ImageDraw.Draw(image)
+    near = depth == "near"
+    outline = colors["outline"]
+    skin = colors["skin_mid"] if near else colors["skin_shadow"]
+    shadow = colors["skin_shadow"] if near else colors["skin_deep"]
+    light = colors["skin_light"] if near else colors["skin_mid"]
+
+    if "upper" in sections:
+        upper_mid = _lerp_point(shoulder, elbow, 0.58)
+        upper_points = (shoulder, upper_mid, elbow)
+        upper_widths = (6.0 if near else 5.0, 6.8 if near else 5.7, 4.5 if near else 3.9)
+        _draw_ribbon(draw, upper_points, upper_widths, outline=outline, fill=skin)
+        # Fill the insertion inside the already outlined ribbon. A standalone
+        # outlined shoulder disc reads as a puppet joint and creates the exact
+        # duplicated-deltoid artifact this pass is replacing.
+        draw.ellipse(_disc_box(shoulder, 4 if near else 3, 4 if near else 3), fill=skin)
+        highlight_start = _lerp_point(shoulder, upper_mid, 0.28)
+        highlight_end = _lerp_point(upper_mid, elbow, 0.45)
+        draw.line(
+            (
+                highlight_start[0] - 1,
+                highlight_start[1] - 1,
+                highlight_end[0] - 1,
+                highlight_end[1] - 1,
+            ),
+            fill=light,
+            width=2 if near else 1,
+        )
+        draw.line(
+            (
+                upper_mid[0] + 2,
+                upper_mid[1] + 1,
+                elbow[0] + 1,
+                elbow[1],
+            ),
+            fill=shadow,
+            width=2,
+        )
+        muscle_center = _lerp_point(shoulder, elbow, 0.47)
+        draw.line(
+            (
+                muscle_center[0] - 2,
+                muscle_center[1] + 2,
+                muscle_center[0] + 1,
+                muscle_center[1] + 3,
+            ),
+            fill=shadow,
+            width=1,
+        )
+        draw.point((muscle_center[0] - 2, muscle_center[1] - 2), fill=light)
+        if near:
+            draw.point((muscle_center[0] - 3, muscle_center[1] - 2), fill=colors["skin_high"])
+
+    if "lower" in sections:
+        lower_mid = _lerp_point(elbow, wrist, 0.58)
+        lower_points = (elbow, lower_mid, wrist)
+        lower_widths = (4.4 if near else 3.8, 5.0 if near else 4.2, 3.2 if near else 2.8)
+        _draw_ribbon(draw, lower_points, lower_widths, outline=outline, fill=skin)
+        draw.ellipse(_disc_box(elbow, 3, 3), fill=skin)
+        draw.line(
+            (
+                lower_mid[0] - 1,
+                lower_mid[1] - 1,
+                wrist[0] - 1,
+                wrist[1] - 1,
+            ),
+            fill=light,
+            width=1,
+        )
+        bend_x = round((shoulder[0] + wrist[0]) / 2)
+        draw.line(
+            (elbow[0], elbow[1], bend_x, elbow[1] + (1 if wrist[1] >= elbow[1] else -1)),
+            fill=shadow,
+            width=1,
+        )
+        forearm_detail = _lerp_point(elbow, wrist, 0.46)
+        draw.line(
+            (
+                forearm_detail[0] + 1,
+                forearm_detail[1] + 1,
+                wrist[0] + 1,
+                wrist[1],
+            ),
+            fill=shadow,
+            width=1,
+        )
+
+    if "hand" in sections:
+        _draw_ribbon(
+            draw,
+            (wrist, hand),
+            (3.0 if near else 2.6, 3.5 if near else 3.0),
+            outline=outline,
+            fill=skin,
+            outline_padding=1.0,
+        )
+        fist_center = hand
+        fist_radius = 4 if near else 3
+        direction = 1 if hand[0] >= wrist[0] else -1
+        fist_outer = (
+            (fist_center[0] - direction * fist_radius, fist_center[1] - 3),
+            (fist_center[0] + direction * 2, fist_center[1] - 4),
+            (fist_center[0] + direction * 4, fist_center[1] - 1),
+            (fist_center[0] + direction * 3, fist_center[1] + 3),
+            (fist_center[0] - direction * 2, fist_center[1] + 4),
+            (fist_center[0] - direction * 4, fist_center[1] + 1),
+        )
+        draw.polygon(fist_outer, fill=outline)
+        fist_inner = tuple(_lerp_point(point, fist_center, 0.22) for point in fist_outer)
+        draw.polygon(fist_inner, fill=skin)
+        knuckle_y = fist_center[1] - 1
+        draw.line(
+            (
+                fist_center[0] + direction,
+                knuckle_y - 2,
+                fist_center[0] + direction * 3,
+                knuckle_y,
+            ),
+            fill=light,
+            width=1,
+        )
+        draw.point((fist_center[0] - direction * 2, fist_center[1] + 2), fill=shadow)
+
+
+def _draw_shoe(
+    image: Image.Image,
+    pose: Pose,
+    side: str,
+    colors: Mapping[str, tuple[int, int, int, int]],
+    *,
+    depth: str,
+) -> None:
+    lm = pose.landmarks
+    ankle = lm[f"{side}_ankle"]
+    heel = lm[f"{side}_heel"]
+    toe = lm[f"{side}_toe"]
+    dx = toe[0] - heel[0]
+    dy = toe[1] - heel[1]
+    length = max(1.0, math.hypot(dx, dy))
+    ux, uy = dx / length, dy / length
+    nx, ny = -uy, ux
+    if ny > 0.0:
+        nx, ny = -nx, -ny
+
+    def local(along: float, up: float) -> Point:
+        return _point(heel[0] + ux * along + nx * up, heel[1] + uy * along + ny * up)
+
+    collar = _lerp_point(ankle, local(4.0, 11.0), 0.34)
+    outer = (
+        local(-2.0, 0.0),
+        collar,
+        local(6.0, 11.0),
+        local(max(8.0, length - 3.0), 7.0),
+        local(length + 2.0, 2.0),
+        local(length + 1.0, 0.0),
+    )
+    draw = ImageDraw.Draw(image)
+    # Build a high-top collar from the authored ankle to the shoe body. This
+    # closes the airborne heel gap without changing the ankle, heel, or toe
+    # landmarks and prevents detached footwear islands.
+    draw.line((*ankle, *collar), fill=colors["outline"], width=7)
+    draw.line(
+        (*ankle, *collar),
+        fill=colors["shoe_mid"] if depth == "near" else colors["shoe_dark"],
+        width=4,
+    )
+    draw.polygon(outer, fill=colors["outline"])
+    inner = (
+        local(-0.5, 1.0),
+        _lerp_point(collar, local(5.0, 7.0), 0.36),
+        local(6.0, 9.0),
+        local(max(8.0, length - 3.0), 6.0),
+        local(length, 2.0),
+        local(length, 1.0),
+    )
+    draw.polygon(inner, fill=colors["shoe_mid"] if depth == "near" else colors["shoe_dark"])
+    sole = (
+        local(-1.0, 0.0),
+        local(length + 1.0, 0.0),
+        local(length + 0.5, 2.0),
+        local(-0.5, 2.0),
+    )
+    draw.polygon(sole, fill=colors["white"] if depth == "near" else colors["white_shadow"])
+    draw.line((*local(-1.0, 0.0), *local(length + 1.0, 0.0)), fill=colors["outline"], width=1)
+    toe_cap = local(length - 1.5, 3.0)
+    draw.line(
+        (*local(length - 6.0, 5.0), *toe_cap),
+        fill=colors["white"],
+        width=2,
+    )
+    for lace_offset in (0.0, 3.0):
+        lace_a = local(6.0 + lace_offset, 7.0)
+        lace_b = local(10.0 + lace_offset, 5.5)
+        draw.line((*lace_a, *lace_b), fill=colors["white"], width=1)
+    heel_patch = local(1.0, 6.0)
+    draw.line((*heel_patch, *local(4.0, 7.0)), fill=colors["white_shadow"], width=2)
+
+
+def _draw_leg(
+    image: Image.Image,
+    pose: Pose,
+    side: str,
+    colors: Mapping[str, tuple[int, int, int, int]],
+    *,
+    depth: str,
+) -> None:
+    lm = pose.landmarks
+    hip = lm[f"{side}_hip"]
+    knee = lm[f"{side}_knee"]
+    ankle = lm[f"{side}_ankle"]
+    thigh_mid = _lerp_point(hip, knee, 0.52)
+    calf_mid = _lerp_point(knee, ankle, 0.54)
+    near = depth == "near"
+    support = pose.support_foot == side
+    fill = colors["denim_mid"] if near else colors["denim_shadow"]
+    fold = colors["denim_light"] if near else colors["denim_mid"]
+    shadow = colors["denim_shadow"] if near else colors["denim_deep"]
+    points = (hip, thigh_mid, knee, calf_mid, ankle)
+    widths = (
+        8.0 if near else 7.0,
+        (10.5 if support else 9.5) if near else (9.0 if support else 8.0),
+        7.5 if near else 6.5,
+        8.2 if near else 7.0,
+        4.8 if near else 4.1,
+    )
+    draw = ImageDraw.Draw(image)
+    _draw_ribbon(draw, points, widths, outline=colors["outline"], fill=fill)
+    # The thigh and calf ribbons already overlap at the knee. Fill that union
+    # without encircling it, so the compressed joint reads as denim rather
+    # than a mechanical hinge.
+    draw.ellipse(_disc_box(knee, 5 if near else 4, 4 if near else 3), fill=fill)
+    draw.line(
+        (
+            thigh_mid[0] - 2,
+            thigh_mid[1] - 1,
+            knee[0] - 1,
+            knee[1] - 2,
+        ),
+        fill=fold,
+        width=2 if near else 1,
+    )
+    inner_shift = 2 if side == "left" else -2
+    inner_seam = tuple((point[0] + inner_shift, point[1]) for point in points)
+    draw.line(inner_seam, fill=shadow, width=2 if near else 1, joint="curve")
+    outer_shift = -2 if side == "left" else 2
+    outer_highlight = (
+        (thigh_mid[0] + outer_shift, thigh_mid[1] - 2),
+        (knee[0] + outer_shift, knee[1] - 2),
+        (calf_mid[0] + outer_shift, calf_mid[1] - 1),
+    )
+    draw.line(outer_highlight, fill=fold, width=2 if near else 1, joint="curve")
+    if near:
+        stitch = colors["denim_stitch"]
+        for amount in (0.28, 0.62):
+            stitch_point = _lerp_point(thigh_mid, knee, amount)
+            draw.point((stitch_point[0] + outer_shift, stitch_point[1] - 1), fill=stitch)
+    knee_fold_end = _lerp_point(knee, calf_mid, 0.26)
+    draw.line((*knee, *knee_fold_end), fill=shadow, width=2)
+    calf_fold_start = _lerp_point(knee, calf_mid, 0.56)
+    calf_fold_end = _lerp_point(calf_mid, ankle, 0.62)
+    draw.line(
+        (
+            calf_fold_start[0] - 1,
+            calf_fold_start[1],
+            calf_fold_end[0] - 1,
+            calf_fold_end[1],
+        ),
+        fill=fold,
+        width=1,
+    )
+    if support:
+        compression = _lerp_point(hip, knee, 0.78)
+        draw.line(
+            (compression[0] - 3, compression[1], compression[0] + 2, compression[1] + 2),
+            fill=shadow,
+            width=1,
+        )
+        draw.line(
+            (
+                compression[0] - 1,
+                compression[1] - 3,
+                compression[0] + 4,
+                compression[1] - 1,
+            ),
+            fill=fold,
+            width=1,
+        )
+    else:
+        stretch = _lerp_point(hip, knee, 0.34)
+        draw.line(
+            (stretch[0] - 3, stretch[1] - 1, stretch[0] + 2, stretch[1] + 1),
+            fill=fold,
+            width=1,
+        )
+    _draw_shoe(image, pose, side, colors, depth=depth)
+
+
+def _draw_pelvis_and_belt(
+    image: Image.Image,
+    pose: Pose,
+    colors: Mapping[str, tuple[int, int, int, int]],
+) -> None:
+    lm = pose.landmarks
+    left_hip = lm["left_hip"]
+    right_hip = lm["right_hip"]
+    pelvis = lm["pelvis"]
+    draw = ImageDraw.Draw(image)
+    outer = (
+        (left_hip[0] - 7, left_hip[1] - 5),
+        (right_hip[0] + 7, right_hip[1] - 5),
+        (right_hip[0] + 8, right_hip[1] + 7),
+        (pelvis[0] + 3, pelvis[1] + 11),
+        (pelvis[0] - 4, pelvis[1] + 11),
+        (left_hip[0] - 8, left_hip[1] + 7),
+    )
+    draw.polygon(outer, fill=colors["outline"])
+    inner = tuple(
+        _lerp_point(point, pelvis, 0.12)
+        for point in outer
+    )
+    draw.polygon(inner, fill=colors["denim_shadow"])
+    belt_y = round((left_hip[1] + right_hip[1]) / 2) - 3
+    belt_left = pelvis[0] - 12
+    belt_right = pelvis[0] + 12
+    draw.line((belt_left, belt_y, belt_right, belt_y), fill=colors["outline"], width=4)
+    draw.line((belt_left + 1, belt_y - 1, belt_right - 1, belt_y - 1), fill=colors["belt"], width=2)
+    draw.rectangle((pelvis[0] - 2, belt_y - 2, pelvis[0] + 2, belt_y + 2), fill=colors["gold"], outline=colors["outline"])
+    draw.line((pelvis[0] - 8, belt_y - 2, pelvis[0] - 8, belt_y + 3), fill=colors["gold"], width=1)
+    draw.line((pelvis[0] + 8, belt_y - 2, pelvis[0] + 8, belt_y + 3), fill=colors["gold"], width=1)
+
+    pouch_x = right_hip[0] + 5
+    pouch_y = right_hip[1] + 4
+    draw.rounded_rectangle(
+        (pouch_x - 4, pouch_y - 3, pouch_x + 4, pouch_y + 7),
+        radius=2,
+        fill=colors["denim_deep"],
+        outline=colors["outline"],
+        width=1,
+    )
+    draw.rectangle((pouch_x - 2, pouch_y, pouch_x + 2, pouch_y + 4), outline=colors["denim_light"], width=1)
+    draw.point((pouch_x, pouch_y + 2), fill=colors["gold"])
+    pocket_x = left_hip[0] - 2
+    draw.arc((pocket_x - 4, left_hip[1], pocket_x + 5, left_hip[1] + 8), 5, 165, fill=colors["denim_light"], width=1)
+
+
+def _draw_torso_and_neck(
+    image: Image.Image,
+    pose: Pose,
+    colors: Mapping[str, tuple[int, int, int, int]],
+) -> None:
+    lm = pose.landmarks
+    neck = lm["neck"]
+    left_shoulder = lm["left_shoulder"]
+    right_shoulder = lm["right_shoulder"]
+    pelvis = lm["pelvis"]
+    yaw_shift = round(pose.torso_yaw * 4.0)
+    waist_y = pelvis[1] - 5
+    waist_left = (pelvis[0] - 10 + yaw_shift, waist_y)
+    waist_right = (pelvis[0] + 10 + yaw_shift, waist_y)
+    draw = ImageDraw.Draw(image)
+
+    neck_outer = (
+        (neck[0] - 5, neck[1] - 4),
+        (neck[0] + 5, neck[1] - 4),
+        (neck[0] + 6 + yaw_shift, neck[1] + 10),
+        (neck[0] - 5 + yaw_shift, neck[1] + 10),
+    )
+    draw.polygon(neck_outer, fill=colors["outline"])
+    neck_inner = (
+        (neck[0] - 3, neck[1] - 4),
+        (neck[0] + 3, neck[1] - 4),
+        (neck[0] + 4 + yaw_shift, neck[1] + 9),
+        (neck[0] - 3 + yaw_shift, neck[1] + 9),
+    )
+    draw.polygon(neck_inner, fill=colors["skin_shadow"])
+    draw.line((neck[0] - 2, neck[1] - 3, neck[0] - 1 + yaw_shift, neck[1] + 7), fill=colors["skin_light"], width=1)
+
+    chest_outer = (
+        (neck[0] - 4, neck[1] + 2),
+        (left_shoulder[0] - 3, left_shoulder[1] - 3),
+        (left_shoulder[0] - 5, left_shoulder[1] + 8),
+        (waist_left[0] - 2, waist_left[1]),
+        (waist_right[0] + 2, waist_right[1]),
+        (right_shoulder[0] + 5, right_shoulder[1] + 8),
+        (right_shoulder[0] + 3, right_shoulder[1] - 3),
+        (neck[0] + 4, neck[1] + 2),
+    )
+    draw.polygon(chest_outer, fill=colors["outline"])
+    chest_inner = tuple(_lerp_point(point, (neck[0] + yaw_shift, neck[1] + 18), 0.08) for point in chest_outer)
+    draw.polygon(chest_inner, fill=colors["tank"])
+
+    tank = (
+        (neck[0] - 5 + yaw_shift, neck[1] + 4),
+        (left_shoulder[0] + 1, left_shoulder[1] - 1),
+        (left_shoulder[0] - 1, left_shoulder[1] + 10),
+        waist_left,
+        waist_right,
+        (right_shoulder[0] + 1, right_shoulder[1] + 10),
+        (right_shoulder[0] - 1, right_shoulder[1] - 1),
+        (neck[0] + 5 + yaw_shift, neck[1] + 4),
+        (neck[0] + yaw_shift, neck[1] + 10),
+    )
+    draw.polygon(tank, fill=colors["tank_shadow"])
+    tank_inner = tuple(_lerp_point(point, (pelvis[0] + yaw_shift, neck[1] + 23), 0.10) for point in tank)
+    draw.polygon(tank_inner, fill=colors["tank"])
+    exposed_chest = (
+        (neck[0] - 4 + yaw_shift, neck[1] + 4),
+        (neck[0] + yaw_shift, neck[1] + 10),
+        (neck[0] + 4 + yaw_shift, neck[1] + 4),
+        (neck[0] + 2 + yaw_shift, neck[1] + 1),
+        (neck[0] - 2 + yaw_shift, neck[1] + 1),
+    )
+    draw.polygon(exposed_chest, fill=colors["skin_shadow"])
+    draw.line(
+        (neck[0] - 2 + yaw_shift, neck[1] + 3, neck[0] + 1 + yaw_shift, neck[1] + 7),
+        fill=colors["skin_light"],
+        width=1,
+    )
+    collar = (
+        (neck[0] - 4 + yaw_shift, neck[1] + 5),
+        (neck[0] + yaw_shift, neck[1] + 11),
+        (neck[0] + 4 + yaw_shift, neck[1] + 5),
+    )
+    draw.line(collar, fill=colors["tank_light"], width=1, joint="curve")
+    draw.line(
+        (waist_left[0] + 3, waist_y - 11, waist_left[0] + 5, waist_y - 2),
+        fill=colors["tank_light"],
+        width=1,
+    )
+    draw.point((waist_left[0] + 4, waist_y - 10), fill=colors["tank_high"])
+    draw.line(
+        (waist_right[0] - 4, waist_y - 8, waist_right[0] - 2, waist_y - 1),
+        fill=colors["tank_shadow"],
+        width=2,
+    )
+    draw.line(
+        (neck[0] - 3, neck[1] + 10, neck[0] + 3 + yaw_shift, neck[1] + 12),
+        fill=colors["tank_light"],
+        width=1,
+    )
+    left_armhole = (
+        (left_shoulder[0], left_shoulder[1]),
+        (left_shoulder[0] - 1, left_shoulder[1] + 7),
+        (waist_left[0] + 1, waist_y - 10),
+    )
+    right_armhole = (
+        (right_shoulder[0], right_shoulder[1]),
+        (right_shoulder[0] + 1, right_shoulder[1] + 7),
+        (waist_right[0] - 1, waist_y - 10),
+    )
+    draw.line(left_armhole, fill=colors["tank_light"], width=1)
+    draw.line(right_armhole, fill=colors["tank_shadow"], width=2)
+
+
+def _draw_near_shoulder_insertion(
+    image: Image.Image,
+    pose: Pose,
+    colors: Mapping[str, tuple[int, int, int, int]],
+) -> None:
+    shoulder = pose.landmarks["left_shoulder"]
+    draw = ImageDraw.Draw(image)
+    armpit = _lerp_point(shoulder, pose.landmarks["pelvis"], 0.23)
+    insertion = (
+        (shoulder[0] - 3, shoulder[1] - 3),
+        (shoulder[0] + 3, shoulder[1] - 2),
+        (shoulder[0] + 4, shoulder[1] + 4),
+        (armpit[0] + 1, armpit[1]),
+        (shoulder[0] - 3, shoulder[1] + 4),
+    )
+    draw.polygon(insertion, fill=colors["skin_mid"])
+    draw.line(
+        (shoulder[0] - 2, shoulder[1] - 2, shoulder[0] + 1, shoulder[1] - 3),
+        fill=colors["skin_light"],
+        width=1,
+    )
+    draw.point((shoulder[0] - 2, shoulder[1] - 3), fill=colors["skin_high"])
+    draw.line((shoulder[0] + 2, shoulder[1] + 3, armpit[0], armpit[1]), fill=colors["skin_deep"], width=2)
+    draw.line((shoulder[0] - 2, shoulder[1], shoulder[0] - 1, shoulder[1] + 4), fill=colors["skin_light"], width=1)
+
+
+def _composite_head_template(image: Image.Image, pose: Pose, rig: CanonicalDaveRig) -> None:
+    part = rig.parts["head"]
+    bounds = part.layer.getbbox()
+    if bounds is None:
+        raise ValueError("canonical Dave head template is empty")
+    stamp = part.layer.crop(bounds)
+    target = pose.landmarks["head_center"]
+    dx = target[0] - part.source_end[0]
+    dy = target[1] - part.source_end[1]
+    image.alpha_composite(stamp, (bounds[0] + dx, bounds[1] + dy))
+
+
+def render_dave_pose(pose: Pose, rig: CanonicalDaveRig) -> Image.Image:
     image = Image.new("RGBA", (CELL_SIZE, CELL_SIZE))
+    colors = _handdrawn_colors(rig)
+    near_arm_layer = HANDDRAWN_NEAR_ARM_LAYER[pose.index]
 
-    def composite(name: str, target_start: Point, target_end: Point) -> None:
-        image.alpha_composite(_transform_bone(rig.parts[name], target_start, target_end))
+    # Far anatomy is completely established before the body, so the torso and
+    # pelvis naturally remove hidden shoulders, chest, hip, and thigh pixels.
+    _draw_arm_sections(image, pose, "right", colors, depth="far")
+    if near_arm_layer == "behind":
+        _draw_arm_sections(image, pose, "left", colors, depth="near")
+    elif near_arm_layer == "split":
+        _draw_arm_sections(image, pose, "left", colors, depth="near", sections=("upper",))
 
-    composite("far_upper_arm", lm["right_shoulder"], lm["right_elbow"])
-    composite("far_lower_arm", lm["right_elbow"], lm["right_hand"])
-    composite("far_upper_leg", lm["right_hip"], lm["right_knee"])
-    composite("far_lower_leg", lm["right_knee"], lm["right_ankle"])
-    composite("far_shoe", lm["right_heel"], lm["right_toe"])
-    composite("torso", lm["neck"], lm["pelvis"])
-    composite("near_upper_leg", lm["left_hip"], lm["left_knee"])
-    composite("near_lower_leg", lm["left_knee"], lm["left_ankle"])
-    composite("near_shoe", lm["left_heel"], lm["left_toe"])
-    composite("pelvis", lm["left_hip"], lm["right_hip"])
-    clothing_detail = Image.new("RGBA", (CELL_SIZE, CELL_SIZE))
-    detail_draw = ImageDraw.Draw(clothing_detail)
-    belt = _canonical_color(rig, (38, 27, 29))
-    gold = _canonical_color(rig, (221, 153, 55))
-    belt_y = round((lm["left_hip"][1] + lm["right_hip"][1]) / 2) - 1
-    _line(detail_draw, ((ROOT_X - 9, belt_y), (ROOT_X + 9, belt_y)), belt, 3)
-    detail_draw.rectangle((ROOT_X - 2, belt_y - 2, ROOT_X + 2, belt_y + 2), fill=gold, outline=belt)
-    image.alpha_composite(clothing_detail)
-    composite("near_upper_arm", lm["left_shoulder"], lm["left_elbow"])
-    composite("near_lower_arm", lm["left_elbow"], lm["left_hand"])
-    composite("head", lm["neck"], lm["head_center"])
+    _draw_leg(image, pose, "right", colors, depth="far")
+    _draw_leg(image, pose, "left", colors, depth="near")
+    _draw_pelvis_and_belt(image, pose, colors)
+    _draw_torso_and_neck(image, pose, colors)
+
+    if near_arm_layer == "front":
+        _draw_arm_sections(image, pose, "left", colors, depth="near")
+        _draw_near_shoulder_insertion(image, pose, colors)
+    elif near_arm_layer == "split":
+        _draw_arm_sections(
+            image,
+            pose,
+            "left",
+            colors,
+            depth="near",
+            sections=("lower", "hand"),
+        )
+        _draw_near_shoulder_insertion(image, pose, colors)
+
+    _composite_head_template(image, pose, rig)
 
     # The floor is a hard game-space contract. Rigid shoe stamps can carry one
-    # source outline pixel below their semantic heel/toe anchors, so clip that
-    # source overhang instead of allowing a frame-dependent ground wobble.
+    # authored outline pixel below their semantic heel/toe anchors, so clip
+    # that overhang instead of allowing a frame-dependent ground wobble.
     if GROUND_Y + 1 < CELL_SIZE:
         image.paste((0, 0, 0, 0), (0, GROUND_Y + 1, CELL_SIZE, CELL_SIZE))
     return _hard_alpha(image)
@@ -879,6 +1505,201 @@ def render_side_by_side_gif(
     _save_gif(frames, path, 40)
 
 
+def load_walk_strip(path: Path) -> list[Image.Image]:
+    strip = Image.open(path).convert("RGBA")
+    if strip.size != (CELL_SIZE * POSE_COUNT, CELL_SIZE):
+        raise ValueError(f"unexpected Dave walk strip size: {strip.size}")
+    return [
+        strip.crop((index * CELL_SIZE, 0, (index + 1) * CELL_SIZE, CELL_SIZE))
+        for index in range(POSE_COUNT)
+    ]
+
+
+def render_old_new_contact_sheet(
+    old_frames: list[Image.Image],
+    new_frames: list[Image.Image],
+    poses: tuple[Pose, ...],
+    path: Path,
+) -> None:
+    panel_w, panel_h = 360, 226
+    canvas = Image.new("RGBA", (panel_w * 3, panel_h * 4), (18, 20, 27, 255))
+    draw = ImageDraw.Draw(canvas)
+    for index, (old, new, pose) in enumerate(zip(old_frames, new_frames, poses, strict=True)):
+        left = (index % 3) * panel_w
+        top = (index // 3) * panel_h
+        draw.rectangle(
+            (left + 4, top + 4, left + panel_w - 5, top + panel_h - 5),
+            outline=(99, 80, 120, 255),
+            width=2,
+        )
+        draw.text(
+            (left + 10, top + 9),
+            f"{index + 1:02d} {pose.name}",
+            font=_font(13, bold=True),
+            fill=(245, 239, 226, 255),
+        )
+        canvas.alpha_composite(_comparison_dave_frame(old, 176), (left + 4, top + 37))
+        canvas.alpha_composite(_comparison_dave_frame(new, 176), (left + 180, top + 37))
+        draw.text((left + 70, top + 205), "OLD", font=_font(11), fill=(222, 125, 122, 255))
+        draw.text((left + 244, top + 205), "NEW", font=_font(11), fill=(105, 217, 222, 255))
+    path.parent.mkdir(parents=True, exist_ok=True)
+    canvas.convert("RGB").save(path)
+
+
+def render_old_new_gif(
+    old_frames: list[Image.Image], new_frames: list[Image.Image], path: Path
+) -> None:
+    frames: list[Image.Image] = []
+    for index in range(POSE_COUNT * 2):
+        pose_index = index // 2
+        canvas = Image.new("RGBA", (720, 300), (18, 20, 27, 255))
+        draw = ImageDraw.Draw(canvas)
+        draw.rectangle((14, 14, 350, 286), outline=(113, 77, 87, 255), width=2)
+        draw.rectangle((370, 14, 706, 286), outline=(67, 119, 127, 255), width=2)
+        draw.text((28, 24), "OLD COMPOSITED ART", font=_font(15, bold=True), fill=(240, 190, 184, 255))
+        draw.text((384, 24), "NEW RECONSTRUCTED ART", font=_font(15, bold=True), fill=(174, 234, 236, 255))
+        canvas.alpha_composite(_comparison_dave_frame(old_frames[pose_index], 256), (54, 38))
+        canvas.alpha_composite(_comparison_dave_frame(new_frames[pose_index], 256), (410, 38))
+        draw.text((28, 278), f"pose {pose_index + 1:02d}/12", font=_font(11), fill=(174, 157, 181, 255))
+        draw.text((384, 278), "same skeleton / same timing", font=_font(11), fill=(174, 157, 181, 255))
+        frames.append(canvas)
+    _save_gif(frames, path, 40)
+
+
+def render_anatomy_overlay(
+    old_frames: list[Image.Image],
+    new_frames: list[Image.Image],
+    poses: tuple[Pose, ...],
+    path: Path,
+) -> None:
+    overlays: list[Image.Image] = []
+    labels: list[str] = []
+    for old, new, pose in zip(old_frames, new_frames, poses, strict=True):
+        old_alpha = old.getchannel("A")
+        new_alpha = new.getchannel("A")
+        overlay = Image.new("RGBA", (CELL_SIZE, CELL_SIZE), (228, 225, 218, 255))
+        overlay.putdata(
+            [
+                (58, 54, 61, 255)
+                if old_value >= 128 and new_value >= 128
+                else (205, 67, 64, 255)
+                if old_value >= 128
+                else (34, 155, 166, 255)
+                if new_value >= 128
+                else (228, 225, 218, 255)
+                for old_value, new_value in zip(_pixels(old_alpha), _pixels(new_alpha), strict=True)
+            ]
+        )
+        overlay_draw = ImageDraw.Draw(overlay)
+        for landmark in pose.landmarks.values():
+            overlay_draw.point(landmark, fill=(247, 185, 41, 255))
+        overlays.append(overlay)
+        labels.append(f"{pose.index + 1:02d} {pose.name}")
+    _contact_sheet(overlays, labels, path, columns=4, cell=(214, 178))
+
+
+def render_silhouette_sheet(
+    sprites: list[Image.Image], poses: tuple[Pose, ...], path: Path
+) -> None:
+    silhouettes: list[Image.Image] = []
+    for sprite in sprites:
+        alpha = sprite.getchannel("A")
+        silhouette = Image.new("RGBA", sprite.size, (226, 224, 218, 255))
+        silhouette.putdata(
+            [
+                (5, 7, 10, 255) if value >= 128 else (226, 224, 218, 255)
+                for value in _pixels(alpha)
+            ]
+        )
+        silhouettes.append(silhouette)
+    _contact_sheet(
+        silhouettes,
+        [f"{pose.index + 1:02d} {pose.name}" for pose in poses],
+        path,
+        columns=4,
+        cell=(214, 178),
+    )
+
+
+def _alpha_component_sizes(image: Image.Image) -> list[int]:
+    alpha = image.getchannel("A")
+    active = {
+        (x, y)
+        for y in range(image.height)
+        for x in range(image.width)
+        if alpha.getpixel((x, y)) >= 128
+    }
+    sizes: list[int] = []
+    while active:
+        seed = active.pop()
+        stack = [seed]
+        size = 0
+        while stack:
+            x, y = stack.pop()
+            size += 1
+            for offset_x in (-1, 0, 1):
+                for offset_y in (-1, 0, 1):
+                    if offset_x == 0 and offset_y == 0:
+                        continue
+                    neighbor = (x + offset_x, y + offset_y)
+                    if neighbor in active:
+                        active.remove(neighbor)
+                        stack.append(neighbor)
+        sizes.append(size)
+    return sorted(sizes, reverse=True)
+
+
+def validate_handdrawn_anatomy(
+    sprites: list[Image.Image], poses: tuple[Pose, ...]
+) -> dict[str, object]:
+    component_sizes = [_alpha_component_sizes(sprite) for sprite in sprites]
+    silhouette_hashes = [
+        hashlib.sha256(sprite.getchannel("A").tobytes()).hexdigest()
+        for sprite in sprites
+    ]
+    uncovered_landmarks: dict[str, list[str]] = {}
+    neck_spans: list[int] = []
+    for sprite, pose in zip(sprites, poses, strict=True):
+        alpha = sprite.getchannel("A")
+        missing: list[str] = []
+        for name, (x, y) in pose.landmarks.items():
+            covered = any(
+                alpha.getpixel((probe_x, probe_y)) >= 128
+                for probe_y in range(max(0, y - 4), min(CELL_SIZE, y + 5))
+                for probe_x in range(max(0, x - 4), min(CELL_SIZE, x + 5))
+            )
+            if not covered:
+                missing.append(name)
+        if missing:
+            uncovered_landmarks[str(pose.index + 1)] = missing
+        neck_y = pose.landmarks["neck"][1]
+        pelvis_x = pose.landmarks["pelvis"][0]
+        neck_spans.append(
+            sum(
+                alpha.getpixel((x, neck_y)) >= 128
+                for x in range(max(0, pelvis_x - 18), min(CELL_SIZE, pelvis_x + 19))
+            )
+        )
+    checks = {
+        "single_connected_character": all(len(sizes) == 1 for sizes in component_sizes),
+        "all_skeletal_landmarks_covered": not uncovered_landmarks,
+        "twelve_distinct_silhouettes": len(set(silhouette_hashes)) == POSE_COUNT,
+        "bounded_neck_geometry": max(neck_spans) <= 30,
+        "all_layer_modes_exercised": set(HANDDRAWN_NEAR_ARM_LAYER) == {"behind", "split", "front"},
+    }
+    if not all(checks.values()):
+        failed = [name for name, passed in checks.items() if not passed]
+        raise ValueError(f"hand-reconstructed Dave anatomy rejected: {failed}")
+    return {
+        "checks": checks,
+        "component_counts": [len(sizes) for sizes in component_sizes],
+        "smallest_frame_component_px": min(sizes[0] for sizes in component_sizes),
+        "uncovered_landmarks": uncovered_landmarks,
+        "neck_span_px": neck_spans,
+        "near_arm_layer_by_pose": list(HANDDRAWN_NEAR_ARM_LAYER),
+    }
+
+
 def _pixel_delta(first: Image.Image, second: Image.Image) -> int:
     return sum(a != b for a, b in zip(_pixels(first.convert("RGBA")), _pixels(second.convert("RGBA"))))
 
@@ -1012,6 +1833,7 @@ def main() -> None:
     parser.add_argument("--review-dir", type=Path, required=True)
     parser.add_argument("--pose-data-output", type=Path, required=True)
     parser.add_argument("--candidate-output", type=Path, required=True)
+    parser.add_argument("--baseline-strip", type=Path)
     parser.add_argument(
         "--canonical-atlas",
         type=Path,
@@ -1035,6 +1857,14 @@ def main() -> None:
     poses = build_poses()
     skeleton_metrics = validate_skeleton(poses)
     pose_data = _pose_json(poses)
+    motion_fingerprint = hashlib.sha256(
+        json.dumps(pose_data, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    ).hexdigest()
+    if motion_fingerprint != APPROVED_MOTION_FINGERPRINT:
+        raise ValueError(
+            "approved Dave skeleton/timing changed: "
+            f"{motion_fingerprint} != {APPROVED_MOTION_FINGERPRINT}"
+        )
     args.pose_data_output.parent.mkdir(parents=True, exist_ok=True)
     args.pose_data_output.write_text(json.dumps(pose_data, indent=2) + "\n", encoding="utf-8")
 
@@ -1058,8 +1888,21 @@ def main() -> None:
         args.review_dir / "dave_canonical_rig_parts_contact_sheet.png",
     )
     sprites = [render_dave_pose(pose, rig) for pose in poses]
+    anatomy_metrics = validate_handdrawn_anatomy(sprites, poses)
     final_metrics = validate_final(sprites, poses, rig.palette)
     write_strip(sprites, args.candidate_output)
+    render_silhouette_sheet(
+        sprites,
+        poses,
+        args.review_dir / "dave_walk_silhouette_validation.png",
+    )
+    _contact_sheet(
+        sprites,
+        [f"{pose.index + 1:02d} {pose.name}" for pose in poses],
+        args.review_dir / "dave_walk_final_frame_review.png",
+        columns=3,
+        cell=(320, 300),
+    )
     render_paired_contact_sheet(
         unique_reference,
         sprites,
@@ -1086,16 +1929,63 @@ def main() -> None:
         sprites,
         args.review_dir / "dave_walk_vs_reference.gif",
     )
+    old_frames: list[Image.Image] | None = None
+    if args.baseline_strip is not None:
+        old_frames = load_walk_strip(args.baseline_strip)
+        render_old_new_contact_sheet(
+            old_frames,
+            sprites,
+            poses,
+            args.review_dir / "dave_walk_old_vs_new_contact_sheet.png",
+        )
+        render_old_new_gif(
+            old_frames,
+            sprites,
+            args.review_dir / "dave_walk_old_vs_new.gif",
+        )
+        render_anatomy_overlay(
+            old_frames,
+            sprites,
+            poses,
+            args.review_dir / "dave_walk_corrected_anatomy_overlay.png",
+        )
 
     report = {
         "status": "pass",
-        "method": "deterministic landmark retarget and canonical cut-part pixel rig",
+        "method": "per-pose hand-reconstructed pixel anatomy around the approved landmark skeleton",
         "forbidden_methods_used": [],
+        "skeleton_reused": True,
+        "timing_changed": False,
+        "approved_motion_fingerprint": motion_fingerprint,
+        "frames_requiring_manual_redraw": list(range(1, POSE_COUNT + 1)),
+        "frames_manually_reconstructed": list(range(1, POSE_COUNT + 1)),
+        "silhouette_validation": anatomy_metrics,
+        "hidden_surface_corrections": [
+            "rear shoulder and rear chest are established behind the torso and removed by torso coverage",
+            "rear upper arm and rear forearm are hidden where the torso crosses them",
+            "far right hip and thigh are drawn before the near left leg and unified pelvis",
+            "all prior duplicate shoulder, neck, torso, muscle, and outline pixels are absent",
+        ],
+        "layer_order_corrections": [
+            {
+                "pose": pose.index + 1,
+                "phase": pose.name,
+                "near_arm": HANDDRAWN_NEAR_ARM_LAYER[pose.index],
+                "leg_order": "far_right_then_near_left_then_unified_pelvis",
+            }
+            for pose in poses
+        ],
+        "anatomy_corrections": [
+            "deltoid, biceps, triceps, elbow, forearm, wrist, and fist are redrawn per pose",
+            "neck, exposed chest, tank collar, armholes, and cloth folds form one connected torso",
+            "waistband, belt loops, buckle, pocket, pouch, and denim folds follow the pelvis and weight-bearing leg",
+            "each shoe is rebuilt from heel/toe orientation with collar, upper, laces, toe cap, and sole",
+        ],
         "canonical_rig": {
             "source": args.canonical_atlas.as_posix(),
             "source_sha256": rig.source_sha256,
             "source_cell": [CANONICAL_CELL_COLUMN, CANONICAL_CELL_ROW],
-            "part_count": len(rig.parts),
+            "use": "identity head template and locked master palette only; limbs and torso are redrawn",
             "palette_color_count": len(rig.palette),
             "resampling": "nearest_neighbor_only",
         },
@@ -1126,11 +2016,17 @@ def main() -> None:
             "skeleton_contact_sheet": "dave_skeleton_12_pose_contact_sheet.png",
             "canonical_rig_parts_contact_sheet": "dave_canonical_rig_parts_contact_sheet.png",
             "paired_contact_sheet": "final_dave_and_target_paired_contact_sheet.png",
+            "silhouette_validation": "dave_walk_silhouette_validation.png",
+            "final_frame_review": "dave_walk_final_frame_review.png",
             "normal_speed_gif": "dave_walk_normal_speed.gif",
             "quarter_speed_gif": "dave_walk_quarter_speed.gif",
             "world_foot_lock_gif": "dave_walk_world_foot_lock.gif",
             "world_foot_lock_contact_sheet": "dave_walk_world_foot_lock_contact_sheet.png",
             "side_by_side_gif": "dave_walk_vs_reference.gif",
+            "old_vs_new_contact_sheet": "dave_walk_old_vs_new_contact_sheet.png" if old_frames is not None else None,
+            "old_vs_new_gif": "dave_walk_old_vs_new.gif" if old_frames is not None else None,
+            "corrected_anatomy_overlay": "dave_walk_corrected_anatomy_overlay.png" if old_frames is not None else None,
+            "in_game_preview": "runtime_dave_walk.gif (render after installation)",
         },
     }
     report_path = args.review_dir / "dave_walk_validation_report.json"

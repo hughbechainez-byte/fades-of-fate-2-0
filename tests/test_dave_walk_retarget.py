@@ -14,11 +14,39 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 POSE_DATA = PROJECT_ROOT / "data" / "dave_walk_reference_poses.json"
 WALK_STRIP = PROJECT_ROOT / "assets" / "sprites" / "black_dave_walk_12.png"
 FIST_DATA = PROJECT_ROOT / "assets" / "sprites" / "black_dave_fist_anchors.json"
+APPROVED_MOTION_FINGERPRINT = "3e14f770c606a86da3a2ee6d30b2f19f256257acfff60c26eba579426259e96d"
 
 
 def _pixels(image: Image.Image):
     getter = getattr(image, "get_flattened_data", None)
     return getter() if getter is not None else image.getdata()
+
+
+def _alpha_component_sizes(frame: Image.Image) -> list[int]:
+    alpha = frame.getchannel("A")
+    active = {
+        (x, y)
+        for y in range(frame.height)
+        for x in range(frame.width)
+        if alpha.getpixel((x, y)) >= 128
+    }
+    sizes: list[int] = []
+    while active:
+        stack = [active.pop()]
+        size = 0
+        while stack:
+            x, y = stack.pop()
+            size += 1
+            for offset_x in (-1, 0, 1):
+                for offset_y in (-1, 0, 1):
+                    if offset_x == 0 and offset_y == 0:
+                        continue
+                    neighbor = (x + offset_x, y + offset_y)
+                    if neighbor in active:
+                        active.remove(neighbor)
+                        stack.append(neighbor)
+        sizes.append(size)
+    return sorted(sizes, reverse=True)
 
 
 class DaveWalkRetargetTests(unittest.TestCase):
@@ -42,6 +70,16 @@ class DaveWalkRetargetTests(unittest.TestCase):
             [pose["support_foot"] for pose in self.poses],
             ["left"] * 6 + ["right"] * 6,
         )
+
+    def test_approved_skeleton_and_timing_fingerprint_is_frozen(self) -> None:
+        fingerprint = hashlib.sha256(
+            json.dumps(
+                self.pose_data,
+                sort_keys=True,
+                separators=(",", ":"),
+            ).encode("utf-8")
+        ).hexdigest()
+        self.assertEqual(fingerprint, APPROVED_MOTION_FINGERPRINT)
 
     def test_counter_motion_pelvis_arcs_and_world_foot_lock(self) -> None:
         for side in ("left", "right"):
@@ -84,6 +122,27 @@ class DaveWalkRetargetTests(unittest.TestCase):
         self.assertFalse(
             any(0 < pixel[3] < 255 for frame in frames for pixel in _pixels(frame))
         )
+
+    def test_hand_reconstructed_frames_have_one_connected_anatomy(self) -> None:
+        strip = Image.open(WALK_STRIP).convert("RGBA")
+        frames = [strip.crop((index * 128, 0, (index + 1) * 128, 128)) for index in range(12)]
+        for index, (frame, pose) in enumerate(zip(frames, self.poses, strict=True), start=1):
+            with self.subTest(frame=index):
+                self.assertEqual(
+                    len(_alpha_component_sizes(frame)),
+                    1,
+                    "every shoe, limb, head, and clothing cluster must join one finished silhouette",
+                )
+                alpha = frame.getchannel("A")
+                for name, (x, y) in pose["landmarks_px"].items():
+                    self.assertTrue(
+                        any(
+                            alpha.getpixel((probe_x, probe_y)) >= 128
+                            for probe_y in range(max(0, y - 4), min(128, y + 5))
+                            for probe_x in range(max(0, x - 4), min(128, x + 5))
+                        ),
+                        f"{name} is disconnected from the reconstructed frame",
+                    )
 
     def test_walk_fist_metadata_uses_the_same_retarget_landmarks(self) -> None:
         metadata = json.loads(FIST_DATA.read_text(encoding="utf-8"))["states"]["walk"]
