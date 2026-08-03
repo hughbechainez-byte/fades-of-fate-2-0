@@ -534,7 +534,7 @@ class SpriteAtlasTests(unittest.TestCase):
         # predicate: the old shoe/bicep points also looked "skin colored".
         semantic_goldens = {
             ("idle", 4): ((50, 48), (85, 49)),
-            ("walk", 1): ((57, 75), (94, 75)),
+            ("walk", 1): ((47, 84), (98, 82)),
             ("attack_1", 2): ((53, 41), (133, 43)),
             ("attack_3", 4): ((39, 62), (93, 30)),
             ("heavy", 4): ((39, 62), (93, 30)),

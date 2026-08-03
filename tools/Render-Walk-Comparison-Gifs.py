@@ -12,7 +12,7 @@ os.environ.setdefault("SDL_AUDIODRIVER", "dummy")
 os.environ.setdefault("PYGAME_HIDE_SUPPORT_PROMPT", "1")
 
 import pygame
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageChops, ImageDraw, ImageFont
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from src import pixel_art
@@ -27,6 +27,28 @@ def _load_reference(path: Path) -> tuple[list[Image.Image], list[int]]:
         frames.append(source.convert("RGBA").copy())
         durations.append(max(40, min(200, int(source.info.get("duration", 80) or 80))))
     return frames, durations
+
+
+def _reference_motion_bounds(frames: list[Image.Image]) -> tuple[int, int, int, int]:
+    motion = Image.new("L", frames[0].size)
+    base = frames[0].convert("RGB")
+    for frame in frames[1:]:
+        difference = ImageChops.difference(base, frame.convert("RGB")).convert("L")
+        motion = ImageChops.lighter(
+            motion,
+            difference.point(lambda value: 255 if value > 12 else 0),
+        )
+    bounds = motion.getbbox()
+    if bounds is None:
+        return (0, 0, frames[0].width, frames[0].height)
+    left, top, right, bottom = bounds
+    padding = 28
+    return (
+        max(0, left - padding),
+        max(0, top - padding),
+        min(frames[0].width, right + padding),
+        min(frames[0].height, bottom + padding),
+    )
 
 
 def _runtime_frames(count: int) -> list[Image.Image]:
@@ -54,6 +76,7 @@ def render_dave(output_path: Path) -> None:
 
 def render(reference_path: Path, output_path: Path, iteration: int) -> None:
     reference, reference_durations = _load_reference(reference_path)
+    reference_bounds = _reference_motion_bounds(reference)
     runtime = _runtime_frames(max(24, len(reference)))
     font = ImageFont.load_default()
     frames: list[Image.Image] = []
@@ -69,7 +92,7 @@ def render(reference_path: Path, output_path: Path, iteration: int) -> None:
         draw.text((384, 42), "reference frame", fill=(174, 157, 181, 255), font=font)
         left = runtime[index % len(runtime)].resize((256, 256), Image.Resampling.NEAREST)
         canvas.alpha_composite(left, (55, 38))
-        right = reference[index % len(reference)]
+        right = reference[index % len(reference)].crop(reference_bounds)
         scale = min(300 / right.width, 235 / right.height)
         right = right.resize((max(1, round(right.width * scale)), max(1, round(right.height * scale))), Image.Resampling.NEAREST)
         canvas.alpha_composite(right, (538 - right.width // 2, 166 - right.height // 2))

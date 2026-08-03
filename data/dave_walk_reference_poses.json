@@ -1,0 +1,2332 @@
+{
+  "schema_version": 1,
+  "source": "supplied reference GIF; repeated 40 ms frame pairs reduced to 12 estimated poses",
+  "coordinate_system": {
+    "origin": "pelvis",
+    "x_positive": "facing direction",
+    "y_positive": "down",
+    "character_height_px": 112.0,
+    "leg_length_px": 50.0,
+    "shoulder_width_px": 18.0
+  },
+  "stride_distance_px": 120.96,
+  "pose_count": 12,
+  "loop_duration_ms": 960,
+  "required_landmarks": [
+    "head_center",
+    "neck",
+    "left_shoulder",
+    "right_shoulder",
+    "left_elbow",
+    "right_elbow",
+    "left_wrist",
+    "right_wrist",
+    "left_hand",
+    "right_hand",
+    "pelvis",
+    "left_hip",
+    "right_hip",
+    "left_knee",
+    "right_knee",
+    "left_ankle",
+    "right_ankle",
+    "left_heel",
+    "right_heel",
+    "left_toe",
+    "right_toe"
+  ],
+  "poses": [
+    {
+      "index": 0,
+      "phase": "left_contact",
+      "reference_source_frame": 0,
+      "duration_ms": 80,
+      "root_distance_px": 0.0,
+      "support_foot": "left",
+      "contact_landmark": "left_heel",
+      "foot_contact": {
+        "left": "heel",
+        "right": "toe"
+      },
+      "near_arm": "left",
+      "near_leg": "left",
+      "torso_yaw": 0.08,
+      "shoulder_angle_deg": -6,
+      "hip_angle_deg": 5,
+      "pelvis_height_px": 49,
+      "landmarks_px": {
+        "head_center": [
+          67,
+          25
+        ],
+        "neck": [
+          64,
+          35
+        ],
+        "left_shoulder": [
+          57,
+          43
+        ],
+        "right_shoulder": [
+          71,
+          39
+        ],
+        "left_elbow": [
+          48,
+          57
+        ],
+        "right_elbow": [
+          80,
+          53
+        ],
+        "left_wrist": [
+          40,
+          70
+        ],
+        "right_wrist": [
+          88,
+          66
+        ],
+        "left_hand": [
+          38,
+          72
+        ],
+        "right_hand": [
+          90,
+          68
+        ],
+        "pelvis": [
+          64,
+          77
+        ],
+        "left_hip": [
+          60,
+          75
+        ],
+        "right_hip": [
+          68,
+          79
+        ],
+        "left_knee": [
+          79,
+          98
+        ],
+        "left_ankle": [
+          98,
+          113
+        ],
+        "left_heel": [
+          92,
+          126
+        ],
+        "left_toe": [
+          114,
+          126
+        ],
+        "right_knee": [
+          45,
+          98
+        ],
+        "right_ankle": [
+          33,
+          111
+        ],
+        "right_heel": [
+          22,
+          124
+        ],
+        "right_toe": [
+          44,
+          126
+        ]
+      },
+      "landmarks_normalized_to_pelvis_and_height": {
+        "head_center": [
+          0.0268,
+          -0.4643
+        ],
+        "neck": [
+          0.0,
+          -0.375
+        ],
+        "left_shoulder": [
+          -0.0625,
+          -0.3036
+        ],
+        "right_shoulder": [
+          0.0625,
+          -0.3393
+        ],
+        "left_elbow": [
+          -0.1429,
+          -0.1786
+        ],
+        "right_elbow": [
+          0.1429,
+          -0.2143
+        ],
+        "left_wrist": [
+          -0.2143,
+          -0.0625
+        ],
+        "right_wrist": [
+          0.2143,
+          -0.0982
+        ],
+        "left_hand": [
+          -0.2321,
+          -0.0446
+        ],
+        "right_hand": [
+          0.2321,
+          -0.0804
+        ],
+        "pelvis": [
+          0.0,
+          0.0
+        ],
+        "left_hip": [
+          -0.0357,
+          -0.0179
+        ],
+        "right_hip": [
+          0.0357,
+          0.0179
+        ],
+        "left_knee": [
+          0.1339,
+          0.1875
+        ],
+        "left_ankle": [
+          0.3036,
+          0.3214
+        ],
+        "left_heel": [
+          0.25,
+          0.4375
+        ],
+        "left_toe": [
+          0.4464,
+          0.4375
+        ],
+        "right_knee": [
+          -0.1696,
+          0.1875
+        ],
+        "right_ankle": [
+          -0.2768,
+          0.3036
+        ],
+        "right_heel": [
+          -0.375,
+          0.4196
+        ],
+        "right_toe": [
+          -0.1786,
+          0.4375
+        ]
+      }
+    },
+    {
+      "index": 1,
+      "phase": "left_down",
+      "reference_source_frame": 2,
+      "duration_ms": 80,
+      "root_distance_px": 10.08,
+      "support_foot": "left",
+      "contact_landmark": "left_heel",
+      "foot_contact": {
+        "left": "flat",
+        "right": "airborne"
+      },
+      "near_arm": "left",
+      "near_leg": "left",
+      "torso_yaw": 0.24,
+      "shoulder_angle_deg": -4,
+      "hip_angle_deg": 6,
+      "pelvis_height_px": 45,
+      "landmarks_px": {
+        "head_center": [
+          68,
+          29
+        ],
+        "neck": [
+          65,
+          39
+        ],
+        "left_shoulder": [
+          57,
+          46
+        ],
+        "right_shoulder": [
+          73,
+          44
+        ],
+        "left_elbow": [
+          49,
+          60
+        ],
+        "right_elbow": [
+          81,
+          58
+        ],
+        "left_wrist": [
+          44,
+          73
+        ],
+        "right_wrist": [
+          86,
+          71
+        ],
+        "left_hand": [
+          42,
+          75
+        ],
+        "right_hand": [
+          88,
+          73
+        ],
+        "pelvis": [
+          64,
+          81
+        ],
+        "left_hip": [
+          60,
+          79
+        ],
+        "right_hip": [
+          68,
+          83
+        ],
+        "left_knee": [
+          81,
+          103
+        ],
+        "left_ankle": [
+          91,
+          112
+        ],
+        "left_heel": [
+          82,
+          126
+        ],
+        "left_toe": [
+          105,
+          126
+        ],
+        "right_knee": [
+          48,
+          95
+        ],
+        "right_ankle": [
+          37,
+          108
+        ],
+        "right_heel": [
+          28,
+          119
+        ],
+        "right_toe": [
+          50,
+          122
+        ]
+      },
+      "landmarks_normalized_to_pelvis_and_height": {
+        "head_center": [
+          0.0357,
+          -0.4643
+        ],
+        "neck": [
+          0.0089,
+          -0.375
+        ],
+        "left_shoulder": [
+          -0.0625,
+          -0.3125
+        ],
+        "right_shoulder": [
+          0.0804,
+          -0.3304
+        ],
+        "left_elbow": [
+          -0.1339,
+          -0.1875
+        ],
+        "right_elbow": [
+          0.1518,
+          -0.2054
+        ],
+        "left_wrist": [
+          -0.1786,
+          -0.0714
+        ],
+        "right_wrist": [
+          0.1964,
+          -0.0893
+        ],
+        "left_hand": [
+          -0.1964,
+          -0.0536
+        ],
+        "right_hand": [
+          0.2143,
+          -0.0714
+        ],
+        "pelvis": [
+          0.0,
+          0.0
+        ],
+        "left_hip": [
+          -0.0357,
+          -0.0179
+        ],
+        "right_hip": [
+          0.0357,
+          0.0179
+        ],
+        "left_knee": [
+          0.1518,
+          0.1964
+        ],
+        "left_ankle": [
+          0.2411,
+          0.2768
+        ],
+        "left_heel": [
+          0.1607,
+          0.4018
+        ],
+        "left_toe": [
+          0.3661,
+          0.4018
+        ],
+        "right_knee": [
+          -0.1429,
+          0.125
+        ],
+        "right_ankle": [
+          -0.2411,
+          0.2411
+        ],
+        "right_heel": [
+          -0.3214,
+          0.3393
+        ],
+        "right_toe": [
+          -0.125,
+          0.3661
+        ]
+      }
+    },
+    {
+      "index": 2,
+      "phase": "left_mid_stance",
+      "reference_source_frame": 4,
+      "duration_ms": 80,
+      "root_distance_px": 20.16,
+      "support_foot": "left",
+      "contact_landmark": "left_heel",
+      "foot_contact": {
+        "left": "flat",
+        "right": "airborne"
+      },
+      "near_arm": "left",
+      "near_leg": "left",
+      "torso_yaw": 0.42,
+      "shoulder_angle_deg": 1,
+      "hip_angle_deg": 3,
+      "pelvis_height_px": 47,
+      "landmarks_px": {
+        "head_center": [
+          69,
+          27
+        ],
+        "neck": [
+          66,
+          37
+        ],
+        "left_shoulder": [
+          57,
+          43
+        ],
+        "right_shoulder": [
+          75,
+          43
+        ],
+        "left_elbow": [
+          52,
+          58
+        ],
+        "right_elbow": [
+          80,
+          58
+        ],
+        "left_wrist": [
+          52,
+          71
+        ],
+        "right_wrist": [
+          80,
+          71
+        ],
+        "left_hand": [
+          50,
+          73
+        ],
+        "right_hand": [
+          82,
+          73
+        ],
+        "pelvis": [
+          64,
+          79
+        ],
+        "left_hip": [
+          60,
+          78
+        ],
+        "right_hip": [
+          68,
+          80
+        ],
+        "left_knee": [
+          76,
+          99
+        ],
+        "left_ankle": [
+          83,
+          111
+        ],
+        "left_heel": [
+          72,
+          126
+        ],
+        "left_toe": [
+          95,
+          126
+        ],
+        "right_knee": [
+          56,
+          91
+        ],
+        "right_ankle": [
+          53,
+          104
+        ],
+        "right_heel": [
+          42,
+          114
+        ],
+        "right_toe": [
+          64,
+          118
+        ]
+      },
+      "landmarks_normalized_to_pelvis_and_height": {
+        "head_center": [
+          0.0446,
+          -0.4643
+        ],
+        "neck": [
+          0.0179,
+          -0.375
+        ],
+        "left_shoulder": [
+          -0.0625,
+          -0.3214
+        ],
+        "right_shoulder": [
+          0.0982,
+          -0.3214
+        ],
+        "left_elbow": [
+          -0.1071,
+          -0.1875
+        ],
+        "right_elbow": [
+          0.1429,
+          -0.1875
+        ],
+        "left_wrist": [
+          -0.1071,
+          -0.0714
+        ],
+        "right_wrist": [
+          0.1429,
+          -0.0714
+        ],
+        "left_hand": [
+          -0.125,
+          -0.0536
+        ],
+        "right_hand": [
+          0.1607,
+          -0.0536
+        ],
+        "pelvis": [
+          0.0,
+          0.0
+        ],
+        "left_hip": [
+          -0.0357,
+          -0.0089
+        ],
+        "right_hip": [
+          0.0357,
+          0.0089
+        ],
+        "left_knee": [
+          0.1071,
+          0.1786
+        ],
+        "left_ankle": [
+          0.1696,
+          0.2857
+        ],
+        "left_heel": [
+          0.0714,
+          0.4196
+        ],
+        "left_toe": [
+          0.2768,
+          0.4196
+        ],
+        "right_knee": [
+          -0.0714,
+          0.1071
+        ],
+        "right_ankle": [
+          -0.0982,
+          0.2232
+        ],
+        "right_heel": [
+          -0.1964,
+          0.3125
+        ],
+        "right_toe": [
+          0.0,
+          0.3482
+        ]
+      }
+    },
+    {
+      "index": 3,
+      "phase": "right_passing",
+      "reference_source_frame": 6,
+      "duration_ms": 80,
+      "root_distance_px": 30.24,
+      "support_foot": "left",
+      "contact_landmark": "left_heel",
+      "foot_contact": {
+        "left": "flat",
+        "right": "airborne"
+      },
+      "near_arm": "left",
+      "near_leg": "left",
+      "torso_yaw": 0.3,
+      "shoulder_angle_deg": 6,
+      "hip_angle_deg": -2,
+      "pelvis_height_px": 50,
+      "landmarks_px": {
+        "head_center": [
+          68,
+          24
+        ],
+        "neck": [
+          65,
+          34
+        ],
+        "left_shoulder": [
+          56,
+          38
+        ],
+        "right_shoulder": [
+          74,
+          42
+        ],
+        "left_elbow": [
+          56,
+          53
+        ],
+        "right_elbow": [
+          74,
+          57
+        ],
+        "left_wrist": [
+          60,
+          67
+        ],
+        "right_wrist": [
+          70,
+          71
+        ],
+        "left_hand": [
+          58,
+          69
+        ],
+        "right_hand": [
+          72,
+          73
+        ],
+        "pelvis": [
+          64,
+          76
+        ],
+        "left_hip": [
+          60,
+          77
+        ],
+        "right_hip": [
+          68,
+          75
+        ],
+        "left_knee": [
+          69,
+          96
+        ],
+        "left_ankle": [
+          74,
+          111
+        ],
+        "left_heel": [
+          62,
+          126
+        ],
+        "left_toe": [
+          84,
+          126
+        ],
+        "right_knee": [
+          68,
+          88
+        ],
+        "right_ankle": [
+          67,
+          101
+        ],
+        "right_heel": [
+          56,
+          112
+        ],
+        "right_toe": [
+          79,
+          115
+        ]
+      },
+      "landmarks_normalized_to_pelvis_and_height": {
+        "head_center": [
+          0.0357,
+          -0.4643
+        ],
+        "neck": [
+          0.0089,
+          -0.375
+        ],
+        "left_shoulder": [
+          -0.0714,
+          -0.3393
+        ],
+        "right_shoulder": [
+          0.0893,
+          -0.3036
+        ],
+        "left_elbow": [
+          -0.0714,
+          -0.2054
+        ],
+        "right_elbow": [
+          0.0893,
+          -0.1696
+        ],
+        "left_wrist": [
+          -0.0357,
+          -0.0804
+        ],
+        "right_wrist": [
+          0.0536,
+          -0.0446
+        ],
+        "left_hand": [
+          -0.0536,
+          -0.0625
+        ],
+        "right_hand": [
+          0.0714,
+          -0.0268
+        ],
+        "pelvis": [
+          0.0,
+          0.0
+        ],
+        "left_hip": [
+          -0.0357,
+          0.0089
+        ],
+        "right_hip": [
+          0.0357,
+          -0.0089
+        ],
+        "left_knee": [
+          0.0446,
+          0.1786
+        ],
+        "left_ankle": [
+          0.0893,
+          0.3125
+        ],
+        "left_heel": [
+          -0.0179,
+          0.4464
+        ],
+        "left_toe": [
+          0.1786,
+          0.4464
+        ],
+        "right_knee": [
+          0.0357,
+          0.1071
+        ],
+        "right_ankle": [
+          0.0268,
+          0.2232
+        ],
+        "right_heel": [
+          -0.0714,
+          0.3214
+        ],
+        "right_toe": [
+          0.1339,
+          0.3482
+        ]
+      }
+    },
+    {
+      "index": 4,
+      "phase": "left_up",
+      "reference_source_frame": 8,
+      "duration_ms": 80,
+      "root_distance_px": 40.32,
+      "support_foot": "left",
+      "contact_landmark": "left_toe",
+      "foot_contact": {
+        "left": "heel_rise",
+        "right": "airborne"
+      },
+      "near_arm": "left",
+      "near_leg": "left",
+      "torso_yaw": 0.1,
+      "shoulder_angle_deg": 8,
+      "hip_angle_deg": -6,
+      "pelvis_height_px": 54,
+      "landmarks_px": {
+        "head_center": [
+          67,
+          20
+        ],
+        "neck": [
+          64,
+          30
+        ],
+        "left_shoulder": [
+          57,
+          33
+        ],
+        "right_shoulder": [
+          71,
+          39
+        ],
+        "left_elbow": [
+          62,
+          48
+        ],
+        "right_elbow": [
+          66,
+          54
+        ],
+        "left_wrist": [
+          68,
+          61
+        ],
+        "right_wrist": [
+          60,
+          67
+        ],
+        "left_hand": [
+          70,
+          63
+        ],
+        "right_hand": [
+          58,
+          69
+        ],
+        "pelvis": [
+          64,
+          72
+        ],
+        "left_hip": [
+          60,
+          74
+        ],
+        "right_hip": [
+          68,
+          70
+        ],
+        "left_knee": [
+          59,
+          91
+        ],
+        "left_ankle": [
+          44,
+          107
+        ],
+        "left_heel": [
+          34,
+          120
+        ],
+        "left_toe": [
+          52,
+          126
+        ],
+        "right_knee": [
+          78,
+          91
+        ],
+        "right_ankle": [
+          83,
+          104
+        ],
+        "right_heel": [
+          74,
+          116
+        ],
+        "right_toe": [
+          98,
+          120
+        ]
+      },
+      "landmarks_normalized_to_pelvis_and_height": {
+        "head_center": [
+          0.0268,
+          -0.4643
+        ],
+        "neck": [
+          0.0,
+          -0.375
+        ],
+        "left_shoulder": [
+          -0.0625,
+          -0.3482
+        ],
+        "right_shoulder": [
+          0.0625,
+          -0.2946
+        ],
+        "left_elbow": [
+          -0.0179,
+          -0.2143
+        ],
+        "right_elbow": [
+          0.0179,
+          -0.1607
+        ],
+        "left_wrist": [
+          0.0357,
+          -0.0982
+        ],
+        "right_wrist": [
+          -0.0357,
+          -0.0446
+        ],
+        "left_hand": [
+          0.0536,
+          -0.0804
+        ],
+        "right_hand": [
+          -0.0536,
+          -0.0268
+        ],
+        "pelvis": [
+          0.0,
+          0.0
+        ],
+        "left_hip": [
+          -0.0357,
+          0.0179
+        ],
+        "right_hip": [
+          0.0357,
+          -0.0179
+        ],
+        "left_knee": [
+          -0.0446,
+          0.1696
+        ],
+        "left_ankle": [
+          -0.1786,
+          0.3125
+        ],
+        "left_heel": [
+          -0.2679,
+          0.4286
+        ],
+        "left_toe": [
+          -0.1071,
+          0.4821
+        ],
+        "right_knee": [
+          0.125,
+          0.1696
+        ],
+        "right_ankle": [
+          0.1696,
+          0.2857
+        ],
+        "right_heel": [
+          0.0893,
+          0.3929
+        ],
+        "right_toe": [
+          0.3036,
+          0.4286
+        ]
+      }
+    },
+    {
+      "index": 5,
+      "phase": "left_toe_off_reach",
+      "reference_source_frame": 10,
+      "duration_ms": 80,
+      "root_distance_px": 50.4,
+      "support_foot": "left",
+      "contact_landmark": "left_toe",
+      "foot_contact": {
+        "left": "toe_off",
+        "right": "heel_reach"
+      },
+      "near_arm": "left",
+      "near_leg": "left",
+      "torso_yaw": -0.12,
+      "shoulder_angle_deg": 3,
+      "hip_angle_deg": -4,
+      "pelvis_height_px": 52,
+      "landmarks_px": {
+        "head_center": [
+          67,
+          22
+        ],
+        "neck": [
+          64,
+          32
+        ],
+        "left_shoulder": [
+          56,
+          37
+        ],
+        "right_shoulder": [
+          72,
+          39
+        ],
+        "left_elbow": [
+          64,
+          51
+        ],
+        "right_elbow": [
+          64,
+          53
+        ],
+        "left_wrist": [
+          72,
+          64
+        ],
+        "right_wrist": [
+          56,
+          66
+        ],
+        "left_hand": [
+          74,
+          66
+        ],
+        "right_hand": [
+          54,
+          68
+        ],
+        "pelvis": [
+          64,
+          74
+        ],
+        "left_hip": [
+          60,
+          75
+        ],
+        "right_hip": [
+          68,
+          73
+        ],
+        "left_knee": [
+          52,
+          90
+        ],
+        "left_ankle": [
+          33,
+          104
+        ],
+        "left_heel": [
+          24,
+          116
+        ],
+        "left_toe": [
+          42,
+          126
+        ],
+        "right_knee": [
+          84,
+          96
+        ],
+        "right_ankle": [
+          99,
+          111
+        ],
+        "right_heel": [
+          91,
+          124
+        ],
+        "right_toe": [
+          113,
+          126
+        ]
+      },
+      "landmarks_normalized_to_pelvis_and_height": {
+        "head_center": [
+          0.0268,
+          -0.4643
+        ],
+        "neck": [
+          0.0,
+          -0.375
+        ],
+        "left_shoulder": [
+          -0.0714,
+          -0.3304
+        ],
+        "right_shoulder": [
+          0.0714,
+          -0.3125
+        ],
+        "left_elbow": [
+          0.0,
+          -0.2054
+        ],
+        "right_elbow": [
+          0.0,
+          -0.1875
+        ],
+        "left_wrist": [
+          0.0714,
+          -0.0893
+        ],
+        "right_wrist": [
+          -0.0714,
+          -0.0714
+        ],
+        "left_hand": [
+          0.0893,
+          -0.0714
+        ],
+        "right_hand": [
+          -0.0893,
+          -0.0536
+        ],
+        "pelvis": [
+          0.0,
+          0.0
+        ],
+        "left_hip": [
+          -0.0357,
+          0.0089
+        ],
+        "right_hip": [
+          0.0357,
+          -0.0089
+        ],
+        "left_knee": [
+          -0.1071,
+          0.1429
+        ],
+        "left_ankle": [
+          -0.2768,
+          0.2679
+        ],
+        "left_heel": [
+          -0.3571,
+          0.375
+        ],
+        "left_toe": [
+          -0.1964,
+          0.4643
+        ],
+        "right_knee": [
+          0.1786,
+          0.1964
+        ],
+        "right_ankle": [
+          0.3125,
+          0.3304
+        ],
+        "right_heel": [
+          0.2411,
+          0.4464
+        ],
+        "right_toe": [
+          0.4375,
+          0.4643
+        ]
+      }
+    },
+    {
+      "index": 6,
+      "phase": "right_contact",
+      "reference_source_frame": 12,
+      "duration_ms": 80,
+      "root_distance_px": 60.48,
+      "support_foot": "right",
+      "contact_landmark": "right_heel",
+      "foot_contact": {
+        "right": "heel",
+        "left": "toe"
+      },
+      "near_arm": "left",
+      "near_leg": "left",
+      "torso_yaw": -0.08,
+      "shoulder_angle_deg": 6,
+      "hip_angle_deg": -5,
+      "pelvis_height_px": 49,
+      "landmarks_px": {
+        "head_center": [
+          67,
+          25
+        ],
+        "neck": [
+          64,
+          35
+        ],
+        "left_shoulder": [
+          57,
+          39
+        ],
+        "right_shoulder": [
+          71,
+          43
+        ],
+        "left_elbow": [
+          66,
+          53
+        ],
+        "right_elbow": [
+          62,
+          57
+        ],
+        "left_wrist": [
+          74,
+          66
+        ],
+        "right_wrist": [
+          54,
+          70
+        ],
+        "left_hand": [
+          76,
+          68
+        ],
+        "right_hand": [
+          52,
+          72
+        ],
+        "pelvis": [
+          64,
+          77
+        ],
+        "left_hip": [
+          60,
+          79
+        ],
+        "right_hip": [
+          68,
+          75
+        ],
+        "left_knee": [
+          45,
+          98
+        ],
+        "left_ankle": [
+          33,
+          111
+        ],
+        "left_heel": [
+          22,
+          124
+        ],
+        "left_toe": [
+          44,
+          126
+        ],
+        "right_knee": [
+          79,
+          98
+        ],
+        "right_ankle": [
+          98,
+          113
+        ],
+        "right_heel": [
+          92,
+          126
+        ],
+        "right_toe": [
+          114,
+          126
+        ]
+      },
+      "landmarks_normalized_to_pelvis_and_height": {
+        "head_center": [
+          0.0268,
+          -0.4643
+        ],
+        "neck": [
+          0.0,
+          -0.375
+        ],
+        "left_shoulder": [
+          -0.0625,
+          -0.3393
+        ],
+        "right_shoulder": [
+          0.0625,
+          -0.3036
+        ],
+        "left_elbow": [
+          0.0179,
+          -0.2143
+        ],
+        "right_elbow": [
+          -0.0179,
+          -0.1786
+        ],
+        "left_wrist": [
+          0.0893,
+          -0.0982
+        ],
+        "right_wrist": [
+          -0.0893,
+          -0.0625
+        ],
+        "left_hand": [
+          0.1071,
+          -0.0804
+        ],
+        "right_hand": [
+          -0.1071,
+          -0.0446
+        ],
+        "pelvis": [
+          0.0,
+          0.0
+        ],
+        "left_hip": [
+          -0.0357,
+          0.0179
+        ],
+        "right_hip": [
+          0.0357,
+          -0.0179
+        ],
+        "left_knee": [
+          -0.1696,
+          0.1875
+        ],
+        "left_ankle": [
+          -0.2768,
+          0.3036
+        ],
+        "left_heel": [
+          -0.375,
+          0.4196
+        ],
+        "left_toe": [
+          -0.1786,
+          0.4375
+        ],
+        "right_knee": [
+          0.1339,
+          0.1875
+        ],
+        "right_ankle": [
+          0.3036,
+          0.3214
+        ],
+        "right_heel": [
+          0.25,
+          0.4375
+        ],
+        "right_toe": [
+          0.4464,
+          0.4375
+        ]
+      }
+    },
+    {
+      "index": 7,
+      "phase": "right_down",
+      "reference_source_frame": 14,
+      "duration_ms": 80,
+      "root_distance_px": 70.56,
+      "support_foot": "right",
+      "contact_landmark": "right_heel",
+      "foot_contact": {
+        "right": "flat",
+        "left": "airborne"
+      },
+      "near_arm": "left",
+      "near_leg": "left",
+      "torso_yaw": -0.24,
+      "shoulder_angle_deg": 4,
+      "hip_angle_deg": -6,
+      "pelvis_height_px": 45,
+      "landmarks_px": {
+        "head_center": [
+          66,
+          29
+        ],
+        "neck": [
+          63,
+          39
+        ],
+        "left_shoulder": [
+          55,
+          44
+        ],
+        "right_shoulder": [
+          71,
+          46
+        ],
+        "left_elbow": [
+          63,
+          58
+        ],
+        "right_elbow": [
+          63,
+          60
+        ],
+        "left_wrist": [
+          68,
+          71
+        ],
+        "right_wrist": [
+          58,
+          73
+        ],
+        "left_hand": [
+          70,
+          73
+        ],
+        "right_hand": [
+          56,
+          75
+        ],
+        "pelvis": [
+          64,
+          81
+        ],
+        "left_hip": [
+          60,
+          83
+        ],
+        "right_hip": [
+          68,
+          79
+        ],
+        "left_knee": [
+          48,
+          95
+        ],
+        "left_ankle": [
+          37,
+          108
+        ],
+        "left_heel": [
+          28,
+          119
+        ],
+        "left_toe": [
+          50,
+          122
+        ],
+        "right_knee": [
+          81,
+          103
+        ],
+        "right_ankle": [
+          91,
+          112
+        ],
+        "right_heel": [
+          82,
+          126
+        ],
+        "right_toe": [
+          105,
+          126
+        ]
+      },
+      "landmarks_normalized_to_pelvis_and_height": {
+        "head_center": [
+          0.0179,
+          -0.4643
+        ],
+        "neck": [
+          -0.0089,
+          -0.375
+        ],
+        "left_shoulder": [
+          -0.0804,
+          -0.3304
+        ],
+        "right_shoulder": [
+          0.0625,
+          -0.3125
+        ],
+        "left_elbow": [
+          -0.0089,
+          -0.2054
+        ],
+        "right_elbow": [
+          -0.0089,
+          -0.1875
+        ],
+        "left_wrist": [
+          0.0357,
+          -0.0893
+        ],
+        "right_wrist": [
+          -0.0536,
+          -0.0714
+        ],
+        "left_hand": [
+          0.0536,
+          -0.0714
+        ],
+        "right_hand": [
+          -0.0714,
+          -0.0536
+        ],
+        "pelvis": [
+          0.0,
+          0.0
+        ],
+        "left_hip": [
+          -0.0357,
+          0.0179
+        ],
+        "right_hip": [
+          0.0357,
+          -0.0179
+        ],
+        "left_knee": [
+          -0.1429,
+          0.125
+        ],
+        "left_ankle": [
+          -0.2411,
+          0.2411
+        ],
+        "left_heel": [
+          -0.3214,
+          0.3393
+        ],
+        "left_toe": [
+          -0.125,
+          0.3661
+        ],
+        "right_knee": [
+          0.1518,
+          0.1964
+        ],
+        "right_ankle": [
+          0.2411,
+          0.2768
+        ],
+        "right_heel": [
+          0.1607,
+          0.4018
+        ],
+        "right_toe": [
+          0.3661,
+          0.4018
+        ]
+      }
+    },
+    {
+      "index": 8,
+      "phase": "right_mid_stance",
+      "reference_source_frame": 16,
+      "duration_ms": 80,
+      "root_distance_px": 80.64,
+      "support_foot": "right",
+      "contact_landmark": "right_heel",
+      "foot_contact": {
+        "right": "flat",
+        "left": "airborne"
+      },
+      "near_arm": "left",
+      "near_leg": "left",
+      "torso_yaw": -0.42,
+      "shoulder_angle_deg": -1,
+      "hip_angle_deg": -3,
+      "pelvis_height_px": 47,
+      "landmarks_px": {
+        "head_center": [
+          65,
+          27
+        ],
+        "neck": [
+          62,
+          37
+        ],
+        "left_shoulder": [
+          53,
+          43
+        ],
+        "right_shoulder": [
+          71,
+          43
+        ],
+        "left_elbow": [
+          58,
+          58
+        ],
+        "right_elbow": [
+          66,
+          58
+        ],
+        "left_wrist": [
+          58,
+          71
+        ],
+        "right_wrist": [
+          66,
+          71
+        ],
+        "left_hand": [
+          60,
+          73
+        ],
+        "right_hand": [
+          64,
+          73
+        ],
+        "pelvis": [
+          64,
+          79
+        ],
+        "left_hip": [
+          60,
+          80
+        ],
+        "right_hip": [
+          68,
+          78
+        ],
+        "left_knee": [
+          56,
+          91
+        ],
+        "left_ankle": [
+          53,
+          104
+        ],
+        "left_heel": [
+          42,
+          114
+        ],
+        "left_toe": [
+          64,
+          118
+        ],
+        "right_knee": [
+          76,
+          99
+        ],
+        "right_ankle": [
+          83,
+          111
+        ],
+        "right_heel": [
+          72,
+          126
+        ],
+        "right_toe": [
+          95,
+          126
+        ]
+      },
+      "landmarks_normalized_to_pelvis_and_height": {
+        "head_center": [
+          0.0089,
+          -0.4643
+        ],
+        "neck": [
+          -0.0179,
+          -0.375
+        ],
+        "left_shoulder": [
+          -0.0982,
+          -0.3214
+        ],
+        "right_shoulder": [
+          0.0625,
+          -0.3214
+        ],
+        "left_elbow": [
+          -0.0536,
+          -0.1875
+        ],
+        "right_elbow": [
+          0.0179,
+          -0.1875
+        ],
+        "left_wrist": [
+          -0.0536,
+          -0.0714
+        ],
+        "right_wrist": [
+          0.0179,
+          -0.0714
+        ],
+        "left_hand": [
+          -0.0357,
+          -0.0536
+        ],
+        "right_hand": [
+          0.0,
+          -0.0536
+        ],
+        "pelvis": [
+          0.0,
+          0.0
+        ],
+        "left_hip": [
+          -0.0357,
+          0.0089
+        ],
+        "right_hip": [
+          0.0357,
+          -0.0089
+        ],
+        "left_knee": [
+          -0.0714,
+          0.1071
+        ],
+        "left_ankle": [
+          -0.0982,
+          0.2232
+        ],
+        "left_heel": [
+          -0.1964,
+          0.3125
+        ],
+        "left_toe": [
+          0.0,
+          0.3482
+        ],
+        "right_knee": [
+          0.1071,
+          0.1786
+        ],
+        "right_ankle": [
+          0.1696,
+          0.2857
+        ],
+        "right_heel": [
+          0.0714,
+          0.4196
+        ],
+        "right_toe": [
+          0.2768,
+          0.4196
+        ]
+      }
+    },
+    {
+      "index": 9,
+      "phase": "left_passing",
+      "reference_source_frame": 18,
+      "duration_ms": 80,
+      "root_distance_px": 90.72,
+      "support_foot": "right",
+      "contact_landmark": "right_heel",
+      "foot_contact": {
+        "right": "flat",
+        "left": "airborne"
+      },
+      "near_arm": "left",
+      "near_leg": "left",
+      "torso_yaw": -0.3,
+      "shoulder_angle_deg": -6,
+      "hip_angle_deg": 2,
+      "pelvis_height_px": 50,
+      "landmarks_px": {
+        "head_center": [
+          66,
+          24
+        ],
+        "neck": [
+          63,
+          34
+        ],
+        "left_shoulder": [
+          54,
+          42
+        ],
+        "right_shoulder": [
+          72,
+          38
+        ],
+        "left_elbow": [
+          54,
+          57
+        ],
+        "right_elbow": [
+          72,
+          53
+        ],
+        "left_wrist": [
+          50,
+          71
+        ],
+        "right_wrist": [
+          76,
+          67
+        ],
+        "left_hand": [
+          52,
+          73
+        ],
+        "right_hand": [
+          74,
+          69
+        ],
+        "pelvis": [
+          64,
+          76
+        ],
+        "left_hip": [
+          60,
+          75
+        ],
+        "right_hip": [
+          68,
+          77
+        ],
+        "left_knee": [
+          68,
+          88
+        ],
+        "left_ankle": [
+          67,
+          101
+        ],
+        "left_heel": [
+          56,
+          112
+        ],
+        "left_toe": [
+          79,
+          115
+        ],
+        "right_knee": [
+          69,
+          96
+        ],
+        "right_ankle": [
+          74,
+          111
+        ],
+        "right_heel": [
+          62,
+          126
+        ],
+        "right_toe": [
+          84,
+          126
+        ]
+      },
+      "landmarks_normalized_to_pelvis_and_height": {
+        "head_center": [
+          0.0179,
+          -0.4643
+        ],
+        "neck": [
+          -0.0089,
+          -0.375
+        ],
+        "left_shoulder": [
+          -0.0893,
+          -0.3036
+        ],
+        "right_shoulder": [
+          0.0714,
+          -0.3393
+        ],
+        "left_elbow": [
+          -0.0893,
+          -0.1696
+        ],
+        "right_elbow": [
+          0.0714,
+          -0.2054
+        ],
+        "left_wrist": [
+          -0.125,
+          -0.0446
+        ],
+        "right_wrist": [
+          0.1071,
+          -0.0804
+        ],
+        "left_hand": [
+          -0.1071,
+          -0.0268
+        ],
+        "right_hand": [
+          0.0893,
+          -0.0625
+        ],
+        "pelvis": [
+          0.0,
+          0.0
+        ],
+        "left_hip": [
+          -0.0357,
+          -0.0089
+        ],
+        "right_hip": [
+          0.0357,
+          0.0089
+        ],
+        "left_knee": [
+          0.0357,
+          0.1071
+        ],
+        "left_ankle": [
+          0.0268,
+          0.2232
+        ],
+        "left_heel": [
+          -0.0714,
+          0.3214
+        ],
+        "left_toe": [
+          0.1339,
+          0.3482
+        ],
+        "right_knee": [
+          0.0446,
+          0.1786
+        ],
+        "right_ankle": [
+          0.0893,
+          0.3125
+        ],
+        "right_heel": [
+          -0.0179,
+          0.4464
+        ],
+        "right_toe": [
+          0.1786,
+          0.4464
+        ]
+      }
+    },
+    {
+      "index": 10,
+      "phase": "right_up",
+      "reference_source_frame": 20,
+      "duration_ms": 80,
+      "root_distance_px": 100.8,
+      "support_foot": "right",
+      "contact_landmark": "right_toe",
+      "foot_contact": {
+        "right": "heel_rise",
+        "left": "airborne"
+      },
+      "near_arm": "left",
+      "near_leg": "left",
+      "torso_yaw": -0.1,
+      "shoulder_angle_deg": -8,
+      "hip_angle_deg": 6,
+      "pelvis_height_px": 54,
+      "landmarks_px": {
+        "head_center": [
+          67,
+          20
+        ],
+        "neck": [
+          64,
+          30
+        ],
+        "left_shoulder": [
+          57,
+          39
+        ],
+        "right_shoulder": [
+          71,
+          33
+        ],
+        "left_elbow": [
+          52,
+          54
+        ],
+        "right_elbow": [
+          76,
+          48
+        ],
+        "left_wrist": [
+          46,
+          67
+        ],
+        "right_wrist": [
+          82,
+          61
+        ],
+        "left_hand": [
+          44,
+          69
+        ],
+        "right_hand": [
+          84,
+          63
+        ],
+        "pelvis": [
+          64,
+          72
+        ],
+        "left_hip": [
+          60,
+          70
+        ],
+        "right_hip": [
+          68,
+          74
+        ],
+        "left_knee": [
+          78,
+          91
+        ],
+        "left_ankle": [
+          83,
+          104
+        ],
+        "left_heel": [
+          74,
+          116
+        ],
+        "left_toe": [
+          98,
+          120
+        ],
+        "right_knee": [
+          59,
+          91
+        ],
+        "right_ankle": [
+          44,
+          107
+        ],
+        "right_heel": [
+          34,
+          120
+        ],
+        "right_toe": [
+          52,
+          126
+        ]
+      },
+      "landmarks_normalized_to_pelvis_and_height": {
+        "head_center": [
+          0.0268,
+          -0.4643
+        ],
+        "neck": [
+          0.0,
+          -0.375
+        ],
+        "left_shoulder": [
+          -0.0625,
+          -0.2946
+        ],
+        "right_shoulder": [
+          0.0625,
+          -0.3482
+        ],
+        "left_elbow": [
+          -0.1071,
+          -0.1607
+        ],
+        "right_elbow": [
+          0.1071,
+          -0.2143
+        ],
+        "left_wrist": [
+          -0.1607,
+          -0.0446
+        ],
+        "right_wrist": [
+          0.1607,
+          -0.0982
+        ],
+        "left_hand": [
+          -0.1786,
+          -0.0268
+        ],
+        "right_hand": [
+          0.1786,
+          -0.0804
+        ],
+        "pelvis": [
+          0.0,
+          0.0
+        ],
+        "left_hip": [
+          -0.0357,
+          -0.0179
+        ],
+        "right_hip": [
+          0.0357,
+          0.0179
+        ],
+        "left_knee": [
+          0.125,
+          0.1696
+        ],
+        "left_ankle": [
+          0.1696,
+          0.2857
+        ],
+        "left_heel": [
+          0.0893,
+          0.3929
+        ],
+        "left_toe": [
+          0.3036,
+          0.4286
+        ],
+        "right_knee": [
+          -0.0446,
+          0.1696
+        ],
+        "right_ankle": [
+          -0.1786,
+          0.3125
+        ],
+        "right_heel": [
+          -0.2679,
+          0.4286
+        ],
+        "right_toe": [
+          -0.1071,
+          0.4821
+        ]
+      }
+    },
+    {
+      "index": 11,
+      "phase": "right_toe_off_reach",
+      "reference_source_frame": 22,
+      "duration_ms": 80,
+      "root_distance_px": 110.88,
+      "support_foot": "right",
+      "contact_landmark": "right_toe",
+      "foot_contact": {
+        "right": "toe_off",
+        "left": "heel_reach"
+      },
+      "near_arm": "left",
+      "near_leg": "left",
+      "torso_yaw": 0.12,
+      "shoulder_angle_deg": -3,
+      "hip_angle_deg": 4,
+      "pelvis_height_px": 52,
+      "landmarks_px": {
+        "head_center": [
+          67,
+          22
+        ],
+        "neck": [
+          64,
+          32
+        ],
+        "left_shoulder": [
+          56,
+          39
+        ],
+        "right_shoulder": [
+          72,
+          37
+        ],
+        "left_elbow": [
+          48,
+          53
+        ],
+        "right_elbow": [
+          80,
+          51
+        ],
+        "left_wrist": [
+          40,
+          66
+        ],
+        "right_wrist": [
+          88,
+          64
+        ],
+        "left_hand": [
+          38,
+          68
+        ],
+        "right_hand": [
+          90,
+          66
+        ],
+        "pelvis": [
+          64,
+          74
+        ],
+        "left_hip": [
+          60,
+          73
+        ],
+        "right_hip": [
+          68,
+          75
+        ],
+        "left_knee": [
+          84,
+          96
+        ],
+        "left_ankle": [
+          99,
+          111
+        ],
+        "left_heel": [
+          91,
+          124
+        ],
+        "left_toe": [
+          113,
+          126
+        ],
+        "right_knee": [
+          52,
+          90
+        ],
+        "right_ankle": [
+          33,
+          104
+        ],
+        "right_heel": [
+          24,
+          116
+        ],
+        "right_toe": [
+          42,
+          126
+        ]
+      },
+      "landmarks_normalized_to_pelvis_and_height": {
+        "head_center": [
+          0.0268,
+          -0.4643
+        ],
+        "neck": [
+          0.0,
+          -0.375
+        ],
+        "left_shoulder": [
+          -0.0714,
+          -0.3125
+        ],
+        "right_shoulder": [
+          0.0714,
+          -0.3304
+        ],
+        "left_elbow": [
+          -0.1429,
+          -0.1875
+        ],
+        "right_elbow": [
+          0.1429,
+          -0.2054
+        ],
+        "left_wrist": [
+          -0.2143,
+          -0.0714
+        ],
+        "right_wrist": [
+          0.2143,
+          -0.0893
+        ],
+        "left_hand": [
+          -0.2321,
+          -0.0536
+        ],
+        "right_hand": [
+          0.2321,
+          -0.0714
+        ],
+        "pelvis": [
+          0.0,
+          0.0
+        ],
+        "left_hip": [
+          -0.0357,
+          -0.0089
+        ],
+        "right_hip": [
+          0.0357,
+          0.0089
+        ],
+        "left_knee": [
+          0.1786,
+          0.1964
+        ],
+        "left_ankle": [
+          0.3125,
+          0.3304
+        ],
+        "left_heel": [
+          0.2411,
+          0.4464
+        ],
+        "left_toe": [
+          0.4375,
+          0.4643
+        ],
+        "right_knee": [
+          -0.1071,
+          0.1429
+        ],
+        "right_ankle": [
+          -0.2768,
+          0.2679
+        ],
+        "right_heel": [
+          -0.3571,
+          0.375
+        ],
+        "right_toe": [
+          -0.1964,
+          0.4643
+        ]
+      }
+    }
+  ]
+}
