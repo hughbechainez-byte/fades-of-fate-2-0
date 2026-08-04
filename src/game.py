@@ -5127,7 +5127,12 @@ class FadesGame:
                         if obj.state in {"windup", "attack", "recovery"}
                         else obj.state
                     )
-                    actor_kind = "stick" if obj.kind in {"security", "security_guard", "guard", "homeless"} else obj.kind
+                    if obj.kind in {"security", "security_guard", "guard"}:
+                        actor_kind = "security"
+                    elif obj.kind == "homeless":
+                        actor_kind = "homeless"
+                    else:
+                        actor_kind = obj.kind
                     if obj.state == "windup":
                         enemy_tick = action_segment_tick(
                             actor_kind,

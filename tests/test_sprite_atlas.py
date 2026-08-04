@@ -864,6 +864,10 @@ class SpriteAtlasTests(unittest.TestCase):
                 idle_signatures.add(_signature(sprite_atlas.enemy_frame(kind, "idle", 0)))
         self.assertEqual(len(idle_signatures), 4)
 
+    def test_unknown_enemy_kind_is_rejected_instead_of_falling_back(self) -> None:
+        with self.assertRaisesRegex(ValueError, "unknown enemy kind"):
+            sprite_atlas.enemy_frame("prototype_enemy", "idle", 0)
+
     def test_couch_personality_and_combat_states_are_visually_distinct(self) -> None:
         signatures = {
             tuple(_signature(frame) for frame in sprite_atlas.animation_frames("couch", state))
