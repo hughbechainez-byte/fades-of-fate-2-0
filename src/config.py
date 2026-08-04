@@ -622,6 +622,7 @@ def validate_gameplay(
         "moves",
         "enemies",
         "chief",
+        "ko_companion",
         "bb_gun",
         "shelly_propane",
         "audio",
@@ -962,6 +963,69 @@ def validate_gameplay(
     for field in ("cpu_shelly_frenzy_charge_seconds", "cpu_shelly_frenzy_rearm_seconds"):
         if float(companion_ai.get(field, 0)) <= 0:
             raise ConfigError(f"companion_ai.{field} must be positive")
+
+    ko_companion = data["ko_companion"]
+    if not isinstance(ko_companion, dict):
+        raise ConfigError("ko_companion must be an object")
+    if not isinstance(ko_companion.get("enabled"), bool):
+        raise ConfigError("ko_companion.enabled must be boolean")
+    intervals = tuple(
+        float(value) for value in ko_companion.get("attack_intervals", ())
+    )
+    if intervals != (20.0, 25.0, 30.0):
+        raise ConfigError("ko_companion.attack_intervals must be [20, 25, 30]")
+    attack_cycle = tuple(str(value) for value in ko_companion.get("attack_cycle", ()))
+    if attack_cycle != ("punch_1", "punch_2", "kick"):
+        raise ConfigError(
+            "ko_companion.attack_cycle must be [punch_1, punch_2, kick]"
+        )
+    if int(ko_companion.get("super_every_actions", 0)) != 4:
+        raise ConfigError("ko_companion.super_every_actions must be 4")
+    for field in (
+        "warmup_seconds",
+        "prepare_bubble_seconds",
+        "selection_fallback_seconds",
+        "recent_damage_seconds",
+        "skate_speed",
+        "follow_speed",
+        "follow_distance",
+        "follow_depth_offset",
+        "contact_x",
+        "contact_depth",
+        "attack_seconds",
+        "attack_impact_seconds",
+        "kick_impact_seconds",
+        "daze_seconds",
+        "fall_seconds",
+        "disappear_seconds",
+        "super_step_seconds",
+        "super_duration",
+        "super_contact_offset",
+        "stride_distance",
+        "offscreen_recall_distance",
+    ):
+        if float(ko_companion.get(field, 0)) <= 0.0:
+            raise ConfigError(f"ko_companion.{field} must be positive")
+    if float(ko_companion["attack_impact_seconds"]) >= float(
+        ko_companion["attack_seconds"]
+    ):
+        raise ConfigError(
+            "ko_companion.attack_impact_seconds must precede attack_seconds"
+        )
+    if float(ko_companion["kick_impact_seconds"]) >= float(
+        ko_companion["attack_seconds"]
+    ):
+        raise ConfigError(
+            "ko_companion.kick_impact_seconds must precede attack_seconds"
+        )
+    if float(ko_companion["prepare_bubble_seconds"]) > float(
+        ko_companion["warmup_seconds"]
+    ):
+        raise ConfigError(
+            "ko_companion.prepare_bubble_seconds must not exceed warmup_seconds"
+        )
+    if float(ko_companion["daze_seconds"]) < 2.0:
+        raise ConfigError("ko_companion.daze_seconds must last at least two seconds")
 
     dave = data["players"].get("black_dave", {})
     if not isinstance(dave.get("super_full_map"), bool):

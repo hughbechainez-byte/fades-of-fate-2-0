@@ -1,0 +1,3275 @@
+{
+  "actor": "ko",
+  "generated_utc": "2026-08-04T18:39:41.001307Z",
+  "generator": {
+    "path": "C:\\Users\\blowb\\Desktop\\the-fades-of-fate-ko-skater\\tools\\Build-KO-Animation.py",
+    "sha256": "59d29085e06bb489fb4987d47175fe4dbb7ff02475c93db8cb2fbbb6cd20e3e7"
+  },
+  "output": {
+    "atlas_path": "C:\\Users\\blowb\\Desktop\\the-fades-of-fate-ko-skater\\assets\\sprites\\ko_animation_atlas.png",
+    "atlas_sha256": "e863f2f9860c188136c2ea21c30f5bb58b4c3b5784c47496a27e2813e06ac61a",
+    "atlas_size_bytes": 810428,
+    "atlas_size_px": [
+      3648,
+      896
+    ],
+    "cell_size_px": [
+      304,
+      128
+    ],
+    "columns": 12,
+    "rows": 7
+  },
+  "schema_version": 1,
+  "source_contract": {
+    "layout": "left-to-right connected complete bodies",
+    "matte_rgb": [
+      255,
+      0,
+      255
+    ],
+    "mirroring": "renderer-owned; sources face right",
+    "pose_counts": {
+      "idle": 8,
+      "kick": 8,
+      "prepare": 8,
+      "punch_1": 8,
+      "punch_2": 8,
+      "skate": 12,
+      "super": 12
+    },
+    "resampling": "nearest-neighbor only",
+    "root": "C:\\Users\\blowb\\Desktop\\the-fades-of-fate-ko-skater\\art_source\\ko",
+    "state_order": [
+      "idle",
+      "skate",
+      "prepare",
+      "punch_1",
+      "punch_2",
+      "kick",
+      "super"
+    ],
+    "super_composition": {
+      "base_file": "ko_super_source.png",
+      "base_pose_count": 11,
+      "hook_file": "ko_super_hook_source.png",
+      "hook_insert_after_base_pose": 6,
+      "hook_pose_count": 1
+    }
+  },
+  "states": {
+    "idle": {
+      "frame_source_map": [
+        {
+          "runtime_pose": 1,
+          "source_file": "ko_idle_source.png",
+          "source_pose": 1
+        },
+        {
+          "runtime_pose": 2,
+          "source_file": "ko_idle_source.png",
+          "source_pose": 2
+        },
+        {
+          "runtime_pose": 3,
+          "source_file": "ko_idle_source.png",
+          "source_pose": 3
+        },
+        {
+          "runtime_pose": 4,
+          "source_file": "ko_idle_source.png",
+          "source_pose": 4
+        },
+        {
+          "runtime_pose": 5,
+          "source_file": "ko_idle_source.png",
+          "source_pose": 5
+        },
+        {
+          "runtime_pose": 6,
+          "source_file": "ko_idle_source.png",
+          "source_pose": 6
+        },
+        {
+          "runtime_pose": 7,
+          "source_file": "ko_idle_source.png",
+          "source_pose": 7
+        },
+        {
+          "runtime_pose": 8,
+          "source_file": "ko_idle_source.png",
+          "source_pose": 8
+        }
+      ],
+      "keying": {
+        "hard_alpha_coercions": 0,
+        "keyed_pixels": 1181797,
+        "source_semitransparent_pixels": 0,
+        "visible_chroma_spill_pixels": 0
+      },
+      "pose_count": 8,
+      "render": {
+        "common_nearest_scale": 0.28733032,
+        "frames": [
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 1,
+            "runtime_bounds_px": [
+              128,
+              2,
+              177,
+              128
+            ],
+            "runtime_root_x": 152.0045,
+            "runtime_signature_sha256": "64f0f467bbef64a89dbb90bcf0b0ec2b6e23ce28c996880889f266a57ba16015",
+            "runtime_visible_height_px": 126,
+            "source_bounds_px": [
+              65,
+              171,
+              236,
+              612
+            ],
+            "source_cell_bounds_px": [
+              65,
+              171,
+              236,
+              612
+            ],
+            "source_component_count": 1,
+            "source_file": "ko_idle_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 49650,
+            "source_pose": 1,
+            "source_root_x": 83.7709,
+            "source_signature_sha256": "ac94cc5ab0e5bd6430ddf2ccff351c05dd909592b0cfe6f684ebda836600747e"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 2,
+            "runtime_bounds_px": [
+              129,
+              1,
+              182,
+              128
+            ],
+            "runtime_root_x": 151.9028,
+            "runtime_signature_sha256": "b7daf81ff23ea73d469dd33e46d8a497c534ec5d00319451e33553d0ed597ad5",
+            "runtime_visible_height_px": 127,
+            "source_bounds_px": [
+              344,
+              170,
+              529,
+              612
+            ],
+            "source_cell_bounds_px": [
+              344,
+              170,
+              529,
+              612
+            ],
+            "source_component_count": 2,
+            "source_file": "ko_idle_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 48172,
+            "source_pose": 2,
+            "source_root_x": 79.9438,
+            "source_signature_sha256": "d2736287150929af0c34991c2dfcff71433f1880a1355c234c771c60da6ef9dd"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 3,
+            "runtime_bounds_px": [
+              129,
+              1,
+              181,
+              128
+            ],
+            "runtime_root_x": 151.616,
+            "runtime_signature_sha256": "a9b9c6ca959e9b82bac607bb87fa5dab255e7f94c51becc1c952d4b5010729d3",
+            "runtime_visible_height_px": 127,
+            "source_bounds_px": [
+              623,
+              170,
+              804,
+              612
+            ],
+            "source_cell_bounds_px": [
+              623,
+              170,
+              804,
+              612
+            ],
+            "source_component_count": 1,
+            "source_file": "ko_idle_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 48543,
+            "source_pose": 3,
+            "source_root_x": 78.721,
+            "source_signature_sha256": "3dd4347aed54751f1a7443118f8c6873f423eca074eb8c368f1f0755190209bc"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 4,
+            "runtime_bounds_px": [
+              129,
+              2,
+              187,
+              128
+            ],
+            "runtime_root_x": 151.7409,
+            "runtime_signature_sha256": "fcfb7910bc8528875ba8cd5c3e67d5e78ecb4e3d1698514ac3ec870e9df9a5db",
+            "runtime_visible_height_px": 126,
+            "source_bounds_px": [
+              887,
+              171,
+              1090,
+              612
+            ],
+            "source_cell_bounds_px": [
+              887,
+              171,
+              1090,
+              612
+            ],
+            "source_component_count": 2,
+            "source_file": "ko_idle_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 49646,
+            "source_pose": 4,
+            "source_root_x": 79.5931,
+            "source_signature_sha256": "1ff8daba9ae82c110bf93faa3044b9262bcce0edb7b4494dfc73eeaba0a37022"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 5,
+            "runtime_bounds_px": [
+              130,
+              2,
+              180,
+              128
+            ],
+            "runtime_root_x": 151.8879,
+            "runtime_signature_sha256": "0c04267c9040c184cafcd0375d808b70459ead2885f531bd349ad02577e757f3",
+            "runtime_visible_height_px": 126,
+            "source_bounds_px": [
+              1177,
+              172,
+              1353,
+              612
+            ],
+            "source_cell_bounds_px": [
+              1177,
+              172,
+              1353,
+              612
+            ],
+            "source_component_count": 2,
+            "source_file": "ko_idle_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 47751,
+            "source_pose": 5,
+            "source_root_x": 77.0453,
+            "source_signature_sha256": "a81127839db7fe76d561d031a52a545214052a2dff86e645f2b12a823dc96ce5"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 6,
+            "runtime_bounds_px": [
+              126,
+              1,
+              177,
+              128
+            ],
+            "runtime_root_x": 151.8854,
+            "runtime_signature_sha256": "9adc801655c502d1af633b5e13fafea712df31ff5062dd6e05a8f6c2b2587b3c",
+            "runtime_visible_height_px": 127,
+            "source_bounds_px": [
+              1428,
+              170,
+              1608,
+              612
+            ],
+            "source_cell_bounds_px": [
+              1428,
+              170,
+              1608,
+              612
+            ],
+            "source_component_count": 1,
+            "source_file": "ko_idle_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 50317,
+            "source_pose": 6,
+            "source_root_x": 91.3602,
+            "source_signature_sha256": "26fda3e7e9b54055a7207c7e653e5ac1f4351484479950bd1bc6a267c90cf228"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 7,
+            "runtime_bounds_px": [
+              126,
+              6,
+              180,
+              128
+            ],
+            "runtime_root_x": 152.3186,
+            "runtime_signature_sha256": "7675548f29219427bffda10b30e35d816d964a8c982626e20308b32fce3d69e9",
+            "runtime_visible_height_px": 122,
+            "source_bounds_px": [
+              1688,
+              187,
+              1878,
+              612
+            ],
+            "source_cell_bounds_px": [
+              1688,
+              187,
+              1878,
+              612
+            ],
+            "source_component_count": 1,
+            "source_file": "ko_idle_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 49039,
+            "source_pose": 7,
+            "source_root_x": 92.6024,
+            "source_signature_sha256": "1da0f8a60813a9ce2367c70299722e6e068328cf1946b239440f00fc60a84ddb"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 8,
+            "runtime_bounds_px": [
+              122,
+              12,
+              184,
+              128
+            ],
+            "runtime_root_x": 152.1728,
+            "runtime_signature_sha256": "9d8e78f7e967945b82cf2a403292e368727f89b9b054fce92e4418a92c44e0ad",
+            "runtime_visible_height_px": 116,
+            "source_bounds_px": [
+              1912,
+              205,
+              2131,
+              612
+            ],
+            "source_cell_bounds_px": [
+              1912,
+              205,
+              2131,
+              612
+            ],
+            "source_component_count": 1,
+            "source_file": "ko_idle_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 47613,
+            "source_pose": 8,
+            "source_root_x": 106.5781,
+            "source_signature_sha256": "107e93c51b02239ffef466a2f27ecad0435263964036597a29bad731bab5df04"
+          }
+        ],
+        "ground_line_px": 127,
+        "maximum_visible_height_px": 127,
+        "root_x_px": 152,
+        "scale_limit": "height_target",
+        "target_height_achieved": true,
+        "target_visible_height_px": 127
+      },
+      "row": 0,
+      "segmentation": {
+        "body_area_floor_px": 7548,
+        "body_height_floor_px": 109,
+        "method": "left_to_right_connected_complete_bodies",
+        "pose_order": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "retained_detail_components": 3,
+        "source_component_count": 11
+      },
+      "source_matte_rgb": [
+        255,
+        0,
+        255
+      ],
+      "source_mode": "RGBA",
+      "source_path": "C:\\Users\\blowb\\Desktop\\the-fades-of-fate-ko-skater\\art_source\\ko\\ko_idle_source.png",
+      "source_sha256": "51ebdb8b8e25bfa8194469d5b5883da94bb5006a778d18cb1c0b437d0271b980",
+      "source_size_px": [
+        2172,
+        724
+      ],
+      "sources": [
+        {
+          "filename": "ko_idle_source.png",
+          "keying": {
+            "hard_alpha_coercions": 0,
+            "keyed_pixels": 1181797,
+            "source_semitransparent_pixels": 0,
+            "visible_chroma_spill_pixels": 0
+          },
+          "mode": "RGBA",
+          "path": "C:\\Users\\blowb\\Desktop\\the-fades-of-fate-ko-skater\\art_source\\ko\\ko_idle_source.png",
+          "pose_count": 8,
+          "role": "primary",
+          "segmentation": {
+            "body_area_floor_px": 7548,
+            "body_height_floor_px": 109,
+            "method": "left_to_right_connected_complete_bodies",
+            "pose_order": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+            ],
+            "retained_detail_components": 3,
+            "source_component_count": 11
+          },
+          "sha256": "51ebdb8b8e25bfa8194469d5b5883da94bb5006a778d18cb1c0b437d0271b980",
+          "size_px": [
+            2172,
+            724
+          ]
+        }
+      ]
+    },
+    "kick": {
+      "frame_source_map": [
+        {
+          "runtime_pose": 1,
+          "source_file": "ko_kick_source.png",
+          "source_pose": 1
+        },
+        {
+          "runtime_pose": 2,
+          "source_file": "ko_kick_source.png",
+          "source_pose": 2
+        },
+        {
+          "runtime_pose": 3,
+          "source_file": "ko_kick_source.png",
+          "source_pose": 3
+        },
+        {
+          "runtime_pose": 4,
+          "source_file": "ko_kick_source.png",
+          "source_pose": 4
+        },
+        {
+          "runtime_pose": 5,
+          "source_file": "ko_kick_source.png",
+          "source_pose": 5
+        },
+        {
+          "runtime_pose": 6,
+          "source_file": "ko_kick_source.png",
+          "source_pose": 6
+        },
+        {
+          "runtime_pose": 7,
+          "source_file": "ko_kick_source.png",
+          "source_pose": 7
+        },
+        {
+          "runtime_pose": 8,
+          "source_file": "ko_kick_source.png",
+          "source_pose": 8
+        }
+      ],
+      "keying": {
+        "hard_alpha_coercions": 0,
+        "keyed_pixels": 1280802,
+        "source_semitransparent_pixels": 0,
+        "visible_chroma_spill_pixels": 0
+      },
+      "pose_count": 8,
+      "render": {
+        "common_nearest_scale": 0.34699454,
+        "frames": [
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 1,
+            "runtime_bounds_px": [
+              124,
+              3,
+              185,
+              128
+            ],
+            "runtime_root_x": 151.987,
+            "runtime_signature_sha256": "1be29b91c2d658dac07484e2b4ae29fc44e8d2e555ecccc9cfa7b3377b567500",
+            "runtime_visible_height_px": 125,
+            "source_bounds_px": [
+              48,
+              198,
+              224,
+              561
+            ],
+            "source_cell_bounds_px": [
+              48,
+              198,
+              224,
+              561
+            ],
+            "source_component_count": 1,
+            "source_file": "ko_kick_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 38329,
+            "source_pose": 1,
+            "source_root_x": 80.7495,
+            "source_signature_sha256": "7835eb97114126c38566931abffd30674fe4b5df22330511b9dd486a614f5d14"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 2,
+            "runtime_bounds_px": [
+              121,
+              2,
+              193,
+              128
+            ],
+            "runtime_root_x": 151.5351,
+            "runtime_signature_sha256": "5f4068bb5bf0ccc1dd403edc9df80670fc3dceb1aee18f9bf9352133ebfcdb1f",
+            "runtime_visible_height_px": 126,
+            "source_bounds_px": [
+              285,
+              198,
+              493,
+              563
+            ],
+            "source_cell_bounds_px": [
+              285,
+              198,
+              493,
+              563
+            ],
+            "source_component_count": 2,
+            "source_file": "ko_kick_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 40409,
+            "source_pose": 2,
+            "source_root_x": 88.2124,
+            "source_signature_sha256": "0c05ea693be63f18580a55af8a253c4be91823f87055dbe483ab0a22875a7f70"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 3,
+            "runtime_bounds_px": [
+              134,
+              1,
+              196,
+              128
+            ],
+            "runtime_root_x": 152.0652,
+            "runtime_signature_sha256": "aa0b4dbebaccd60f8211dd84dde6eaec9866b1872abc451b617b9ee5d96117d7",
+            "runtime_visible_height_px": 127,
+            "source_bounds_px": [
+              569,
+              197,
+              750,
+              563
+            ],
+            "source_cell_bounds_px": [
+              569,
+              197,
+              750,
+              563
+            ],
+            "source_component_count": 1,
+            "source_file": "ko_kick_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 37328,
+            "source_pose": 3,
+            "source_root_x": 52.7387,
+            "source_signature_sha256": "17d60477cb022c7403fe14c4f1da78fb53204e8a2708db916ef60e437777d9b2"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 4,
+            "runtime_bounds_px": [
+              115,
+              5,
+              188,
+              128
+            ],
+            "runtime_root_x": 151.6642,
+            "runtime_signature_sha256": "3fe4064e3ebf552557e0666e5b910ed5420c4466f95f632cabcfc9406dbbee7b",
+            "runtime_visible_height_px": 123,
+            "source_bounds_px": [
+              800,
+              205,
+              1012,
+              562
+            ],
+            "source_cell_bounds_px": [
+              800,
+              205,
+              1012,
+              562
+            ],
+            "source_component_count": 1,
+            "source_file": "ko_kick_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 34577,
+            "source_pose": 4,
+            "source_root_x": 106.4769,
+            "source_signature_sha256": "75ebf71cfbf692e300f0b2c5f5cb28244b50eb7500b0bbf56d07bf80eb65039f"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 5,
+            "runtime_bounds_px": [
+              120,
+              16,
+              228,
+              128
+            ],
+            "runtime_root_x": 152.2778,
+            "runtime_signature_sha256": "7629846f30f46d32d78bc7b3db782b6d46c7d8127bf877dee5417080b6602637",
+            "runtime_visible_height_px": 112,
+            "source_bounds_px": [
+              1050,
+              238,
+              1363,
+              561
+            ],
+            "source_cell_bounds_px": [
+              1050,
+              238,
+              1363,
+              561
+            ],
+            "source_component_count": 1,
+            "source_file": "ko_kick_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 35727,
+            "source_pose": 5,
+            "source_root_x": 93.5458,
+            "source_signature_sha256": "484aa2c2b31fc344cf8188273ff71011c8cdc6d72733218b8d3fb5c2fc40185d"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 6,
+            "runtime_bounds_px": [
+              133,
+              15,
+              223,
+              128
+            ],
+            "runtime_root_x": 152.1348,
+            "runtime_signature_sha256": "2e328698d1ff28b126b59cd161ee8052dab19a635525c9961f0d6f393ed8a080",
+            "runtime_visible_height_px": 113,
+            "source_bounds_px": [
+              1387,
+              234,
+              1648,
+              562
+            ],
+            "source_cell_bounds_px": [
+              1387,
+              234,
+              1648,
+              562
+            ],
+            "source_component_count": 2,
+            "source_file": "ko_kick_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 31354,
+            "source_pose": 6,
+            "source_root_x": 55.4911,
+            "source_signature_sha256": "0bc0145fc317c718c6bedf2e03f0d806d359a2195d09e6ed2689fdb791581628"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 7,
+            "runtime_bounds_px": [
+              137,
+              2,
+              205,
+              128
+            ],
+            "runtime_root_x": 151.7015,
+            "runtime_signature_sha256": "23c4d347d293b21db0ab097bdc1c7bfb40d7c89cf0ab9d494d8fd2850dec886a",
+            "runtime_visible_height_px": 126,
+            "source_bounds_px": [
+              1682,
+              198,
+              1880,
+              563
+            ],
+            "source_cell_bounds_px": [
+              1682,
+              198,
+              1880,
+              563
+            ],
+            "source_component_count": 1,
+            "source_file": "ko_kick_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 35821,
+            "source_pose": 7,
+            "source_root_x": 42.8072,
+            "source_signature_sha256": "4e48e6762dd171d1389ddd7e5120f80f195497b56bcf638604a59786506038d9"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 8,
+            "runtime_bounds_px": [
+              124,
+              3,
+              185,
+              128
+            ],
+            "runtime_root_x": 151.9189,
+            "runtime_signature_sha256": "ab9135baf0a3db1359b2222812cbaa47ce6efcb67b9e622a742186ebea300a11",
+            "runtime_visible_height_px": 125,
+            "source_bounds_px": [
+              1925,
+              198,
+              2103,
+              561
+            ],
+            "source_cell_bounds_px": [
+              1925,
+              198,
+              2103,
+              561
+            ],
+            "source_component_count": 1,
+            "source_file": "ko_kick_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 38181,
+            "source_pose": 8,
+            "source_root_x": 81.4683,
+            "source_signature_sha256": "0acaf9db84fda8ac22e1ea9c07c4ab0729c26ec17e4b47c80ebd25d23597c147"
+          }
+        ],
+        "ground_line_px": 127,
+        "maximum_visible_height_px": 127,
+        "root_x_px": 152,
+        "scale_limit": "height_target",
+        "target_height_achieved": true,
+        "target_visible_height_px": 127
+      },
+      "row": 5,
+      "segmentation": {
+        "body_area_floor_px": 6062,
+        "body_height_floor_px": 109,
+        "method": "left_to_right_connected_complete_bodies",
+        "pose_order": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "retained_detail_components": 2,
+        "source_component_count": 10
+      },
+      "source_matte_rgb": [
+        255,
+        0,
+        255
+      ],
+      "source_mode": "RGBA",
+      "source_path": "C:\\Users\\blowb\\Desktop\\the-fades-of-fate-ko-skater\\art_source\\ko\\ko_kick_source.png",
+      "source_sha256": "25d9ed6ca008bcf0f71d9c252c5fcd29ff30eef2f3022807c0b6ec3cb0141b14",
+      "source_size_px": [
+        2172,
+        724
+      ],
+      "sources": [
+        {
+          "filename": "ko_kick_source.png",
+          "keying": {
+            "hard_alpha_coercions": 0,
+            "keyed_pixels": 1280802,
+            "source_semitransparent_pixels": 0,
+            "visible_chroma_spill_pixels": 0
+          },
+          "mode": "RGBA",
+          "path": "C:\\Users\\blowb\\Desktop\\the-fades-of-fate-ko-skater\\art_source\\ko\\ko_kick_source.png",
+          "pose_count": 8,
+          "role": "primary",
+          "segmentation": {
+            "body_area_floor_px": 6062,
+            "body_height_floor_px": 109,
+            "method": "left_to_right_connected_complete_bodies",
+            "pose_order": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+            ],
+            "retained_detail_components": 2,
+            "source_component_count": 10
+          },
+          "sha256": "25d9ed6ca008bcf0f71d9c252c5fcd29ff30eef2f3022807c0b6ec3cb0141b14",
+          "size_px": [
+            2172,
+            724
+          ]
+        }
+      ]
+    },
+    "prepare": {
+      "frame_source_map": [
+        {
+          "runtime_pose": 1,
+          "source_file": "ko_prepare_source.png",
+          "source_pose": 1
+        },
+        {
+          "runtime_pose": 2,
+          "source_file": "ko_prepare_source.png",
+          "source_pose": 2
+        },
+        {
+          "runtime_pose": 3,
+          "source_file": "ko_prepare_source.png",
+          "source_pose": 3
+        },
+        {
+          "runtime_pose": 4,
+          "source_file": "ko_prepare_source.png",
+          "source_pose": 4
+        },
+        {
+          "runtime_pose": 5,
+          "source_file": "ko_prepare_source.png",
+          "source_pose": 5
+        },
+        {
+          "runtime_pose": 6,
+          "source_file": "ko_prepare_source.png",
+          "source_pose": 6
+        },
+        {
+          "runtime_pose": 7,
+          "source_file": "ko_prepare_source.png",
+          "source_pose": 7
+        },
+        {
+          "runtime_pose": 8,
+          "source_file": "ko_prepare_source.png",
+          "source_pose": 8
+        }
+      ],
+      "keying": {
+        "hard_alpha_coercions": 0,
+        "keyed_pixels": 1244010,
+        "source_semitransparent_pixels": 0,
+        "visible_chroma_spill_pixels": 0
+      },
+      "pose_count": 8,
+      "render": {
+        "common_nearest_scale": 0.29742389,
+        "frames": [
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 1,
+            "runtime_bounds_px": [
+              129,
+              1,
+              176,
+              128
+            ],
+            "runtime_root_x": 152.1843,
+            "runtime_signature_sha256": "fe17d3f95128a3dc1524f28eefb2f0600f40dc1e249e33faa0f0f381eb1804a4",
+            "runtime_visible_height_px": 127,
+            "source_bounds_px": [
+              65,
+              165,
+              226,
+              592
+            ],
+            "source_cell_bounds_px": [
+              65,
+              165,
+              226,
+              592
+            ],
+            "source_component_count": 1,
+            "source_file": "ko_prepare_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 46156,
+            "source_pose": 1,
+            "source_root_x": 79.4186,
+            "source_signature_sha256": "d34232f8d661dffa83559f13397e9673e92560e586cc3619a7a86b7e2602d2ce"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 2,
+            "runtime_bounds_px": [
+              129,
+              1,
+              176,
+              128
+            ],
+            "runtime_root_x": 152.3723,
+            "runtime_signature_sha256": "e409b69fbed1e1d3c2084414f50201c0ab82d28b5dd9189daa351e75023e00ef",
+            "runtime_visible_height_px": 127,
+            "source_bounds_px": [
+              325,
+              165,
+              485,
+              592
+            ],
+            "source_cell_bounds_px": [
+              325,
+              165,
+              485,
+              592
+            ],
+            "source_component_count": 1,
+            "source_file": "ko_prepare_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 45958,
+            "source_pose": 2,
+            "source_root_x": 79.5653,
+            "source_signature_sha256": "f92ce444db591ca746b39dbe83d69eda0ec7778c672cc4c986c798404c50126d"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 3,
+            "runtime_bounds_px": [
+              130,
+              4,
+              175,
+              128
+            ],
+            "runtime_root_x": 151.6767,
+            "runtime_signature_sha256": "22525ca8aa22fa86d3714116d69cac0702ae392b64a718fc40599c7abc75f8b9",
+            "runtime_visible_height_px": 124,
+            "source_bounds_px": [
+              599,
+              174,
+              753,
+              592
+            ],
+            "source_cell_bounds_px": [
+              599,
+              174,
+              753,
+              592
+            ],
+            "source_component_count": 1,
+            "source_file": "ko_prepare_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 44326,
+            "source_pose": 3,
+            "source_root_x": 74.1825,
+            "source_signature_sha256": "f87e90616677c27dd9dd709c9bff9b03e2d369f53d1ec2264713445bb16db7d2"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 4,
+            "runtime_bounds_px": [
+              122,
+              28,
+              185,
+              128
+            ],
+            "runtime_root_x": 151.7609,
+            "runtime_signature_sha256": "8c68b3758866d9d6a991c08df53f46bc167d436354f2130b5d83fadb13e01535",
+            "runtime_visible_height_px": 100,
+            "source_bounds_px": [
+              828,
+              252,
+              1040,
+              589
+            ],
+            "source_cell_bounds_px": [
+              828,
+              252,
+              1040,
+              589
+            ],
+            "source_component_count": 1,
+            "source_file": "ko_prepare_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 41023,
+            "source_pose": 4,
+            "source_root_x": 100.1478,
+            "source_signature_sha256": "01e392fc8880ef6ce99ea6843d98639bfc499f409c1598a6e7c7c39ccdecaae7"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 5,
+            "runtime_bounds_px": [
+              114,
+              27,
+              189,
+              128
+            ],
+            "runtime_root_x": 151.8084,
+            "runtime_signature_sha256": "7e35ee5f75a850162b22b940d1ceb32271b268f06b0633c48c57c78a0c11c0b3",
+            "runtime_visible_height_px": 101,
+            "source_bounds_px": [
+              1092,
+              248,
+              1345,
+              589
+            ],
+            "source_cell_bounds_px": [
+              1092,
+              248,
+              1345,
+              589
+            ],
+            "source_component_count": 1,
+            "source_file": "ko_prepare_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 44753,
+            "source_pose": 5,
+            "source_root_x": 127.5403,
+            "source_signature_sha256": "0f21a4e569f8bebe7024e3a6c245c22c6a32ef68b942af08fbcf1e0496ea0f93"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 6,
+            "runtime_bounds_px": [
+              117,
+              31,
+              189,
+              128
+            ],
+            "runtime_root_x": 152.0552,
+            "runtime_signature_sha256": "055893b975499761a4795bd8570a929c49c0adbb0d9928445f301630044333f7",
+            "runtime_visible_height_px": 97,
+            "source_bounds_px": [
+              1386,
+              260,
+              1631,
+              589
+            ],
+            "source_cell_bounds_px": [
+              1386,
+              260,
+              1631,
+              589
+            ],
+            "source_component_count": 1,
+            "source_file": "ko_prepare_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 41852,
+            "source_pose": 6,
+            "source_root_x": 119.2849,
+            "source_signature_sha256": "90937c0bd287d353315bf94e60177a391e1cfd3935cdfa0609a3d492865cb04d"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 7,
+            "runtime_bounds_px": [
+              125,
+              51,
+              179,
+              128
+            ],
+            "runtime_root_x": 151.6182,
+            "runtime_signature_sha256": "7c1c75b662de9098638cf315f5ed6b85101b760e69036cee39d45a22c8b86df6",
+            "runtime_visible_height_px": 77,
+            "source_bounds_px": [
+              1680,
+              328,
+              1863,
+              589
+            ],
+            "source_cell_bounds_px": [
+              1680,
+              328,
+              1863,
+              589
+            ],
+            "source_component_count": 1,
+            "source_file": "ko_prepare_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 32984,
+            "source_pose": 7,
+            "source_root_x": 90.2062,
+            "source_signature_sha256": "606f3a94d838fb7a260038756057809aed616767b4b2fcceeaf6a7f5d4af2331"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 8,
+            "runtime_bounds_px": [
+              125,
+              56,
+              180,
+              128
+            ],
+            "runtime_root_x": 152.2393,
+            "runtime_signature_sha256": "927b039aa4e0fc2e096bf352607c496f8d385560d9e356a2c1de4e45fd58a27a",
+            "runtime_visible_height_px": 72,
+            "source_bounds_px": [
+              1926,
+              345,
+              2114,
+              589
+            ],
+            "source_cell_bounds_px": [
+              1926,
+              345,
+              2114,
+              589
+            ],
+            "source_component_count": 1,
+            "source_file": "ko_prepare_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 31466,
+            "source_pose": 8,
+            "source_root_x": 93.109,
+            "source_signature_sha256": "9b2cf0d03a015e6e88e14ece7418c71f2760d0b5e79db64b9c121292fedfeaee"
+          }
+        ],
+        "ground_line_px": 127,
+        "maximum_visible_height_px": 127,
+        "root_x_px": 152,
+        "scale_limit": "height_target",
+        "target_height_achieved": true,
+        "target_visible_height_px": 127
+      },
+      "row": 2,
+      "segmentation": {
+        "body_area_floor_px": 6924,
+        "body_height_floor_px": 109,
+        "method": "left_to_right_connected_complete_bodies",
+        "pose_order": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "retained_detail_components": 0,
+        "source_component_count": 8
+      },
+      "source_matte_rgb": [
+        255,
+        0,
+        255
+      ],
+      "source_mode": "RGBA",
+      "source_path": "C:\\Users\\blowb\\Desktop\\the-fades-of-fate-ko-skater\\art_source\\ko\\ko_prepare_source.png",
+      "source_sha256": "1a0c4122bd6b819de420f642755bd53a66d6832bc4f03e636447bb39e59326f1",
+      "source_size_px": [
+        2172,
+        724
+      ],
+      "sources": [
+        {
+          "filename": "ko_prepare_source.png",
+          "keying": {
+            "hard_alpha_coercions": 0,
+            "keyed_pixels": 1244010,
+            "source_semitransparent_pixels": 0,
+            "visible_chroma_spill_pixels": 0
+          },
+          "mode": "RGBA",
+          "path": "C:\\Users\\blowb\\Desktop\\the-fades-of-fate-ko-skater\\art_source\\ko\\ko_prepare_source.png",
+          "pose_count": 8,
+          "role": "primary",
+          "segmentation": {
+            "body_area_floor_px": 6924,
+            "body_height_floor_px": 109,
+            "method": "left_to_right_connected_complete_bodies",
+            "pose_order": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+            ],
+            "retained_detail_components": 0,
+            "source_component_count": 8
+          },
+          "sha256": "1a0c4122bd6b819de420f642755bd53a66d6832bc4f03e636447bb39e59326f1",
+          "size_px": [
+            2172,
+            724
+          ]
+        }
+      ]
+    },
+    "punch_1": {
+      "frame_source_map": [
+        {
+          "runtime_pose": 1,
+          "source_file": "ko_punch_1_source.png",
+          "source_pose": 1
+        },
+        {
+          "runtime_pose": 2,
+          "source_file": "ko_punch_1_source.png",
+          "source_pose": 2
+        },
+        {
+          "runtime_pose": 3,
+          "source_file": "ko_punch_1_source.png",
+          "source_pose": 3
+        },
+        {
+          "runtime_pose": 4,
+          "source_file": "ko_punch_1_source.png",
+          "source_pose": 4
+        },
+        {
+          "runtime_pose": 5,
+          "source_file": "ko_punch_1_source.png",
+          "source_pose": 5
+        },
+        {
+          "runtime_pose": 6,
+          "source_file": "ko_punch_1_source.png",
+          "source_pose": 6
+        },
+        {
+          "runtime_pose": 7,
+          "source_file": "ko_punch_1_source.png",
+          "source_pose": 7
+        },
+        {
+          "runtime_pose": 8,
+          "source_file": "ko_punch_1_source.png",
+          "source_pose": 8
+        }
+      ],
+      "keying": {
+        "hard_alpha_coercions": 0,
+        "keyed_pixels": 1246893,
+        "source_semitransparent_pixels": 0,
+        "visible_chroma_spill_pixels": 0
+      },
+      "pose_count": 8,
+      "render": {
+        "common_nearest_scale": 0.3557423,
+        "frames": [
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 1,
+            "runtime_bounds_px": [
+              124,
+              2,
+              186,
+              128
+            ],
+            "runtime_root_x": 152.3857,
+            "runtime_signature_sha256": "69cc08923f04b37d16ad61c1a035f58624d2616479ad82a2731c83075a42897a",
+            "runtime_visible_height_px": 126,
+            "source_bounds_px": [
+              49,
+              209,
+              225,
+              564
+            ],
+            "source_cell_bounds_px": [
+              49,
+              209,
+              225,
+              564
+            ],
+            "source_component_count": 1,
+            "source_file": "ko_punch_1_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 38296,
+            "source_pose": 1,
+            "source_root_x": 80.5789,
+            "source_signature_sha256": "7d0e016bb6819071e069e0094b8691f4baec6f5d9a7fbfe33eee240eb4f43fdf"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 2,
+            "runtime_bounds_px": [
+              116,
+              1,
+              191,
+              128
+            ],
+            "runtime_root_x": 151.502,
+            "runtime_signature_sha256": "3566ca13be1628e647287fd90d0a65464c2ec434b5241d4551b0d2d789d2a796",
+            "runtime_visible_height_px": 127,
+            "source_bounds_px": [
+              291,
+              207,
+              504,
+              564
+            ],
+            "source_cell_bounds_px": [
+              291,
+              207,
+              504,
+              564
+            ],
+            "source_component_count": 1,
+            "source_file": "ko_punch_1_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 43683,
+            "source_pose": 2,
+            "source_root_x": 100.8256,
+            "source_signature_sha256": "2a78917b4b0205893c75e5f59baa72880fb60284503b77dc197f6bb84cf64e0b"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 3,
+            "runtime_bounds_px": [
+              114,
+              3,
+              228,
+              128
+            ],
+            "runtime_root_x": 151.563,
+            "runtime_signature_sha256": "3447330492254a1d6b0acd6fe0127a9c4d16391d45e102cc616d993faf7d1e32",
+            "runtime_visible_height_px": 125,
+            "source_bounds_px": [
+              552,
+              210,
+              874,
+              564
+            ],
+            "source_cell_bounds_px": [
+              552,
+              210,
+              874,
+              564
+            ],
+            "source_component_count": 1,
+            "source_file": "ko_punch_1_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 42720,
+            "source_pose": 3,
+            "source_root_x": 106.0989,
+            "source_signature_sha256": "cd3aa23a678ad13166394b08d88e9c4077d960c20ec1b08e0159e1d177812e73"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 4,
+            "runtime_bounds_px": [
+              110,
+              2,
+              215,
+              128
+            ],
+            "runtime_root_x": 151.6099,
+            "runtime_signature_sha256": "e3541f715720540c48693b29ba628f3933d25813b0467a0b922c6c6d99101c60",
+            "runtime_visible_height_px": 126,
+            "source_bounds_px": [
+              844,
+              208,
+              1140,
+              564
+            ],
+            "source_cell_bounds_px": [
+              844,
+              208,
+              1140,
+              564
+            ],
+            "source_component_count": 1,
+            "source_file": "ko_punch_1_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 42528,
+            "source_pose": 4,
+            "source_root_x": 117.3002,
+            "source_signature_sha256": "3216d17ce8b4850b476557914c6bc17d457e2c9ddd5bded24b8a664b4e11e1f0"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 5,
+            "runtime_bounds_px": [
+              114,
+              3,
+              189,
+              128
+            ],
+            "runtime_root_x": 151.8441,
+            "runtime_signature_sha256": "84bc367c195f69193740d07ace27ef954801c49cd90e13e86df366baeafd887a",
+            "runtime_visible_height_px": 125,
+            "source_bounds_px": [
+              1141,
+              211,
+              1353,
+              564
+            ],
+            "source_cell_bounds_px": [
+              1141,
+              211,
+              1353,
+              564
+            ],
+            "source_component_count": 1,
+            "source_file": "ko_punch_1_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 41910,
+            "source_pose": 5,
+            "source_root_x": 106.9725,
+            "source_signature_sha256": "bf4b7f5ea163152441887ef67255bfdbc6942aa3fce2302f3ca0bf99067de8b8"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 6,
+            "runtime_bounds_px": [
+              113,
+              4,
+              225,
+              128
+            ],
+            "runtime_root_x": 152.2367,
+            "runtime_signature_sha256": "767b5c041dc4e7eec6fed56a46d904a324139632b68b89dfd324382a5d1019cd",
+            "runtime_visible_height_px": 124,
+            "source_bounds_px": [
+              1366,
+              214,
+              1682,
+              564
+            ],
+            "source_cell_bounds_px": [
+              1366,
+              214,
+              1682,
+              564
+            ],
+            "source_component_count": 1,
+            "source_file": "ko_punch_1_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 41892,
+            "source_pose": 6,
+            "source_root_x": 110.7035,
+            "source_signature_sha256": "e23b2c3895f41e5016ce384440e8c2f3e0c2712146ae74e2a1abecc1534bf681"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 7,
+            "runtime_bounds_px": [
+              113,
+              2,
+              192,
+              128
+            ],
+            "runtime_root_x": 152.2197,
+            "runtime_signature_sha256": "561263f53bb650ef839155609c8d3e48abe2724a5a37b10f51688c27c0b11a6a",
+            "runtime_visible_height_px": 126,
+            "source_bounds_px": [
+              1649,
+              209,
+              1872,
+              564
+            ],
+            "source_cell_bounds_px": [
+              1649,
+              209,
+              1872,
+              564
+            ],
+            "source_component_count": 1,
+            "source_file": "ko_punch_1_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 36569,
+            "source_pose": 7,
+            "source_root_x": 110.7089,
+            "source_signature_sha256": "869a0b1a1a4f5558eed8165a45f2d747e1fef33d628a7481feaa5399b146dd39"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 8,
+            "runtime_bounds_px": [
+              123,
+              1,
+              186,
+              128
+            ],
+            "runtime_root_x": 151.8772,
+            "runtime_signature_sha256": "cb0aba434d76f326ca3f51481b81d0062c4a0b4b6e70fee82b29ceac3267f935",
+            "runtime_visible_height_px": 127,
+            "source_bounds_px": [
+              1928,
+              207,
+              2106,
+              564
+            ],
+            "source_cell_bounds_px": [
+              1928,
+              207,
+              2106,
+              564
+            ],
+            "source_component_count": 1,
+            "source_file": "ko_punch_1_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 38037,
+            "source_pose": 8,
+            "source_root_x": 81.5895,
+            "source_signature_sha256": "61342dabcab667d7519b5dbf881a6f049f8a306214462c895057e9b283bc0947"
+          }
+        ],
+        "ground_line_px": 127,
+        "maximum_visible_height_px": 127,
+        "root_x_px": 152,
+        "scale_limit": "height_target",
+        "target_height_achieved": true,
+        "target_visible_height_px": 127
+      },
+      "row": 3,
+      "segmentation": {
+        "body_area_floor_px": 6553,
+        "body_height_floor_px": 109,
+        "method": "left_to_right_connected_complete_bodies",
+        "pose_order": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "retained_detail_components": 0,
+        "source_component_count": 8
+      },
+      "source_matte_rgb": [
+        255,
+        0,
+        255
+      ],
+      "source_mode": "RGBA",
+      "source_path": "C:\\Users\\blowb\\Desktop\\the-fades-of-fate-ko-skater\\art_source\\ko\\ko_punch_1_source.png",
+      "source_sha256": "ef7820551b98d3cdebc89e669cbc71d86370258ca6e0b9dc87522dbbe330a694",
+      "source_size_px": [
+        2172,
+        724
+      ],
+      "sources": [
+        {
+          "filename": "ko_punch_1_source.png",
+          "keying": {
+            "hard_alpha_coercions": 0,
+            "keyed_pixels": 1246893,
+            "source_semitransparent_pixels": 0,
+            "visible_chroma_spill_pixels": 0
+          },
+          "mode": "RGBA",
+          "path": "C:\\Users\\blowb\\Desktop\\the-fades-of-fate-ko-skater\\art_source\\ko\\ko_punch_1_source.png",
+          "pose_count": 8,
+          "role": "primary",
+          "segmentation": {
+            "body_area_floor_px": 6553,
+            "body_height_floor_px": 109,
+            "method": "left_to_right_connected_complete_bodies",
+            "pose_order": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+            ],
+            "retained_detail_components": 0,
+            "source_component_count": 8
+          },
+          "sha256": "ef7820551b98d3cdebc89e669cbc71d86370258ca6e0b9dc87522dbbe330a694",
+          "size_px": [
+            2172,
+            724
+          ]
+        }
+      ]
+    },
+    "punch_2": {
+      "frame_source_map": [
+        {
+          "runtime_pose": 1,
+          "source_file": "ko_punch_2_source.png",
+          "source_pose": 1
+        },
+        {
+          "runtime_pose": 2,
+          "source_file": "ko_punch_2_source.png",
+          "source_pose": 2
+        },
+        {
+          "runtime_pose": 3,
+          "source_file": "ko_punch_2_source.png",
+          "source_pose": 3
+        },
+        {
+          "runtime_pose": 4,
+          "source_file": "ko_punch_2_source.png",
+          "source_pose": 4
+        },
+        {
+          "runtime_pose": 5,
+          "source_file": "ko_punch_2_source.png",
+          "source_pose": 5
+        },
+        {
+          "runtime_pose": 6,
+          "source_file": "ko_punch_2_source.png",
+          "source_pose": 6
+        },
+        {
+          "runtime_pose": 7,
+          "source_file": "ko_punch_2_source.png",
+          "source_pose": 7
+        },
+        {
+          "runtime_pose": 8,
+          "source_file": "ko_punch_2_source.png",
+          "source_pose": 8
+        }
+      ],
+      "keying": {
+        "hard_alpha_coercions": 0,
+        "keyed_pixels": 1251532,
+        "source_semitransparent_pixels": 0,
+        "visible_chroma_spill_pixels": 0
+      },
+      "pose_count": 8,
+      "render": {
+        "common_nearest_scale": 0.27429806,
+        "frames": [
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 1,
+            "runtime_bounds_px": [
+              125,
+              38,
+              182,
+              128
+            ],
+            "runtime_root_x": 151.8811,
+            "runtime_signature_sha256": "416eb3a3da2de568c544f84a8de3831e5a8d9b3baaf173d22ce412f55ba6a235",
+            "runtime_visible_height_px": 90,
+            "source_bounds_px": [
+              43,
+              249,
+              252,
+              578
+            ],
+            "source_cell_bounds_px": [
+              43,
+              249,
+              252,
+              578
+            ],
+            "source_component_count": 1,
+            "source_file": "ko_punch_2_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 39019,
+            "source_pose": 1,
+            "source_root_x": 98.5641,
+            "source_signature_sha256": "cc453f79358bb0254d83bc986964126fbdfd1601c331eb8f06af2af946d1fff8"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 2,
+            "runtime_bounds_px": [
+              119,
+              46,
+              189,
+              128
+            ],
+            "runtime_root_x": 151.7196,
+            "runtime_signature_sha256": "0ab45240b26f9a170fefebbdcfba3a032efd3ccd2d066f658fbcf39d75e158b4",
+            "runtime_visible_height_px": 82,
+            "source_bounds_px": [
+              301,
+              277,
+              557,
+              577
+            ],
+            "source_cell_bounds_px": [
+              301,
+              277,
+              557,
+              577
+            ],
+            "source_component_count": 1,
+            "source_file": "ko_punch_2_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 41796,
+            "source_pose": 2,
+            "source_root_x": 119.6601,
+            "source_signature_sha256": "58938cab8a5e5a4a94f505d7f13843256b78c53d4238a48e81978b5975e5319a"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 3,
+            "runtime_bounds_px": [
+              118,
+              40,
+              186,
+              128
+            ],
+            "runtime_root_x": 151.6671,
+            "runtime_signature_sha256": "306a60d72bd5fc70a812745f93356288b7f6c494236d5e069f0e5a0c0d8918c8",
+            "runtime_visible_height_px": 88,
+            "source_bounds_px": [
+              597,
+              254,
+              847,
+              578
+            ],
+            "source_cell_bounds_px": [
+              597,
+              254,
+              847,
+              578
+            ],
+            "source_component_count": 2,
+            "source_file": "ko_punch_2_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 40391,
+            "source_pose": 3,
+            "source_root_x": 123.776,
+            "source_signature_sha256": "a2386ba4f63b83c3d68278693162c9b280270a6e822fa7998830c0f894af4fec"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 4,
+            "runtime_bounds_px": [
+              120,
+              38,
+              191,
+              128
+            ],
+            "runtime_root_x": 152.0141,
+            "runtime_signature_sha256": "f52c4d54aca550fe02d79306b7249395df2695ef1d89faa2c6729c988bdf70d3",
+            "runtime_visible_height_px": 90,
+            "source_bounds_px": [
+              856,
+              249,
+              1115,
+              578
+            ],
+            "source_cell_bounds_px": [
+              856,
+              249,
+              1115,
+              578
+            ],
+            "source_component_count": 1,
+            "source_file": "ko_punch_2_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 37392,
+            "source_pose": 4,
+            "source_root_x": 116.7839,
+            "source_signature_sha256": "3a4e4858147636b0e937e85cab01388c3f9db173695cd700d8fd29b521edd485"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 5,
+            "runtime_bounds_px": [
+              120,
+              54,
+              187,
+              128
+            ],
+            "runtime_root_x": 152.355,
+            "runtime_signature_sha256": "785e55ace806bc3be728fd90ea6f908f17c4463143a49ecd83b1029acfa4f69c",
+            "runtime_visible_height_px": 74,
+            "source_bounds_px": [
+              1128,
+              308,
+              1373,
+              578
+            ],
+            "source_cell_bounds_px": [
+              1128,
+              308,
+              1373,
+              578
+            ],
+            "source_component_count": 1,
+            "source_file": "ko_punch_2_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 35401,
+            "source_pose": 5,
+            "source_root_x": 118.3131,
+            "source_signature_sha256": "b1734c1920000af5973888e9dd61aa5c427677e81c8087848f7dcdf0db711214"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 6,
+            "runtime_bounds_px": [
+              132,
+              19,
+              189,
+              128
+            ],
+            "runtime_root_x": 151.6445,
+            "runtime_signature_sha256": "020480cdb15ee13f18c1775ffa51363ce4835faa0be346301def9b6a8a5985a5",
+            "runtime_visible_height_px": 109,
+            "source_bounds_px": [
+              1422,
+              168,
+              1632,
+              566
+            ],
+            "source_cell_bounds_px": [
+              1422,
+              168,
+              1632,
+              566
+            ],
+            "source_component_count": 1,
+            "source_file": "ko_punch_2_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 43437,
+            "source_pose": 6,
+            "source_root_x": 72.3746,
+            "source_signature_sha256": "5f02073cac4f6970b1ced4bfa57a58f57520ded29084c28a62142e60b60f20d7"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 7,
+            "runtime_bounds_px": [
+              124,
+              1,
+              176,
+              128
+            ],
+            "runtime_root_x": 151.9026,
+            "runtime_signature_sha256": "f08cd502560a593dd9b8a2391dfe2d6e2d7dd6f9571421ebcc690ff32b109d12",
+            "runtime_visible_height_px": 127,
+            "source_bounds_px": [
+              1663,
+              114,
+              1856,
+              577
+            ],
+            "source_cell_bounds_px": [
+              1663,
+              114,
+              1856,
+              577
+            ],
+            "source_component_count": 1,
+            "source_file": "ko_punch_2_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 44616,
+            "source_pose": 7,
+            "source_root_x": 103.5616,
+            "source_signature_sha256": "c2cefada7590567ccf7b474ab0a5c96d9973c607f115e5d9aa36995bf840aa80"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 8,
+            "runtime_bounds_px": [
+              129,
+              29,
+              178,
+              128
+            ],
+            "runtime_root_x": 151.5184,
+            "runtime_signature_sha256": "c63c90d2122fd5ce9260dc35e76d4b81743fc0b4265dfa2b3aaad2f6c3cf6ec6",
+            "runtime_visible_height_px": 99,
+            "source_bounds_px": [
+              1919,
+              215,
+              2098,
+              579
+            ],
+            "source_cell_bounds_px": [
+              1919,
+              215,
+              2098,
+              579
+            ],
+            "source_component_count": 1,
+            "source_file": "ko_punch_2_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 38944,
+            "source_pose": 8,
+            "source_root_x": 82.2611,
+            "source_signature_sha256": "d897d97bfacc0a55cf50a116e75b31a0681b5a570e34d8602889157ccf308a03"
+          }
+        ],
+        "ground_line_px": 127,
+        "maximum_visible_height_px": 127,
+        "root_x_px": 152,
+        "scale_limit": "height_target",
+        "target_height_achieved": true,
+        "target_visible_height_px": 127
+      },
+      "row": 4,
+      "segmentation": {
+        "body_area_floor_px": 6693,
+        "body_height_floor_px": 109,
+        "method": "left_to_right_connected_complete_bodies",
+        "pose_order": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "retained_detail_components": 1,
+        "source_component_count": 9
+      },
+      "source_matte_rgb": [
+        255,
+        0,
+        255
+      ],
+      "source_mode": "RGBA",
+      "source_path": "C:\\Users\\blowb\\Desktop\\the-fades-of-fate-ko-skater\\art_source\\ko\\ko_punch_2_source.png",
+      "source_sha256": "feb31b65fa1581b2e1a9cc31e48feee7896ebfde839f763d82ee8b5ae96517c0",
+      "source_size_px": [
+        2172,
+        724
+      ],
+      "sources": [
+        {
+          "filename": "ko_punch_2_source.png",
+          "keying": {
+            "hard_alpha_coercions": 0,
+            "keyed_pixels": 1251532,
+            "source_semitransparent_pixels": 0,
+            "visible_chroma_spill_pixels": 0
+          },
+          "mode": "RGBA",
+          "path": "C:\\Users\\blowb\\Desktop\\the-fades-of-fate-ko-skater\\art_source\\ko\\ko_punch_2_source.png",
+          "pose_count": 8,
+          "role": "primary",
+          "segmentation": {
+            "body_area_floor_px": 6693,
+            "body_height_floor_px": 109,
+            "method": "left_to_right_connected_complete_bodies",
+            "pose_order": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+            ],
+            "retained_detail_components": 1,
+            "source_component_count": 9
+          },
+          "sha256": "feb31b65fa1581b2e1a9cc31e48feee7896ebfde839f763d82ee8b5ae96517c0",
+          "size_px": [
+            2172,
+            724
+          ]
+        }
+      ]
+    },
+    "skate": {
+      "frame_source_map": [
+        {
+          "runtime_pose": 1,
+          "source_file": "ko_skate_source.png",
+          "source_pose": 1
+        },
+        {
+          "runtime_pose": 2,
+          "source_file": "ko_skate_source.png",
+          "source_pose": 2
+        },
+        {
+          "runtime_pose": 3,
+          "source_file": "ko_skate_source.png",
+          "source_pose": 3
+        },
+        {
+          "runtime_pose": 4,
+          "source_file": "ko_skate_source.png",
+          "source_pose": 4
+        },
+        {
+          "runtime_pose": 5,
+          "source_file": "ko_skate_source.png",
+          "source_pose": 5
+        },
+        {
+          "runtime_pose": 6,
+          "source_file": "ko_skate_source.png",
+          "source_pose": 6
+        },
+        {
+          "runtime_pose": 7,
+          "source_file": "ko_skate_source.png",
+          "source_pose": 7
+        },
+        {
+          "runtime_pose": 8,
+          "source_file": "ko_skate_source.png",
+          "source_pose": 8
+        },
+        {
+          "runtime_pose": 9,
+          "source_file": "ko_skate_source.png",
+          "source_pose": 9
+        },
+        {
+          "runtime_pose": 10,
+          "source_file": "ko_skate_source.png",
+          "source_pose": 10
+        },
+        {
+          "runtime_pose": 11,
+          "source_file": "ko_skate_source.png",
+          "source_pose": 11
+        },
+        {
+          "runtime_pose": 12,
+          "source_file": "ko_skate_source.png",
+          "source_pose": 12
+        }
+      ],
+      "keying": {
+        "hard_alpha_coercions": 0,
+        "keyed_pixels": 1318376,
+        "source_semitransparent_pixels": 0,
+        "visible_chroma_spill_pixels": 0
+      },
+      "pose_count": 12,
+      "render": {
+        "common_nearest_scale": 0.41368078,
+        "frames": [
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 1,
+            "runtime_bounds_px": [
+              125,
+              1,
+              184,
+              128
+            ],
+            "runtime_root_x": 152.2253,
+            "runtime_signature_sha256": "57809af578f67afd73b211cff0821513940b5d7f2a6c68d911d0a3d057677cdb",
+            "runtime_visible_height_px": 127,
+            "source_bounds_px": [
+              31,
+              208,
+              176,
+              515
+            ],
+            "source_cell_bounds_px": [
+              31,
+              208,
+              176,
+              515
+            ],
+            "source_component_count": 1,
+            "source_file": "ko_skate_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 23303,
+            "source_pose": 1,
+            "source_root_x": 66.9097,
+            "source_signature_sha256": "08bfd963453d6dee6def4d50175d634838af9f2cc15c6ee8902595d2b62bb174"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 2,
+            "runtime_bounds_px": [
+              110,
+              13,
+              188,
+              128
+            ],
+            "runtime_root_x": 152.3182,
+            "runtime_signature_sha256": "7a8d8fb4c5960be79fbda95342ad828f25cc06c81881d73002235c6cf321fc65",
+            "runtime_visible_height_px": 115,
+            "source_bounds_px": [
+              209,
+              235,
+              398,
+              515
+            ],
+            "source_cell_bounds_px": [
+              209,
+              235,
+              398,
+              515
+            ],
+            "source_component_count": 1,
+            "source_file": "ko_skate_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 21404,
+            "source_pose": 2,
+            "source_root_x": 102.5402,
+            "source_signature_sha256": "41c43bfb291a1aacb9d1055ba6b6d06d0f05e218deb96a4a5468a03da0b253dc"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 3,
+            "runtime_bounds_px": [
+              123,
+              28,
+              187,
+              128
+            ],
+            "runtime_root_x": 151.9794,
+            "runtime_signature_sha256": "32f417625a1bbb5766a8f1a581cf2cd38afdbd1de0909fa2154f953d5ba5c0bd",
+            "runtime_visible_height_px": 100,
+            "source_bounds_px": [
+              428,
+              273,
+              584,
+              515
+            ],
+            "source_cell_bounds_px": [
+              428,
+              273,
+              584,
+              515
+            ],
+            "source_component_count": 1,
+            "source_file": "ko_skate_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 19415,
+            "source_pose": 3,
+            "source_root_x": 70.6374,
+            "source_signature_sha256": "dd1b894667ca0b8d0131bb273e7986db1e4cc298efb10c8ac4bbf0f824557a7c"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 4,
+            "runtime_bounds_px": [
+              97,
+              24,
+              185,
+              128
+            ],
+            "runtime_root_x": 151.7185,
+            "runtime_signature_sha256": "08742d7ff7285970f980a7934027a58a95a286b96ec9e2be134da8a4588ee0dd",
+            "runtime_visible_height_px": 104,
+            "source_bounds_px": [
+              608,
+              263,
+              821,
+              515
+            ],
+            "source_cell_bounds_px": [
+              608,
+              263,
+              821,
+              515
+            ],
+            "source_component_count": 1,
+            "source_file": "ko_skate_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 20730,
+            "source_pose": 4,
+            "source_root_x": 132.4436,
+            "source_signature_sha256": "7c61c79bf0f35cc43288e0a353402aae350d52f1ad970575b294140a77daef10"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 5,
+            "runtime_bounds_px": [
+              121,
+              6,
+              184,
+              128
+            ],
+            "runtime_root_x": 151.6116,
+            "runtime_signature_sha256": "53c9da877961ca13c08f8e748a60809ac713ffb811921b1983342fe27d97b9b9",
+            "runtime_visible_height_px": 122,
+            "source_bounds_px": [
+              846,
+              218,
+              1000,
+              515
+            ],
+            "source_cell_bounds_px": [
+              846,
+              218,
+              1000,
+              515
+            ],
+            "source_component_count": 1,
+            "source_file": "ko_skate_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 22213,
+            "source_pose": 5,
+            "source_root_x": 74.8283,
+            "source_signature_sha256": "fa6fc516da7a9dcd8e1a3d9834b7c425969c52b20d2c10999108cf0c58824f99"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 6,
+            "runtime_bounds_px": [
+              125,
+              6,
+              184,
+              128
+            ],
+            "runtime_root_x": 151.5984,
+            "runtime_signature_sha256": "ccd1852fa9e44778146de96a019b3582aaf577dd0e4886175c1c6d96ede9e885",
+            "runtime_visible_height_px": 122,
+            "source_bounds_px": [
+              1009,
+              219,
+              1153,
+              515
+            ],
+            "source_cell_bounds_px": [
+              1009,
+              219,
+              1153,
+              515
+            ],
+            "source_component_count": 1,
+            "source_file": "ko_skate_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 22035,
+            "source_pose": 6,
+            "source_root_x": 64.9182,
+            "source_signature_sha256": "4a14e4e0b384f39a8bbb72d576c36465abcd1c34afd8e9872eb3ebb88a2d9a7c"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 7,
+            "runtime_bounds_px": [
+              126,
+              7,
+              185,
+              128
+            ],
+            "runtime_root_x": 152.046,
+            "runtime_signature_sha256": "112b78c13c8d33ac197a86a8a9275ba4764f44ca9d5dfdf69340da57175584a2",
+            "runtime_visible_height_px": 121,
+            "source_bounds_px": [
+              1163,
+              222,
+              1307,
+              515
+            ],
+            "source_cell_bounds_px": [
+              1163,
+              222,
+              1307,
+              515
+            ],
+            "source_component_count": 1,
+            "source_file": "ko_skate_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 21466,
+            "source_pose": 7,
+            "source_root_x": 63.5699,
+            "source_signature_sha256": "b5fe54bf00dfa2b09cf8ab6dd16563e64ef2078d0e91d2794749ab66f9f79301"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 8,
+            "runtime_bounds_px": [
+              125,
+              9,
+              185,
+              128
+            ],
+            "runtime_root_x": 151.9533,
+            "runtime_signature_sha256": "1ef68135738f10b97e51f7664371a8f34260fb83b0338d88af3715dd35e5fdc8",
+            "runtime_visible_height_px": 119,
+            "source_bounds_px": [
+              1320,
+              227,
+              1467,
+              515
+            ],
+            "source_cell_bounds_px": [
+              1320,
+              227,
+              1467,
+              515
+            ],
+            "source_component_count": 2,
+            "source_file": "ko_skate_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 21907,
+            "source_pose": 8,
+            "source_root_x": 66.0357,
+            "source_signature_sha256": "ad1ccc36c47efc4f03672439a99cff14c588998ef2f74a3de7e4a5b97e0f7a2e"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 9,
+            "runtime_bounds_px": [
+              129,
+              17,
+              181,
+              128
+            ],
+            "runtime_root_x": 152.0629,
+            "runtime_signature_sha256": "5b1ab673935b0d6d703400a02cc38d38234af30645e23255c75779c873544250",
+            "runtime_visible_height_px": 111,
+            "source_bounds_px": [
+              1482,
+              247,
+              1608,
+              517
+            ],
+            "source_cell_bounds_px": [
+              1482,
+              247,
+              1608,
+              517
+            ],
+            "source_component_count": 1,
+            "source_file": "ko_skate_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 19081,
+            "source_pose": 9,
+            "source_root_x": 55.8832,
+            "source_signature_sha256": "50fb83c9c3eb1f5837843bde4a5b8cacf8c9255b3be31c234cde484af7f3bc51"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 10,
+            "runtime_bounds_px": [
+              110,
+              17,
+              187,
+              128
+            ],
+            "runtime_root_x": 152.0221,
+            "runtime_signature_sha256": "40408c4156f6bf81ea969e91c91aad2591fc9802b0570582e287ca2d30bf13c8",
+            "runtime_visible_height_px": 111,
+            "source_bounds_px": [
+              1603,
+              246,
+              1790,
+              515
+            ],
+            "source_cell_bounds_px": [
+              1603,
+              246,
+              1790,
+              515
+            ],
+            "source_component_count": 1,
+            "source_file": "ko_skate_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 19954,
+            "source_pose": 10,
+            "source_root_x": 102.0536,
+            "source_signature_sha256": "890d093dc9cf62fdaace3b5e108af38e3cf18ab95fdd905293500168eb3957e1"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 11,
+            "runtime_bounds_px": [
+              120,
+              10,
+              186,
+              128
+            ],
+            "runtime_root_x": 151.5367,
+            "runtime_signature_sha256": "073203301659865042a7f9cf58a73b6fc644c8e42b8983eb7a6203186e0a0f30",
+            "runtime_visible_height_px": 118,
+            "source_bounds_px": [
+              1824,
+              229,
+              1984,
+              515
+            ],
+            "source_cell_bounds_px": [
+              1824,
+              229,
+              1984,
+              515
+            ],
+            "source_component_count": 1,
+            "source_file": "ko_skate_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 21390,
+            "source_pose": 11,
+            "source_root_x": 76.4526,
+            "source_signature_sha256": "91648a3e6851685fbe8869fce2c8a3266bd9b79b32ff7ed4f608e884f313e66c"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 12,
+            "runtime_bounds_px": [
+              127,
+              8,
+              186,
+              128
+            ],
+            "runtime_root_x": 152.4658,
+            "runtime_signature_sha256": "406a6ca4ee0126c01f7abb2074327e8522df0207d8fbd1a34469d630575650ac",
+            "runtime_visible_height_px": 120,
+            "source_bounds_px": [
+              2004,
+              224,
+              2148,
+              515
+            ],
+            "source_cell_bounds_px": [
+              2004,
+              224,
+              2148,
+              515
+            ],
+            "source_component_count": 1,
+            "source_file": "ko_skate_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 21254,
+            "source_pose": 12,
+            "source_root_x": 62.1539,
+            "source_signature_sha256": "c1e9aae6b84a3e12330899224f2bdb5d9862274bfec53f24dd65f56dca4327aa"
+          }
+        ],
+        "ground_line_px": 127,
+        "maximum_visible_height_px": 127,
+        "root_x_px": 152,
+        "scale_limit": "height_target",
+        "target_height_achieved": true,
+        "target_visible_height_px": 127
+      },
+      "row": 1,
+      "segmentation": {
+        "body_area_floor_px": 3496,
+        "body_height_floor_px": 109,
+        "method": "left_to_right_connected_complete_bodies",
+        "pose_order": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "retained_detail_components": 1,
+        "source_component_count": 13
+      },
+      "source_matte_rgb": [
+        255,
+        0,
+        255
+      ],
+      "source_mode": "RGBA",
+      "source_path": "C:\\Users\\blowb\\Desktop\\the-fades-of-fate-ko-skater\\art_source\\ko\\ko_skate_source.png",
+      "source_sha256": "5e2de8610bf4d59e0d78ca63959f5392a2e4a867a5327942287a3c1e354df7ef",
+      "source_size_px": [
+        2172,
+        724
+      ],
+      "sources": [
+        {
+          "filename": "ko_skate_source.png",
+          "keying": {
+            "hard_alpha_coercions": 0,
+            "keyed_pixels": 1318376,
+            "source_semitransparent_pixels": 0,
+            "visible_chroma_spill_pixels": 0
+          },
+          "mode": "RGBA",
+          "path": "C:\\Users\\blowb\\Desktop\\the-fades-of-fate-ko-skater\\art_source\\ko\\ko_skate_source.png",
+          "pose_count": 12,
+          "role": "primary",
+          "segmentation": {
+            "body_area_floor_px": 3496,
+            "body_height_floor_px": 109,
+            "method": "left_to_right_connected_complete_bodies",
+            "pose_order": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "retained_detail_components": 1,
+            "source_component_count": 13
+          },
+          "sha256": "5e2de8610bf4d59e0d78ca63959f5392a2e4a867a5327942287a3c1e354df7ef",
+          "size_px": [
+            2172,
+            724
+          ]
+        }
+      ]
+    },
+    "super": {
+      "frame_source_map": [
+        {
+          "runtime_pose": 1,
+          "source_file": "ko_super_source.png",
+          "source_pose": 1
+        },
+        {
+          "runtime_pose": 2,
+          "source_file": "ko_super_source.png",
+          "source_pose": 2
+        },
+        {
+          "runtime_pose": 3,
+          "source_file": "ko_super_source.png",
+          "source_pose": 3
+        },
+        {
+          "runtime_pose": 4,
+          "source_file": "ko_super_source.png",
+          "source_pose": 4
+        },
+        {
+          "runtime_pose": 5,
+          "source_file": "ko_super_source.png",
+          "source_pose": 5
+        },
+        {
+          "runtime_pose": 6,
+          "source_file": "ko_super_source.png",
+          "source_pose": 6
+        },
+        {
+          "runtime_pose": 7,
+          "source_file": "ko_super_hook_source.png",
+          "source_pose": 1
+        },
+        {
+          "runtime_pose": 8,
+          "source_file": "ko_super_source.png",
+          "source_pose": 7
+        },
+        {
+          "runtime_pose": 9,
+          "source_file": "ko_super_source.png",
+          "source_pose": 8
+        },
+        {
+          "runtime_pose": 10,
+          "source_file": "ko_super_source.png",
+          "source_pose": 9
+        },
+        {
+          "runtime_pose": 11,
+          "source_file": "ko_super_source.png",
+          "source_pose": 10
+        },
+        {
+          "runtime_pose": 12,
+          "source_file": "ko_super_source.png",
+          "source_pose": 11
+        }
+      ],
+      "keying": {
+        "hard_alpha_coercions": 0,
+        "keyed_pixels": 2726976,
+        "source_semitransparent_pixels": 0,
+        "visible_chroma_spill_pixels": 0
+      },
+      "pose_count": 12,
+      "render": {
+        "common_nearest_scale": 0.47037037,
+        "frames": [
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 1,
+            "runtime_bounds_px": [
+              121,
+              53,
+              190,
+              128
+            ],
+            "runtime_root_x": 151.87,
+            "runtime_signature_sha256": "23fcbe26f290a7686a81661a15c0d6b0012957962e8472e7c81a58ca97cdc84a",
+            "runtime_visible_height_px": 75,
+            "source_bounds_px": [
+              24,
+              336,
+              172,
+              496
+            ],
+            "source_cell_bounds_px": [
+              24,
+              336,
+              172,
+              496
+            ],
+            "source_component_count": 2,
+            "source_file": "ko_super_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 14495,
+            "source_pose": 1,
+            "source_root_x": 66.2138,
+            "source_signature_sha256": "e95217e33daf5700003b9248a44ca2c7ff170becbfcd295efd7d3e88e53ef27d"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 2,
+            "runtime_bounds_px": [
+              134,
+              44,
+              220,
+              128
+            ],
+            "runtime_root_x": 151.6565,
+            "runtime_signature_sha256": "f2ee66269a39799433ce4cfb6e3046721fc5738f2b9cf26ed0cc723afd9ca935",
+            "runtime_visible_height_px": 84,
+            "source_bounds_px": [
+              203,
+              317,
+              387,
+              496
+            ],
+            "source_cell_bounds_px": [
+              203,
+              317,
+              387,
+              496
+            ],
+            "source_component_count": 1,
+            "source_file": "ko_super_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 16010,
+            "source_pose": 2,
+            "source_root_x": 37.7766,
+            "source_signature_sha256": "3b3dabe26d946007bb575ccc3e2cadc048ad90105c77f78af195db06bebf192b"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 3,
+            "runtime_bounds_px": [
+              129,
+              45,
+              240,
+              128
+            ],
+            "runtime_root_x": 152.1827,
+            "runtime_signature_sha256": "5282e3dc304ad0d96bdee3ee61e6a8b475e8de4457f657644b3bf1368357e0a0",
+            "runtime_visible_height_px": 83,
+            "source_bounds_px": [
+              402,
+              320,
+              640,
+              497
+            ],
+            "source_cell_bounds_px": [
+              402,
+              320,
+              640,
+              497
+            ],
+            "source_component_count": 1,
+            "source_file": "ko_super_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 17260,
+            "source_pose": 3,
+            "source_root_x": 49.7071,
+            "source_signature_sha256": "1dc06ff7a7ac6efb60d88021619c00a237304bf897de812166798b5a53aa872c"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 4,
+            "runtime_bounds_px": [
+              116,
+              26,
+              201,
+              128
+            ],
+            "runtime_root_x": 151.6032,
+            "runtime_signature_sha256": "2bb038aef60ae829a877c8201a4fdd6a64ec97db493ee494336ace32ac966435",
+            "runtime_visible_height_px": 102,
+            "source_bounds_px": [
+              613,
+              279,
+              794,
+              497
+            ],
+            "source_cell_bounds_px": [
+              613,
+              279,
+              794,
+              497
+            ],
+            "source_component_count": 1,
+            "source_file": "ko_super_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 16311,
+            "source_pose": 4,
+            "source_root_x": 75.8139,
+            "source_signature_sha256": "8eabc76fb2c2d23875cfd040a8d63f67d48ac228b6773402562c86bb03b05458"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 5,
+            "runtime_bounds_px": [
+              122,
+              26,
+              210,
+              128
+            ],
+            "runtime_root_x": 151.6268,
+            "runtime_signature_sha256": "5fbf3ab4549cffc52b5dc9d123c48cd883416e88bd5a6e75c18e84a08cfb41f6",
+            "runtime_visible_height_px": 102,
+            "source_bounds_px": [
+              790,
+              279,
+              979,
+              497
+            ],
+            "source_cell_bounds_px": [
+              790,
+              279,
+              979,
+              497
+            ],
+            "source_component_count": 1,
+            "source_file": "ko_super_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 15742,
+            "source_pose": 5,
+            "source_root_x": 63.6303,
+            "source_signature_sha256": "6659ac2b9f145a3de4ff1188024f470115a0f67fb9a7c66a354c7c681343520c"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 6,
+            "runtime_bounds_px": [
+              114,
+              44,
+              228,
+              128
+            ],
+            "runtime_root_x": 152.0297,
+            "runtime_signature_sha256": "397d8a7b3f235aa5c96951a6e148fa08388ff2bb4da8bbce0aaf57bd400140ff",
+            "runtime_visible_height_px": 84,
+            "source_bounds_px": [
+              959,
+              317,
+              1202,
+              497
+            ],
+            "source_cell_bounds_px": [
+              959,
+              317,
+              1202,
+              497
+            ],
+            "source_component_count": 1,
+            "source_file": "ko_super_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 17073,
+            "source_pose": 6,
+            "source_root_x": 81.0633,
+            "source_signature_sha256": "d69218f001b42860a108f7630289081fa3fd1845d7f941464ecdedec4d50114f"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 7,
+            "runtime_bounds_px": [
+              116,
+              44,
+              223,
+              128
+            ],
+            "runtime_root_x": 152.304,
+            "runtime_signature_sha256": "07554050ebd850314f7e2d1c587bd00994ed412db85491843957e6965730ee08",
+            "runtime_visible_height_px": 84,
+            "source_bounds_px": [
+              324,
+              216,
+              1124,
+              846
+            ],
+            "source_cell_bounds_px": [
+              324,
+              216,
+              1124,
+              846
+            ],
+            "source_component_count": 1,
+            "source_file": "ko_super_hook_source.png",
+            "source_normalization_scale": 0.28571429,
+            "source_opaque_pixels": 237423,
+            "source_pose": 1,
+            "source_root_x": 77.6973,
+            "source_signature_sha256": "e7cc09fdaf2d617f4a2845f5986e10c8102ba1f8f14932743b01bdb77ff03174"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 8,
+            "runtime_bounds_px": [
+              123,
+              25,
+              210,
+              128
+            ],
+            "runtime_root_x": 151.6135,
+            "runtime_signature_sha256": "8b245b0892d35fa1cb2a658e25056d35558ffaf0d49c07f628900bb85e4d3c42",
+            "runtime_visible_height_px": 103,
+            "source_bounds_px": [
+              1171,
+              277,
+              1356,
+              497
+            ],
+            "source_cell_bounds_px": [
+              1171,
+              277,
+              1356,
+              497
+            ],
+            "source_component_count": 1,
+            "source_file": "ko_super_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 17230,
+            "source_pose": 7,
+            "source_root_x": 60.8449,
+            "source_signature_sha256": "027395f3b0e0d40976855a16dbc633b8903d84830297d48f4c4a51aa1b483821"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 9,
+            "runtime_bounds_px": [
+              131,
+              1,
+              243,
+              128
+            ],
+            "runtime_root_x": 152.4299,
+            "runtime_signature_sha256": "deb11a0375a4f4417ddd2dd33d8899690ba691c0af3524096ba56542dd1cbc6f",
+            "runtime_visible_height_px": 127,
+            "source_bounds_px": [
+              1362,
+              227,
+              1602,
+              497
+            ],
+            "source_cell_bounds_px": [
+              1362,
+              227,
+              1602,
+              497
+            ],
+            "source_component_count": 1,
+            "source_file": "ko_super_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 17899,
+            "source_pose": 8,
+            "source_root_x": 45.9213,
+            "source_signature_sha256": "a2f8c8c457bc2e11e6c21fefdc22a72aeec5d64e17154bb8fc2a1097fb40514b"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 10,
+            "runtime_bounds_px": [
+              118,
+              35,
+              213,
+              128
+            ],
+            "runtime_root_x": 151.555,
+            "runtime_signature_sha256": "db829a30f86ea71f2cddb4b6519a120f792e96801a5eb836d8192ad4bd030f1b",
+            "runtime_visible_height_px": 93,
+            "source_bounds_px": [
+              1599,
+              299,
+              1801,
+              497
+            ],
+            "source_cell_bounds_px": [
+              1599,
+              299,
+              1801,
+              497
+            ],
+            "source_component_count": 2,
+            "source_file": "ko_super_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 19084,
+            "source_pose": 9,
+            "source_root_x": 71.3486,
+            "source_signature_sha256": "1043f0dddf0a7b3f91e6c71c1459c2ddcea6f9b76494ed434dcc803a58202760"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 11,
+            "runtime_bounds_px": [
+              101,
+              55,
+              209,
+              128
+            ],
+            "runtime_root_x": 151.8869,
+            "runtime_signature_sha256": "b926b3be17c8b6a9152572f7af7902f506cba3c81e5563712ad7447804386b67",
+            "runtime_visible_height_px": 73,
+            "source_bounds_px": [
+              1793,
+              340,
+              2023,
+              496
+            ],
+            "source_cell_bounds_px": [
+              1793,
+              340,
+              2023,
+              496
+            ],
+            "source_component_count": 1,
+            "source_file": "ko_super_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 14816,
+            "source_pose": 10,
+            "source_root_x": 108.3703,
+            "source_signature_sha256": "5d9389fc8851e08bed4acca8e0e9e08eff48323b40016c067bbb8715c9093520"
+          },
+          {
+            "clipped": false,
+            "ground_y": 127,
+            "hard_alpha": true,
+            "pose": 12,
+            "runtime_bounds_px": [
+              127,
+              25,
+              180,
+              128
+            ],
+            "runtime_root_x": 151.6959,
+            "runtime_signature_sha256": "726a1bfa28d47db8eb47258703a55cbc232930a9a45f2fc95b1e4f3283117f69",
+            "runtime_visible_height_px": 103,
+            "source_bounds_px": [
+              2029,
+              276,
+              2143,
+              497
+            ],
+            "source_cell_bounds_px": [
+              2029,
+              276,
+              2143,
+              497
+            ],
+            "source_component_count": 2,
+            "source_file": "ko_super_source.png",
+            "source_normalization_scale": 1.0,
+            "source_opaque_pixels": 15073,
+            "source_pose": 11,
+            "source_root_x": 53.1195,
+            "source_signature_sha256": "0be38978c6f8bf5c0098eba97b6fe69b609f359260133e0d50eea6ab455ab7df"
+          }
+        ],
+        "ground_line_px": 127,
+        "maximum_visible_height_px": 127,
+        "root_x_px": 152,
+        "scale_limit": "height_target",
+        "target_height_achieved": true,
+        "target_visible_height_px": 127
+      },
+      "row": 6,
+      "segmentation": {
+        "base_pose_count": 11,
+        "hook_insert_after_base_pose": 6,
+        "hook_normalization": {
+          "method": "uniform_nearest_to_preceding_authored_pose_height",
+          "normalized_hook_size_px": [
+            229,
+            180
+          ],
+          "original_hook_size_px": [
+            800,
+            630
+          ],
+          "reference_base_pose": 6,
+          "reference_height_px": 180,
+          "scale": 0.28571429
+        },
+        "hook_pose_count": 1,
+        "method": "authored_base_plus_single_hook",
+        "sources": {
+          "base": {
+            "body_area_floor_px": 2863,
+            "body_height_floor_px": 109,
+            "method": "left_to_right_connected_complete_bodies",
+            "pose_order": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11
+            ],
+            "retained_detail_components": 3,
+            "source_component_count": 14
+          },
+          "hook": {
+            "body_area_floor_px": 35614,
+            "body_height_floor_px": 154,
+            "method": "left_to_right_connected_complete_bodies",
+            "pose_order": [
+              1
+            ],
+            "retained_detail_components": 0,
+            "source_component_count": 1
+          }
+        }
+      },
+      "source_matte_rgb": [
+        255,
+        0,
+        255
+      ],
+      "source_mode": "RGBA",
+      "source_path": "C:\\Users\\blowb\\Desktop\\the-fades-of-fate-ko-skater\\art_source\\ko\\ko_super_source.png",
+      "source_sha256": "7c876f47935015bd8d70a971349e89736cddba6be8a14d1a438fab52f26f6ccd",
+      "source_size_px": [
+        2172,
+        724
+      ],
+      "sources": [
+        {
+          "filename": "ko_super_source.png",
+          "keying": {
+            "hard_alpha_coercions": 0,
+            "keyed_pixels": 1391535,
+            "source_semitransparent_pixels": 0,
+            "visible_chroma_spill_pixels": 0
+          },
+          "mode": "RGBA",
+          "path": "C:\\Users\\blowb\\Desktop\\the-fades-of-fate-ko-skater\\art_source\\ko\\ko_super_source.png",
+          "pose_count": 11,
+          "role": "base",
+          "segmentation": {
+            "body_area_floor_px": 2863,
+            "body_height_floor_px": 109,
+            "method": "left_to_right_connected_complete_bodies",
+            "pose_order": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11
+            ],
+            "retained_detail_components": 3,
+            "source_component_count": 14
+          },
+          "sha256": "7c876f47935015bd8d70a971349e89736cddba6be8a14d1a438fab52f26f6ccd",
+          "size_px": [
+            2172,
+            724
+          ]
+        },
+        {
+          "filename": "ko_super_hook_source.png",
+          "keying": {
+            "hard_alpha_coercions": 0,
+            "keyed_pixels": 1335441,
+            "source_semitransparent_pixels": 0,
+            "visible_chroma_spill_pixels": 0
+          },
+          "mode": "RGBA",
+          "path": "C:\\Users\\blowb\\Desktop\\the-fades-of-fate-ko-skater\\art_source\\ko\\ko_super_hook_source.png",
+          "pose_count": 1,
+          "role": "hook",
+          "segmentation": {
+            "body_area_floor_px": 35614,
+            "body_height_floor_px": 154,
+            "method": "left_to_right_connected_complete_bodies",
+            "pose_order": [
+              1
+            ],
+            "retained_detail_components": 0,
+            "source_component_count": 1
+          },
+          "sha256": "e378ae5911a05341d823d16d216df54bbadfe297fbd780209227a642d633083c",
+          "size_px": [
+            1536,
+            1024
+          ]
+        }
+      ]
+    }
+  },
+  "validation": {
+    "clipped_frames": 0,
+    "complete_cel_resizing": true,
+    "directional_variants_generated": false,
+    "duplicate_poses": 0,
+    "exact_state_set": [
+      "idle",
+      "skate",
+      "prepare",
+      "punch_1",
+      "punch_2",
+      "kick",
+      "super"
+    ],
+    "ground_aligned": true,
+    "hard_alpha": true,
+    "status": "PASS",
+    "total_authored_poses": 64,
+    "visible_chroma_spill_pixels": 0
+  }
+}

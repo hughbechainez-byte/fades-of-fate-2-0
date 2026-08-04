@@ -770,6 +770,11 @@ class Enemy:
     attack_last_hit_times: dict[tuple[str, int], float] = field(default_factory=dict)
     burn_time: float = 0.0
     burn_tick: float = 0.0
+    recent_damage_timer: float = 0.0
+    ko_claimed: bool = False
+    ko_hitter: Player | None = None
+    ko_fall_seconds: float = 0.62
+    ko_disappear_seconds: float = 0.22
     death_awarded: bool = False
     last_hitter: Player | None = None
     # Captured before each authoritative enemy update.  A player attack on the
@@ -793,7 +798,16 @@ class Enemy:
 
     @property
     def targetable(self) -> bool:
-        return self.state not in {"dead", "spawn", *COUCH_RETREAT_STATES}
+        return (
+            not self.ko_claimed
+            and self.state not in {
+                "dead",
+                "spawn",
+                "ko_dazed",
+                "ko_fall",
+                *COUCH_RETREAT_STATES,
+            }
+        )
 
     @property
     def feet_y(self) -> float:
@@ -844,6 +858,17 @@ class Enemy:
         self.cooldown = max(0.0, self.cooldown - dt)
         self.wake_invulnerable = max(0.0, self.wake_invulnerable - dt)
         self.hit_flash = max(0.0, self.hit_flash - dt)
+        self.recent_damage_timer = max(0.0, self.recent_damage_timer - dt)
+        if self.state == "ko_dazed":
+            self.state_clock += dt
+            if self.state_clock >= self.state_duration:
+                self._set_state("ko_fall", self.ko_fall_seconds)
+            return
+        if self.state == "ko_fall":
+            self.state_clock += dt
+            if self.state_clock >= self.state_duration:
+                self._die(game, self.ko_hitter)
+            return
         if self.kind == "couch" and self.state in COUCH_RETREAT_STATES:
             # The game owns the add-wave roster and refuge coordinates. Couch
             # stays visibly airborne or beside the bikes while untargetable.
@@ -1121,6 +1146,10 @@ class Enemy:
         self.token_held = 0
         self.health -= applied_amount
         self.hit_flash = 0.10
+        quiet_seconds = float(
+            game.data.get("ko_companion", {}).get("recent_damage_seconds", 0.9)
+        )
+        self.recent_damage_timer = max(self.recent_damage_timer, quiet_seconds)
         self.last_hitter = hitter or self.last_hitter
         if hitter is not None:
             game.award_hit(hitter, self, applied_amount)
@@ -1168,13 +1197,68 @@ class Enemy:
             self._set_state("hitstun", hitstun)
         return True
 
+    def begin_ko_sequence(
+        self,
+        game: Any,
+        hitter: Player | None,
+        *,
+        daze_seconds: float,
+        fall_seconds: float,
+        disappear_seconds: float = 0.22,
+    ) -> bool:
+        """Start KO's authored daze/fall finish without boss health clamping."""
+
+        if (
+            not self.alive
+            or self.state in {"spawn", "ko_dazed", "ko_fall", *COUCH_RETREAT_STATES}
+            or (not self.targetable and not self.ko_claimed)
+        ):
+            return False
+        remaining_health = max(0.0, self.health)
+        game.release_attack_token(self)
+        self.token_held = 0
+        self.health = 0.0
+        self.ko_claimed = False
+        self.ko_hitter = hitter
+        self.last_hitter = hitter or self.last_hitter
+        self.burn_time = 0.0
+        self.burn_tick = 0.0
+        self.recent_damage_timer = 0.0
+        self.knockback_vx = 0.0
+        self.knockback_vy = 0.0
+        self.hit_flash = 0.16
+        self.ko_fall_seconds = max(0.05, float(fall_seconds))
+        self.ko_disappear_seconds = max(0.05, float(disappear_seconds))
+        if hitter is not None:
+            game.award_hit(hitter, self, remaining_health)
+        self._set_state("ko_dazed", max(0.10, float(daze_seconds)))
+        game.add_effect(
+            "impact",
+            self.x,
+            self.y - 36.0,
+            color=(255, 231, 92),
+            radius=26.0,
+            duration=0.22,
+        )
+        game.audio.play("heavy")
+        game.audio.play("enemy_downed")
+        game.log_breadcrumb(
+            "ko_companion_dazed_enemy",
+            enemy=self.kind,
+            enemy_id=self.enemy_id,
+            boss=self.kind == "couch",
+        )
+        return True
+
     def _die(self, game: Any, hitter: Player | None) -> None:
         if self.state == "dead":
             return
         game.release_attack_token(self)
         self.token_held = 0
+        self.ko_claimed = False
         self.health = 0.0
-        self._set_state("dead", 0.72)
+        dead_seconds = self.ko_disappear_seconds if self.ko_hitter is not None else 0.72
+        self._set_state("dead", dead_seconds)
         self.knockback_vx *= 1.2
         if not self.death_awarded:
             self.death_awarded = True
@@ -1665,6 +1749,351 @@ class Chief:
             duration=min(0.24, self.maul_timer),
         )
         game.log_breadcrumb("chief_maul_started", enemy_id=self.maul_target_id)
+
+
+@dataclass(slots=True)
+class KOCompanion:
+    """Autonomous KO cameo with a deliberately sparse, deterministic offense."""
+
+    owner: Player
+    config: dict[str, Any]
+    x: float
+    y: float
+    facing: int = 1
+    state: str = "idle"
+    state_clock: float = 0.0
+    state_duration: float = 0.0
+    animation_clock: float = 0.0
+    locomotion_distance: float = 0.0
+    animation_state: str = "idle"
+    animation_moving: bool = False
+    attack_cooldown: float = -1.0
+    interval_index: int = 0
+    attack_index: int = 0
+    completed_actions: int = 0
+    pending_action: str = ""
+    last_action: str = ""
+    attack_landed: bool = False
+    target: Enemy | None = None
+    target_search_clock: float = 0.0
+    super_targets: tuple[Enemy, ...] = ()
+    super_target_index: int = 0
+    super_hits: int = 0
+
+    def __post_init__(self) -> None:
+        if self.attack_cooldown < 0.0:
+            self.attack_cooldown = self._intervals()[0]
+
+    @property
+    def feet_y(self) -> float:
+        return self.y
+
+    @property
+    def animation_tick(self) -> int:
+        if self.state == "skate":
+            return _distance_animation_tick(
+                self.locomotion_distance,
+                "ko",
+                "skate",
+                float(self.config.get("stride_distance", 112.0)),
+            )
+        return _animation_tick(self.animation_clock)
+
+    def advance_animation(self, dt: float) -> None:
+        if self.state != self.animation_state:
+            if self.state not in {"idle", "skate"}:
+                self.animation_clock = 0.0
+            self.animation_state = self.state
+        if self.state != "skate":
+            self.animation_clock += max(0.0, dt)
+
+    def update(self, game: Any, dt: float) -> None:
+        dt = max(0.0, float(dt))
+        self.animation_moving = False
+        if self.state == "prepare":
+            self._update_prepare(game, dt)
+            return
+        if self.state in {"punch_1", "punch_2", "kick"}:
+            self._update_regular_attack(game, dt)
+            return
+        if self.state == "super":
+            self._update_super(game, dt)
+            return
+        if self.target is not None:
+            self._update_approach(game, dt)
+            return
+
+        live_opponents = game.ko_live_opponents(self)
+        if live_opponents:
+            self.attack_cooldown = max(0.0, self.attack_cooldown - dt)
+        if self.attack_cooldown <= 0.0 and live_opponents:
+            self.target_search_clock += dt
+            allow_contested = self.target_search_clock >= float(
+                self.config.get("selection_fallback_seconds", 1.2)
+            )
+            target = game.select_ko_target(self, allow_contested=allow_contested)
+            if target is not None:
+                self._claim_target(target, game)
+                return
+        self._follow_party(game, dt)
+
+    def _intervals(self) -> tuple[float, ...]:
+        values = tuple(float(value) for value in self.config.get("attack_intervals", (20.0, 25.0, 30.0)))
+        return values or (20.0, 25.0, 30.0)
+
+    def _claim_target(self, target: Enemy, game: Any) -> None:
+        target.ko_claimed = True
+        # Once the warm-up begins, lingering teammate damage must not steal
+        # the exact opponent KO visibly selected.
+        target.burn_time = 0.0
+        target.burn_tick = 0.0
+        self.target = target
+        every = max(1, int(self.config.get("super_every_actions", 4)))
+        if (self.completed_actions + 1) % every == 0:
+            self.pending_action = "super"
+        else:
+            cycle = tuple(str(value) for value in self.config.get("attack_cycle", ("punch_1", "punch_2", "kick")))
+            self.pending_action = cycle[self.attack_index % len(cycle)]
+        self.target_search_clock = 0.0
+        self.facing = 1 if target.x >= self.x else -1
+        self._set_state("prepare", float(self.config.get("warmup_seconds", 1.15)))
+        game.log_breadcrumb(
+            "ko_companion_selected_target",
+            enemy=target.kind,
+            enemy_id=target.enemy_id,
+            action=self.pending_action,
+        )
+
+    def _claimed_target(self, game: Any) -> Enemy | None:
+        target = self.target
+        if target is None or not target.alive:
+            return None
+        if target.state in {"spawn", "ko_dazed", "ko_fall", *COUCH_RETREAT_STATES}:
+            return None
+        return next((enemy for enemy in getattr(game, "enemies", ()) if enemy is target), None)
+
+    def _release_target(self) -> None:
+        if self.target is not None:
+            self.target.ko_claimed = False
+        self.target = None
+
+    def _cancel_action(self) -> None:
+        self._release_target()
+        for target in self.super_targets:
+            target.ko_claimed = False
+        self.super_targets = ()
+        self.super_target_index = 0
+        self.super_hits = 0
+        self.pending_action = ""
+        self.attack_landed = False
+        self.target_search_clock = 0.0
+        self._set_state("idle")
+
+    def _update_prepare(self, game: Any, dt: float) -> None:
+        target = self._claimed_target(game)
+        if target is None:
+            self._cancel_action()
+            return
+        self.facing = 1 if target.x >= self.x else -1
+        self.state_clock += dt
+        if self.state_clock < self.state_duration:
+            return
+        if self.pending_action == "super":
+            self._start_super(game)
+            return
+        # Let the approach step prove that movement was actually applied
+        # before exposing the skateboard state to the renderer.
+        self._set_state("idle")
+
+    def _update_approach(self, game: Any, dt: float) -> None:
+        target = self._claimed_target(game)
+        if target is None:
+            self._cancel_action()
+            return
+        dx, dy = target.x - self.x, target.y - self.y
+        self.facing = 1 if dx >= 0.0 else -1
+        contact_x = float(self.config.get("contact_x", 30.0))
+        contact_depth = float(self.config.get("contact_depth", 18.0))
+        if abs(dx) <= contact_x and abs(dy) <= contact_depth:
+            self.attack_landed = False
+            self._set_state(
+                self.pending_action,
+                float(self.config.get("attack_seconds", 0.58)),
+            )
+            return
+        nx, ny = normalized(dx, dy)
+        speed = float(self.config.get("skate_speed", 220.0))
+        applied_x, applied_y = game.move_actor(
+            self,
+            nx * speed * dt,
+            ny * speed * 0.72 * dt,
+        )
+        self.animation_moving = abs(applied_x) + abs(applied_y) > 0.015
+        if self.animation_moving:
+            self.locomotion_distance += math.hypot(applied_x, applied_y)
+            self.state = "skate"
+        else:
+            # The skateboard is an authored locomotion-only prop.  A blocked
+            # approach must not leave it visible while KO is standing still.
+            self.state = "idle"
+
+    def _update_regular_attack(self, game: Any, dt: float) -> None:
+        self.state_clock += dt
+        impact_key = (
+            "kick_impact_seconds" if self.state == "kick" else "attack_impact_seconds"
+        )
+        if not self.attack_landed and self.state_clock >= float(
+            self.config.get(impact_key, 0.14 if self.state == "kick" else 0.10)
+        ):
+            target = self._claimed_target(game)
+            if target is None:
+                self._cancel_action()
+                return
+            self.attack_landed = target.begin_ko_sequence(
+                game,
+                self.owner,
+                daze_seconds=float(self.config.get("daze_seconds", 2.4)),
+                fall_seconds=float(self.config.get("fall_seconds", 0.62)),
+                disappear_seconds=float(self.config.get("disappear_seconds", 0.22)),
+            )
+            if self.attack_landed:
+                self.last_action = self.pending_action
+        if self.state_clock >= self.state_duration:
+            if self.attack_landed:
+                self._finish_action()
+            else:
+                self._cancel_action()
+
+    def _start_super(self, game: Any) -> None:
+        targets = tuple(game.ko_super_targets(self))
+        if not targets:
+            self._cancel_action()
+            return
+        for target in targets:
+            target.ko_claimed = True
+        self.super_targets = targets
+        self.super_target_index = 0
+        self.super_hits = 0
+        self.attack_landed = False
+        self._set_state("super", float(self.config.get("super_duration", 0.72)))
+        game.audio.play("super")
+        game.add_effect(
+            "text",
+            self.x,
+            self.y - 76.0,
+            text="SPEED BLITZ!",
+            color=(255, 239, 118),
+            duration=0.72,
+        )
+        game.log_breadcrumb("ko_companion_super_started", targets=len(targets))
+
+    def _update_super(self, game: Any, dt: float) -> None:
+        self.state_clock += dt
+        step = float(self.config.get("super_step_seconds", 0.055))
+        contact = float(self.config.get("super_contact_offset", 24.0))
+        while (
+            self.super_target_index < len(self.super_targets)
+            and self.state_clock + 1e-9 >= (self.super_target_index + 1) * step
+        ):
+            target = self.super_targets[self.super_target_index]
+            self.super_target_index += 1
+            if not target.alive or not any(enemy is target for enemy in getattr(game, "enemies", ())):
+                target.ko_claimed = False
+                continue
+            origin_x, origin_y = self.x, self.y
+            self.facing = 1 if target.x >= origin_x else -1
+            self.x = target.x - self.facing * contact
+            self.y = target.y
+            direction = 1.0 if self.x >= origin_x else -1.0
+            game.add_effect(
+                "streak",
+                (origin_x + self.x) * 0.5,
+                (origin_y + self.y) * 0.5 - 34.0,
+                color=(255, 236, 104),
+                radius=max(12.0, abs(self.x - origin_x) * 0.22),
+                duration=0.18,
+                vx=direction * 150.0,
+                direction=direction,
+            )
+            landed = target.begin_ko_sequence(
+                game,
+                self.owner,
+                daze_seconds=float(self.config.get("daze_seconds", 2.4)),
+                fall_seconds=float(self.config.get("fall_seconds", 0.62)),
+                disappear_seconds=float(self.config.get("disappear_seconds", 0.22)),
+            )
+            if landed:
+                self.super_hits += 1
+                self.attack_landed = True
+        if self.state_clock >= self.state_duration:
+            for target in self.super_targets[self.super_target_index :]:
+                target.ko_claimed = False
+            if self.attack_landed:
+                self.last_action = "super"
+                self._finish_action()
+            else:
+                self._cancel_action()
+
+    def _finish_action(self) -> None:
+        completed = self.pending_action
+        self._release_target()
+        for target in self.super_targets:
+            target.ko_claimed = False
+        self.super_targets = ()
+        self.super_target_index = 0
+        self.completed_actions += 1
+        if completed in {"punch_1", "punch_2", "kick"}:
+            cycle = tuple(str(value) for value in self.config.get("attack_cycle", ("punch_1", "punch_2", "kick")))
+            self.attack_index = (self.attack_index + 1) % len(cycle)
+        intervals = self._intervals()
+        self.interval_index = (self.interval_index + 1) % len(intervals)
+        self.attack_cooldown = intervals[self.interval_index]
+        self.pending_action = ""
+        self.target_search_clock = 0.0
+        self.attack_landed = False
+        # The authored attack clip contains its own follow-through.  Return to
+        # idle instead of requesting an un-authored recovery sprite state.
+        self._set_state("idle")
+
+    def _follow_party(self, game: Any, dt: float) -> None:
+        anchor = self.owner if self.owner.combat_active else game.nearest_player(self.x, self.y)
+        if anchor is None:
+            self.state = "idle"
+            return
+        follow_distance = float(self.config.get("follow_distance", 68.0))
+        follow_depth = float(self.config.get("follow_depth_offset", 23.0))
+        target_x = anchor.x - anchor.facing * follow_distance
+        target_y = anchor.y + follow_depth
+        dx, dy = target_x - self.x, target_y - self.y
+        recall_distance = float(self.config.get("offscreen_recall_distance", 480.0))
+        if math.hypot(dx, dy * 1.5) > recall_distance:
+            self.x = target_x
+            self.y = target_y
+            self.facing = anchor.facing
+            self.state = "idle"
+            return
+        if abs(dx) + abs(dy) <= 9.0:
+            self.state = "idle"
+            return
+        nx, ny = normalized(dx, dy)
+        speed = float(self.config.get("follow_speed", 185.0))
+        applied_x, applied_y = game.move_actor(
+            self,
+            nx * speed * dt,
+            ny * speed * 0.72 * dt,
+        )
+        self.animation_moving = abs(applied_x) + abs(applied_y) > 0.015
+        if self.animation_moving:
+            self.facing = 1 if applied_x >= 0.0 else -1
+            self.locomotion_distance += math.hypot(applied_x, applied_y)
+            self.state = "skate"
+        else:
+            self.state = "idle"
+
+    def _set_state(self, state: str, duration: float = 0.0) -> None:
+        self.state = state
+        self.state_clock = 0.0
+        self.state_duration = max(0.0, float(duration))
 
 
 @dataclass(slots=True)

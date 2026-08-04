@@ -936,6 +936,41 @@
                    "frenzy_clear_linger_seconds":  0.42,
                    "maul_seconds":  0.52
               },
+    "ko_companion":  {
+                          "enabled":  true,
+                          "attack_intervals":  [
+                                                   20,
+                                                   25,
+                                                   30
+                                               ],
+                          "attack_cycle":  [
+                                               "punch_1",
+                                               "punch_2",
+                                               "kick"
+                                           ],
+                          "warmup_seconds":  1.15,
+                          "prepare_bubble_seconds":  0.9,
+                          "selection_fallback_seconds":  1.2,
+                          "recent_damage_seconds":  0.9,
+                          "skate_speed":  220,
+                          "follow_speed":  185,
+                          "follow_distance":  68,
+                          "follow_depth_offset":  23,
+                          "contact_x":  30,
+                          "contact_depth":  18,
+                          "attack_seconds":  0.58,
+                          "attack_impact_seconds":  0.10,
+                          "kick_impact_seconds":  0.14,
+                          "daze_seconds":  2.4,
+                          "fall_seconds":  0.62,
+                          "disappear_seconds":  0.22,
+                          "super_every_actions":  4,
+                          "super_step_seconds":  0.055,
+                          "super_duration":  0.72,
+                          "super_contact_offset":  24,
+                          "stride_distance":  112,
+                          "offscreen_recall_distance":  480
+                      },
     "bb_gun":  {
                     "max_ammo":  6,
                     "start_ammo":  4,

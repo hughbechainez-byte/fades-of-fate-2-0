@@ -15,9 +15,7 @@ covering the area it drew, which is useful for dirty-rectangle renderers.
 from __future__ import annotations
 
 import math
-import os
 from collections import OrderedDict
-from functools import lru_cache
 from pathlib import Path
 from typing import Any, Mapping, Sequence
 
@@ -73,6 +71,7 @@ __all__ = [
     "draw_sunset_epilogue",
     "shade_authored_sprite",
     "draw_player",
+    "draw_ko",
     "draw_jermaine_loading",
     "draw_white_dave_loading",
     "draw_fist_flames",
@@ -5202,26 +5201,6 @@ def _draw_dave(sprite: pygame.Surface, state: str, frame: int, accent: tuple[int
         pygame.draw.rect(sprite, (255, 100, 77), (center - 22, 17 + crouch, 3, 8))
 
 
-@lru_cache(maxsize=1)
-def _ko_preview_sprite() -> pygame.Surface | None:
-    """Load the authored KO preview cutout used by the engine capture path."""
-
-    try:
-        source = pygame.image.load(str(resource_path("assets/ko_preview_cutout.png"))).convert_alpha()
-    except (FileNotFoundError, pygame.error):
-        return None
-    target_height = 112
-    scale = target_height / max(1, source.get_height())
-    size = (max(1, round(source.get_width() * scale)), target_height)
-    return pygame.transform.smoothscale(source, size)
-
-
-def _ko_preview_enabled() -> bool:
-    """Keep the capture-only KO cutout out of ordinary gameplay renders."""
-
-    return os.environ.get("FADES_KO_PREVIEW", "").strip().lower() in {"1", "true", "yes", "on"}
-
-
 def _draw_shelly(sprite: pygame.Surface, state: str, frame: int, accent: tuple[int, int, int]) -> None:
     outline = (42, 29, 34)
     skin_deep = (143, 79, 82)
@@ -5591,6 +5570,103 @@ def _draw_walk_echo(
         _blit_grounded(surface, echo, x - direction * (lead + 4), y, z, facing, bottom)
 
 
+def _draw_ko_super_speed(
+    surface: pygame.Surface,
+    authored: pygame.Surface,
+    x: float,
+    y: float,
+    z: float,
+    facing: object,
+    frame: int,
+) -> pygame.Rect:
+    """Draw KO's renderer-owned Flash-like super wake behind the hard cel."""
+
+    direction = _face_sign(facing)
+    phase = max(0, int(frame)) % 12
+    bounds: pygame.Rect | None = None
+    for offset, alpha in (
+        (10 + phase % 3, 58),
+        (22 + phase % 4, 34),
+        (36 + phase % 5, 18),
+    ):
+        echo = authored.copy()
+        echo.set_alpha(alpha)
+        echo_bounds = _blit_grounded(
+            surface,
+            echo,
+            x - direction * offset,
+            y,
+            z,
+            facing,
+            authored.get_height(),
+        )
+        bounds = echo_bounds if bounds is None else bounds.union(echo_bounds)
+
+    anchor_y = _i(y - z) - 74
+    for index, (reach, lift) in enumerate(((47, 0), (37, 13), (29, 27))):
+        pulse = (phase + index * 2) % 6
+        start = (
+            _i(x) - direction * (reach + pulse),
+            anchor_y + lift,
+        )
+        end = (
+            _i(x) - direction * (11 + pulse // 2),
+            anchor_y + lift + 2,
+        )
+        ink = pygame.draw.line(surface, (35, 31, 49), start, end, 3)
+        light = pygame.draw.line(surface, (255, 236, 142), start, end, 1)
+        bounds = ink if bounds is None else bounds.union(ink)
+        bounds = bounds.union(light)
+    return bounds or pygame.Rect(_i(x), _i(y - z), 0, 0)
+
+
+def draw_ko(
+    surface: pygame.Surface,
+    x: float,
+    y: float,
+    z: float = 0.0,
+    facing: object = 1,
+    state: object = "idle",
+    frame: int = 0,
+) -> pygame.Rect:
+    """Draw KO's exact authored cel with no actor or state fallback.
+
+    The atlas owns his gloves, coat, skateboard, strikes, and super poses.
+    This renderer owns only left/right mirroring, a grounded shadow, and the
+    super-only speed wake; it never decorates another state with a board,
+    echo, streak, placeholder silhouette, material filter, or soft scaling.
+    """
+
+    if sprite_atlas is None:
+        raise RuntimeError("KO authored sprite atlas loader is unavailable")
+    state_name = _state_name(state)
+    authored = sprite_atlas.ko_frame(state_name, int(frame))
+    shadow = _shadow(surface, x, y, 54, 10, elevation=z)
+    bounds = shadow
+    if state_name == "super":
+        bounds = bounds.union(
+            _draw_ko_super_speed(
+                surface,
+                authored,
+                x,
+                y,
+                z,
+                facing,
+                int(frame),
+            )
+        )
+    body = _blit_grounded(
+        surface,
+        authored,
+        x,
+        y,
+        z,
+        facing,
+        authored.get_height(),
+    )
+    return bounds.union(body)
+
+
 def draw_player(
     surface: pygame.Surface,
     x: float,
@@ -5623,19 +5699,6 @@ def draw_player(
         else (195, 74, 124)
     )
     accent = _rgb(player_color, accent_default)
-    if name in {"black_dave", "dave", "blackdave"} and _ko_preview_enabled() and _ko_preview_sprite() is not None:
-        ko = _ko_preview_sprite()
-        if ko is not None:
-            _shadow(surface, x, y, 43, 9, elevation=z)
-            return _blit_grounded(
-                surface,
-                _hit_flash_sprite(ko, hit_flash),
-                x,
-                y,
-                z,
-                facing,
-                ko.get_height() - 4,
-            )
     authored = sprite_atlas.player_frame(name, state_name, int(frame)) if sprite_atlas is not None else None
     if authored is not None:
         _shadow(

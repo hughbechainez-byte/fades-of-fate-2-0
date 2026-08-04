@@ -421,10 +421,7 @@ class PixelArtTests(unittest.TestCase):
 
     def test_every_actor_shadow_receives_its_world_elevation(self) -> None:
         canvas = pygame.Surface((640, 360), pygame.SRCALPHA)
-        with (
-            patch.dict(os.environ, {"FADES_KO_PREVIEW": ""}),
-            patch.object(pixel_art, "_shadow", wraps=pixel_art._shadow) as shadow,
-        ):
+        with patch.object(pixel_art, "_shadow", wraps=pixel_art._shadow) as shadow:
             draw_player(canvas, 90, 300, 37, 1, "idle", "black_dave", 0, "#ef5547")
             draw_chief(canvas, 190, 300, 18, 1, "idle", 0)
             draw_enemy(canvas, 290, 300, 29, -1, "idle", "stick", 0)
@@ -1955,15 +1952,22 @@ class PixelArtTests(unittest.TestCase):
         draw_effect(late, 60, 50, kind="dust", frame=4, radius=18)
         self.assertNotEqual(pygame.image.tobytes(early, "RGBA"), pygame.image.tobytes(late, "RGBA"))
 
-    def test_ko_preview_is_opt_in_and_never_replaces_dave_in_normal_play(self) -> None:
+    def test_legacy_ko_preview_flag_cannot_replace_black_dave(self) -> None:
         normal_canvas = pygame.Surface((400, 240), pygame.SRCALPHA)
-        preview_canvas = pygame.Surface((400, 240), pygame.SRCALPHA)
+        flagged_canvas = pygame.Surface((400, 240), pygame.SRCALPHA)
         with patch.dict(os.environ, {"FADES_KO_PREVIEW": ""}):
-            normal = draw_player(normal_canvas, 100, 220, 0, 1, "idle", "black_dave", 0, "#ef5547")
+            normal = draw_player(
+                normal_canvas, 100, 220, 0, 1, "idle", "black_dave", 0, "#ef5547"
+            )
         with patch.dict(os.environ, {"FADES_KO_PREVIEW": "1"}):
-            preview = draw_player(preview_canvas, 100, 220, 0, 1, "idle", "black_dave", 0, "#ef5547")
-        self.assertGreater(normal.h, preview.h)
-        self.assertNotEqual(normal.size, preview.size)
+            flagged = draw_player(
+                flagged_canvas, 100, 220, 0, 1, "idle", "black_dave", 0, "#ef5547"
+            )
+        self.assertEqual(normal, flagged)
+        self.assertEqual(
+            pygame.image.tobytes(normal_canvas, "RGBA"),
+            pygame.image.tobytes(flagged_canvas, "RGBA"),
+        )
 
     def test_render_full_preview(self) -> None:
         """Save one stable image that makes regressions easy to inspect by eye."""

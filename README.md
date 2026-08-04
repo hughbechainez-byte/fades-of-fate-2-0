@@ -49,11 +49,12 @@ git push origin main
 
 If local and `origin/main` diverge, stop and reconcile before further feature work. Silent dual trees are a defect.
 
-The demo contains two selectable adult heroes and two blacked-out **COMING SOON** roster cards:
+The demo contains two selectable adult heroes, their autonomous allies, and two blacked-out **COMING SOON** roster cards:
 
 - **Black Dave:** slim, lean and muscular; backward black cap and matching tank top; small gold-trim rectangular glasses; diamond studs; fists that ignite for ten seconds after six fast attack presses (+20% damage); a finite-ammo lane-shot BB gun; Bluetooth-speaker shockwave super.
 - **Shelly:** shorter, fair-skinned and naturally soft with a small waist, fuller hips and a rounder rear silhouette; brunette bun; crop top and cargo pants; torch lighter; refill/cigarette/petting downtime; Chief companion and frenzy super.
 - **Chief:** light-brown pit bull with a diamond-set gold Cuban-link collar. He rests when Dave and Shelly are settled, independently bites nearby threats, intercepts attackers pressuring Dave, responds to each hero's dedicated command meter, accepts a safe-moment pet, and goes into a full frenzy during Shelly's super.
+- **KO:** a lean, dark-skinned Somali support fighter in a white lab coat and MMA gloves. He travels only on his skateboard, patiently selects a quiet opponent, rotates two punches and a kick every 20–30 combat seconds, dazes each target before the knockout, and periodically speed-blitzes the active crowd.
 
 ## Start playing
 
@@ -153,7 +154,7 @@ Every run writes searchable breadcrumbs to `logs\latest.log` beside the executab
 - Data-driven move timing and stats; five street-enemy roles including post-clear Security details, plus Couch; global attack-token limits; wave and boss scaling by player count.
 - Contextual throws, four-hit chains, aerials, dodge invulnerability, hit-built super meter, separate rechargeable Chief meters, finite BB ammo with non-solid drops, revive window, score multipliers and hot-plug input.
 - A four-level Chapter 1 campaign swaps data-backed geometry and themes at each results-screen handoff; deterministic outro and completion timelines freeze performance statistics before results, while the I-8-to-Soapy bridge appears as an explicit travel card.
-- Ninety-one canonical clips provide 828 rooted authored keys—8–16 meaningful drawings per clip—on a capture-safe 30 Hz presentation timeline while combat remains fixed at 60 Hz. Dave and Shelly use twelve true stride keys at 15 poses per second for a 0.8-second gait; phase advances from applied travel and survives brief stops. Shelly's longer refill and waistband actions remain infrequent accents, and manifest-backed tests reject duplicates, translation filler, foot-line drift, or uneven synthetic in-betweens.
+- Ninety-eight canonical clips provide 900 rooted authored keys—8–16 meaningful drawings per clip—on a capture-safe 30 Hz presentation timeline while combat remains fixed at 60 Hz. Dave and Shelly use twelve true stride keys at 15 poses per second for a 0.8-second gait; KO adds 64 strict actor-specific poses across idle, skateboard travel, preparation, two punches, a kick, and his speed-blitz super. Phase advances from applied travel and survives brief stops. Manifest-backed tests reject duplicates, translation filler, foot-line drift, placeholder aliases, or uneven synthetic in-betweens.
 - Level-aware procedural pixel art and physical props share fixed world anchors, so Sprouts, 7-Eleven, Madison Plaza, I-8, Soapy Joe's, Broadway, Revive, and Awaken Church track progress one-to-one instead of floating.
 - Original parody storefront signage and generated character/stage art; no commercial game art, logos, or fonts are copied. The title music and synthesized voice/SFX library are original; the stage track remains the local 8-bit conversion selected for Second Street.
 

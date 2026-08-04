@@ -327,6 +327,92 @@ SHELLY_PERSONALITY_PHASES = {
 }
 
 
+# KO is an authored support fighter, not a Dave alias.  These state names are
+# intentionally exact because his props and costume continuity are part of the
+# art contract: the skateboard belongs only to ``skate``; glove-up and coat
+# beats belong to ``idle``/``prepare``; combat and super use their own cels.
+KO_PHASES = {
+    "idle": (
+        "coat_settle",
+        "left_glove_start",
+        "left_glove_secure",
+        "right_glove_start",
+        "right_glove_secure",
+        "wrist_check",
+        "guard_rise",
+        "ready",
+    ),
+    "skate": (
+        "rear_foot_push",
+        "rear_foot_recover",
+        "both_feet_set",
+        "front_truck_compress",
+        "coast_low",
+        "coast_rise",
+        "rear_truck_compress",
+        "weight_transfer",
+        "carve_out",
+        "carve_return",
+        "coast_settle",
+        "roll_ready",
+    ),
+    "prepare": (
+        "scan_crowd",
+        "select_opponent",
+        "grip_coat",
+        "throw_coat",
+        "stance_drop",
+        "guard_set",
+        "lets_get_it",
+        "ready",
+    ),
+    "punch_1": (
+        "guard",
+        "lead_shoulder_load",
+        "lead_hand_launch",
+        "jab_contact",
+        "jab_extension",
+        "hand_return",
+        "guard_recover",
+        "ready",
+    ),
+    "punch_2": (
+        "guard",
+        "rear_hip_load",
+        "rear_hand_launch",
+        "cross_contact",
+        "cross_extension",
+        "torso_unwind",
+        "guard_recover",
+        "ready",
+    ),
+    "kick": (
+        "guard",
+        "weight_shift",
+        "knee_chamber",
+        "kick_launch",
+        "kick_contact",
+        "leg_retract",
+        "foot_set",
+        "ready",
+    ),
+    "super": (
+        "stance_flash",
+        "launch_blur",
+        "first_target",
+        "cross_screen_one",
+        "second_target",
+        "cross_screen_two",
+        "third_target",
+        "cross_screen_three",
+        "crowd_finish",
+        "return_blur",
+        "brake_flash",
+        "ready",
+    ),
+}
+
+
 PLAYER_STATES = (
     "idle",
     "walk",
@@ -346,6 +432,7 @@ PLAYER_STATES = (
     "refill",
     "pants",
 )
+KO_STATES = tuple(KO_PHASES)
 CHIEF_STATES = ("idle", "move", "attack", "frenzy", "guard", "sit", "pet", "command", "maul")
 # Maul is a wide, authored composite containing Chief and a safely stylized
 # grounded foe, so it lives outside Chief's normal 128px locomotion atlas.
@@ -426,6 +513,14 @@ def _jerry_phase(state: str) -> str:
 
 
 def _loop_and_hold(actor: str, state: str) -> tuple[bool, int]:
+    if actor == "ko":
+        if state == "idle":
+            return True, 5
+        if state == "skate":
+            return True, 2
+        if state == "prepare":
+            return False, 2
+        return False, 1
     if actor == "chief" and state == "maul":
         return False, 2
     if state == "command":
@@ -484,6 +579,19 @@ ANIMATION_CLIPS: tuple[AnimationClip, ...] = tuple(
         )
         for actor in ("black_dave", "shelly")
         for row, state in enumerate(PLAYER_STATES)
+    ]
+    + [
+        AnimationClip(
+            "ko",
+            state,
+            "assets/sprites/ko_animation_atlas.png",
+            row,
+            304,
+            128,
+            *_loop_and_hold("ko", state),
+            KO_PHASES[state],
+        )
+        for row, state in enumerate(KO_STATES)
     ]
     + [
         AnimationClip(
@@ -685,6 +793,10 @@ def clip_for(actor: str, state: str) -> AnimationClip:
         normalized_actor = "black_dave"
     elif normalized_actor == "shellie":
         normalized_actor = "shelly"
+    if normalized_actor == "ko":
+        if normalized_state not in KO_STATES:
+            raise ValueError(f"unknown KO animation state: {normalized_state}")
+        return _CLIP_INDEX[("ko", normalized_state)]
     if normalized_actor in {"black_dave", "shelly"}:
         normalized_state = PLAYER_ALIASES.get(normalized_state, normalized_state)
     elif normalized_actor == "chief":
@@ -884,6 +996,8 @@ __all__ = [
     "EXPANDED_PARTY_IDLE_POSES",
     "EXTENDED_HERO_POSES",
     "JERRY_STATES",
+    "KO_PHASES",
+    "KO_STATES",
     "PLAYER_STATES",
     "POSES_PER_CLIP",
     "action_segment_tick",

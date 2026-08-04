@@ -165,7 +165,6 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--self-test", action="store_true", help="run the hardware-free foundation QA suite and exit")
     parser.add_argument("--mute", action="store_true", help="disable music and sound")
     parser.add_argument("--windowed", action="store_true", help="start in a resizable 1280x720 window")
-    parser.add_argument("--ko-preview", action="store_true", help="render the first hero as the KO engine preview")
     parser.add_argument(
         "--skip-content-update",
         action="store_true",
@@ -240,8 +239,6 @@ def initialize_pygame(android_runtime: bool) -> None:
 def _run() -> int:
     args = parse_args()
     os.environ.setdefault("PYGAME_HIDE_SUPPORT_PROMPT", "1")
-    if args.ko_preview:
-        os.environ["FADES_KO_PREVIEW"] = "1"
     if args.self_test:
         os.environ.setdefault("SDL_VIDEODRIVER", "dummy")
         os.environ.setdefault("SDL_AUDIODRIVER", "dummy")

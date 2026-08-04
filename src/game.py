@@ -46,6 +46,7 @@ from .entities import (
     Chief,
     Effect,
     Enemy,
+    KOCompanion,
     Player,
     Projectile,
     SuperButanePickup,
@@ -372,6 +373,7 @@ class FadesGame:
         self._frame_snapshots: dict[int, InputSnapshot] = {}
         self.enemies: list[Enemy] = []
         self.chiefs: list[Chief] = []
+        self.ko_companion: KOCompanion | None = None
         self.projectiles: list[Projectile] = []
         self.ammo_pickups: list[AmmoPickup] = []
         self.super_butane_pickups: list[SuperButanePickup] = []
@@ -1203,6 +1205,7 @@ class FadesGame:
         self.players.clear()
         self.enemies.clear()
         self.chiefs.clear()
+        self.ko_companion = None
         self.projectiles.clear()
         self.ammo_pickups.clear()
         self.super_butane_pickups.clear()
@@ -1371,6 +1374,7 @@ class FadesGame:
         self.players.clear()
         self.enemies.clear()
         self.chiefs.clear()
+        self.ko_companion = None
         self.projectiles.clear()
         self.ammo_pickups.clear()
         self.super_butane_pickups.clear()
@@ -1493,6 +1497,20 @@ class FadesGame:
             chief_owner = next((player for player in self.players if player.character == "shelly"), self.players[0])
             self.chiefs.append(Chief(chief_owner, chief_cfg, chief_owner.x - 28.0, chief_owner.y + 9.0))
 
+        # KO is one shared autonomous cameo, not another playable/CPU slot.
+        # Anchoring him to the first human preserves camera and player scaling
+        # semantics while still allowing him to follow a surviving teammate.
+        ko_cfg = self.data["ko_companion"]
+        if self.players and bool(ko_cfg.get("enabled", True)):
+            ko_owner = next((player for player in self.players if not player.is_cpu), self.players[0])
+            self.ko_companion = KOCompanion(
+                ko_owner,
+                ko_cfg,
+                ko_owner.x - 72.0,
+                ko_owner.y + 23.0,
+                facing=ko_owner.facing,
+            )
+
         self._prepare_runtime_chapter_content()
         self.route_card_timer = 2.7
         self.route_card_objective = self._route_card_objective()
@@ -1605,6 +1623,9 @@ class FadesGame:
         for chief in self.chiefs:
             chief.update(self, dt)
             chief.advance_animation(dt)
+        if self.ko_companion is not None:
+            self.ko_companion.update(self, dt)
+            self.ko_companion.advance_animation(dt)
         for enemy in list(self.enemies):
             enemy.update(self, dt)
             enemy.advance_animation(dt)
@@ -2772,6 +2793,13 @@ class FadesGame:
                 48.0,
                 1.0,
             )
+        if isinstance(actor, KOCompanion):
+            return (
+                float(physics["player_radius_x"]),
+                float(physics["player_radius_depth"]),
+                50.0,
+                0.8,
+            )
         return (
             float(physics["chief_radius_x"]),
             float(physics["chief_radius_depth"]),
@@ -2796,16 +2824,17 @@ class FadesGame:
         )
         x = clamp(moved.x, half_width, float(self.meta["stage_width"]) - half_width)
 
-        if isinstance(actor, Player):
+        if isinstance(actor, (Player, KOCompanion)):
             # Players remain visible; CPU companions and co-op partners cannot
             # drag camera authority away from the human-controlled group.
             x = clamp(x, self.camera_x + half_width, self.camera_x + LOGICAL_SIZE[0] - half_width)
             if self.active_gate is not None:
                 x = min(x, self.active_gate - half_width)
-            humans = [player for player in self.players if not player.is_cpu and player.alive and player is not actor]
-            if humans:
-                tether = float(self.data["engine"]["camera"].get("group_tether_width", 552.0))
-                x = clamp(x, max(player.x for player in humans) - tether, min(player.x for player in humans) + tether)
+            if isinstance(actor, Player):
+                humans = [player for player in self.players if not player.is_cpu and player.alive and player is not actor]
+                if humans:
+                    tether = float(self.data["engine"]["camera"].get("group_tether_width", 552.0))
+                    x = clamp(x, max(player.x for player in humans) - tether, min(player.x for player in humans) + tether)
 
         actor.x = x
         actor.y = moved.depth
@@ -3871,6 +3900,88 @@ class FadesGame:
             and enemy.wake_invulnerable <= 0.0
         ]
         return min(candidates, key=lambda enemy: abs(enemy.x - x) + abs(enemy.y - y) * 1.8, default=None)
+
+    def ko_live_opponents(self, companion: KOCompanion) -> tuple[Enemy, ...]:
+        """Return exact active enemy objects eligible for KO's next action."""
+
+        return tuple(
+            enemy
+            for enemy in self.enemies
+            if enemy.alive
+            and enemy.state not in {
+                "spawn",
+                "dead",
+                "ko_dazed",
+                "ko_fall",
+                *COUCH_RETREAT_STATES,
+            }
+            and (not enemy.ko_claimed or enemy is companion.target)
+        )
+
+    def _ko_contested_enemy_ids(self) -> set[int]:
+        """Identify enemies teammates are already attacking or pursuing."""
+
+        contested = {
+            enemy.enemy_id
+            for enemy in self.enemies
+            if enemy.recent_damage_timer > 0.0
+            or enemy.burn_time > 0.0
+            or enemy.state in {"hitstun", "down"}
+        }
+        for player in self.players:
+            if player.cpu_target_enemy_id >= 0:
+                contested.add(player.cpu_target_enemy_id)
+            contested.update(
+                int(identity[1])
+                for identity in player.attack_hit_ids
+                if len(identity) >= 2 and identity[0] == "enemy"
+            )
+        for chief in self.chiefs:
+            contested.update(
+                enemy_id
+                for enemy_id in (
+                    chief.command_enemy_id,
+                    chief.protect_enemy_id,
+                    chief.maul_target_id,
+                )
+                if enemy_id >= 0
+            )
+        return contested
+
+    def select_ko_target(
+        self,
+        companion: KOCompanion,
+        *,
+        allow_contested: bool = False,
+    ) -> Enemy | None:
+        """Select a quiet exact-object target, with a bounded fallback wait."""
+
+        candidates = list(self.ko_live_opponents(companion))
+        if not candidates:
+            return None
+        contested = self._ko_contested_enemy_ids()
+        quiet = [enemy for enemy in candidates if enemy.enemy_id not in contested]
+        if quiet:
+            candidates = quiet
+        elif not allow_contested:
+            return None
+        return min(
+            candidates,
+            key=lambda enemy: (
+                abs(enemy.x - companion.x) + abs(enemy.y - companion.y) * 1.8,
+                enemy.enemy_id,
+            ),
+        )
+
+    def ko_super_targets(self, companion: KOCompanion) -> tuple[Enemy, ...]:
+        """Snapshot the current active roster without consuming future spawns."""
+
+        return tuple(
+            sorted(
+                self.ko_live_opponents(companion),
+                key=lambda enemy: (enemy.x, enemy.enemy_id),
+            )
+        )
 
     def try_throw(self, player: Player) -> bool:
         move = self.data["moves"]["throw"]
@@ -4945,6 +5056,8 @@ class FadesGame:
         )
         drawables: list[tuple[float, int, str, str, Any]] = []
         drawables.extend((chief.feet_y, 2, f"chief-{chief.owner.slot}", "chief", chief) for chief in self.chiefs)
+        if self.ko_companion is not None:
+            drawables.append((self.ko_companion.feet_y, 2, "ko-companion", "ko", self.ko_companion))
         drawables.extend((enemy.feet_y, 2, f"enemy-{enemy.enemy_id}", "enemy", enemy) for enemy in self.enemies)
         drawables.extend((player.feet_y, 2, f"player-{player.slot}", "player", player) for player in self.players if player.state != "eliminated")
         drawables.extend((projectile.feet_y, 3, f"projectile-{index}", "projectile", projectile) for index, projectile in enumerate(self.projectiles))
@@ -4975,6 +5088,8 @@ class FadesGame:
             for prop in self._content_event_props
         )
         security_bubbles: list[tuple[float, float, int, int]] = []
+        ko_prepare_bubbles: list[tuple[float, float, int]] = []
+        ko_daze_stars: list[tuple[float, float, float, int]] = []
         enemy_health_bars: list[tuple[Enemy, pygame.Rect]] = []
         for _, _, _, kind, obj in sorted(drawables, key=lambda item: (item[0], item[1], item[2])):
             mapping_object = kind in {"prop", "scene_object", "content_prop"}
@@ -4999,6 +5114,15 @@ class FadesGame:
                 screen_shake=(0.0, self._camera_shake_y),
             )
             x, y = projected.xy
+            if kind == "enemy" and obj.state == "ko_dazed":
+                # KO's victims visibly wobble while the stars orbit.  The
+                # offsets stay integer-aligned to preserve the pixel contract.
+                wobble = ((-2, 0), (0, -1), (2, 0), (0, 1))[
+                    int(obj.state_clock * 12.0) % 4
+                ]
+                x += wobble[0]
+                y += wobble[1]
+                ko_daze_stars.append((x, y, obj.state_clock, obj.enemy_id))
             if kind == "prop":
                 pixel_art.draw_stage_prop(surface, x, y, obj.get("kind", "planter"), self.frame // 4)
                 if prop_health == 1:
@@ -5025,7 +5149,25 @@ class FadesGame:
                     prop_kind=str(obj.get("kind", "tent_camp")),
                 )
                 continue
-            if kind == "player":
+            if kind == "ko":
+                ko_tick = (
+                    int(obj.state_clock * ANIMATION_PLAYBACK_HZ)
+                    if obj.state in {"prepare", "punch_1", "punch_2", "kick", "super"}
+                    else obj.animation_tick
+                )
+                pixel_art.draw_ko(
+                    surface,
+                    x,
+                    y,
+                    z=0,
+                    facing=obj.facing,
+                    state=obj.state,
+                    frame=ko_tick,
+                )
+                bubble_seconds = float(obj.config.get("prepare_bubble_seconds", 0.9))
+                if obj.state == "prepare" and obj.state_clock <= bubble_seconds:
+                    ko_prepare_bubbles.append((x, y, obj.facing))
+            elif kind == "player":
                 action_states = {"light", "heavy", "air_attack", "jump", "hurt", "downed", "super", "dodge", "pet", "ranged", "propane"}
                 visual_state = (
                     "attack_3"
@@ -5119,7 +5261,11 @@ class FadesGame:
                             frame=int(obj.state_clock * ANIMATION_PLAYBACK_HZ),
                         )
                         continue
-                    if obj.state == "recovery" and obj.attack_pattern:
+                    if obj.state == "ko_dazed":
+                        boss_state = "hitstun"
+                    elif obj.state == "ko_fall":
+                        boss_state = "down"
+                    elif obj.state == "recovery" and obj.attack_pattern:
                         boss_state = f"{obj.attack_pattern}_recovery"
                     else:
                         boss_state = obj.attack_pattern if obj.state in {"windup", "attack", "charge"} and obj.attack_pattern else obj.state
@@ -5148,7 +5294,7 @@ class FadesGame:
                             obj.state_duration,
                         )
                     else:
-                        boss_action = obj.state in {"spawn", "hitstun", "down", "dead"}
+                        boss_action = obj.state in {"spawn", "hitstun", "down", "dead", "ko_dazed", "ko_fall"}
                         boss_tick = int(obj.state_clock * ANIMATION_PLAYBACK_HZ) if boss_action else obj.animation_tick
                     pixel_art.draw_boss(
                         surface,
@@ -5162,7 +5308,11 @@ class FadesGame:
                     )
                 else:
                     enemy_state = (
-                        "charge"
+                        "hurt"
+                        if obj.state == "ko_dazed"
+                        else "down"
+                        if obj.state == "ko_fall"
+                        else "charge"
                         if obj.state == "charge"
                         else "attack"
                         if obj.state in {"windup", "attack", "recovery"}
@@ -5199,7 +5349,7 @@ class FadesGame:
                             obj.state_duration,
                         )
                     else:
-                        enemy_action = obj.state in {"spawn", "hitstun", "down", "dead"}
+                        enemy_action = obj.state in {"spawn", "hitstun", "down", "dead", "ko_dazed", "ko_fall"}
                         enemy_tick = int(obj.state_clock * ANIMATION_PLAYBACK_HZ) if enemy_action else obj.animation_tick
                     enemy_rect = pixel_art.draw_enemy(
                         surface,
@@ -5212,7 +5362,7 @@ class FadesGame:
                         frame=enemy_tick,
                         hit_flash=obj.hit_flash,
                     )
-                    if obj.alive:
+                    if obj.alive and obj.state not in {"ko_dazed", "ko_fall"}:
                         if not isinstance(enemy_rect, pygame.Rect):
                             enemy_rect = pygame.Rect(int(round(x - 18)), int(round(y - 56)), 36, 56)
                         enemy_health_bars.append((obj, enemy_rect))
@@ -5238,6 +5388,29 @@ class FadesGame:
 
         for enemy, enemy_rect in enemy_health_bars:
             self._draw_enemy_health_bar(surface, enemy, enemy_rect)
+
+        for x, y, clock, enemy_id in ko_daze_stars:
+            self._draw_ko_daze_stars(surface, x, y, clock, enemy_id)
+
+        for x, y, facing in ko_prepare_bubbles:
+            bubble_x = clamp(x, 68.0, LOGICAL_SIZE[0] - 68.0)
+            bubble_bottom = max(44.0, y - 86.0)
+            pixel_art.draw_comic_speech_bubble(
+                surface,
+                bubble_x,
+                bubble_bottom,
+                132,
+                28,
+                facing=facing,
+            )
+            self._text(
+                surface,
+                self.font_tiny,
+                "LET'S GET IT!",
+                (31, 40, 61),
+                (bubble_x, bubble_bottom - 15),
+                center=True,
+            )
 
         for x, y, facing, enemy_id in security_bubbles:
             speech, remaining = self._security_speech_by_enemy.get(enemy_id, ("", 0.0))
@@ -5323,6 +5496,45 @@ class FadesGame:
             (239, 78, 174),
             (69, 20, 57),
         )
+
+    @staticmethod
+    def _draw_ko_daze_stars(
+        surface: pygame.Surface,
+        x: float,
+        y: float,
+        clock: float,
+        enemy_id: int,
+    ) -> None:
+        """Draw three crisp orbiting stars above a KO-dazed opponent."""
+
+        phase = float(clock) * 7.5 + (enemy_id % 7) * 0.31
+        colors = ((255, 236, 83), (255, 174, 64), (255, 247, 153))
+        for index, color in enumerate(colors):
+            angle = phase + index * math.tau / len(colors)
+            center_x = int(round(x + math.cos(angle) * 15.0))
+            center_y = int(round(y - 62.0 + math.sin(angle) * 5.0))
+            points = (
+                (center_x, center_y - 4),
+                (center_x + 2, center_y - 1),
+                (center_x + 5, center_y),
+                (center_x + 2, center_y + 1),
+                (center_x, center_y + 4),
+                (center_x - 2, center_y + 1),
+                (center_x - 5, center_y),
+                (center_x - 2, center_y - 1),
+            )
+            pygame.draw.polygon(surface, (73, 43, 78), points)
+            pygame.draw.polygon(
+                surface,
+                color,
+                tuple(
+                    (
+                        center_x + int(round((point_x - center_x) * 0.68)),
+                        center_y + int(round((point_y - center_y) * 0.68)),
+                    )
+                    for point_x, point_y in points
+                ),
+            )
 
     def _draw_couch_refuge_taunt(self, surface: pygame.Surface) -> None:
         retreat = self.couch_retreat

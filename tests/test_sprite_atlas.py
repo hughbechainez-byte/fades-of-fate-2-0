@@ -74,6 +74,7 @@ ANIMATION_ATLAS_SPECS = {
     "assets/sprites/jerry_animation_atlas.png": (2304, 576),
     "assets/sprites/victory_animation_strip.png": (2048, 144),
     "assets/sprites/sunset_bmx_animation_strip.png": (2048, 144),
+    "assets/sprites/ko_animation_atlas.png": (3648, 896),
 }
 
 
@@ -127,8 +128,8 @@ class SpriteAtlasTests(unittest.TestCase):
                 self.assertEqual(pygame.image.load(str(path)).get_size(), expected_size)
 
     def test_every_active_animation_uses_meaningful_capture_safe_authored_keys(self) -> None:
-        self.assertEqual(len(ANIMATION_CLIPS), 91)
-        self.assertEqual(total_authored_poses(), 836)
+        self.assertEqual(len(ANIMATION_CLIPS), 98)
+        self.assertEqual(total_authored_poses(), 900)
         self.assertEqual(ANIMATION_TICKS_PER_SECOND, 30.0)
         for clip in ANIMATION_CLIPS:
             with self.subTest(actor=clip.actor, state=clip.state):

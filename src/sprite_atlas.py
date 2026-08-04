@@ -12,6 +12,7 @@ from .animation_manifest import (
     ANIMATION_CLIPS,
     ANIMATION_PLAYBACK_HZ,
     AnimationClip,
+    KO_STATES,
     clip_for,
     total_authored_poses,
 )
@@ -193,10 +194,35 @@ def animation_frame(actor: object, state: object, tick: int) -> pygame.Surface |
     return _clip_frame(clip, tick)
 
 
+def ko_frame(state: object, tick: int) -> pygame.Surface:
+    """Return an exact authored KO pose and never substitute another actor.
+
+    KO's skateboard, lab-coat/glove preparation, three strikes, and super are
+    state-specific visual contracts.  A missing state or atlas is therefore a
+    hard error: silently rendering Dave or KO's idle would violate both the
+    gameplay read and the review provenance for the character.
+    """
+
+    state_name = _state_name(state)
+    if state_name not in KO_STATES:
+        raise ValueError(f"unknown KO animation state: {state_name}")
+    clip = clip_for("ko", state_name)
+    poses = animation_frames("ko", state_name)
+    if len(poses) != clip.frame_count:
+        atlas_path = Path(resource_path(clip.atlas))
+        raise FileNotFoundError(
+            f"KO authored atlas is missing or incomplete: {atlas_path} "
+            f"({len(poses)}/{clip.frame_count} poses for {state_name})"
+        )
+    return poses[_clip_phase_index(clip, max(0, int(tick)), len(poses))]
+
+
 def player_frame(character: object, state: object, tick: int) -> pygame.Surface | None:
     """Return one of the hero's authored phase poses."""
 
     name = str(character or "black_dave").strip().lower().replace("-", "_").replace(" ", "_")
+    if name == "ko":
+        return ko_frame(state, tick)
     if name in {"jermaine", "white_dave"}:
         return None
     name = "shelly" if name in {"shelly", "shellie"} else "black_dave"
@@ -438,6 +464,7 @@ __all__ = [
     "clear_cache",
     "enemy_frame",
     "jerry_frame",
+    "ko_frame",
     "player_frame",
     "player_fist_anchors",
     "sunset_frame",
