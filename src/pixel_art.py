@@ -800,50 +800,113 @@ def draw_tent_camp(
     smoke_phase: float = 0.0,
     prop_kind: str = "tent_camp",
 ) -> pygame.Rect:
-    """Draw a small roadside tent with smoke so the ambush reads at a glance."""
+    """Draw a dense roadside encampment cluster with hard-edged smoke and props."""
 
     _ = prop_kind
     cx = _i(x)
     cy = _i(y)
     phase = int(frame) // 4 + int(smoke_phase)
-    tent = pygame.Surface((118, 76), pygame.SRCALPHA)
+    tent = pygame.Surface((144, 88), pygame.SRCALPHA)
     outline = (25, 23, 28)
-    tarp = (132, 103, 78)
-    tarp_dark = (78, 61, 51)
-    tarp_light = (187, 151, 112)
+    tarp = (124, 97, 74)
+    tarp_dark = (69, 55, 48)
+    tarp_light = (182, 148, 114)
     seam = (211, 177, 133)
     smoke_base = (72, 68, 75)
-    roof = [(12, 54), (39, 18), (78, 18), (106, 54), (96, 57), (22, 57)]
+    roof = [(18, 63), (49, 20), (89, 18), (116, 34), (132, 63), (116, 67), (31, 67)]
     pygame.draw.polygon(tent, outline, roof)
-    pygame.draw.polygon(tent, tarp_dark, [(16, 52), (40, 22), (76, 22), (101, 52), (92, 54), (25, 54)])
-    pygame.draw.polygon(tent, tarp, [(21, 51), (42, 25), (74, 25), (96, 51), (87, 53), (28, 53)])
-    pygame.draw.polygon(tent, _shade(tarp, -18), [(42, 25), (58, 29), (57, 53), (28, 53)])
-    pygame.draw.polygon(tent, _shade(tarp, 14), [(59, 29), (74, 25), (96, 51), (87, 53), (58, 53)])
-    pygame.draw.line(tent, seam, (40, 23), (28, 54), 2)
-    pygame.draw.line(tent, seam, (76, 23), (91, 54), 2)
-    pygame.draw.line(tent, (98, 128, 118), (57, 19), (57, 54), 2)
-    pygame.draw.line(tent, (68, 53, 46), (18, 56), (101, 56), 3)
-    pygame.draw.line(tent, (190, 161, 122), (25, 48), (39, 48), 2)
-    pygame.draw.line(tent, (190, 161, 122), (77, 46), (91, 49), 2)
-    pygame.draw.rect(tent, (34, 28, 27), (43, 36, 29, 18))
-    pygame.draw.polygon(tent, (12, 15, 19), [(48, 39), (61, 34), (69, 39), (69, 53), (48, 53)])
-    pygame.draw.rect(tent, (157, 119, 81), (57, 43, 9, 11))
-    pygame.draw.rect(tent, (220, 169, 94), (59, 45, 5, 5))
-    pygame.draw.rect(tent, (58, 45, 38), (27, 55, 19, 7))
-    pygame.draw.line(tent, (159, 123, 88), (29, 57), (44, 60), 2)
-    pygame.draw.ellipse(tent, (40, 38, 35), (77, 56, 20, 8))
-    pygame.draw.rect(tent, (150, 115, 79), (81, 53, 12, 7))
-    pygame.draw.rect(tent, (208, 164, 102), (83, 54, 8, 2))
-    pygame.draw.line(tent, seam, (22, 53), (17, 67), 2)
-    pygame.draw.line(tent, seam, (96, 53), (102, 67), 2)
-    for smoke_index, (dx, dy, size) in enumerate(((7, -8, 10), (20, -19, 9), (32, -31, 8), (41, -43, 6))):
+    pygame.draw.polygon(tent, tarp_dark, [(22, 61), (50, 24), (87, 22), (112, 36), (127, 61), (111, 64), (34, 64)])
+    pygame.draw.polygon(tent, tarp, [(27, 60), (52, 27), (84, 25), (108, 38), (122, 60), (106, 62), (38, 62)])
+    pygame.draw.polygon(tent, _shade(tarp, -16), [(52, 27), (67, 31), (67, 62), (38, 62)])
+    pygame.draw.polygon(tent, _shade(tarp, 15), [(68, 31), (84, 25), (108, 38), (106, 62), (68, 62)])
+    pygame.draw.line(tent, seam, (49, 24), (35, 63), 2)
+    pygame.draw.line(tent, seam, (86, 23), (104, 62), 2)
+    pygame.draw.line(tent, (98, 128, 118), (68, 21), (68, 63), 2)
+    pygame.draw.line(tent, (68, 53, 46), (23, 65), (126, 65), 3)
+    pygame.draw.rect(tent, (34, 28, 27), (51, 40, 31, 22))
+    pygame.draw.polygon(tent, (12, 15, 19), [(55, 42), (68, 36), (78, 42), (78, 61), (55, 61)])
+    pygame.draw.rect(tent, (157, 119, 81), (64, 49, 10, 13))
+    pygame.draw.rect(tent, (220, 169, 94), (66, 50, 6, 6))
+    pygame.draw.rect(tent, (58, 45, 38), (36, 63, 18, 8))
+    pygame.draw.line(tent, (159, 123, 88), (38, 65), (51, 69), 2)
+    pygame.draw.ellipse(tent, (40, 38, 35), (94, 63, 25, 9))
+    pygame.draw.rect(tent, (150, 115, 79), (99, 60, 15, 8))
+    pygame.draw.rect(tent, (208, 164, 102), (101, 61, 11, 3))
+    pygame.draw.rect(tent, (43, 37, 34), (6, 63, 22, 9))
+    pygame.draw.rect(tent, (106, 88, 73), (8, 61, 18, 7))
+    pygame.draw.line(tent, (157, 130, 96), (10, 64), (23, 67), 2)
+    pygame.draw.rect(tent, (36, 30, 29), (118, 66, 13, 8))
+    pygame.draw.rect(tent, (93, 78, 67), (119, 64, 11, 6))
+    pygame.draw.rect(tent, (178, 145, 107), (121, 64, 7, 2))
+    pygame.draw.line(tent, seam, (31, 62), (25, 79), 2)
+    pygame.draw.line(tent, seam, (113, 62), (119, 79), 2)
+    for pole_x in (12, 133):
+        pygame.draw.line(tent, (101, 86, 74), (pole_x, 60), (pole_x - 4 if pole_x < 70 else pole_x + 4, 81), 2)
+    for smoke_index, (dx, dy, size) in enumerate(((10, -7, 11), (25, -20, 10), (39, -34, 8), (52, -46, 7))):
         wobble = ((phase + smoke_index) % 5) - 2
-        puff = pygame.Rect(47 + dx + wobble, 18 + dy - phase * 2 + smoke_index * 3, size, max(4, size - 2))
+        puff = pygame.Rect(57 + dx + wobble, 18 + dy - phase * 2 + smoke_index * 3, size, max(4, size - 2))
         pygame.draw.ellipse(tent, smoke_base, puff)
         pygame.draw.ellipse(tent, (122 + smoke_index * 7, 116 + smoke_index * 5, 120 + smoke_index * 5), puff.inflate(-2, -1))
+    for ember_x, ember_y in ((95, 70), (100, 68), (106, 71)):
+        pygame.draw.rect(tent, (255, 176, 74), (ember_x, ember_y, 2, 2))
+    for ash_x, ash_y in ((85, 73), (112, 75), (23, 75), (129, 77)):
+        pygame.draw.rect(tent, (76, 71, 69), (ash_x, ash_y, 2, 1))
     rect = tent.get_rect(midbottom=(cx, cy))
     surface.blit(tent, rect)
     return rect.inflate(6, 8)
+
+
+_DETAILED_ENEMY_VARIANT_BASES = {
+    "encampment_crawler": "pipe",
+    "encampment_drifter": "stick",
+    "underpass_camp_runner": "whip",
+    "cart_tent_lurker": "cart",
+    "parking_security": "pipe",
+}
+
+
+def _encampment_variant_frame(
+    authored: pygame.Surface,
+    variant_id: str,
+    state_name: str,
+) -> pygame.Surface:
+    sprite = authored.copy()
+    outline = (30, 26, 28)
+    blanket = {
+        "encampment_crawler": (100, 88, 69),
+        "encampment_drifter": (88, 76, 66),
+        "underpass_camp_runner": (73, 85, 84),
+        "cart_tent_lurker": (109, 90, 64),
+    }.get(variant_id, (91, 79, 68))
+    patch = _shade(blanket, 18)
+    bag = (58, 52, 46)
+    beanie = (62, 47, 41)
+    if state_name in {"down", "dead"}:
+        pygame.draw.rect(sprite, blanket, (26, 54, 24, 10))
+        pygame.draw.rect(sprite, patch, (32, 55, 9, 4))
+        pygame.draw.rect(sprite, bag, (47, 58, 9, 7))
+        pygame.draw.rect(sprite, beanie, (53, 44, 8, 4))
+        return sprite
+    pygame.draw.rect(sprite, blanket, (22, 33, 17, 21))
+    pygame.draw.rect(sprite, patch, (24, 41, 8, 6))
+    pygame.draw.line(sprite, outline, (38, 35), (46, 49), 1)
+    pygame.draw.rect(sprite, bag, (45, 44, 9, 11))
+    pygame.draw.rect(sprite, _shade(bag, 20), (46, 45, 7, 3))
+    pygame.draw.rect(sprite, beanie, (27, 11, 10, 5))
+    pygame.draw.rect(sprite, (188, 159, 119), (29, 12, 5, 2))
+    if variant_id == "encampment_crawler":
+        pygame.draw.line(sprite, (150, 124, 87), (46, 54), (59, 61), 2)
+        pygame.draw.rect(sprite, (193, 163, 114), (55, 59, 4, 3))
+    elif variant_id == "underpass_camp_runner":
+        pygame.draw.line(sprite, (88, 105, 104), (19, 53), (34, 60), 2)
+        pygame.draw.rect(sprite, (184, 180, 152), (46, 31, 7, 3))
+    elif variant_id == "cart_tent_lurker":
+        pygame.draw.rect(sprite, (129, 105, 73), (57, 47, 8, 9))
+        pygame.draw.rect(sprite, (197, 169, 116), (58, 48, 6, 3))
+    else:
+        pygame.draw.line(sprite, (156, 134, 103), (20, 58), (34, 63), 2)
+        pygame.draw.line(sprite, (79, 69, 61), (24, 61), (40, 61), 1)
+    return sprite
 
 
 def _face_sign(facing: object) -> int:
@@ -5137,7 +5200,10 @@ def draw_enemy(
 ) -> pygame.Rect:
     """Draw a distinct, shaded silhouette for each configurable archetype."""
 
-    enemy_kind = str(kind or "stick").strip().lower().replace("-", "_").replace(" ", "_")
+    raw_kind = str(kind or "stick").strip().lower()
+    raw_kind, _, raw_variant = raw_kind.partition(":")
+    enemy_kind = raw_kind.replace("-", "_").replace(" ", "_")
+    variant_key = raw_variant.replace("-", "_").replace(" ", "_")
     if enemy_kind in {"shopping_cart", "cart_pusher"}:
         enemy_kind = "cart"
     elif enemy_kind in {"makeshift_whip", "cord"}:
@@ -5150,11 +5216,20 @@ def draw_enemy(
     # Security guards deliberately reuse the authored sixteen-pose stick
     # motion strip. Their uniform overlay makes the role readable without
     # introducing a low-frame-count exception to the animation-floor rule.
-    authored_kind = "stick" if security else enemy_kind
+    authored_kind = _DETAILED_ENEMY_VARIANT_BASES.get(variant_key, "stick" if security else enemy_kind)
     authored = None if homeless else sprite_atlas.enemy_frame(authored_kind, state_name, int(frame)) if sprite_atlas is not None else None
+    if authored is None and homeless and variant_key and sprite_atlas is not None:
+        detailed_kind = _DETAILED_ENEMY_VARIANT_BASES.get(variant_key)
+        if detailed_kind is not None:
+            authored = sprite_atlas.enemy_frame(detailed_kind, state_name, int(frame))
     if authored is not None:
         _shadow(surface, x, y, 67 if enemy_kind == "cart" else 47, 9, elevation=z)
-        sprite = _security_uniform_frame(authored, state_name) if security else authored
+        if homeless:
+            sprite = _encampment_variant_frame(authored, variant_key, state_name)
+        elif security:
+            sprite = _security_uniform_frame(authored, state_name)
+        else:
+            sprite = authored
         profile = "security_uniform" if security else "enemy_cloth"
         rendered = _hit_flash_sprite(_material_lit_sprite(sprite, profile), hit_flash)
         return _blit_grounded(

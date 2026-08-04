@@ -1096,6 +1096,35 @@ class PixelArtTests(unittest.TestCase):
         self.assertTrue(output.is_file())
         self.assertGreater(output.stat().st_size, 18_000)
 
+    def test_homeless_variants_use_detailed_existing_enemy_frames(self) -> None:
+        surface = pygame.Surface((520, 200), pygame.SRCALPHA)
+        variants = (
+            "encampment_crawler",
+            "encampment_drifter",
+            "underpass_camp_runner",
+            "cart_tent_lurker",
+        )
+        rects = [
+            draw_enemy(
+                surface,
+                70 + index * 110,
+                150,
+                kind=f"homeless:{variant}",
+                state="attack",
+                frame=6,
+            )
+            for index, variant in enumerate(variants)
+        ]
+        widths = [rect.width for rect in rects]
+        self.assertGreater(max(widths) - min(widths), 6)
+        self.assertGreater(surface.get_bounding_rect().width, 200)
+
+    def test_tent_camp_art_is_wider_than_the_old_single_tarp_silhouette(self) -> None:
+        surface = pygame.Surface((240, 180), pygame.SRCALPHA)
+        rect = pixel_art.draw_tent_camp(surface, 120, 150, frame=8, smoke_phase=2.0)
+        self.assertGreaterEqual(rect.width, 120)
+        self.assertGreaterEqual(rect.height, 70)
+
     def test_material_lighting_is_localized_preserves_alpha_and_adds_both_form_sides(self) -> None:
         cases = (
             (sprite_atlas.player_frame("black_dave", "idle", 0), "dave"),

@@ -742,6 +742,7 @@ class Enemy:
     x: float
     y: float
     stats: dict[str, Any]
+    variant_id: str = ""
     difficulty_scale: float = 1.0
     health: float = 1.0
     max_health: float = 1.0

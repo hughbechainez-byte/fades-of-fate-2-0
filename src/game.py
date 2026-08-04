@@ -18,7 +18,7 @@ from .animation_manifest import (
 )
 from .atmosphere import AtmosphereState
 from .audio import AudioManager
-from .chapter_content import compile_level_content, load_chapter_content
+from .chapter_content import compile_level_content, enemy_variants, load_chapter_content
 from .combat_engine import (
     AABB2,
     AttackQueryReport,
@@ -250,6 +250,7 @@ class FadesGame:
         # combat configuration.  Validating it at boot catches a broken route
         # contract before a player reaches a later stage.
         self.chapter_content = load_chapter_content(gameplay=self.data)
+        self.enemy_variant_catalog = enemy_variants(self.chapter_content)
         self.runtime_chapter_content: dict[str, Any] = {}
         self._content_major_by_hook: dict[str, dict[str, Any]] = {}
         self._content_optional: dict[str, Any] | None = None
@@ -1766,12 +1767,7 @@ class FadesGame:
     def _begin_environment_event(self, event: dict[str, Any], leader_x: float) -> None:
         """Launch a short invisible ambush from an authored environmental beat."""
 
-        wave = [
-            str(kind)
-            for group in event.get("spawn_groups", ())
-            if isinstance(group, dict)
-            for kind in group.get("runtime_kinds", ())
-        ]
+        wave = self._spawn_identifiers_from_groups(event.get("spawn_groups", ()))
         if not wave:
             return
         self.encounter_active = True
@@ -1805,12 +1801,7 @@ class FadesGame:
     def _begin_optional_content(self, optional: dict[str, Any], leader_x: float) -> None:
         """Enter a short side encounter that always rejoins the main route."""
 
-        wave = [
-            str(kind)
-            for group in optional.get("spawn_groups", ())
-            if isinstance(group, dict)
-            for kind in group.get("runtime_kinds", ())
-        ]
+        wave = self._spawn_identifiers_from_groups(optional.get("spawn_groups", ()))
         if not wave:
             return
         self._content_optional_active = True
@@ -3526,12 +3517,7 @@ class FadesGame:
         base = list(encounter["base"])
         content_fight = self._content_major_by_hook.get(str(encounter.get("name", "")).strip().lower())
         if base != ["couch"] and content_fight is not None:
-            authored_roles = [
-                str(kind)
-                for group in content_fight.get("spawn_groups", ())
-                if isinstance(group, dict)
-                for kind in group.get("runtime_kinds", ())
-            ]
+            authored_roles = self._spawn_identifiers_from_groups(content_fight.get("spawn_groups", ()))
             # The content contract contributes role variety, then the focused
             # roster pass below caps the encounter before it becomes a noisy
             # parade of overlapping targets.
@@ -3803,7 +3789,29 @@ class FadesGame:
             enemies=wave,
         )
 
-    def _spawn_enemy(self, kind: str) -> Enemy:
+    def _spawn_identifiers_from_groups(self, groups: Iterable[object]) -> list[str]:
+        wave: list[str] = []
+        for group in groups:
+            if not isinstance(group, dict):
+                continue
+            resolved = group.get("resolved_variant_ids", ())
+            if isinstance(resolved, (list, tuple)) and resolved:
+                wave.extend(str(identifier) for identifier in resolved)
+                continue
+            runtime_kinds = group.get("runtime_kinds", ())
+            if isinstance(runtime_kinds, (list, tuple)):
+                wave.extend(str(kind) for kind in runtime_kinds)
+        return wave
+
+    def _resolve_enemy_identifier(self, identifier: str) -> tuple[str, str]:
+        normalized = str(identifier or "stick").strip().lower().replace("-", "_").replace(" ", "_")
+        variant = self.enemy_variant_catalog.get(normalized)
+        if variant is None:
+            return normalized, ""
+        return str(variant.get("runtime_kind", normalized)), normalized
+
+    def _spawn_enemy(self, identifier: str) -> Enemy:
+        kind, variant_id = self._resolve_enemy_identifier(identifier)
         self.enemy_sequence += 1
         stats = dict(self.data["enemies"][kind])
         direction = -1 if self.enemy_sequence % 3 == 0 else 1
@@ -3824,7 +3832,7 @@ class FadesGame:
             stats["health"] = max(1.0, float(stats["health"]) * self._encounter_enemy_durability_scale)
             stats["damage"] = max(0.1, float(stats["damage"]) * self._encounter_enemy_damage_scale)
             stats["score"] = max(1.0, float(stats["score"]) * self._encounter_enemy_score_scale)
-        enemy = Enemy(self.enemy_sequence, kind, x, y, stats, difficulty_scale=scale)
+        enemy = Enemy(self.enemy_sequence, kind, x, y, stats, variant_id=variant_id, difficulty_scale=scale)
         self.enemies.append(enemy)
         self.add_effect("spawn", x, y, radius=25, color=(210, 118, 255), duration=0.45)
         if kind == "security":
@@ -4821,8 +4829,39 @@ class FadesGame:
 
     def _draw_title(self, surface: pygame.Surface) -> None:
         surface.blit(self.key_art, (0, 0))
-        pixel_art.draw_white_dave_loading(surface, 92, 303, frame=int(self.elapsed * 6.0))
-        pixel_art.draw_jermaine_loading(surface, 548, 303, frame=int(self.elapsed * 8.0))
+        pixel_art.draw_tent_camp(surface, 94, 303, frame=self.frame, smoke_phase=self.elapsed * 2.0)
+        pixel_art.draw_enemy(
+            surface,
+            132,
+            304,
+            z=0,
+            facing=1,
+            state="chase",
+            kind="homeless:cart_tent_lurker",
+            frame=int(self.elapsed * 8.0),
+        )
+        pixel_art.draw_player(
+            surface,
+            535,
+            304,
+            0,
+            -1,
+            "idle",
+            "jermaine",
+            int(self.elapsed * 6.0),
+            (255, 218, 76),
+        )
+        pixel_art.draw_player(
+            surface,
+            585,
+            304,
+            0,
+            -1,
+            "idle",
+            "white_dave",
+            int(self.elapsed * 5.0),
+            (205, 82, 57),
+        )
         overlay = pygame.Surface(LOGICAL_SIZE, pygame.SRCALPHA)
         overlay.fill((5, 4, 16, 35))
         surface.blit(overlay, (0, 0))
@@ -5167,7 +5206,7 @@ class FadesGame:
                         z=0,
                         facing=obj.facing,
                         state=enemy_state,
-                        kind=obj.kind,
+                        kind=f"{obj.kind}:{obj.variant_id}" if obj.variant_id else obj.kind,
                         frame=enemy_tick,
                         hit_flash=obj.hit_flash,
                     )
