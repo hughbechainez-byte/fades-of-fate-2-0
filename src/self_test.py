@@ -467,7 +467,28 @@ def run_foundation_self_test(output_dir: Path | None = None) -> dict[str, Any]:
             f"title/select loop starts {menu_music}",
         )
 
-        # Solo defaults to human Dave plus CPU Shelly and Chief, without
+        # KO is an explicit CPU-only roster choice. He retains the dedicated
+        # low-frequency companion state machine and never becomes a Player.
+        game.select_slots = [
+            SelectSlot(
+                keyboard_binding,
+                character_index=0,
+                confirmed=True,
+                cpu_companion_index=2,
+            )
+        ]
+        game._start_stage()
+        _check(
+            len(game.players) == 1
+            and game.ko_companion is not None
+            and game.ko_companion.owner is game.players[0]
+            and not any(player.character == "ko" for player in game.players),
+            "solo_ko_cpu_selection",
+            report,
+            "start-screen KO choice creates one authored CPU support fighter and no Player placeholder",
+        )
+
+        # Solo still defaults to human Dave plus CPU Shelly and Chief, without
         # silently increasing encounter scaling to a two-human budget.
         game.select_slots = [SelectSlot(keyboard_binding, character_index=0, confirmed=True)]
         game._start_stage()

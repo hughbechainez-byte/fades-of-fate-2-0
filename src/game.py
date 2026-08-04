@@ -83,11 +83,13 @@ PLAYER_COLORS = (
 )
 
 PLAYABLE_CHARACTERS = ("black_dave", "shelly", "jermaine", "white_dave")
+SOLO_CPU_COMPANIONS = ("black_dave", "shelly", "ko")
 CHARACTER_LABELS = {
     "black_dave": "BLACK DAVE",
     "shelly": "SHELLY",
     "jermaine": "JERMAINE",
     "white_dave": "WHITE DAVE",
+    "ko": "KO",
 }
 
 PAUSE_MENU_ITEMS = (
@@ -144,6 +146,7 @@ class SelectSlot:
     character_index: int = 0
     confirmed: bool = False
     nav_cooldown: float = 0.0
+    cpu_companion_index: int | None = None
 
 
 @dataclass(slots=True)
@@ -322,12 +325,14 @@ class FadesGame:
             "shelly": pygame.Rect(715, 165, 450, 755),
             "jermaine": pygame.Rect(455, 170, 405, 750),
             "white_dave": pygame.Rect(455, 170, 405, 750),
+            "ko": pygame.Rect(455, 170, 405, 750),
         }
         portrait_assets = {
             "black_dave": "assets/portraits/dave_portrait_lean_young_v2.png",
             "shelly": "assets/portraits/shelly_portrait_curvy_v1.png",
             "jermaine": "assets/portraits/jermaine_portrait_v1.png",
             "white_dave": "assets/portraits/white_dave_portrait_v1.png",
+            "ko": "assets/portraits/ko_portrait_v1.png",
         }
         self.character_portraits: dict[str, pygame.Surface] = {}
         for name, rect in portrait_rects.items():
@@ -335,10 +340,16 @@ class FadesGame:
             # cards use their dedicated portraits so the playable heroes read
             # with the same material detail as the enemies.
             portrait = key_art_source.subsurface(rect.clip(key_art_source.get_rect())).copy()
+            portrait_path = Path(resource_path(portrait_assets[name]))
+            if name == "ko" and not portrait_path.is_file():
+                raise FileNotFoundError(f"KO character-select portrait is required: {portrait_path}")
             try:
-                authored_portrait = pygame.image.load(str(resource_path(portrait_assets[name]))).convert()
-            except (OSError, pygame.error):
-                pass
+                authored_portrait = pygame.image.load(str(portrait_path)).convert()
+            except (OSError, pygame.error) as exc:
+                if name == "ko":
+                    raise RuntimeError(
+                        f"KO character-select portrait could not be loaded: {portrait_path}"
+                    ) from exc
             else:
                 # The authored images are square.  A center cover-crop keeps
                 # faces and torso readable in the established tall card slot
@@ -350,6 +361,10 @@ class FadesGame:
                     pygame.Rect(crop_left, 0, crop_width, source_rect.height)
                 ).copy()
             self.character_portraits[name] = pygame.transform.smoothscale(portrait, (90, 145))
+        self.cpu_companion_portraits = {
+            name: pygame.transform.smoothscale(self.character_portraits[name], (40, 64))
+            for name in SOLO_CPU_COMPANIONS
+        }
         self.state = "loading"
         self.loading_timer = 1.75
         self.select_slots: list[SelectSlot] = []
@@ -744,6 +759,19 @@ class FadesGame:
                     self.audio.play("menu")
                     self.log_breadcrumb("character_selected", player=1, character=PLAYABLE_CHARACTERS[index], source="mouse")
                     return
+            if len(self.select_slots) == 1:
+                for cpu_index, character in enumerate(SOLO_CPU_COMPANIONS):
+                    if pygame.Rect(172 + cpu_index * 156, 229, 144, 91).collidepoint(point):
+                        slot = self.select_slots[0]
+                        slot.cpu_companion_index = cpu_index
+                        slot.confirmed = False
+                        self.audio.play("menu")
+                        self.log_breadcrumb(
+                            "cpu_companion_selected",
+                            character=character,
+                            source="mouse",
+                        )
+                        return
             if pygame.Rect(16, 229, 144, 91).collidepoint(point):
                 slot = self._keyboard_select_slot()
                 if slot.confirmed:
@@ -1256,19 +1284,39 @@ class FadesGame:
 
         controller_line = f"{self.input.controller_count} CONTROLLER(S) DETECTED"
         if len(self.select_slots) == 1:
-            controlled_index = self.select_slots[0].character_index
+            slot = self.select_slots[0]
+            controlled_index = slot.character_index
             controlled_character = PLAYABLE_CHARACTERS[controlled_index]
             controlled = CHARACTER_LABELS[controlled_character]
-            companion_character = "black_dave" if controlled_character == "shelly" else "shelly"
+            companion_character = self._solo_cpu_character(slot)
             companion = CHARACTER_LABELS[companion_character]
             return (
                 f"YOU CONTROL: {controlled}  •  CPU COMPANION: {companion}",
-                f"CHIEF IS SHARED AI SUPPORT  •  {controller_line}",
+                f"UP/DOWN OR CLICK TO CHOOSE CPU  •  CHIEF SHARED  •  {controller_line}",
             )
         return (
             "EACH PLAYER CONTROLS THE HERO SHOWN  •  CHIEF IS SHARED AI SUPPORT",
             controller_line,
         )
+
+    @staticmethod
+    def _automatic_solo_cpu_character(controlled_character: str) -> str:
+        return "black_dave" if controlled_character == "shelly" else "shelly"
+
+    def _solo_cpu_character(self, slot: SelectSlot) -> str:
+        if slot.cpu_companion_index is None:
+            controlled = PLAYABLE_CHARACTERS[slot.character_index]
+            return self._automatic_solo_cpu_character(controlled)
+        return SOLO_CPU_COMPANIONS[slot.cpu_companion_index % len(SOLO_CPU_COMPANIONS)]
+
+    def _cycle_solo_cpu_character(self, slot: SelectSlot, direction: int) -> str:
+        current = self._solo_cpu_character(slot)
+        current_index = SOLO_CPU_COMPANIONS.index(current)
+        slot.cpu_companion_index = (current_index + direction) % len(SOLO_CPU_COMPANIONS)
+        selected = self._solo_cpu_character(slot)
+        self.audio.play("menu")
+        self.log_breadcrumb("cpu_companion_selected", character=selected, source="navigation")
+        return selected
 
     def _prepare_runtime_chapter_content(self) -> None:
         """Compile the authored Chapter record for the live human roster.
@@ -1339,6 +1387,18 @@ class FadesGame:
                 slot.character_index = (slot.character_index + (1 if snapshot.move_x > 0 else -1)) % len(PLAYABLE_CHARACTERS)
                 slot.nav_cooldown = 0.22
                 self.audio.play("menu")
+            elif (
+                index == 0
+                and len(self.select_slots) == 1
+                and slot.nav_cooldown <= 0.0
+                and abs(snapshot.move_y) > 0.55
+            ):
+                # Enter/Space/controller A also opens the roster, so that same
+                # edge can arrive with P1 already confirmed.  CPU navigation
+                # must remain available and visibly return the slot to editing.
+                slot.confirmed = False
+                self._cycle_solo_cpu_character(slot, 1 if snapshot.move_y > 0 else -1)
+                slot.nav_cooldown = 0.22
             if snapshot.pressed & {"confirm", "light", "jump"}:
                 if slot.confirmed:
                     start_requested = True
@@ -1352,7 +1412,14 @@ class FadesGame:
                 elif len(self.select_slots) > 1:
                     self.select_slots.pop(index)
                     break
-            if "pause" in snapshot.pressed and slot.confirmed:
+            # Enter is both confirm and pause in the keyboard mapping.  On the
+            # title-to-roster edge it may confirm P1, but it must not also skip
+            # the roster and start gameplay in that same fixed update.
+            if (
+                "pause" in snapshot.pressed
+                and slot.confirmed
+                and not (snapshot.pressed & {"confirm", "light", "jump"})
+            ):
                 start_requested = True
 
         if start_requested and self.select_slots and all(slot.confirmed for slot in self.select_slots):
@@ -1438,6 +1505,11 @@ class FadesGame:
         self.level_outro_frame = None
 
         characters = PLAYABLE_CHARACTERS
+        solo_cpu_character = (
+            self._solo_cpu_character(self.select_slots[0])
+            if len(self.select_slots) == 1
+            else None
+        )
         for index, slot in enumerate(self.select_slots):
             character = characters[slot.character_index]
             player = Player(
@@ -1453,14 +1525,14 @@ class FadesGame:
             )
             self.players.append(player)
 
-        # A solo run defaults to Dave plus CPU Shelly. Choosing Shelly remains
-        # available and swaps in CPU Dave, preserving both playable options.
-        if len(self.select_slots) == 1:
+        # Solo play exposes Dave, Shelly, and KO as explicit CPU support
+        # choices. KO keeps his dedicated low-frequency one-hit state machine;
+        # he must never be forced through Player's generic CPU combat states.
+        if solo_cpu_character in {"black_dave", "shelly"}:
             human = self.players[0]
-            companion_character = "black_dave" if human.character == "shelly" else "shelly"
             companion = Player(
                 slot=1,
-                character=companion_character,
+                character=solo_cpu_character,
                 binding={"type": "cpu", "instance_id": -2},
                 x=human.x - 42.0,
                 y=human.y + 18.0,
@@ -1497,11 +1569,10 @@ class FadesGame:
             chief_owner = next((player for player in self.players if player.character == "shelly"), self.players[0])
             self.chiefs.append(Chief(chief_owner, chief_cfg, chief_owner.x - 28.0, chief_owner.y + 9.0))
 
-        # KO is one shared autonomous cameo, not another playable/CPU slot.
-        # Anchoring him to the first human preserves camera and player scaling
-        # semantics while still allowing him to follow a surviving teammate.
+        # KO is CPU-only support, selected from the solo roster rather than an
+        # unconditional cameo or a human-playable placeholder.
         ko_cfg = self.data["ko_companion"]
-        if self.players and bool(ko_cfg.get("enabled", True)):
+        if solo_cpu_character == "ko" and self.players and bool(ko_cfg.get("enabled", True)):
             ko_owner = next((player for player in self.players if not player.is_cpu), self.players[0])
             self.ko_companion = KOCompanion(
                 ko_owner,
@@ -1526,6 +1597,7 @@ class FadesGame:
                 {"slot": p.slot + 1, "character": p.character, "binding": p.binding, "cpu": p.is_cpu}
                 for p in self.players
             ],
+            cpu_support=solo_cpu_character,
         )
 
     def _update_gameplay(self, dt: float) -> None:
@@ -5021,11 +5093,45 @@ class FadesGame:
                 pygame.draw.rect(surface, (255, 151, 112), (x + 25, 57, 94, 149), 2)
                 self._text(surface, self.font_tiny, "CUTTERS • BOLT BREAKER", (255, 188, 155), (x + 72, 205), center=True)
 
+        solo_cpu_character = (
+            self._solo_cpu_character(self.select_slots[0])
+            if len(self.select_slots) == 1
+            else None
+        )
+        cpu_card_colors = {
+            "black_dave": (24, 91, 119),
+            "shelly": (112, 50, 86),
+            "ko": (73, 66, 98),
+        }
         for index in range(4):
             x = 16 + index * 156
             rect = pygame.Rect(x, 229, 144, 91)
             color = PLAYER_COLORS[index]
             hovered = self.mouse_position is not None and rect.collidepoint(self.mouse_position)
+            if len(self.select_slots) == 1 and index > 0:
+                cpu_character = SOLO_CPU_COMPANIONS[index - 1]
+                selected = cpu_character == solo_cpu_character
+                border = (255, 222, 99) if selected or hovered else (104, 229, 255)
+                background = cpu_card_colors[cpu_character]
+                self._panel(surface, rect, background, border)
+                surface.blit(self.cpu_companion_portraits[cpu_character], (x + 7, 239))
+                self._text(surface, self.font_tiny, "CPU SUPPORT", (255, 240, 174), (x + 94, 239), center=True)
+                self._text(
+                    surface,
+                    self.font_small,
+                    CHARACTER_LABELS[cpu_character],
+                    (255, 246, 210),
+                    (x + 94, 254),
+                    center=True,
+                )
+                status = "SELECTED" if selected else "CLICK TO CHOOSE"
+                self._text(surface, self.font_tiny, status, border, (x + 94, 275), center=True)
+                if cpu_character == "ko":
+                    self._text(surface, self.font_tiny, "LIGHTNING • 1-HIT", (183, 226, 255), (x + 94, 292), center=True)
+                else:
+                    self._text(surface, self.font_tiny, "FULL COMBAT AI", (190, 200, 220), (x + 94, 292), center=True)
+                continue
+
             self._panel(surface, rect, (29, 35, 54) if hovered else (13, 16, 29), (255, 222, 99) if hovered else color)
             if index < len(self.select_slots):
                 slot = self.select_slots[index]
@@ -5033,7 +5139,8 @@ class FadesGame:
                 status = "YOU CONTROL • READY" if slot.confirmed else "YOU CONTROL • SELECTING"
                 self._text(surface, self.font, f"P{index + 1}  {character}", color, (x + 72, 244), center=True)
                 self._text(surface, self.font_tiny, status, (255, 240, 174), (x + 72, 267), center=True)
-                self._text(surface, self.font_tiny, "< > CHOOSE  •  A/ENTER CONFIRM", (190, 200, 220), (x + 72, 288), center=True)
+                choose_line = "< > HERO • UP/DOWN CPU" if len(self.select_slots) == 1 else "< > CHOOSE  •  A/ENTER CONFIRM"
+                self._text(surface, self.font_tiny, choose_line, (190, 200, 220), (x + 72, 288), center=True)
                 self._text(surface, self.font_tiny, "PRESS AGAIN / START TO BEGIN", (150, 236, 255), (x + 72, 304), center=True)
             else:
                 self._text(surface, self.font, f"P{index + 1}", color, (x + 72, 247), center=True)
@@ -6159,7 +6266,7 @@ class FadesGame:
         layer.set_alpha(int(round(255 * self.options.hud_opacity)))
         surface.blit(layer, (0, 0))
 
-    def _activate_visual_evidence_scene(self) -> None:
+    def _activate_visual_evidence_scene(self, *, cpu_companion_index: int | None = None) -> None:
         """Open the same fixed-camera Level 1 proof scene on PC and Android."""
 
         first_level_id = str(campaign_levels(self.data)[0]["id"])
@@ -6168,6 +6275,7 @@ class FadesGame:
                 {"type": "keyboard", "instance_id": -1},
                 character_index=0,
                 confirmed=True,
+                cpu_companion_index=cpu_companion_index,
             )
         ]
         if self.level_id != first_level_id:

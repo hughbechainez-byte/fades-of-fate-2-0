@@ -49,16 +49,16 @@ git push origin main
 
 If local and `origin/main` diverge, stop and reconcile before further feature work. Silent dual trees are a defect.
 
-The demo contains two selectable adult heroes, their autonomous allies, and two blacked-out **COMING SOON** roster cards:
+The demo contains four selectable adult heroes plus autonomous CPU support choices:
 
 - **Black Dave:** slim, lean and muscular; backward black cap and matching tank top; small gold-trim rectangular glasses; diamond studs; fists that ignite for ten seconds after six fast attack presses (+20% damage); a finite-ammo lane-shot BB gun; Bluetooth-speaker shockwave super.
 - **Shelly:** shorter, fair-skinned and naturally soft with a small waist, fuller hips and a rounder rear silhouette; brunette bun; crop top and cargo pants; torch lighter; refill/cigarette/petting downtime; Chief companion and frenzy super.
 - **Chief:** light-brown pit bull with a diamond-set gold Cuban-link collar. He rests when Dave and Shelly are settled, independently bites nearby threats, intercepts attackers pressuring Dave, responds to each hero's dedicated command meter, accepts a safe-moment pet, and goes into a full frenzy during Shelly's super.
-- **KO:** a lean, dark-skinned Somali support fighter in a white lab coat and MMA gloves. He travels only on his skateboard, patiently selects a quiet opponent, rotates two punches and a kick every 20–30 combat seconds with a distinct lightning signature on each strike, dazes each target before the knockout, and periodically clears the active crowd in a blue-white speed blitz.
+- **KO:** a lean, dark-skinned Somali CPU support fighter with a fuller scraggly beard, white lab coat, and MMA gloves. He travels only on his skateboard, patiently selects a quiet opponent, rotates two punches and a kick every 20–30 combat seconds with a distinct lightning signature on each strike, dazes each target before the knockout, and periodically clears the active crowd in a blue-white speed blitz.
 
 ## Start playing
 
-Double-click **The Fades of Fate** Desktop shortcut or `The Fades of Fate.exe` inside the demo folder. On the roster screen, confirm a hero and press confirm/Start again after everyone is ready. A one-human run defaults to player-controlled Black Dave plus CPU Shelly and Chief; choosing Shelly instead swaps in CPU Dave. Human players replace the CPU party in 2–4 player games.
+Double-click **The Fades of Fate** Desktop shortcut or `The Fades of Fate.exe` inside the demo folder. On the roster screen, choose a hero with left/right and solo CPU support with up/down (or click the bottom CPU cards), then confirm and press confirm/Start again after everyone is ready. A one-human run defaults to player-controlled Black Dave plus CPU Shelly and Chief, but CPU Dave, Shelly, or KO can be selected from the start. Human players replace solo CPU support in 2–4 player games.
 
 Clearing Level 1 introduces Jerry, a skinny old man with shoulder-length wiry white hair, a low black cowboy hat, leather trench coat and walker. He warns the party that he saw Couch by the 7-Eleven while coming to El Cilantro next to Goodwill. Choose **Start Level 2/3/4** on each results screen; a named travel card makes the I-8, Broadway, and Awaken transitions explicit. Couch, her comic confrontation, the BMX prop and the hug/treat/BMX sunset celebration are reserved for the Level 4 Awaken Church finale.
 
@@ -143,7 +143,7 @@ Drag an FFmpeg-readable music file (MP3, WAV, FLAC, M4A, and similar) onto `Conv
 
 Every run writes searchable breadcrumbs to `logs\latest.log` beside the executable and also keeps a timestamped session log. An uncaught crash creates `logs\crash-*.log` containing the traceback plus the latest gameplay breadcrumbs. Double-click `Open Crash Logs.cmd` to open that folder.
 
-`Run Foundation Self-Test.cmd` checks keyboard/controller mappings, live Chief/BB commands, off-screen Chief recall, unlimited development respawns, combat/collision/camera behavior, solo Dave + CPU Shelly, local 2–4 player creation, every Chapter 1 route and its encounter gates, Level 1's Jerry outro, inter-level handoffs, Level 4's Awaken Church Couch transition/boss completion, the BMX sunset strip, singleton music switching, rendering, and log creation. Its result is saved to `build\self_test_report.json` with Level 1–3, finale, and Dave fire-fist screenshots.
+`Run Foundation Self-Test.cmd` checks keyboard/controller mappings, live Chief/BB commands, off-screen Chief recall, unlimited development respawns, combat/collision/camera behavior, solo Dave + CPU Shelly, the selectable KO CPU-support path, local 2–4 player creation, every Chapter 1 route and its encounter gates, Level 1's Jerry outro, inter-level handoffs, Level 4's Awaken Church Couch transition/boss completion, the BMX sunset strip, singleton music switching, rendering, and log creation. Its result is saved to `build\self_test_report.json` with Level 1–3, finale, and Dave fire-fist screenshots.
 
 ## Foundation architecture
 

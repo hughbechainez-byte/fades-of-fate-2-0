@@ -33,7 +33,12 @@ class KOCompanionTests(unittest.TestCase):
         self.manager = InputManager(max_players=4, discover_controllers=False)
         self.game = FadesGame(self.manager, mute=True)
         self.game.select_slots = [
-            SelectSlot({"type": "keyboard"}, character_index=0, confirmed=True)
+            SelectSlot(
+                {"type": "keyboard"},
+                character_index=0,
+                confirmed=True,
+                cpu_companion_index=2,
+            )
         ]
         self.game._start_stage()
         self.ko = self.game.ko_companion
@@ -79,6 +84,8 @@ class KOCompanionTests(unittest.TestCase):
     def test_stage_owns_one_non_player_ko_companion(self) -> None:
         self.assertIsInstance(self.ko, KOCompanion)
         self.assertNotIn(self.ko, self.game.players)
+        self.assertEqual(len(self.game.players), 1)
+        self.assertTrue(all(player.character != "ko" for player in self.game.players))
         self.assertEqual(sum(isinstance(actor, KOCompanion) for actor in [self.ko]), 1)
         human = next(player for player in self.game.players if not player.is_cpu)
         self.assertIs(self.ko.owner, human)

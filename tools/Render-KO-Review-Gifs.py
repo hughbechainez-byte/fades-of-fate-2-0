@@ -953,7 +953,11 @@ def _activate_tool_gameplay_fixture(
         raise ReviewIntegrationError(
             "FadesGame has no deterministic visual-evidence stage setup"
         )
-    activate_scene()
+    _call_with_supported_keywords(
+        activate_scene,
+        {"cpu_companion_index": 2},
+        label="FadesGame._activate_visual_evidence_scene",
+    )
     # Keep the review focused on KO rather than startup HUD cards.
     game.route_card_timer = 0.0
     game.stage_banner_timer = 0.0

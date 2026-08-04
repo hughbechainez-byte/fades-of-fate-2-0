@@ -12,7 +12,7 @@ os.environ.setdefault("PYGAME_HIDE_SUPPORT_PROMPT", "1")
 
 import pygame
 
-from src.entities import Enemy
+from src.entities import Enemy, KOCompanion
 from src.config import campaign_levels, resource_path
 from src.game import FadesGame, SelectSlot
 from src.input_manager import InputManager, InputSnapshot
@@ -74,6 +74,7 @@ class StateFlowIntegrationTests(unittest.TestCase):
             "shelly": "assets/portraits/shelly_portrait_curvy_v1.png",
             "jermaine": "assets/portraits/jermaine_portrait_v1.png",
             "white_dave": "assets/portraits/white_dave_portrait_v1.png",
+            "ko": "assets/portraits/ko_portrait_v1.png",
         }
         try:
             for character, relative in portrait_paths.items():
@@ -94,6 +95,22 @@ class StateFlowIntegrationTests(unittest.TestCase):
                     )
         finally:
             game.close()
+            manager.close()
+
+    def test_ko_portrait_load_failure_never_falls_back_to_placeholder_art(self) -> None:
+        manager = InputManager(max_players=4, discover_controllers=False)
+        original_load = pygame.image.load
+
+        def load_without_ko(path: str) -> pygame.Surface:
+            if str(path).replace("\\", "/").endswith("assets/portraits/ko_portrait_v1.png"):
+                raise pygame.error("corrupt KO portrait")
+            return original_load(path)
+
+        try:
+            with mock.patch("src.game.pygame.image.load", side_effect=load_without_ko):
+                with self.assertRaisesRegex(RuntimeError, "KO character-select portrait could not be loaded"):
+                    FadesGame(manager, mute=True)
+        finally:
             manager.close()
 
     def test_game_selects_configured_menu_stage_and_return_music(self) -> None:
@@ -155,6 +172,7 @@ class StateFlowIntegrationTests(unittest.TestCase):
             companion = next(player for player in game.players if player.is_cpu)
             self.assertEqual((human.character, human.binding), ("black_dave", {"type": "keyboard"}))
             self.assertEqual(companion.character, "shelly")
+            self.assertIsNone(game.ko_companion)
             self.assertEqual(len(game.chiefs), 1)
             self.assertIs(game.chiefs[0].owner, companion)
         finally:
@@ -189,11 +207,82 @@ class StateFlowIntegrationTests(unittest.TestCase):
                 ("shelly", {"type": "controller", "instance_id": instance_id}),
             )
             self.assertEqual(companion.character, "black_dave")
+            self.assertIsNone(game.ko_companion)
             self.assertEqual(len(game.chiefs), 1)
             self.assertIs(game.chiefs[0].owner, human)
         finally:
             game.close()
             manager.close()
+
+    def test_controller_can_choose_ko_as_cpu_support_without_creating_player_placeholder(self) -> None:
+        manager = InputManager(max_players=4, discover_controllers=False)
+        instance_id = 43
+        manager.add_synthetic_controller(instance_id)
+        game = FadesGame(manager, mute=True)
+        try:
+            game.state = "title"
+            self._tap_controller(game, manager, instance_id, pygame.CONTROLLER_BUTTON_START)
+            self.assertEqual(game.state, "character_select")
+            self.assertFalse(game.select_slots[0].confirmed)
+
+            self._tap_controller(game, manager, instance_id, pygame.CONTROLLER_BUTTON_DPAD_DOWN)
+            self.assertEqual(game.select_slots[0].cpu_companion_index, 2)
+            self.assertEqual(
+                game._selection_footer_lines()[0],
+                "YOU CONTROL: BLACK DAVE  •  CPU COMPANION: KO",
+            )
+            self._tap_controller(game, manager, instance_id, pygame.CONTROLLER_BUTTON_A)
+            self._tap_controller(game, manager, instance_id, pygame.CONTROLLER_BUTTON_A)
+
+            self.assertEqual(len(game.players), 1)
+            self.assertEqual(game.players[0].character, "black_dave")
+            self.assertFalse(game.players[0].is_cpu)
+            self.assertIsInstance(game.ko_companion, KOCompanion)
+            assert game.ko_companion is not None
+            self.assertIs(game.ko_companion.owner, game.players[0])
+            self.assertFalse(any(player.character == "ko" for player in game.players))
+        finally:
+            game.close()
+            manager.close()
+
+    def test_confirm_entry_keys_can_still_choose_ko_cpu_support(self) -> None:
+        keyboard_manager = InputManager(max_players=4, discover_controllers=False)
+        keyboard_game = FadesGame(keyboard_manager, mute=True)
+        controller_manager = InputManager(max_players=4, discover_controllers=False)
+        instance_id = 44
+        controller_manager.add_synthetic_controller(instance_id)
+        controller_game = FadesGame(controller_manager, mute=True)
+        try:
+            keyboard_game.state = "title"
+            self._tap_key(keyboard_game, keyboard_manager, pygame.K_RETURN)
+            self.assertEqual(keyboard_game.state, "character_select")
+            self.assertTrue(keyboard_game.select_slots[0].confirmed)
+            self._tap_key(keyboard_game, keyboard_manager, pygame.K_DOWN)
+            self.assertFalse(keyboard_game.select_slots[0].confirmed)
+            self.assertEqual(keyboard_game.select_slots[0].cpu_companion_index, 2)
+
+            controller_game.state = "title"
+            self._tap_controller(
+                controller_game,
+                controller_manager,
+                instance_id,
+                pygame.CONTROLLER_BUTTON_A,
+            )
+            self.assertEqual(controller_game.state, "character_select")
+            self.assertTrue(controller_game.select_slots[0].confirmed)
+            self._tap_controller(
+                controller_game,
+                controller_manager,
+                instance_id,
+                pygame.CONTROLLER_BUTTON_DPAD_DOWN,
+            )
+            self.assertFalse(controller_game.select_slots[0].confirmed)
+            self.assertEqual(controller_game.select_slots[0].cpu_companion_index, 2)
+        finally:
+            keyboard_game.close()
+            keyboard_manager.close()
+            controller_game.close()
+            controller_manager.close()
 
     def test_two_player_selection_keeps_both_human_owners_and_one_shared_chief(self) -> None:
         manager = InputManager(max_players=4, discover_controllers=False)
@@ -220,6 +309,7 @@ class StateFlowIntegrationTests(unittest.TestCase):
             )
             self.assertEqual(len(game.chiefs), 1)
             self.assertIs(game.chiefs[0].owner, game.players[1])
+            self.assertIsNone(game.ko_companion)
         finally:
             game.close()
             manager.close()
@@ -249,6 +339,8 @@ class StateFlowIntegrationTests(unittest.TestCase):
             self.assertIn("SHELLY + CHIEF", rendered_labels)
             self.assertIn("JERMAINE", rendered_labels)
             self.assertIn("WHITE DAVE", rendered_labels)
+            self.assertIn("KO", rendered_labels)
+            self.assertIn("CPU SUPPORT", rendered_labels)
             self.assertIn("YOU CONTROL: WHITE DAVE  •  CPU COMPANION: SHELLY", rendered_labels)
             self.assertNotIn("LOCKED", rendered_labels)
             click((86, 275))   # ready
@@ -276,6 +368,36 @@ class StateFlowIntegrationTests(unittest.TestCase):
             click((320, 325))
             self.assertEqual(game.state, "character_select")
             self.assertEqual(game.select_slots[0].character_index, 0)
+        finally:
+            game.close()
+            manager.close()
+
+    def test_mouse_cpu_cards_choose_ko_and_multiplayer_suppresses_solo_support(self) -> None:
+        manager = InputManager(max_players=4, discover_controllers=False)
+        game = FadesGame(manager, mute=True)
+        try:
+            game.state = "title"
+            game.handle_events([
+                pygame.event.Event(pygame.MOUSEBUTTONDOWN, {"button": 1, "pos": (320, 325)})
+            ])
+            game.handle_events([
+                pygame.event.Event(pygame.MOUSEBUTTONDOWN, {"button": 1, "pos": (556, 275)})
+            ])
+            self.assertEqual(game.select_slots[0].cpu_companion_index, 2)
+            self.assertIn("CPU COMPANION: KO", game._selection_footer_lines()[0])
+
+            game.select_slots.append(
+                SelectSlot(
+                    {"type": "controller", "instance_id": 99},
+                    character_index=1,
+                    confirmed=True,
+                )
+            )
+            game.select_slots[0].confirmed = True
+            game._start_stage()
+            self.assertEqual(len(game.players), 2)
+            self.assertTrue(all(not player.is_cpu for player in game.players))
+            self.assertIsNone(game.ko_companion)
         finally:
             game.close()
             manager.close()
