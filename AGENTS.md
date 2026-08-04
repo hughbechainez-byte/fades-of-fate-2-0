@@ -15,6 +15,7 @@ After implementing and testing every fix, rebuild the Windows package with `tool
 - Keep `BUILD_SOURCE_COMMIT.txt` in the packaged build; it must record commit SHA, branch, UTC timestamp, source path, and whether the source tree was clean.
 - Safe repo-local defaults are `pull.ff=only`, `fetch.prune=true`, and sensible upstream setup for new branches.
 After every task, finish the branch cleanup path: commit the exact changed files, fast-forward or merge into `main`, push the result, and remove any temporary task branch only after confirming the commit(s) are preserved on `main` so no work can be overwritten.
+If a task adds or changes files, commit and push them before stopping. Do not wait for the delivery chain to finish before committing and pushing the changes already made.
 
 For every `v*` tag, `.github/workflows/windows-desktop-release.yml` repeats the package gates on Windows and uploads the complete executable package ZIP to that tag's GitHub Release.
 
