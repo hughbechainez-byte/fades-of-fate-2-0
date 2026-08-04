@@ -5999,6 +5999,17 @@ class FadesGame:
                     color=effect.color,
                     radius=max(10, int(effect.radius)),
                 )
+            elif effect.kind.startswith("ko_lightning_"):
+                facing_suffix = "left" if effect.direction < 0.0 else "right"
+                pixel_art.draw_effect(
+                    surface,
+                    x,
+                    y,
+                    kind=f"{effect.kind}_{facing_suffix}",
+                    frame=int(progress * 8.0),
+                    color=effect.color,
+                    radius=max(18, int(effect.radius)),
+                )
             elif effect.kind == "impact":
                 radius = max(5, int(effect.radius * (0.45 + progress * 0.85)))
                 flat_height = max(4, radius // 2)

@@ -24,6 +24,15 @@ _CHIEF_STRIDE_DISTANCE = 140.0
 _ENEMY_STRIDE_DISTANCE = 70.0
 _COUCH_STRIDE_DISTANCE = 106.0
 COUCH_RETREAT_STATES = frozenset({"bike_retreat", "bike_refuge", "bike_return"})
+KO_LIGHTNING_STYLES: dict[
+    str,
+    tuple[str, tuple[int, int, int], float, float],
+] = {
+    "punch_1": ("ko_lightning_jab", (91, 226, 255), 38.0, 0.24),
+    "punch_2": ("ko_lightning_cross", (191, 119, 255), 46.0, 0.27),
+    "kick": ("ko_lightning_kick", (255, 218, 82), 52.0, 0.31),
+    "super": ("ko_lightning_super", (178, 241, 255), 88.0, 0.22),
+}
 
 
 def _animation_phase_offset(identity: int, state: str) -> float:
@@ -1957,6 +1966,7 @@ class KOCompanion:
                 disappear_seconds=float(self.config.get("disappear_seconds", 0.22)),
             )
             if self.attack_landed:
+                self._emit_attack_lightning(game, target, self.pending_action)
                 self.last_action = self.pending_action
         if self.state_clock >= self.state_duration:
             if self.attack_landed:
@@ -2004,7 +2014,7 @@ class KOCompanion:
             self.facing = 1 if target.x >= origin_x else -1
             self.x = target.x - self.facing * contact
             self.y = target.y
-            direction = 1.0 if self.x >= origin_x else -1.0
+            travel_direction = 1.0 if self.x >= origin_x else -1.0
             game.add_effect(
                 "streak",
                 (origin_x + self.x) * 0.5,
@@ -2012,8 +2022,8 @@ class KOCompanion:
                 color=(255, 236, 104),
                 radius=max(12.0, abs(self.x - origin_x) * 0.22),
                 duration=0.18,
-                vx=direction * 150.0,
-                direction=direction,
+                vx=travel_direction * 150.0,
+                direction=travel_direction,
             )
             landed = target.begin_ko_sequence(
                 game,
@@ -2023,6 +2033,18 @@ class KOCompanion:
                 disappear_seconds=float(self.config.get("disappear_seconds", 0.22)),
             )
             if landed:
+                midpoint_x = (origin_x + self.x) * 0.5
+                midpoint_y = (origin_y + self.y) * 0.5 - 38.0
+                effect_kind, color, base_radius, duration = KO_LIGHTNING_STYLES["super"]
+                game.add_effect(
+                    effect_kind,
+                    midpoint_x,
+                    midpoint_y,
+                    color=color,
+                    radius=max(base_radius, min(150.0, abs(self.x - origin_x) * 0.62)),
+                    duration=duration,
+                    direction=float(self.facing),
+                )
                 self.super_hits += 1
                 self.attack_landed = True
         if self.state_clock >= self.state_duration:
@@ -2033,6 +2055,28 @@ class KOCompanion:
                 self._finish_action()
             else:
                 self._cancel_action()
+
+    def _emit_attack_lightning(
+        self,
+        game: Any,
+        target: Enemy,
+        action: str,
+    ) -> None:
+        """Attach one distinct crisp lightning signature to each KO strike."""
+
+        style = KO_LIGHTNING_STYLES.get(action)
+        if style is None:
+            return
+        effect_kind, color, radius, duration = style
+        game.add_effect(
+            effect_kind,
+            (self.x + target.x) * 0.5,
+            (self.y + target.y) * 0.5 - (26.0 if action == "kick" else 39.0),
+            color=color,
+            radius=radius,
+            duration=duration,
+            direction=float(self.facing),
+        )
 
     def _finish_action(self) -> None:
         completed = self.pending_action

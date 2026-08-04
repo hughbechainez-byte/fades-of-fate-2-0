@@ -84,6 +84,16 @@ EXPECTED_GIF_NAMES: tuple[str, ...] = (
     "super_flash_clear.gif",
 )
 
+LIGHTNING_REVIEW_STYLES: dict[
+    str,
+    tuple[str, tuple[int, int, int], int],
+] = {
+    "punch_jab_cross": ("ko_lightning_jab", (91, 226, 255), 38),
+    "punch_hook_uppercut": ("ko_lightning_cross", (191, 119, 255), 46),
+    "kick_roundhouse": ("ko_lightning_kick", (255, 218, 82), 52),
+}
+LIGHTNING_SUPER_STYLE = ("ko_lightning_super", (178, 241, 255), 88)
+
 
 @dataclass(slots=True)
 class RuntimeBindings:
@@ -504,6 +514,84 @@ def _draw_enemy(
     )
 
 
+def _draw_attack_lightning(
+    bindings: RuntimeBindings,
+    surface: pygame.Surface,
+    *,
+    clip_name: str,
+    tick: int,
+) -> None:
+    style = LIGHTNING_REVIEW_STYLES.get(clip_name)
+    if style is None:
+        return
+    draw_effect = getattr(bindings.pixel_art, "draw_effect", None)
+    if not callable(draw_effect):
+        raise ReviewIntegrationError("src.pixel_art.draw_effect is unavailable")
+    kind, color, radius = style
+    _call_with_supported_keywords(
+        draw_effect,
+        {
+            "surface": surface,
+            "x": 382.0,
+            "y": 274.0 if clip_name == "kick_roundhouse" else 258.0,
+            "z": 0.0,
+            "kind": f"{kind}_right",
+            "frame": tick,
+            "color": color,
+            "radius": radius,
+        },
+        label=f"src.pixel_art.draw_effect:{kind}",
+    )
+
+
+def _validate_lightning_signatures(bindings: RuntimeBindings) -> dict[str, Any]:
+    """Prove that every KO attack owns a distinct moving lightning render."""
+
+    draw_effect = getattr(bindings.pixel_art, "draw_effect", None)
+    if not callable(draw_effect):
+        raise ReviewIntegrationError("src.pixel_art.draw_effect is unavailable")
+    styles = dict(LIGHTNING_REVIEW_STYLES)
+    styles["super_flash_clear"] = LIGHTNING_SUPER_STYLE
+    signatures: set[str] = set()
+    records: dict[str, Any] = {}
+    for name, (kind, color, radius) in styles.items():
+        frames: list[str] = []
+        opaque_counts: list[int] = []
+        for tick in (0, 5):
+            surface = pygame.Surface((320, 180), pygame.SRCALPHA)
+            _call_with_supported_keywords(
+                draw_effect,
+                {
+                    "surface": surface,
+                    "x": 160.0,
+                    "y": 90.0,
+                    "z": 0.0,
+                    "kind": f"{kind}_right",
+                    "frame": tick,
+                    "color": color,
+                    "radius": radius,
+                },
+                label=f"src.pixel_art.draw_effect:{kind}",
+            )
+            frames.append(_frame_signature(surface))
+            opaque_counts.append(pygame.mask.from_surface(surface).count())
+        if min(opaque_counts) < 20:
+            raise ReviewIntegrationError(f"{kind} rendered too few visible lightning pixels")
+        if frames[0] == frames[1]:
+            raise ReviewIntegrationError(f"{kind} has no phase-driven lightning motion")
+        if frames[0] in signatures:
+            raise ReviewIntegrationError(f"{kind} duplicates another KO lightning signature")
+        signatures.add(frames[0])
+        records[name] = {
+            "effect_kind": kind,
+            "color": list(color),
+            "radius": radius,
+            "opaque_pixels": opaque_counts,
+            "phase_motion": "pass",
+        }
+    return {"status": "pass", "distinct_signatures": len(signatures), "attacks": records}
+
+
 def _render_direct_clip(
     bindings: RuntimeBindings,
     base: pygame.Surface,
@@ -516,6 +604,7 @@ def _render_direct_clip(
     for index in range(frame_count):
         tick = round(index * 30 / fps)
         surface = base.copy()
+        active_window = False
         if clip.enemy_layout == "target":
             active_window = frame_count // 3 <= index < frame_count * 2 // 3
             _draw_enemy(
@@ -545,6 +634,13 @@ def _render_direct_clip(
             state=state,
             tick=tick,
         )
+        if active_window:
+            _draw_attack_lightning(
+                bindings,
+                surface,
+                clip_name=clip.name,
+                tick=tick,
+            )
         frames.append(_annotate(_surface_image(surface), clip.name, index, frame_count))
     return frames, _frame_durations(frame_count, fps)
 
@@ -1173,6 +1269,7 @@ def _render_review_artifacts(
         tuple(range(24)),
     )
     features = _validate_features(bindings, states, strict=strict)
+    lightning = _validate_lightning_signatures(bindings)
     assets = _asset_provenance(bindings, states)
     base = _stage_base(bindings)
 
@@ -1200,6 +1297,8 @@ def _render_review_artifacts(
                 "unique_authored_pose_count": unique_pose_counts[clip.name],
             }
         )
+        if clip.name in LIGHTNING_REVIEW_STYLES:
+            record["lightning_effect"] = LIGHTNING_REVIEW_STYLES[clip.name][0]
         artifacts[clip.name] = record
 
     gameplay_verification: dict[str, Any] = {}
@@ -1214,6 +1313,8 @@ def _render_review_artifacts(
         _save_gif(frames, path, durations)
         record = _artifact_record(path)
         record["capture"] = "FadesGame.update_and_draw"
+        if scenario == "super_flash_clear":
+            record["lightning_effect"] = LIGHTNING_SUPER_STYLE[0]
         artifacts[scenario] = record
         gameplay_verification[scenario] = verification
 
@@ -1253,6 +1354,7 @@ def _render_review_artifacts(
         "resolved_states": states,
         "mirror_validation": mirror,
         "feature_validation": features,
+        "lightning_validation": lightning,
         "gameplay_validation": gameplay_verification,
         "artifacts": artifacts,
     }

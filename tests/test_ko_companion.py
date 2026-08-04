@@ -14,7 +14,7 @@ import pygame
 
 from src import sprite_atlas
 from src.animation_manifest import clip_for
-from src.entities import Enemy, KOCompanion
+from src.entities import Enemy, KOCompanion, KO_LIGHTNING_STYLES
 from src.game import FadesGame, SelectSlot
 from src.input_manager import InputManager
 
@@ -186,15 +186,32 @@ class KOCompanionTests(unittest.TestCase):
     def test_regular_attacks_rotate_punch_punch_kick(self) -> None:
         observed: list[str] = []
         cooldowns: list[float] = []
+        lightning: list[tuple[str, tuple[int, int, int]]] = []
         for index in range(3):
             target = self.enemy(40 + index)
             observed.append(self.begin_regular_action(target))
+            effect_start = len(self.game.effects)
             self.ko.update(self.game, float(self.ko.config["attack_seconds"]))
             self.assertEqual(target.state, "ko_dazed")
             self.assertEqual(self.ko.state, "idle")
             cooldowns.append(self.ko.attack_cooldown)
+            new_lightning = [
+                effect
+                for effect in self.game.effects[effect_start:]
+                if effect.kind.startswith("ko_lightning_")
+            ]
+            self.assertEqual(len(new_lightning), 1)
+            lightning.append((new_lightning[0].kind, new_lightning[0].color))
         self.assertEqual(observed, ["punch_1", "punch_2", "kick"])
         self.assertEqual(cooldowns, [25.0, 30.0, 20.0])
+        self.assertEqual(
+            lightning,
+            [
+                (KO_LIGHTNING_STYLES[action][0], KO_LIGHTNING_STYLES[action][1])
+                for action in observed
+            ],
+        )
+        self.assertEqual(len({color for _, color in lightning}), 3)
         self.assertEqual(self.ko.completed_actions, 3)
         self.assertEqual(self.ko.attack_cooldown, 20.0)
 
@@ -258,6 +275,34 @@ class KOCompanionTests(unittest.TestCase):
         self.assertEqual(self.ko.last_action, "super")
         self.assertEqual(self.ko.completed_actions, 4)
         self.assertEqual(self.game.spawn_queue, before_queue)
+        super_lightning = [
+            effect
+            for effect in self.game.effects
+            if effect.kind == KO_LIGHTNING_STYLES["super"][0]
+        ]
+        self.assertEqual(len(super_lightning), len(enemies))
+        self.assertTrue(
+            all(effect.color == KO_LIGHTNING_STYLES["super"][1] for effect in super_lightning)
+        )
+        self.assertTrue(all(effect.radius >= KO_LIGHTNING_STYLES["super"][2] for effect in super_lightning))
+
+    def test_super_lightning_faces_a_close_left_target_after_contact_teleport(self) -> None:
+        target = self.enemy(64, x_offset=-5.0)
+        self.game.enemies = [target]
+        self.ko.completed_actions = 3
+        self.ko.attack_cooldown = 0.0
+
+        self.ko.update(self.game, 0.0)
+        self.ko.update(self.game, float(self.ko.config["warmup_seconds"]))
+        self.ko.update(self.game, float(self.ko.config["super_duration"]))
+
+        lightning = [
+            effect
+            for effect in self.game.effects
+            if effect.kind == KO_LIGHTNING_STYLES["super"][0]
+        ]
+        self.assertEqual(len(lightning), 1)
+        self.assertEqual(lightning[0].direction, -1.0)
 
     def test_render_uses_strict_state_facing_and_moving_daze_stars(self) -> None:
         canvas = pygame.Surface((640, 360), pygame.SRCALPHA)

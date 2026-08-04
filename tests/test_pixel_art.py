@@ -1952,6 +1952,39 @@ class PixelArtTests(unittest.TestCase):
         draw_effect(late, 60, 50, kind="dust", frame=4, radius=18)
         self.assertNotEqual(pygame.image.tobytes(early, "RGBA"), pygame.image.tobytes(late, "RGBA"))
 
+    def test_ko_attacks_have_distinct_phase_driven_lightning_signatures(self) -> None:
+        signatures: set[bytes] = set()
+        styles = (
+            ("ko_lightning_jab", (91, 226, 255), 38),
+            ("ko_lightning_cross", (191, 119, 255), 46),
+            ("ko_lightning_kick", (255, 218, 82), 52),
+            ("ko_lightning_super", (178, 241, 255), 88),
+        )
+        for kind, color, radius in styles:
+            with self.subTest(kind=kind):
+                early = pygame.Surface((241, 181), pygame.SRCALPHA)
+                late = pygame.Surface((241, 181), pygame.SRCALPHA)
+                left = pygame.Surface((241, 181), pygame.SRCALPHA)
+                early_rect = draw_effect(
+                    early, 120, 90, kind=f"{kind}_right", frame=0, color=color, radius=radius
+                )
+                draw_effect(
+                    late, 120, 90, kind=f"{kind}_right", frame=5, color=color, radius=radius
+                )
+                draw_effect(
+                    left, 120, 90, kind=f"{kind}_left", frame=0, color=color, radius=radius
+                )
+                early_bytes = pygame.image.tobytes(early, "RGBA")
+                self.assertGreater(early_rect.width, 0)
+                self.assertGreater(pygame.mask.from_surface(early).count(), 20)
+                self.assertNotEqual(early_bytes, pygame.image.tobytes(late, "RGBA"))
+                self.assertEqual(
+                    pygame.image.tobytes(pygame.transform.flip(early, True, False), "RGBA"),
+                    pygame.image.tobytes(left, "RGBA"),
+                )
+                signatures.add(early_bytes)
+        self.assertEqual(len(signatures), len(styles))
+
     def test_legacy_ko_preview_flag_cannot_replace_black_dave(self) -> None:
         normal_canvas = pygame.Surface((400, 240), pygame.SRCALPHA)
         flagged_canvas = pygame.Surface((400, 240), pygame.SRCALPHA)

@@ -54,7 +54,7 @@ The demo contains two selectable adult heroes, their autonomous allies, and two 
 - **Black Dave:** slim, lean and muscular; backward black cap and matching tank top; small gold-trim rectangular glasses; diamond studs; fists that ignite for ten seconds after six fast attack presses (+20% damage); a finite-ammo lane-shot BB gun; Bluetooth-speaker shockwave super.
 - **Shelly:** shorter, fair-skinned and naturally soft with a small waist, fuller hips and a rounder rear silhouette; brunette bun; crop top and cargo pants; torch lighter; refill/cigarette/petting downtime; Chief companion and frenzy super.
 - **Chief:** light-brown pit bull with a diamond-set gold Cuban-link collar. He rests when Dave and Shelly are settled, independently bites nearby threats, intercepts attackers pressuring Dave, responds to each hero's dedicated command meter, accepts a safe-moment pet, and goes into a full frenzy during Shelly's super.
-- **KO:** a lean, dark-skinned Somali support fighter in a white lab coat and MMA gloves. He travels only on his skateboard, patiently selects a quiet opponent, rotates two punches and a kick every 20–30 combat seconds, dazes each target before the knockout, and periodically speed-blitzes the active crowd.
+- **KO:** a lean, dark-skinned Somali support fighter in a white lab coat and MMA gloves. He travels only on his skateboard, patiently selects a quiet opponent, rotates two punches and a kick every 20–30 combat seconds with a distinct lightning signature on each strike, dazes each target before the knockout, and periodically clears the active crowd in a blue-white speed blitz.
 
 ## Start playing
 

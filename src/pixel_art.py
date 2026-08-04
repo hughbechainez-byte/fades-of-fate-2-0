@@ -6901,6 +6901,131 @@ def draw_effect(
             pygame.draw.rect(surface, (112, 235, 249), (cx + dx - 2, cy + dy - 1, 4, 3))
         return rect.inflate(8, 8)
 
+    if effect.startswith("ko_lightning_"):
+        signature = effect.removesuffix("_left").removesuffix("_right")
+        if effect.endswith("_left"):
+            # Rasterize one canonical right-facing bolt and flip that bitmap.
+            # This avoids pygame's line endpoint rules producing subtly
+            # different left/right pixel clusters.
+            layer = pygame.Surface((401, 241), pygame.SRCALPHA)
+            anchor_x, anchor_y = 200, 120
+            draw_effect(
+                layer,
+                anchor_x,
+                anchor_y,
+                kind=f"{signature}_right",
+                frame=frame,
+                color=color,
+                radius=radius,
+            )
+            mirrored = pygame.transform.flip(layer, True, False)
+            bounds = mirrored.get_bounding_rect()
+            if bounds.width <= 0 or bounds.height <= 0:
+                return pygame.Rect(cx, cy, 0, 0)
+            destination = (
+                cx - anchor_x + bounds.x,
+                cy - anchor_y + bounds.y,
+            )
+            return surface.blit(mirrored.subsurface(bounds), destination).inflate(8, 8)
+
+        direction = 1
+        palettes = {
+            "ko_lightning_jab": ((91, 226, 255), (229, 253, 255), (18, 67, 105)),
+            "ko_lightning_cross": ((191, 119, 255), (250, 231, 255), (64, 29, 108)),
+            "ko_lightning_kick": ((255, 218, 82), (255, 252, 205), (108, 69, 15)),
+            "ko_lightning_super": ((178, 241, 255), (255, 255, 255), (27, 42, 92)),
+        }
+        default_primary, core_color, outline = palettes.get(
+            signature,
+            palettes["ko_lightning_jab"],
+        )
+        primary = _rgb(color, default_primary)
+        span_limit = 150 if signature == "ko_lightning_super" else 66
+        span = max(24, min(span_limit, int(radius)))
+        offsets_by_signature = {
+            "ko_lightning_jab": (0, -5, 3, -4, 2, 0),
+            "ko_lightning_cross": (7, -8, 5, -10, 6, -3, 0),
+            "ko_lightning_kick": (-17, -10, -2, 7, 15, 19),
+            "ko_lightning_super": (2, -9, 8, -12, 9, -7, 11, -5, 3, 0),
+        }
+        offsets = offsets_by_signature.get(
+            signature,
+            offsets_by_signature["ko_lightning_jab"],
+        )
+        flicker = (phase % 3) - 1
+        points: list[tuple[int, int]] = []
+        for index, y_offset in enumerate(offsets):
+            along = -span / 2.0 + span * index / max(1, len(offsets) - 1)
+            points.append(
+                (
+                    cx + direction * int(round(along)),
+                    cy + y_offset + (flicker if index % 2 else -flicker),
+                )
+            )
+
+        rects = [pygame.draw.lines(surface, outline, False, points, 6)]
+        rects.append(pygame.draw.lines(surface, primary, False, points, 3))
+        for index, (start, end) in enumerate(zip(points, points[1:])):
+            if (index + phase) % 2 == 0:
+                rects.append(pygame.draw.line(surface, core_color, start, end, 1))
+        for index, point in enumerate(points[1:-1], start=1):
+            if (index + phase) % 3 == 0:
+                node = pygame.Rect(point[0] - 2, point[1] - 2, 4, 4)
+                pygame.draw.rect(surface, core_color, node)
+                rects.append(node)
+
+        if signature == "ko_lightning_jab":
+            fork_start = points[-2]
+            fork = (
+                fork_start,
+                (fork_start[0] - direction * 5, fork_start[1] - 8),
+                (fork_start[0] + direction * 4, fork_start[1] - 14),
+            )
+            rects.append(pygame.draw.lines(surface, outline, False, fork, 4))
+            rects.append(pygame.draw.lines(surface, core_color, False, fork, 2))
+        elif signature == "ko_lightning_cross":
+            for index, vertical in ((2, -15), (4, 16)):
+                start = points[index]
+                fork = (
+                    start,
+                    (start[0] - direction * 7, start[1] + vertical // 2),
+                    (start[0] + direction * 3, start[1] + vertical),
+                )
+                rects.append(pygame.draw.lines(surface, outline, False, fork, 4))
+                rects.append(pygame.draw.lines(surface, primary, False, fork, 2))
+        elif signature == "ko_lightning_kick":
+            ground_y = max(point[1] for point in points)
+            contact = points[-1]
+            for branch_direction, lift in ((-1, 0), (1, -3)):
+                crawl = (
+                    contact,
+                    (
+                        contact[0] + direction * branch_direction * max(8, span // 4),
+                        ground_y + lift,
+                    ),
+                    (
+                        contact[0] + direction * branch_direction * max(15, span // 2),
+                        ground_y + 2 + lift,
+                    ),
+                )
+                rects.append(pygame.draw.lines(surface, outline, False, crawl, 4))
+                rects.append(pygame.draw.lines(surface, core_color, False, crawl, 2))
+        elif signature == "ko_lightning_super":
+            echo = tuple((px - direction * 7, py + 11) for px, py in points)
+            rects.append(pygame.draw.lines(surface, outline, False, echo, 5))
+            rects.append(pygame.draw.lines(surface, (91, 178, 255), False, echo, 2))
+            for index in (1, 3, 5, 7):
+                start = points[index]
+                fork_sign = -1 if index % 4 == 1 else 1
+                fork = (
+                    start,
+                    (start[0] - direction * 4, start[1] + fork_sign * 9),
+                    (start[0] + direction * 5, start[1] + fork_sign * 17),
+                )
+                rects.append(pygame.draw.lines(surface, core_color, False, fork, 2))
+
+        return rects[0].unionall(rects[1:]).inflate(8, 8)
+
     if effect in {"flame_trail", "flame_trail_right", "flame_trail_left"}:
         direction = -1 if effect.endswith("_left") else 1
         reach = max(28, min(72, int(radius) + 18 + phase * 3))

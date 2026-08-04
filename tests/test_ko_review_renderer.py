@@ -55,6 +55,14 @@ class KOReviewRendererTests(unittest.TestCase):
             ),
         )
         self.assertEqual(len(set(renderer.EXPECTED_GIF_NAMES)), 9)
+        self.assertEqual(
+            tuple(renderer.LIGHTNING_REVIEW_STYLES),
+            ("punch_jab_cross", "punch_hook_uppercut", "kick_roundhouse"),
+        )
+        self.assertEqual(
+            len({style[0] for style in renderer.LIGHTNING_REVIEW_STYLES.values()}),
+            3,
+        )
 
     def test_thirty_fps_gif_timing_is_deterministic_and_exact_on_average(self) -> None:
         first = renderer._frame_durations(30, 30)
@@ -150,6 +158,23 @@ class KOReviewRendererTests(unittest.TestCase):
         self.assertEqual(renderer._bottom_horizontal_run(fighting_stance), 12)
         self.assertEqual(renderer._bottom_warm_board_pixels(skateboard), 100)
         self.assertEqual(renderer._bottom_warm_board_pixels(fighting_stance), 0)
+
+    def test_runtime_lightning_gate_covers_four_distinct_moving_signatures(self) -> None:
+        result = renderer._validate_lightning_signatures(renderer.RuntimeBindings.load())
+        self.assertEqual(result["status"], "pass")
+        self.assertEqual(result["distinct_signatures"], 4)
+        self.assertEqual(
+            set(result["attacks"]),
+            {
+                "punch_jab_cross",
+                "punch_hook_uppercut",
+                "kick_roundhouse",
+                "super_flash_clear",
+            },
+        )
+        self.assertTrue(
+            all(record["phase_motion"] == "pass" for record in result["attacks"].values())
+        )
 
 
 if __name__ == "__main__":
