@@ -321,27 +321,130 @@ _CHAPTER_ONE_NEAR_LAYER_FOCUS: dict[str, int] = {}
 _SUNSET_BACKGROUND_FILE = "assets/stage/second_street_bmx_sunset_v1.png"
 _AMBIENT_PLANE_RATES = {"far": 0.46, "mid": 0.74, "world": 1.0}
 _AMBIENT_PARTICLE_LIMIT = 16
+_AMBIENT_VEHICLE_MODELS = (
+    "sedan",
+    "hatchback",
+    "suv",
+    "pickup",
+    "delivery_van",
+)
+_AMBIENT_VEHICLE_ART_SIZES = {
+    "sedan": (112, 36),
+    "hatchback": (102, 36),
+    "suv": (116, 40),
+    "pickup": (122, 38),
+    "delivery_van": (114, 42),
+}
+# The rear traffic strip is only 2-12 logical pixels behind the route's parked
+# sedans.  Keep passers smaller, but not miniature: these 1.35x runtime sizes
+# preserve the authored proportions while the nearest-neighbor finish adds
+# enough screen-space resolution for doors, lamps, glazing, and material shade.
+_AMBIENT_VEHICLE_SIZES = {
+    "sedan": (151, 49),
+    "hatchback": (143, 51),
+    "suv": (162, 57),
+    "pickup": (170, 54),
+    "delivery_van": (159, 59),
+}
+_AMBIENT_VEHICLE_MAX_WIDTH = max(width for width, _ in _AMBIENT_VEHICLE_SIZES.values())
+_AMBIENT_TRAFFIC_MIN_HEADWAY_PX = 320
 _CHAPTER_ONE_AMBIENT_EVENTS: dict[str, tuple[dict[str, object], ...]] = {
     "sprouts_el_cilantro": (
-        {"kind": "traffic", "plane": "mid", "start": 0, "end": 3200, "y": 218, "instances": 4, "speed": 1.15, "direction": -1, "palette": ((78, 112, 138), (154, 72, 57), (188, 159, 101)), "seed": 17},
+        {
+            "kind": "traffic",
+            "plane": "mid",
+            "start": 0,
+            "end": 3200,
+            "y": 218,
+            "instances": 1,
+            "headway": 360,
+            "speed": 1.15,
+            "direction": -1,
+            "models": ("sedan", "hatchback", "pickup", "suv", "delivery_van"),
+            "palette": (
+                (64, 102, 132),
+                (158, 66, 55),
+                (188, 150, 91),
+                (66, 111, 91),
+                (184, 183, 167),
+            ),
+            "seed": 17,
+        },
         {"kind": "market_canopy", "plane": "world", "start": 2350, "end": 3200, "anchor": 2780, "span": 430, "seed": 23},
         {"kind": "paper", "plane": "world", "start": 520, "end": 2460, "anchor": 1480, "span": 1940, "y": 286, "height": 48, "particles": 6, "speed": 0.42, "seed": 31},
     ),
     "seven_eleven_underpass": (
         {"kind": "mist", "plane": "far", "start": 1640, "end": 3000, "anchor": 2310, "span": 820, "y": 190, "height": 79, "particles": 8, "speed": 0.18, "seed": 43},
-        {"kind": "traffic", "plane": "mid", "start": 1100, "end": 3100, "y": 226, "instances": 5, "speed": 1.45, "direction": 1, "palette": ((61, 78, 99), (173, 99, 63), (113, 125, 120)), "seed": 29},
+        {
+            "kind": "traffic",
+            "plane": "mid",
+            "start": 1100,
+            "end": 3100,
+            "y": 226,
+            "instances": 1,
+            "headway": 420,
+            "speed": 1.25,
+            "direction": 1,
+            "models": ("delivery_van", "sedan", "suv", "hatchback", "pickup"),
+            "palette": (
+                (59, 75, 98),
+                (177, 93, 56),
+                (103, 123, 112),
+                (126, 55, 75),
+                (191, 176, 145),
+            ),
+            "seed": 29,
+        },
         {"kind": "underpass_lights", "plane": "world", "start": 1750, "end": 3000, "anchor": 2320, "span": 560, "seed": 7},
     ),
     "soapy_joes_revive": (
         {"kind": "wash_spray", "plane": "far", "start": 0, "end": 920, "anchor": 330, "span": 690, "y": 174, "height": 91, "particles": 12, "speed": 0.55, "seed": 53},
-        {"kind": "traffic", "plane": "mid", "start": 650, "end": 3200, "y": 220, "instances": 4, "speed": 1.05, "direction": -1, "palette": ((58, 108, 114), (180, 126, 73), (120, 82, 111)), "seed": 37},
+        {
+            "kind": "traffic",
+            "plane": "mid",
+            "start": 650,
+            "end": 3200,
+            "y": 220,
+            "instances": 1,
+            "headway": 380,
+            "speed": 1.05,
+            "direction": -1,
+            "models": ("hatchback", "suv", "pickup", "sedan", "delivery_van"),
+            "palette": (
+                (52, 112, 119),
+                (184, 122, 67),
+                (111, 74, 118),
+                (147, 154, 158),
+                (149, 64, 61),
+            ),
+            "seed": 37,
+        },
         {"kind": "wash_cycle", "plane": "world", "start": 0, "end": 900, "anchor": 330, "span": 680, "seed": 13},
         {"kind": "revive_neon", "plane": "world", "start": 2020, "end": 3000, "anchor": 2520, "span": 660, "seed": 5},
     ),
     "awaken_church_finale": (
         {"kind": "birds", "plane": "far", "start": 0, "end": 1600, "y": 83, "instances": 5, "speed": 0.62, "direction": 1, "seed": 71},
         {"kind": "dust", "plane": "far", "start": 430, "end": 1600, "anchor": 1010, "span": 1080, "y": 167, "height": 104, "particles": 8, "speed": 0.24, "seed": 61},
-        {"kind": "traffic", "plane": "mid", "start": 0, "end": 1600, "y": 222, "instances": 3, "speed": 0.92, "direction": -1, "palette": ((91, 97, 109), (157, 74, 59), (180, 154, 110)), "seed": 11},
+        {
+            "kind": "traffic",
+            "plane": "mid",
+            "start": 0,
+            "end": 1600,
+            "y": 222,
+            "instances": 1,
+            "headway": 500,
+            "speed": 0.92,
+            "direction": -1,
+            "models": ("sedan", "suv", "delivery_van", "pickup", "hatchback"),
+            "palette": (
+                (88, 96, 110),
+                (159, 73, 56),
+                (182, 149, 101),
+                (64, 96, 78),
+                (73, 105, 132),
+            ),
+            "seed": 11,
+        },
         {"kind": "corridor", "plane": "world", "start": 350, "end": 1370, "anchor": 850, "span": 760, "seed": 19},
         {"kind": "crowd", "plane": "world", "start": 720, "end": 1600, "anchor": 1160, "span": 520, "instances": 4, "seed": 47},
     ),
@@ -374,6 +477,7 @@ _LOCATION_ART_CACHE: dict[str, dict[str, pygame.Surface | None]] = {}
 _BACKGROUND_CACHE_HIT_THEMES: set[str] = set()
 _TRAVEL_PANEL_CACHE: dict[tuple[object, ...], pygame.Surface] = {}
 _PHYSICAL_SCENE_OBJECT_CACHE: dict[tuple[object, ...], pygame.Surface] = {}
+_AMBIENT_VEHICLE_CACHE: dict[tuple[str, tuple[int, int, int], int], pygame.Surface] = {}
 _AMBIENT_OVERLAY_CACHE: dict[tuple[int, int, str], pygame.Surface] = {}
 _WORLD_LIGHTING_CACHE_LIMIT = 16
 _WORLD_LIGHTING_CACHE: OrderedDict[tuple[object, ...], pygame.Surface] = OrderedDict()
@@ -2568,34 +2672,935 @@ def _ambient_anchor_x(event: dict[str, object], cx: float, world_width: int, the
     return _i(float(event.get("anchor", 0.0)) * scale - cx)
 
 
+def _draw_ambient_vehicle_wheels(
+    vehicle: pygame.Surface,
+    centers: Sequence[int],
+    *,
+    style: str,
+) -> None:
+    """Finish a passer with model-specific, grounded tire and hub clusters."""
+
+    height = vehicle.get_height()
+    for center_x in centers:
+        pygame.draw.ellipse(vehicle, (8, 11, 17, 255), (center_x - 8, height - 15, 16, 14))
+        pygame.draw.rect(vehicle, (4, 7, 12, 255), (center_x - 5, height - 3, 10, 2))
+        pygame.draw.ellipse(vehicle, (78, 87, 94, 255), (center_x - 5, height - 12, 10, 9))
+        if style == "sedan":
+            pygame.draw.ellipse(vehicle, (221, 213, 190, 255), (center_x - 4, height - 11, 8, 8), 1)
+            pygame.draw.ellipse(vehicle, (150, 156, 154, 255), (center_x - 3, height - 10, 6, 6))
+            pygame.draw.rect(vehicle, (46, 52, 57, 255), (center_x - 1, height - 8, 3, 3))
+            pygame.draw.rect(vehicle, (239, 229, 199, 255), (center_x - 2, height - 10, 2, 1))
+        elif style == "hatchback":
+            pygame.draw.ellipse(vehicle, (35, 41, 47, 255), (center_x - 4, height - 11, 8, 8))
+            pygame.draw.rect(vehicle, (151, 160, 158, 255), (center_x - 1, height - 9, 3, 4))
+            pygame.draw.rect(vehicle, (229, 219, 188, 255), (center_x - 1, height - 8, 2, 2))
+        elif style == "suv":
+            pygame.draw.ellipse(vehicle, (181, 187, 179, 255), (center_x - 4, height - 11, 8, 8), 1)
+            pygame.draw.line(vehicle, (71, 78, 82, 255), (center_x - 3, height - 8), (center_x + 3, height - 8), 1)
+            pygame.draw.line(vehicle, (71, 78, 82, 255), (center_x, height - 11), (center_x, height - 5), 1)
+            pygame.draw.rect(vehicle, (217, 205, 174, 255), (center_x - 1, height - 9, 3, 3))
+        elif style == "pickup":
+            pygame.draw.ellipse(vehicle, (132, 141, 142, 255), (center_x - 4, height - 11, 8, 8))
+            pygame.draw.ellipse(vehicle, (42, 49, 55, 255), (center_x - 2, height - 9, 4, 4))
+            pygame.draw.rect(vehicle, (198, 190, 168, 255), (center_x - 1, height - 8, 3, 2))
+        else:
+            pygame.draw.ellipse(vehicle, (177, 184, 180, 255), (center_x - 3, height - 10, 6, 6))
+            pygame.draw.rect(vehicle, (52, 59, 64, 255), (center_x - 1, height - 8, 3, 3))
+            pygame.draw.rect(vehicle, (223, 214, 187, 220), (center_x - 2, height - 10, 2, 1))
+
+
+def _finish_ambient_vehicle_native_shading(
+    vehicle: pygame.Surface,
+    model: str,
+    body: tuple[int, int, int],
+) -> pygame.Surface:
+    """Use the resized native pixels for crisp dusk-lit material refinement."""
+
+    if model == "sedan":
+        return vehicle
+
+    shaded = vehicle.copy()
+    width, height = shaded.get_size()
+    base_width, base_height = _AMBIENT_VEHICLE_ART_SIZES[model]
+    body_deep = (*_shade(body, -64), 255)
+    body_dark = (*_shade(body, -38), 255)
+    body_mid = (*body, 255)
+    body_light = (*_shade(body, 38), 255)
+    warm_scale = 0.28 if max(body) < 105 else 1.0
+    paint_top = _mix_color(
+        (*_shade(body, 18), 255),
+        (255, 188, 112, 255),
+        0.22 * warm_scale,
+    )
+    paint_side = _mix_color(body_mid, (210, 146, 103, 255), 0.06)
+    paint_lower = _mix_color((*_shade(body, -24), 255), (31, 48, 66, 255), 0.26)
+    paint_shadow = _mix_color(body_dark, (20, 31, 45, 255), 0.30)
+    paint_key = _mix_color(body_light, (255, 226, 172, 255), 0.38 * warm_scale)
+    paint_spec = _mix_color(body_light, (255, 244, 207, 255), 0.60 * warm_scale)
+    panel_warm = _mix_color(paint_side, (255, 191, 125, 255), 0.20 * warm_scale)
+    panel_cool = _mix_color(paint_lower, (35, 58, 77, 255), 0.22)
+    paint_soft = _mix_color(paint_side, (236, 187, 132, 255), 0.14)
+    paint_weather = _mix_color(paint_lower, (103, 111, 108, 255), 0.17)
+    road_bounce = _mix_color(body_dark, (68, 100, 120, 255), 0.36)
+
+    glass_deep = (24, 39, 52, 255)
+    glass_mid = (45, 70, 84, 255)
+    glass_light = (121, 155, 160, 225)
+    glass_top = (62, 91, 111, 255)
+    glass_low = (25, 44, 58, 255)
+    glass_glint = (158, 182, 181, 255)
+    glass_warm = (111, 124, 122, 225)
+
+    trim = (111, 117, 119, 255)
+    chrome = (196, 195, 181, 255)
+    trim_cool = (91, 106, 113, 255)
+    chrome_mid = (154, 163, 160, 255)
+    chrome_bright = (226, 218, 188, 255)
+
+    warm_dark = (91, 55, 37, 255)
+    warm_mid = (135, 84, 48, 255)
+    warm_light = (188, 132, 72, 255)
+    insert_dark = (73, 48, 39, 255)
+    insert_mid = (122, 77, 51, 255)
+    insert_key = (196, 137, 78, 255)
+
+    for y in range(height):
+        y_ratio = y / max(1, height - 1)
+        for x in range(width):
+            current = tuple(shaded.get_at((x, y)))
+            if current == body_mid:
+                replacement = paint_top if y_ratio < 0.43 else paint_side
+                if y_ratio > 0.66:
+                    replacement = paint_lower
+                shaded.set_at((x, y), replacement)
+            elif current == body_dark:
+                shaded.set_at((x, y), paint_shadow)
+            elif current == body_light:
+                shaded.set_at((x, y), paint_key)
+            elif current == glass_mid:
+                shaded.set_at((x, y), glass_top if y_ratio < 0.36 else glass_low)
+            elif current == glass_deep:
+                shaded.set_at((x, y), glass_low)
+            elif current == glass_light:
+                shaded.set_at((x, y), glass_warm)
+            elif current == trim:
+                shaded.set_at((x, y), trim_cool)
+            elif current == chrome:
+                shaded.set_at((x, y), chrome_mid)
+            elif current == warm_dark:
+                shaded.set_at((x, y), insert_dark)
+            elif current == warm_mid:
+                shaded.set_at((x, y), insert_mid)
+            elif current == warm_light:
+                shaded.set_at((x, y), insert_key)
+
+    paint_family = {
+        paint_top,
+        paint_side,
+        paint_lower,
+        paint_shadow,
+        paint_key,
+        paint_spec,
+        panel_warm,
+        panel_cool,
+        paint_soft,
+        paint_weather,
+    }
+    glass_family = {glass_top, glass_low, glass_warm}
+    insert_family = {insert_dark, insert_mid, insert_key}
+
+    def _break_horizontal_runs(
+        color: tuple[int, int, int, int],
+        replacement: tuple[int, int, int, int],
+        minimum: int,
+        y_start: float,
+        y_end: float,
+    ) -> None:
+        first_y = max(0, round(y_start * height))
+        final_y = min(height, round(y_end * height))
+        for y in range(first_y, final_y):
+            x = 0
+            while x < width:
+                if tuple(shaded.get_at((x, y))) != color:
+                    x += 1
+                    continue
+                run_start = x
+                while x < width and tuple(shaded.get_at((x, y))) == color:
+                    x += 1
+                if x - run_start >= minimum:
+                    for run_x in range(run_start, x):
+                        shaded.set_at((run_x, y), replacement)
+
+    _break_horizontal_runs(paint_key, paint_top, 9, 0.38, 0.76)
+    _break_horizontal_runs(chrome_mid, trim_cool, 8, 0.0, 0.86)
+    _break_horizontal_runs(insert_key, insert_mid, 8, 0.40, 0.68)
+
+    def _paint_region(
+        left: float,
+        top: float,
+        right: float,
+        bottom: float,
+        color: tuple[int, int, int, int],
+        allowed: set[tuple[int, int, int, int]],
+    ) -> None:
+        first_x = max(0, round(left * width))
+        final_x = min(width, round(right * width))
+        first_y = max(0, round(top * height))
+        final_y = min(height, round(bottom * height))
+        for y in range(first_y, final_y):
+            for x in range(first_x, final_x):
+                if tuple(shaded.get_at((x, y))) in allowed:
+                    shaded.set_at((x, y), color)
+
+    if model == "hatchback":
+        _paint_region(0.08, 0.43, 0.22, 0.67, paint_shadow, paint_family)
+        _paint_region(0.20, 0.43, 0.66, 0.54, panel_warm, paint_family)
+        _paint_region(0.20, 0.55, 0.67, 0.67, panel_cool, paint_family)
+        _paint_region(0.69, 0.39, 0.91, 0.52, paint_top, paint_family)
+    elif model == "suv":
+        _paint_region(0.13, 0.35, 0.72, 0.45, panel_warm, paint_family)
+        _paint_region(0.72, 0.36, 0.93, 0.49, paint_top, paint_family)
+        _paint_region(0.12, 0.67, 0.89, 0.75, paint_shadow, paint_family)
+    elif model == "pickup":
+        _paint_region(0.07, 0.44, 0.33, 0.63, paint_shadow, paint_family)
+        _paint_region(0.34, 0.44, 0.76, 0.57, panel_warm, paint_family)
+        _paint_region(0.34, 0.58, 0.77, 0.72, paint_lower, paint_family)
+        _paint_region(0.76, 0.42, 0.94, 0.55, paint_top, paint_family)
+    else:
+        _paint_region(0.13, 0.31, 0.53, 0.45, panel_warm, paint_family)
+        _paint_region(0.13, 0.46, 0.53, 0.57, paint_side, paint_family)
+        _paint_region(0.13, 0.58, 0.53, 0.66, panel_cool, paint_family)
+        _paint_region(0.57, 0.40, 0.76, 0.56, panel_warm, paint_family)
+        _paint_region(0.57, 0.57, 0.76, 0.67, panel_cool, paint_family)
+        _paint_region(0.76, 0.39, 0.94, 0.55, paint_top, paint_family)
+
+    def _point_from_ratio(point: tuple[float, float]) -> tuple[int, int]:
+        return round(point[0] * (width - 1)), round(point[1] * (height - 1))
+
+    def _paint_path(
+        start: tuple[float, float],
+        end: tuple[float, float],
+        color: tuple[int, int, int, int],
+        allowed: set[tuple[int, int, int, int]],
+    ) -> None:
+        start_x, start_y = _point_from_ratio(start)
+        end_x, end_y = _point_from_ratio(end)
+        steps = max(abs(end_x - start_x), abs(end_y - start_y), 1)
+        for step in range(steps + 1):
+            amount = step / steps
+            x = round(start_x + (end_x - start_x) * amount)
+            y = round(start_y + (end_y - start_y) * amount)
+            if tuple(shaded.get_at((x, y))) in allowed:
+                shaded.set_at((x, y), color)
+
+    paint_paths: dict[str, tuple[tuple[tuple[float, float], tuple[float, float], tuple[int, int, int, int]], ...]] = {
+        "hatchback": (
+            ((0.22, 0.19), (0.30, 0.18), paint_spec),
+            ((0.32, 0.18), (0.38, 0.17), paint_key),
+            ((0.40, 0.17), (0.55, 0.17), paint_key),
+            ((0.70, 0.43), (0.76, 0.44), paint_spec),
+            ((0.78, 0.45), (0.82, 0.46), paint_key),
+            ((0.81, 0.46), (0.89, 0.49), paint_key),
+            ((0.13, 0.53), (0.29, 0.52), paint_top),
+            ((0.45, 0.53), (0.62, 0.53), paint_top),
+            ((0.19, 0.72), (0.43, 0.72), road_bounce),
+            ((0.51, 0.72), (0.72, 0.72), road_bounce),
+        ),
+        "suv": (
+            ((0.20, 0.13), (0.28, 0.12), paint_spec),
+            ((0.30, 0.12), (0.36, 0.11), paint_key),
+            ((0.39, 0.11), (0.61, 0.11), paint_key),
+            ((0.75, 0.40), (0.81, 0.41), paint_spec),
+            ((0.83, 0.42), (0.86, 0.43), paint_key),
+            ((0.86, 0.43), (0.92, 0.47), paint_key),
+            ((0.14, 0.44), (0.30, 0.43), paint_top),
+            ((0.72, 0.44), (0.83, 0.45), paint_top),
+            ((0.16, 0.73), (0.39, 0.73), road_bounce),
+            ((0.51, 0.73), (0.77, 0.73), road_bounce),
+        ),
+        "pickup": (
+            ((0.09, 0.39), (0.15, 0.39), paint_spec),
+            ((0.17, 0.39), (0.20, 0.39), paint_key),
+            ((0.21, 0.39), (0.31, 0.39), paint_key),
+            ((0.42, 0.23), (0.49, 0.21), paint_spec),
+            ((0.51, 0.21), (0.56, 0.20), paint_key),
+            ((0.58, 0.20), (0.68, 0.20), paint_key),
+            ((0.77, 0.45), (0.86, 0.46), paint_key),
+            ((0.88, 0.47), (0.93, 0.50), paint_key),
+            ((0.11, 0.66), (0.30, 0.66), paint_shadow),
+            ((0.39, 0.72), (0.58, 0.72), road_bounce),
+            ((0.66, 0.72), (0.77, 0.72), road_bounce),
+        ),
+        "delivery_van": (
+            ((0.10, 0.17), (0.19, 0.16), paint_spec),
+            ((0.21, 0.16), (0.27, 0.15), paint_key),
+            ((0.30, 0.15), (0.57, 0.15), paint_key),
+            ((0.72, 0.42), (0.77, 0.42), paint_spec),
+            ((0.79, 0.43), (0.82, 0.44), paint_key),
+            ((0.83, 0.44), (0.92, 0.47), paint_key),
+            ((0.15, 0.34), (0.31, 0.33), paint_top),
+            ((0.35, 0.33), (0.49, 0.33), paint_top),
+            ((0.12, 0.73), (0.34, 0.73), road_bounce),
+            ((0.45, 0.73), (0.72, 0.73), road_bounce),
+        ),
+    }
+    for start, end, color in paint_paths[model]:
+        _paint_path(start, end, color, paint_family)
+
+    if model == "hatchback":
+        for start, end in (
+            ((0.18, 0.58), (0.31, 0.58)),
+            ((0.43, 0.58), (0.57, 0.58)),
+            ((0.69, 0.58), (0.78, 0.58)),
+        ):
+            _paint_path(start, end, paint_top, paint_family | {trim_cool})
+        _paint_path((0.12, 0.66), (0.23, 0.69), paint_shadow, paint_family)
+    elif model == "pickup":
+        for start, end in (
+            ((0.10, 0.39), (0.18, 0.39)),
+            ((0.21, 0.39), (0.30, 0.39)),
+        ):
+            _paint_path(start, end, paint_key, paint_family | {trim_cool, chrome_mid})
+        for start, end in (
+            ((0.39, 0.57), (0.50, 0.57)),
+            ((0.54, 0.57), (0.64, 0.57)),
+            ((0.68, 0.57), (0.76, 0.57)),
+        ):
+            _paint_path(start, end, paint_top, paint_family | {trim_cool})
+        _paint_path((0.09, 0.61), (0.31, 0.61), paint_shadow, paint_family | {trim_cool})
+    elif model == "delivery_van":
+        for start, end in (
+            ((0.18, 0.44), (0.30, 0.44)),
+            ((0.34, 0.44), (0.47, 0.44)),
+            ((0.60, 0.45), (0.69, 0.45)),
+        ):
+            _paint_path(start, end, paint_top, paint_family | {trim_cool})
+        _paint_path((0.18, 0.57), (0.49, 0.57), paint_shadow, paint_family | {trim_cool})
+        _paint_path((0.59, 0.61), (0.71, 0.61), paint_lower, paint_family | {trim_cool})
+
+    texture_paths = {
+        "hatchback": (
+            ((0.24, 0.47), (0.29, 0.47), paint_spec),
+            ((0.32, 0.50), (0.37, 0.50), paint_soft),
+            ((0.48, 0.48), (0.54, 0.48), paint_soft),
+            ((0.57, 0.61), (0.62, 0.61), paint_weather),
+            ((0.74, 0.53), (0.79, 0.54), paint_key),
+            ((0.82, 0.58), (0.86, 0.59), panel_cool),
+        ),
+        "suv": (
+            ((0.20, 0.38), (0.25, 0.38), paint_spec),
+            ((0.30, 0.40), (0.34, 0.40), paint_soft),
+            ((0.43, 0.38), (0.48, 0.38), paint_soft),
+            ((0.59, 0.40), (0.64, 0.40), paint_weather),
+            ((0.77, 0.43), (0.82, 0.44), paint_spec),
+            ((0.86, 0.50), (0.90, 0.51), panel_cool),
+        ),
+        "pickup": (
+            ((0.12, 0.47), (0.17, 0.47), paint_spec),
+            ((0.22, 0.53), (0.27, 0.53), paint_weather),
+            ((0.39, 0.48), (0.44, 0.48), paint_spec),
+            ((0.48, 0.51), (0.53, 0.51), paint_soft),
+            ((0.58, 0.49), (0.63, 0.49), paint_soft),
+            ((0.68, 0.63), (0.73, 0.63), paint_weather),
+            ((0.80, 0.46), (0.85, 0.47), paint_spec),
+        ),
+        "delivery_van": (
+            ((0.17, 0.37), (0.22, 0.37), paint_spec),
+            ((0.25, 0.40), (0.30, 0.40), paint_soft),
+            ((0.34, 0.43), (0.39, 0.43), paint_soft),
+            ((0.43, 0.51), (0.48, 0.51), paint_weather),
+            ((0.61, 0.46), (0.66, 0.46), paint_spec),
+            ((0.68, 0.58), (0.72, 0.58), panel_cool),
+            ((0.79, 0.45), (0.84, 0.46), paint_spec),
+        ),
+    }
+    for start, end, color in texture_paths[model]:
+        _paint_path(start, end, color, paint_family)
+
+    glass_paths = {
+        "hatchback": (
+            ((0.24, 0.26), (0.35, 0.26)),
+            ((0.44, 0.25), (0.49, 0.31)),
+            ((0.52, 0.26), (0.59, 0.26)),
+        ),
+        "suv": (
+            ((0.23, 0.23), (0.34, 0.23)),
+            ((0.40, 0.22), (0.51, 0.22)),
+            ((0.57, 0.22), (0.63, 0.27)),
+        ),
+        "pickup": (
+            ((0.43, 0.28), (0.50, 0.28)),
+            ((0.56, 0.27), (0.63, 0.27)),
+            ((0.66, 0.28), (0.70, 0.34)),
+        ),
+        "delivery_van": (
+            ((0.62, 0.23), (0.67, 0.23)),
+            ((0.69, 0.22), (0.73, 0.29)),
+        ),
+    }
+    for index, (start, end) in enumerate(glass_paths[model]):
+        _paint_path(start, end, glass_glint if index % 2 else glass_warm, glass_family)
+
+    if model == "suv":
+        for start, end in (
+            ((0.15, 0.50), (0.30, 0.50)),
+            ((0.38, 0.50), (0.49, 0.50)),
+            ((0.56, 0.50), (0.67, 0.50)),
+        ):
+            _paint_path(start, end, insert_key, insert_family)
+        for start, end in (
+            ((0.15, 0.61), (0.34, 0.61)),
+            ((0.45, 0.61), (0.63, 0.61)),
+            ((0.70, 0.61), (0.83, 0.61)),
+        ):
+            _paint_path(start, end, insert_dark, insert_family)
+
+    scale_x = width / base_width
+    scale_y = height / base_height
+    wheel_centers = {
+        "hatchback": (22, 78),
+        "suv": (25, 92),
+        "pickup": (25, 97),
+        "delivery_van": (24, 91),
+    }[model]
+
+    def _set_if_opaque(x: int, y: int, color: tuple[int, int, int, int]) -> None:
+        if 0 <= x < width and 0 <= y < height and shaded.get_at((x, y)).a:
+            shaded.set_at((x, y), color)
+
+    def _paint_arc(
+        center_x: int,
+        center_y: int,
+        radius_x: int,
+        radius_y: int,
+        start_angle: float,
+        end_angle: float,
+        color: tuple[int, int, int, int],
+        allowed: set[tuple[int, int, int, int]],
+    ) -> None:
+        steps = max(8, round((end_angle - start_angle) * max(radius_x, radius_y)))
+        for step in range(steps + 1):
+            angle = start_angle + (end_angle - start_angle) * step / steps
+            x = round(center_x + math.cos(angle) * radius_x)
+            y = round(center_y + math.sin(angle) * radius_y)
+            if 0 <= x < width and 0 <= y < height and tuple(shaded.get_at((x, y))) in allowed:
+                shaded.set_at((x, y), color)
+
+    for base_center in wheel_centers:
+        center_x = round(base_center * scale_x)
+        center_y = round((base_height - 8) * scale_y)
+        arch_x = max(7, round(10 * scale_x))
+        arch_y = max(6, round(9 * scale_y))
+        _paint_arc(
+            center_x,
+            center_y,
+            arch_x,
+            arch_y,
+            math.pi * 1.15,
+            math.pi * 1.45,
+            paint_key,
+            paint_family,
+        )
+        _paint_arc(
+            center_x,
+            center_y,
+            arch_x,
+            arch_y,
+            math.pi * 1.55,
+            math.tau,
+            panel_cool,
+            paint_family,
+        )
+        if model == "hatchback":
+            _set_if_opaque(center_x, center_y, chrome_bright)
+            _set_if_opaque(center_x - 2, center_y, trim_cool)
+            _set_if_opaque(center_x + 2, center_y, trim_cool)
+        elif model == "suv":
+            for offset_x, offset_y in ((0, 0), (-2, 0), (2, 0), (0, -2), (0, 2)):
+                _set_if_opaque(center_x + offset_x, center_y + offset_y, chrome_mid)
+            _set_if_opaque(center_x, center_y, chrome_bright)
+        elif model == "pickup":
+            for offset_x, offset_y in ((-2, -2), (2, -2), (-2, 2), (2, 2)):
+                _set_if_opaque(center_x + offset_x, center_y + offset_y, trim_cool)
+            _set_if_opaque(center_x, center_y, chrome_mid)
+        else:
+            for offset_x in (-2, -1, 0, 1, 2):
+                _set_if_opaque(center_x + offset_x, center_y, chrome_mid)
+            _set_if_opaque(center_x, center_y, chrome_bright)
+
+    bright_points = {
+        "hatchback": ((28, 18), (51, 18), (94, 26)),
+        "suv": ((52, 19), (71, 19), (29, 2), (70, 2)),
+        "pickup": ((54, 20), (78, 20), (13, 18), (112, 28)),
+        "delivery_van": ((52, 17), (76, 18), (11, 12), (91, 10)),
+    }[model]
+    for base_x, base_y in bright_points:
+        _set_if_opaque(round(base_x * scale_x), round(base_y * scale_y), chrome_bright)
+
+    head_pixels: list[tuple[int, int]] = []
+    tail_pixels: list[tuple[int, int]] = []
+    for y in range(height):
+        for x in range(width):
+            pixel = shaded.get_at((x, y))
+            if x >= round(width * 0.84) and pixel.r >= 245 and pixel.g >= 215 and pixel.b >= 140:
+                head_pixels.append((x, y))
+            if x <= round(width * 0.12) and pixel.r >= 190 and pixel.g <= 135 and pixel.b <= 80:
+                tail_pixels.append((x, y))
+    if head_pixels:
+        head_left = min(x for x, _ in head_pixels)
+        head_right = max(x for x, _ in head_pixels)
+        head_top = min(y for _, y in head_pixels)
+        head_bottom = max(y for _, y in head_pixels)
+        divider_x = round((head_left + head_right) * 0.5)
+        if model in {"suv", "delivery_van"}:
+            for y in range(head_top, head_bottom + 1):
+                pixel = shaded.get_at((divider_x, y))
+                if pixel.r >= 220 and pixel.g >= 190:
+                    shaded.set_at((divider_x, y), trim_cool)
+        elif model == "pickup":
+            divider_y = head_bottom - 1
+            for x in range(head_left, head_right + 1):
+                pixel = shaded.get_at((x, divider_y))
+                if pixel.r >= 220 and pixel.g >= 190:
+                    shaded.set_at((x, divider_y), (232, 157, 73, 255))
+        else:
+            _set_if_opaque(head_right, head_bottom, (232, 157, 73, 255))
+    if tail_pixels:
+        tail_left = min(x for x, _ in tail_pixels)
+        tail_bottom = max(y for _, y in tail_pixels)
+        _set_if_opaque(tail_left, tail_bottom, (214, 210, 188, 255))
+    for x, y in sorted(head_pixels, key=lambda point: (point[1], point[0]))[:3]:
+        shaded.set_at((x, y), (255, 250, 218, 255))
+    for x, y in sorted(tail_pixels, key=lambda point: (point[1], point[0]))[:2]:
+        shaded.set_at((x, y), (255, 154, 72, 255))
+
+    return shaded
+
+
+def _ambient_vehicle_surface(
+    model: str,
+    color: Sequence[int],
+    facing: int = 1,
+) -> pygame.Surface:
+    """Build one original hard-edged passer using the tan sedan's material cues."""
+
+    normalized_model = model if model in _AMBIENT_VEHICLE_SIZES else "sedan"
+    body = _rgb(color, (104, 104, 110))
+    normalized_facing = -1 if facing < 0 else 1
+    key = (normalized_model, body, normalized_facing)
+    cached = _AMBIENT_VEHICLE_CACHE.get(key)
+    if cached is not None:
+        return cached
+
+    width, height = _AMBIENT_VEHICLE_ART_SIZES[normalized_model]
+    vehicle = pygame.Surface((width, height), pygame.SRCALPHA)
+    outline = (9, 12, 18, 255)
+    body_deep = (*_shade(body, -64), 255)
+    body_dark = (*_shade(body, -38), 255)
+    body_mid = (*body, 255)
+    body_light = (*_shade(body, 38), 255)
+    glass_deep = (24, 39, 52, 255)
+    glass = (45, 70, 84, 255)
+    glass_light = (121, 155, 160, 225)
+    interior = (17, 25, 32, 255)
+    trim = (111, 117, 119, 255)
+    chrome = (196, 195, 181, 255)
+    warm_trim_dark = (91, 55, 37, 255)
+    warm_trim_mid = (135, 84, 48, 255)
+    warm_trim_light = (188, 132, 72, 255)
+
+    pygame.draw.ellipse(vehicle, (7, 10, 16, 128), (4, height - 8, width - 8, 6))
+
+    if normalized_model == "sedan":
+        pygame.draw.polygon(
+            vehicle,
+            outline,
+            [(2, 19), (9, 14), (24, 12), (33, 4), (72, 4), (82, 11), (101, 14), (110, 20), (108, 29), (4, 29)],
+        )
+        pygame.draw.polygon(
+            vehicle,
+            body_dark,
+            [(5, 19), (12, 16), (27, 14), (35, 7), (69, 7), (79, 14), (99, 16), (106, 20), (104, 27), (7, 27)],
+        )
+        pygame.draw.polygon(vehicle, body_mid, [(8, 18), (29, 15), (81, 15), (99, 18), (102, 24), (9, 24)])
+        pygame.draw.line(vehicle, body_light, (12, 18), (96, 18), 2)
+        pygame.draw.line(vehicle, chrome, (13, 21), (98, 21), 1)
+        pygame.draw.line(vehicle, body_deep, (15, 23), (96, 23), 1)
+        pygame.draw.polygon(vehicle, outline, [(30, 13), (36, 6), (69, 6), (78, 13)])
+        pygame.draw.polygon(vehicle, glass, [(34, 12), (38, 8), (51, 8), (51, 13)])
+        pygame.draw.polygon(vehicle, glass_deep, [(54, 8), (68, 8), (74, 13), (54, 13)])
+        pygame.draw.line(vehicle, glass_light, (38, 9), (48, 9), 1)
+        pygame.draw.line(vehicle, glass_light, (56, 9), (67, 9), 1)
+        pygame.draw.line(vehicle, outline, (53, 7), (53, 14), 2)
+        pygame.draw.line(vehicle, body_deep, (53, 14), (53, 25), 1)
+        pygame.draw.line(vehicle, body_deep, (29, 14), (29, 25), 1)
+        pygame.draw.line(vehicle, body_deep, (78, 14), (78, 25), 1)
+        pygame.draw.line(vehicle, body_light, (32, 16), (50, 16), 1)
+        pygame.draw.line(vehicle, body_light, (56, 16), (75, 16), 1)
+        pygame.draw.rect(vehicle, outline, (63, 18, 6, 2))
+        pygame.draw.rect(vehicle, body_light, (64, 18, 4, 1))
+        pygame.draw.rect(vehicle, outline, (32, 18, 6, 2))
+        pygame.draw.rect(vehicle, body_light, (33, 18, 3, 1))
+        pygame.draw.rect(vehicle, body_deep, (13, 19, 7, 5))
+        pygame.draw.rect(vehicle, body_mid, (14, 20, 5, 3))
+        pygame.draw.rect(vehicle, chrome, (17, 20, 2, 1))
+        pygame.draw.rect(vehicle, trim, (98, 21, 6, 3))
+        pygame.draw.rect(vehicle, outline, (100, 22, 1, 1))
+        pygame.draw.rect(vehicle, body_light, (88, 16, 5, 1))
+        pygame.draw.rect(vehicle, outline, (84, 23, 3, 2))
+        pygame.draw.rect(vehicle, chrome, (85, 23, 1, 1))
+        pygame.draw.line(vehicle, outline, (77, 13), (81, 14), 1)
+        pygame.draw.rect(vehicle, outline, (80, 12, 4, 3))
+        pygame.draw.rect(vehicle, body_mid, (81, 13, 2, 1))
+        wheel_centers = (23, 88)
+    elif normalized_model == "hatchback":
+        pygame.draw.polygon(
+            vehicle,
+            outline,
+            [(2, 19), (8, 13), (19, 6), (60, 5), (73, 12), (92, 15), (100, 20), (99, 29), (3, 29)],
+        )
+        pygame.draw.polygon(
+            vehicle,
+            body_dark,
+            [(5, 19), (11, 14), (22, 8), (58, 8), (70, 14), (90, 17), (96, 20), (95, 27), (6, 27)],
+        )
+        pygame.draw.polygon(vehicle, body_mid, [(8, 18), (21, 12), (70, 15), (89, 18), (93, 24), (8, 24)])
+        pygame.draw.line(vehicle, body_light, (11, 17), (88, 18), 2)
+        pygame.draw.polygon(vehicle, outline, [(10, 20), (90, 20), (93, 23), (9, 23)])
+        pygame.draw.line(vehicle, body_deep, (13, 21), (89, 21), 1)
+        pygame.draw.line(vehicle, body_light, (16, 22), (86, 22), 1)
+        pygame.draw.polygon(vehicle, outline, [(18, 14), (23, 7), (58, 7), (68, 14)])
+        pygame.draw.polygon(vehicle, glass_deep, [(21, 13), (25, 9), (39, 9), (39, 14)])
+        pygame.draw.polygon(vehicle, glass, [(42, 9), (57, 9), (64, 14), (42, 14)])
+        pygame.draw.rect(vehicle, interior, (31, 11, 3, 3))
+        pygame.draw.rect(vehicle, (32, 48, 58, 255), (32, 10, 2, 2))
+        pygame.draw.rect(vehicle, interior, (52, 11, 3, 3))
+        pygame.draw.rect(vehicle, (32, 48, 58, 255), (53, 10, 2, 2))
+        pygame.draw.circle(vehicle, trim, (59, 12), 2, 1)
+        pygame.draw.line(vehicle, glass_light, (25, 10), (36, 10), 1)
+        pygame.draw.line(vehicle, glass_light, (45, 10), (48, 13), 1)
+        pygame.draw.line(vehicle, outline, (40, 8), (40, 15), 2)
+        pygame.draw.line(vehicle, body_deep, (40, 15), (40, 25), 1)
+        pygame.draw.line(vehicle, body_deep, (19, 14), (19, 25), 1)
+        pygame.draw.line(vehicle, body_deep, (69, 14), (69, 25), 1)
+        pygame.draw.line(vehicle, body_light, (22, 16), (38, 16), 1)
+        pygame.draw.line(vehicle, body_light, (43, 16), (66, 16), 1)
+        pygame.draw.rect(vehicle, outline, (50, 18, 6, 2))
+        pygame.draw.rect(vehicle, body_light, (51, 18, 4, 1))
+        pygame.draw.rect(vehicle, outline, (27, 18, 6, 2))
+        pygame.draw.rect(vehicle, body_light, (28, 18, 3, 1))
+        pygame.draw.line(vehicle, trim, (10, 15), (13, 23), 1)
+        pygame.draw.line(vehicle, outline, (15, 14), (15, 24), 1)
+        pygame.draw.line(vehicle, body_light, (16, 15), (16, 23), 1)
+        pygame.draw.line(vehicle, trim, (23, 11), (30, 12), 1)
+        pygame.draw.rect(vehicle, outline, (11, 24, 6, 3))
+        pygame.draw.rect(vehicle, body_dark, (12, 25, 4, 1))
+        pygame.draw.rect(vehicle, (232, 149, 67, 255), (82, 18, 3, 2))
+        pygame.draw.rect(vehicle, chrome, (89, 22, 5, 2))
+        pygame.draw.rect(vehicle, outline, (90, 23, 2, 1))
+        pygame.draw.line(vehicle, trim, (22, 7), (18, 10), 1)
+        pygame.draw.line(vehicle, outline, (67, 13), (71, 14), 1)
+        pygame.draw.rect(vehicle, outline, (70, 12, 4, 3))
+        pygame.draw.rect(vehicle, body_mid, (71, 13, 2, 1))
+        wheel_centers = (22, 78)
+    elif normalized_model == "suv":
+        pygame.draw.polygon(
+            vehicle,
+            outline,
+            [(2, 18), (8, 10), (19, 4), (78, 4), (88, 11), (106, 14), (114, 20), (113, 33), (3, 33)],
+        )
+        pygame.draw.polygon(
+            vehicle,
+            body_dark,
+            [(5, 18), (11, 12), (21, 7), (76, 7), (86, 14), (104, 16), (110, 20), (109, 30), (6, 30)],
+        )
+        pygame.draw.polygon(vehicle, body_mid, [(8, 18), (22, 14), (88, 15), (106, 19), (107, 27), (8, 27)])
+        pygame.draw.line(vehicle, body_light, (11, 17), (103, 18), 2)
+        pygame.draw.polygon(vehicle, chrome, [(12, 19), (103, 19), (106, 27), (10, 27)])
+        pygame.draw.polygon(vehicle, warm_trim_dark, [(14, 20), (101, 20), (103, 26), (12, 26)])
+        pygame.draw.line(vehicle, warm_trim_mid, (15, 21), (100, 21), 2)
+        pygame.draw.line(vehicle, warm_trim_light, (16, 22), (99, 22), 1)
+        pygame.draw.line(vehicle, warm_trim_dark, (16, 25), (101, 25), 1)
+        pygame.draw.polygon(vehicle, outline, [(18, 14), (23, 6), (76, 6), (85, 14)])
+        pygame.draw.polygon(vehicle, glass_deep, [(22, 13), (26, 8), (42, 8), (42, 14)])
+        pygame.draw.rect(vehicle, glass, (45, 8, 16, 6))
+        pygame.draw.polygon(vehicle, glass_deep, [(64, 8), (75, 8), (81, 14), (64, 14)])
+        pygame.draw.rect(vehicle, interior, (33, 10, 3, 4))
+        pygame.draw.rect(vehicle, (31, 46, 57, 255), (34, 9, 2, 2))
+        pygame.draw.rect(vehicle, interior, (52, 10, 3, 4))
+        pygame.draw.rect(vehicle, (31, 46, 57, 255), (53, 9, 2, 2))
+        pygame.draw.rect(vehicle, interior, (70, 10, 3, 4))
+        pygame.draw.circle(vehicle, trim, (75, 11), 2, 1)
+        pygame.draw.line(vehicle, glass_light, (26, 9), (39, 9), 1)
+        pygame.draw.line(vehicle, glass_light, (47, 9), (59, 9), 1)
+        pygame.draw.line(vehicle, glass_light, (66, 9), (69, 12), 1)
+        pygame.draw.line(vehicle, outline, (43, 7), (43, 14), 2)
+        pygame.draw.line(vehicle, outline, (63, 7), (63, 14), 2)
+        pygame.draw.line(vehicle, outline, (77, 7), (77, 14), 1)
+        pygame.draw.line(vehicle, body_deep, (43, 14), (43, 28), 1)
+        pygame.draw.line(vehicle, body_deep, (63, 14), (63, 28), 1)
+        pygame.draw.line(vehicle, body_deep, (21, 14), (21, 28), 1)
+        pygame.draw.line(vehicle, body_deep, (84, 14), (84, 28), 1)
+        for gutter_x in (43, 63, 84):
+            pygame.draw.line(vehicle, body_mid, (gutter_x - 1, 20), (gutter_x - 1, 26), 1)
+            pygame.draw.line(vehicle, body_mid, (gutter_x + 1, 20), (gutter_x + 1, 26), 1)
+            pygame.draw.line(vehicle, body_deep, (gutter_x, 14), (gutter_x, 28), 1)
+        pygame.draw.line(vehicle, body_light, (24, 16), (41, 16), 1)
+        pygame.draw.line(vehicle, body_light, (46, 16), (61, 16), 1)
+        pygame.draw.line(vehicle, body_light, (66, 16), (81, 16), 1)
+        pygame.draw.rect(vehicle, outline, (51, 19, 6, 2))
+        pygame.draw.rect(vehicle, chrome, (52, 19, 4, 1))
+        pygame.draw.rect(vehicle, outline, (70, 19, 6, 2))
+        pygame.draw.rect(vehicle, chrome, (71, 19, 4, 1))
+        pygame.draw.line(vehicle, outline, (83, 13), (87, 14), 1)
+        pygame.draw.rect(vehicle, outline, (86, 12, 4, 3))
+        pygame.draw.rect(vehicle, body_mid, (87, 13, 2, 1))
+        pygame.draw.line(vehicle, trim, (25, 2), (73, 2), 1)
+        pygame.draw.line(vehicle, outline, (25, 3), (73, 3), 1)
+        pygame.draw.rect(vehicle, trim, (28, 2, 2, 4))
+        pygame.draw.rect(vehicle, trim, (69, 2, 2, 4))
+        pygame.draw.rect(vehicle, body_deep, (13, 19, 6, 5))
+        pygame.draw.rect(vehicle, body_mid, (14, 20, 4, 3))
+        pygame.draw.rect(vehicle, chrome, (99, 22, 8, 3))
+        pygame.draw.line(vehicle, outline, (101, 23), (105, 23), 1)
+        pygame.draw.rect(vehicle, trim, (72, 5, 3, 1))
+        pygame.draw.rect(vehicle, trim, (48, 2, 2, 3))
+        pygame.draw.rect(vehicle, outline, (12, 27, 96, 3))
+        pygame.draw.rect(vehicle, body_dark, (14, 28, 92, 1))
+        pygame.draw.rect(vehicle, outline, (13, 24, 6, 4))
+        pygame.draw.rect(vehicle, body_mid, (14, 25, 4, 2))
+        pygame.draw.rect(vehicle, chrome, (16, 25, 2, 1))
+        wheel_centers = (25, 92)
+    elif normalized_model == "pickup":
+        pygame.draw.polygon(
+            vehicle,
+            outline,
+            [(2, 18), (40, 18), (48, 7), (85, 7), (96, 14), (112, 16), (120, 21), (119, 31), (3, 31)],
+        )
+        pygame.draw.polygon(
+            vehicle,
+            body_dark,
+            [(5, 20), (40, 20), (50, 10), (83, 10), (94, 17), (110, 18), (116, 22), (115, 29), (6, 29)],
+        )
+        pygame.draw.rect(vehicle, body_mid, (7, 19, 35, 7))
+        pygame.draw.polygon(vehicle, body_mid, [(42, 18), (51, 12), (93, 18), (109, 19), (112, 26), (42, 26)])
+        pygame.draw.line(vehicle, body_light, (8, 19), (108, 19), 2)
+        pygame.draw.line(vehicle, chrome, (9, 22), (111, 22), 1)
+        pygame.draw.line(vehicle, body_deep, (10, 24), (109, 24), 1)
+        pygame.draw.rect(vehicle, outline, (8, 15, 33, 6))
+        pygame.draw.rect(vehicle, body_deep, (11, 16, 27, 3))
+        pygame.draw.line(vehicle, chrome, (12, 15), (37, 15), 1)
+        pygame.draw.line(vehicle, trim, (12, 16), (37, 16), 1)
+        pygame.draw.rect(vehicle, outline, (12, 20, 27, 5))
+        pygame.draw.rect(vehicle, body_dark, (14, 21, 23, 3))
+        pygame.draw.line(vehicle, body_light, (15, 21), (35, 21), 1)
+        pygame.draw.line(vehicle, body_deep, (20, 21), (20, 24), 1)
+        pygame.draw.line(vehicle, body_deep, (30, 21), (30, 24), 1)
+        pygame.draw.line(vehicle, outline, (9, 16), (9, 27), 1)
+        pygame.draw.line(vehicle, body_light, (10, 17), (10, 26), 1)
+        pygame.draw.rect(vehicle, outline, (12, 18, 6, 3))
+        pygame.draw.rect(vehicle, chrome, (13, 18, 4, 1))
+        pygame.draw.rect(vehicle, chrome, (18, 14, 2, 2))
+        pygame.draw.rect(vehicle, chrome, (34, 14, 2, 2))
+        pygame.draw.rect(vehicle, chrome, (37, 16, 3, 2))
+        pygame.draw.polygon(vehicle, outline, [(43, 17), (50, 8), (83, 8), (93, 17)])
+        pygame.draw.polygon(vehicle, glass_deep, [(47, 16), (52, 10), (63, 10), (63, 17)])
+        pygame.draw.polygon(vehicle, glass, [(66, 10), (81, 10), (89, 17), (66, 17)])
+        pygame.draw.rect(vehicle, interior, (55, 12, 3, 4))
+        pygame.draw.rect(vehicle, (31, 46, 57, 255), (56, 11, 2, 2))
+        pygame.draw.rect(vehicle, interior, (73, 12, 3, 4))
+        pygame.draw.rect(vehicle, (31, 46, 57, 255), (74, 11, 2, 2))
+        pygame.draw.circle(vehicle, trim, (82, 13), 2, 1)
+        pygame.draw.line(vehicle, glass_light, (52, 11), (61, 11), 1)
+        pygame.draw.line(vehicle, glass_light, (68, 11), (79, 11), 1)
+        pygame.draw.line(vehicle, glass_light, (68, 11), (71, 15), 1)
+        pygame.draw.line(vehicle, body_deep, (43, 17), (43, 28), 1)
+        pygame.draw.line(vehicle, outline, (64, 9), (64, 17), 2)
+        pygame.draw.line(vehicle, body_deep, (64, 17), (64, 28), 1)
+        pygame.draw.line(vehicle, outline, (64, 17), (64, 29), 1)
+        pygame.draw.line(vehicle, body_deep, (93, 16), (93, 28), 1)
+        pygame.draw.line(vehicle, body_light, (46, 19), (61, 19), 1)
+        pygame.draw.line(vehicle, body_light, (67, 19), (90, 19), 1)
+        pygame.draw.rect(vehicle, outline, (53, 20, 6, 2))
+        pygame.draw.rect(vehicle, chrome, (54, 20, 4, 1))
+        pygame.draw.rect(vehicle, outline, (77, 20, 6, 2))
+        pygame.draw.rect(vehicle, body_light, (78, 20, 4, 1))
+        pygame.draw.line(vehicle, outline, (93, 15), (97, 16), 1)
+        pygame.draw.rect(vehicle, outline, (96, 14, 4, 3))
+        pygame.draw.rect(vehicle, body_mid, (97, 15, 2, 1))
+        pygame.draw.rect(vehicle, body_deep, (14, 21, 6, 4))
+        pygame.draw.rect(vehicle, body_mid, (15, 22, 4, 2))
+        pygame.draw.rect(vehicle, chrome, (104, 22, 9, 3))
+        pygame.draw.line(vehicle, outline, (106, 23), (111, 23), 1)
+        pygame.draw.rect(vehicle, trim, (10, 25, 4, 1))
+        pygame.draw.rect(vehicle, outline, (42, 27, 51, 3))
+        pygame.draw.line(vehicle, chrome, (45, 28), (90, 28), 1)
+        pygame.draw.rect(vehicle, (232, 149, 67, 255), (105, 19, 3, 2))
+        wheel_centers = (25, 97)
+    else:
+        pygame.draw.polygon(
+            vehicle,
+            outline,
+            [(2, 15), (8, 5), (72, 4), (86, 12), (104, 14), (112, 20), (111, 35), (3, 35)],
+        )
+        pygame.draw.polygon(
+            vehicle,
+            body_dark,
+            [(5, 16), (11, 8), (69, 7), (83, 15), (102, 16), (108, 21), (107, 32), (6, 32)],
+        )
+        pygame.draw.polygon(vehicle, body_mid, [(8, 18), (12, 11), (70, 10), (85, 18), (104, 19), (105, 29), (8, 29)])
+        pygame.draw.line(vehicle, body_light, (12, 12), (68, 11), 2)
+        pygame.draw.polygon(vehicle, outline, [(66, 15), (71, 6), (80, 6), (90, 15)])
+        pygame.draw.polygon(vehicle, glass, [(69, 14), (73, 8), (79, 8), (82, 14)])
+        pygame.draw.polygon(vehicle, glass_deep, [(81, 8), (87, 14), (84, 14), (80, 8)])
+        pygame.draw.rect(vehicle, interior, (75, 11, 3, 4))
+        pygame.draw.rect(vehicle, (31, 46, 57, 255), (76, 10, 2, 2))
+        pygame.draw.circle(vehicle, trim, (82, 12), 2, 1)
+        pygame.draw.line(vehicle, glass_light, (73, 9), (78, 9), 1)
+        pygame.draw.line(vehicle, glass_light, (82, 9), (85, 12), 1)
+        pygame.draw.line(vehicle, outline, (80, 7), (80, 15), 2)
+        # A full sliding cargo door, front passenger door, rear seam and
+        # hardware keep the panel van from reading as an unbroken box.
+        pygame.draw.rect(vehicle, body_mid, (17, 10, 43, 18))
+        pygame.draw.line(vehicle, body_light, (17, 9), (60, 9), 1)
+        pygame.draw.line(vehicle, body_light, (17, 9), (17, 29), 1)
+        pygame.draw.line(vehicle, body_deep, (60, 9), (60, 29), 1)
+        pygame.draw.line(vehicle, body_deep, (17, 28), (60, 28), 1)
+        pygame.draw.line(vehicle, body_deep, (18, 13), (62, 13), 1)
+        pygame.draw.rect(vehicle, chrome, (24, 13, 2, 1))
+        pygame.draw.rect(vehicle, chrome, (54, 13, 2, 1))
+        pygame.draw.rect(vehicle, trim, (20, 15, 37, 9), 1)
+        pygame.draw.line(vehicle, body_light, (22, 16), (54, 16), 1)
+        pygame.draw.line(vehicle, body_dark, (20, 25), (56, 25), 1)
+        pygame.draw.line(vehicle, body_deep, (21, 26), (56, 26), 2)
+        pygame.draw.line(vehicle, chrome, (22, 24), (55, 24), 1)
+        pygame.draw.rect(vehicle, outline, (51, 17, 7, 3))
+        pygame.draw.rect(vehicle, chrome, (52, 17, 5, 2))
+        pygame.draw.line(vehicle, body_deep, (66, 15), (66, 31), 1)
+        pygame.draw.line(vehicle, body_deep, (89, 15), (89, 31), 1)
+        pygame.draw.line(vehicle, body_light, (69, 17), (85, 17), 1)
+        pygame.draw.rect(vehicle, trim, (69, 18, 17, 8), 1)
+        pygame.draw.line(vehicle, body_deep, (70, 25), (85, 25), 1)
+        pygame.draw.rect(vehicle, outline, (75, 18, 7, 3))
+        pygame.draw.rect(vehicle, chrome, (76, 18, 5, 2))
+        pygame.draw.line(vehicle, body_deep, (10, 8), (10, 31), 1)
+        pygame.draw.line(vehicle, outline, (9, 8), (9, 31), 1)
+        pygame.draw.rect(vehicle, outline, (10, 11, 5, 3))
+        pygame.draw.rect(vehicle, chrome, (11, 12, 3, 1))
+        pygame.draw.rect(vehicle, outline, (10, 23, 5, 3))
+        pygame.draw.rect(vehicle, chrome, (11, 24, 3, 1))
+        pygame.draw.rect(vehicle, chrome, (8, 7, 2, 2))
+        pygame.draw.rect(vehicle, (232, 151, 65, 255), (12, 7, 2, 1))
+        pygame.draw.line(vehicle, outline, (85, 14), (89, 15), 1)
+        pygame.draw.rect(vehicle, outline, (88, 13, 4, 3))
+        pygame.draw.rect(vehicle, body_mid, (89, 14, 2, 1))
+        pygame.draw.line(vehicle, outline, (88, 13), (92, 11), 1)
+        pygame.draw.rect(vehicle, chrome, (91, 10, 3, 2))
+        pygame.draw.rect(vehicle, outline, (91, 24, 6, 3))
+        pygame.draw.line(vehicle, trim, (92, 25), (95, 25), 1)
+        pygame.draw.rect(vehicle, outline, (66, 29, 24, 3))
+        pygame.draw.line(vehicle, chrome, (68, 30), (88, 30), 1)
+        wheel_centers = (24, 91)
+
+    for center_x in wheel_centers:
+        arch_width = 22 if normalized_model == "suv" else 20
+        wheel_arch = pygame.Rect(center_x - arch_width // 2, height - 17, arch_width, 18)
+        pygame.draw.arc(vehicle, outline, wheel_arch, math.pi, math.tau, 1)
+        pygame.draw.arc(vehicle, body_light, wheel_arch.inflate(-2, -2), math.pi, math.tau, 1)
+    pygame.draw.line(vehicle, body_deep, (6, height - 9), (width - 7, height - 9), 2)
+    pygame.draw.line(vehicle, trim, (9, height - 11), (width - 11, height - 11), 1)
+    if normalized_model == "sedan":
+        pygame.draw.rect(vehicle, outline, (3, height - 20, 7, 7))
+        pygame.draw.rect(vehicle, (216, 62, 54, 255), (4, height - 19, 5, 5))
+        pygame.draw.rect(vehicle, (255, 135, 70, 255), (4, height - 18, 5, 2))
+        pygame.draw.rect(vehicle, outline, (width - 11, height - 20, 8, 6))
+        pygame.draw.rect(vehicle, (255, 224, 151, 255), (width - 10, height - 19, 6, 4))
+        pygame.draw.rect(vehicle, (255, 250, 218, 255), (width - 9, height - 19, 4, 1))
+        pygame.draw.rect(vehicle, outline, (width - 14, height - 15, 11, 3))
+        pygame.draw.rect(vehicle, chrome, (width - 13, height - 14, 9, 1))
+        pygame.draw.rect(vehicle, trim, (width - 12, height - 13, 3, 1))
+        pygame.draw.rect(vehicle, trim, (width - 7, height - 13, 3, 1))
+        pygame.draw.rect(vehicle, chrome, (width - 9, height - 10, 7, 2))
+        pygame.draw.rect(vehicle, trim, (2, height - 10, 7, 2))
+    elif normalized_model == "hatchback":
+        pygame.draw.rect(vehicle, outline, (3, height - 21, 7, 9))
+        pygame.draw.rect(vehicle, (208, 48, 42, 255), (4, height - 20, 4, 3))
+        pygame.draw.rect(vehicle, (250, 125, 55, 255), (4, height - 17, 4, 2))
+        pygame.draw.rect(vehicle, (214, 210, 188, 255), (4, height - 15, 4, 1))
+        pygame.draw.rect(vehicle, outline, (width - 11, height - 20, 8, 6))
+        pygame.draw.rect(vehicle, (255, 232, 165, 255), (width - 10, height - 19, 5, 3))
+        pygame.draw.rect(vehicle, (245, 151, 58, 255), (width - 5, height - 18, 1, 2))
+        pygame.draw.rect(vehicle, outline, (width - 15, height - 14, 12, 3))
+        pygame.draw.line(vehicle, trim, (width - 13, height - 13), (width - 5, height - 13), 1)
+        pygame.draw.rect(vehicle, chrome, (width - 8, height - 10, 6, 2))
+        pygame.draw.rect(vehicle, outline, (2, height - 10, 9, 2))
+        pygame.draw.rect(vehicle, chrome, (3, height - 10, 5, 1))
+    elif normalized_model == "suv":
+        pygame.draw.rect(vehicle, outline, (3, height - 22, 7, 10))
+        pygame.draw.rect(vehicle, (198, 42, 38, 255), (4, height - 21, 4, 4))
+        pygame.draw.rect(vehicle, (247, 118, 50, 255), (4, height - 17, 4, 3))
+        pygame.draw.rect(vehicle, (225, 217, 188, 255), (4, height - 14, 4, 1))
+        pygame.draw.rect(vehicle, outline, (width - 11, height - 20, 8, 6))
+        pygame.draw.rect(vehicle, (255, 232, 165, 255), (width - 10, height - 19, 6, 4))
+        pygame.draw.rect(vehicle, outline, (width - 15, height - 14, 12, 4))
+        for grille_x in range(width - 13, width - 4, 3):
+            pygame.draw.line(vehicle, trim, (grille_x, height - 13), (grille_x, height - 11), 1)
+        pygame.draw.rect(vehicle, chrome, (width - 10, height - 10, 8, 2))
+        pygame.draw.rect(vehicle, chrome, (2, height - 10, 9, 2))
+    elif normalized_model == "pickup":
+        pygame.draw.rect(vehicle, outline, (3, height - 21, 7, 9))
+        pygame.draw.rect(vehicle, (206, 48, 41, 255), (4, height - 20, 4, 4))
+        pygame.draw.rect(vehicle, (248, 130, 53, 255), (4, height - 16, 4, 2))
+        pygame.draw.rect(vehicle, outline, (width - 11, height - 20, 8, 6))
+        pygame.draw.rect(vehicle, (255, 229, 158, 255), (width - 10, height - 19, 5, 4))
+        pygame.draw.rect(vehicle, (247, 148, 58, 255), (width - 5, height - 18, 1, 3))
+        pygame.draw.rect(vehicle, outline, (width - 15, height - 14, 12, 4))
+        pygame.draw.line(vehicle, chrome, (width - 13, height - 13), (width - 5, height - 13), 1)
+        pygame.draw.line(vehicle, trim, (width - 13, height - 11), (width - 5, height - 11), 1)
+        pygame.draw.rect(vehicle, chrome, (width - 10, height - 10, 8, 2))
+        pygame.draw.rect(vehicle, outline, (2, height - 11, 11, 3))
+        pygame.draw.rect(vehicle, chrome, (3, height - 10, 8, 1))
+        pygame.draw.rect(vehicle, outline, (7, height - 10, 2, 1))
+    else:
+        pygame.draw.rect(vehicle, outline, (3, height - 23, 7, 11))
+        pygame.draw.rect(vehicle, (198, 43, 40, 255), (4, height - 22, 4, 4))
+        pygame.draw.rect(vehicle, (242, 116, 49, 255), (4, height - 18, 4, 3))
+        pygame.draw.rect(vehicle, (218, 213, 192, 255), (4, height - 15, 4, 2))
+        pygame.draw.rect(vehicle, outline, (width - 11, height - 20, 8, 6))
+        pygame.draw.rect(vehicle, (255, 231, 165, 255), (width - 10, height - 19, 6, 4))
+        pygame.draw.rect(vehicle, outline, (width - 15, height - 14, 12, 4))
+        pygame.draw.line(vehicle, trim, (width - 13, height - 13), (width - 5, height - 13), 1)
+        pygame.draw.line(vehicle, trim, (width - 13, height - 11), (width - 7, height - 11), 1)
+        pygame.draw.rect(vehicle, trim, (width - 10, height - 10, 8, 2))
+        pygame.draw.rect(vehicle, trim, (2, height - 10, 9, 2))
+    pygame.draw.rect(vehicle, (226, 218, 191, 255), (width - 8, height - 9, 4, 2))
+    pygame.draw.rect(vehicle, outline, (width - 7, height - 8, 2, 1))
+    _draw_ambient_vehicle_wheels(vehicle, wheel_centers, style=normalized_model)
+
+    runtime_size = _AMBIENT_VEHICLE_SIZES[normalized_model]
+    if vehicle.get_size() != runtime_size:
+        vehicle = _pixel_scale(vehicle, runtime_size)
+    vehicle = _finish_ambient_vehicle_native_shading(vehicle, normalized_model, body)
+    if normalized_facing < 0:
+        vehicle = pygame.transform.flip(vehicle, True, False)
+    _AMBIENT_VEHICLE_CACHE[key] = vehicle
+    return vehicle
+
+
 def _draw_ambient_vehicle(
     surface: pygame.Surface,
     x: int,
     y: int,
     color: Sequence[int],
     facing: int,
-) -> None:
-    """Draw a small far-lane vehicle with readable glass and lamps."""
+    model: str = "sedan",
+) -> pygame.Rect:
+    """Draw one detailed, model-specific vehicle on the far traffic lane."""
 
-    vehicle = pygame.Surface((58, 21), pygame.SRCALPHA)
-    body = _rgb(color, (104, 104, 110))
-    body_dark = _shade(body, -45)
-    body_light = _shade(body, 28)
-    pygame.draw.ellipse(vehicle, (13, 17, 24, 116), (3, 14, 50, 6))
-    pygame.draw.polygon(vehicle, (*body_dark, 240), [(2, 10), (11, 5), (36, 4), (51, 9), (55, 15), (1, 15)])
-    pygame.draw.polygon(vehicle, (*body, 255), [(5, 9), (13, 6), (35, 6), (48, 10), (50, 14), (4, 14)])
-    pygame.draw.line(vehicle, (*body_light, 255), (8, 9), (43, 9), 2)
-    pygame.draw.polygon(vehicle, (45, 72, 91, 245), [(15, 6), (21, 2), (34, 2), (42, 7)])
-    pygame.draw.line(vehicle, (135, 170, 178, 210), (28, 3), (28, 8), 1)
-    pygame.draw.rect(vehicle, (222, 232, 218, 240), (48, 10, 5, 3))
-    pygame.draw.rect(vehicle, (214, 61, 53, 235), (3, 10, 4, 3))
-    pygame.draw.rect(vehicle, (245, 194, 93, 180), (43, 11, 3, 2))
-    for wheel_x in (10, 39):
-        pygame.draw.ellipse(vehicle, (18, 21, 27, 250), (wheel_x, 12, 9, 8))
-        pygame.draw.rect(vehicle, (122, 130, 133, 235), (wheel_x + 3, 14, 3, 3))
-    if facing < 0:
-        vehicle = pygame.transform.flip(vehicle, True, False)
-    surface.blit(vehicle, (x, y - 21))
+    vehicle = _ambient_vehicle_surface(model, color, facing)
+    rect = vehicle.get_rect(bottomleft=(x, y))
+    surface.blit(vehicle, rect)
+    return rect
 
 
 def _draw_ambient_particle(
@@ -2664,28 +3669,64 @@ def _draw_ambient_particles(
     return count
 
 
+def _ambient_traffic_layout(
+    surface_width: int,
+    cx: float,
+    event: dict[str, object],
+    motion_tick: int,
+) -> tuple[tuple[int, int, tuple[int, int, int], int, str], ...]:
+    """Return sparse traffic slots whose model and paint rotate every pass."""
+
+    plane = str(event["plane"])
+    count = max(1, min(2, int(event.get("instances", 1))))
+    seed = int(event.get("seed", 0))
+    base_y = _i(float(event.get("y", 252.0)))
+    raw_palette = tuple(event.get("palette", ((93, 104, 112),)))
+    palette = tuple(_rgb(color, (93, 104, 112)) for color in raw_palette)  # type: ignore[arg-type]
+    if not palette:
+        palette = ((93, 104, 112),)
+    raw_models = tuple(str(model) for model in event.get("models", _AMBIENT_VEHICLE_MODELS))  # type: ignore[arg-type]
+    models = tuple(model for model in raw_models if model in _AMBIENT_VEHICLE_SIZES)
+    if not models:
+        models = _AMBIENT_VEHICLE_MODELS
+    headway = max(
+        _AMBIENT_TRAFFIC_MIN_HEADWAY_PX,
+        int(event.get("headway", _AMBIENT_TRAFFIC_MIN_HEADWAY_PX)),
+    )
+    period = max(1, int(surface_width) + _AMBIENT_VEHICLE_MAX_WIDTH + headway)
+    spacing = period // count
+    direction = -1 if int(event.get("direction", 1)) < 0 else 1
+    shift = _ambient_plane_offset(cx, plane) + direction * _i(
+        motion_tick * float(event.get("speed", 1.0))
+    )
+    layout: list[tuple[int, int, tuple[int, int, int], int, str]] = []
+    for index in range(count):
+        travel = seed * 41 + index * spacing + shift
+        pass_index = travel // period
+        x = -_AMBIENT_VEHICLE_MAX_WIDTH + (travel % period)
+        model = models[(seed + index + pass_index) % len(models)]
+        color = palette[(seed * 3 + index * 2 + pass_index) % len(palette)]
+        lane = (seed + pass_index) % 2
+        layout.append((x, base_y + lane * 4, color, direction, model))
+    return tuple(layout)
+
+
 def _draw_ambient_traffic(
     surface: pygame.Surface,
     cx: float,
     event: dict[str, object],
     motion_tick: int,
 ) -> None:
-    plane = str(event["plane"])
-    count = max(1, min(6, int(event.get("instances", 3))))
-    seed = int(event.get("seed", 0))
-    base_y = _i(float(event.get("y", 252.0)))
-    palette = tuple(event.get("palette", ((93, 104, 112),)))
-    period = surface.get_width() + 116
-    spacing = max(64, period // count)
-    direction = -1 if int(event.get("direction", 1)) < 0 else 1
-    shift = _ambient_plane_offset(cx, plane) + direction * _i(
-        motion_tick * float(event.get("speed", 1.0))
-    )
-    for index in range(count):
-        x = -58 + ((seed * 41 + index * spacing + shift) % period)
-        y = base_y + (index % 2) * 5
-        color = palette[index % len(palette)]
-        _draw_ambient_vehicle(surface, x, y, color, direction)  # type: ignore[arg-type]
+    for x, y, color, direction, model in _ambient_traffic_layout(
+        surface.get_width(),
+        cx,
+        event,
+        motion_tick,
+    ):
+        model_width, _ = _AMBIENT_VEHICLE_SIZES[model]
+        if x >= surface.get_width() or x + model_width <= 0:
+            continue
+        _draw_ambient_vehicle(surface, x, y, color, direction, model)
 
 
 def _draw_ambient_birds(

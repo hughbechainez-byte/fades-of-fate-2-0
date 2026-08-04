@@ -728,6 +728,396 @@ class PixelArtTests(unittest.TestCase):
         self.assertLessEqual(max(sprite.get_height() for sprite in sprites), 72)
         self.assertLessEqual(max(sprite.get_width() for sprite in sprites), 250)
 
+    def test_passing_vehicle_models_match_far_lane_scale_and_detail(self) -> None:
+        route = pixel_art._location_route("sprouts_el_cilantro")
+        self.assertIsNotNone(route)
+        reference = pixel_art._physical_scene_object_sprite(
+            route["physical_scene_objects"][0]
+        )
+        sprites = [
+            pixel_art._ambient_vehicle_surface(model, (188, 150, 91))
+            for model in pixel_art._AMBIENT_VEHICLE_MODELS
+        ]
+        visible_bounds = [sprite.get_bounding_rect(min_alpha=1) for sprite in sprites]
+        signatures = {
+            hashlib.sha256(pygame.image.tobytes(sprite, "RGBA", False)).hexdigest()
+            for sprite in sprites
+        }
+
+        self.assertEqual(len(sprites), 5)
+        self.assertEqual(len(signatures), len(sprites))
+        self.assertEqual(
+            dict(zip(pixel_art._AMBIENT_VEHICLE_MODELS, (sprite.get_size() for sprite in sprites))),
+            {
+                "sedan": (151, 49),
+                "hatchback": (143, 51),
+                "suv": (162, 57),
+                "pickup": (170, 54),
+                "delivery_van": (159, 59),
+            },
+        )
+        self.assertGreaterEqual(
+            min(bounds.width for bounds in visible_bounds) / reference.get_width(),
+            0.55,
+        )
+        self.assertLessEqual(
+            max(bounds.width for bounds in visible_bounds) / reference.get_width(),
+            0.68,
+        )
+        self.assertGreaterEqual(
+            min(bounds.height for bounds in visible_bounds) / reference.get_height(),
+            0.60,
+        )
+        self.assertLessEqual(
+            max(bounds.height for bounds in visible_bounds) / reference.get_height(),
+            0.76,
+        )
+        for model, sprite in zip(pixel_art._AMBIENT_VEHICLE_MODELS, sprites):
+            colors = {
+                tuple(sprite.get_at((x, y)))
+                for x in range(sprite.get_width())
+                for y in range(sprite.get_height())
+                if sprite.get_at((x, y)).a
+            }
+            visible_pixels = sum(
+                1
+                for x in range(sprite.get_width())
+                for y in range(sprite.get_height())
+                if sprite.get_at((x, y)).a
+            )
+            with self.subTest(model=model):
+                self.assertGreaterEqual(len(colors), 18)
+                self.assertGreaterEqual(visible_pixels, 2200)
+        self.assertNotIn(
+            "smoothscale",
+            inspect.getsource(pixel_art._ambient_vehicle_surface),
+        )
+
+    def test_sparse_passing_traffic_cycles_models_and_paint_between_passes(self) -> None:
+        traffic_events = [
+            event
+            for events in pixel_art._CHAPTER_ONE_AMBIENT_EVENTS.values()
+            for event in events
+            if event["kind"] == "traffic"
+        ]
+        self.assertEqual(len(traffic_events), 4)
+        self.assertEqual(sum(int(event["instances"]) for event in traffic_events), 4)
+
+        for event in traffic_events:
+            speed = float(event["speed"])
+            headway = int(event["headway"])
+            period = DESIGN_WIDTH + pixel_art._AMBIENT_VEHICLE_MAX_WIDTH + headway
+            step_ticks = period / speed
+            sampled = [
+                pixel_art._ambient_traffic_layout(
+                    DESIGN_WIDTH,
+                    0.0,
+                    event,
+                    round(step * step_ticks),
+                )[0]
+                for step in range(8)
+            ]
+            models = {item[4] for item in sampled}
+            paints = {item[2] for item in sampled}
+            visible_counts: list[int] = []
+            for tick in range(0, round(step_ticks * 2), 10):
+                layout = pixel_art._ambient_traffic_layout(
+                    DESIGN_WIDTH,
+                    0.0,
+                    event,
+                    tick,
+                )
+                visible_counts.append(
+                    sum(
+                        x < DESIGN_WIDTH
+                        and x + pixel_art._AMBIENT_VEHICLE_SIZES[model][0] > 0
+                        for x, _, _, _, model in layout
+                    )
+                )
+
+            with self.subTest(seed=event["seed"]):
+                self.assertEqual(int(event["instances"]), 1)
+                self.assertGreaterEqual(headway / (speed * 30.0), 8.0)
+                self.assertGreaterEqual(len(tuple(event["models"])), 5)
+                self.assertGreaterEqual(len(tuple(event["palette"])), 5)
+                self.assertGreaterEqual(len(models), 4)
+                self.assertGreaterEqual(len(paints), 4)
+                self.assertLessEqual(max(visible_counts), 1)
+                self.assertIn(0, visible_counts)
+                self.assertIn(1, visible_counts)
+
+    def test_pickup_rear_door_and_van_cargo_cab_doors_remain_defined(self) -> None:
+        pickup_paint = (159, 73, 56)
+        pickup = pixel_art._ambient_vehicle_surface("pickup", pickup_paint)
+        pickup_deep = (*pixel_art._shade(pickup_paint, -64), 255)
+        pickup_outline = (9, 12, 18, 255)
+
+        def scaled_vertical_detail(
+            sprite: pygame.Surface,
+            model: str,
+            base_x: int,
+            base_top: int,
+            base_bottom: int,
+            colors: set[tuple[int, int, int, int]],
+        ) -> int:
+            base_width, base_height = pixel_art._AMBIENT_VEHICLE_ART_SIZES[model]
+            scale_x = sprite.get_width() / base_width
+            scale_y = sprite.get_height() / base_height
+            expected_x = round(base_x * scale_x)
+            top = round(base_top * scale_y)
+            bottom = round(base_bottom * scale_y)
+            return max(
+                sum(tuple(sprite.get_at((x, y))) in colors for y in range(top, bottom))
+                for x in range(max(0, expected_x - 2), min(sprite.get_width(), expected_x + 3))
+            )
+
+        self.assertGreaterEqual(
+            scaled_vertical_detail(
+                pickup,
+                "pickup",
+                43,
+                17,
+                29,
+                {pickup_deep, pickup_outline},
+            ),
+            10,
+        )
+        self.assertGreaterEqual(
+            scaled_vertical_detail(
+                pickup,
+                "pickup",
+                64,
+                17,
+                29,
+                {pickup_deep, pickup_outline},
+            ),
+            10,
+        )
+        pickup_scale_x = pickup.get_width() / pixel_art._AMBIENT_VEHICLE_ART_SIZES["pickup"][0]
+        pickup_scale_y = pickup.get_height() / pixel_art._AMBIENT_VEHICLE_ART_SIZES["pickup"][1]
+        for base_handle in (pygame.Rect(53, 20, 6, 2), pygame.Rect(77, 20, 6, 2)):
+            handle = pygame.Rect(
+                round(base_handle.x * pickup_scale_x),
+                round(base_handle.y * pickup_scale_y),
+                max(2, round(base_handle.w * pickup_scale_x)),
+                max(2, round(base_handle.h * pickup_scale_y)),
+            ).inflate(2, 2)
+            with self.subTest(pickup_handle=base_handle):
+                self.assertTrue(
+                    any(
+                        tuple(pickup.get_at((x, y)))
+                        in {pickup_outline, (226, 218, 188, 255)}
+                        for x in range(handle.left, handle.right)
+                        for y in range(handle.top, handle.bottom)
+                    )
+                )
+
+        van_paint = (184, 183, 167)
+        van = pixel_art._ambient_vehicle_surface("delivery_van", van_paint)
+        van_deep = (*pixel_art._shade(van_paint, -64), 255)
+        for seam_x, top, bottom, minimum in (
+            (10, 8, 31, 12),
+            (60, 9, 30, 12),
+            (66, 15, 31, 12),
+            (89, 15, 31, 10),
+        ):
+            with self.subTest(van_seam_x=seam_x):
+                self.assertGreaterEqual(
+                    scaled_vertical_detail(
+                        van,
+                        "delivery_van",
+                        seam_x,
+                        top,
+                        bottom,
+                        {van_deep, pickup_outline},
+                    ),
+                    minimum,
+                )
+
+    def test_non_sedan_passers_keep_model_specific_functional_detail(self) -> None:
+        paint = (142, 96, 70)
+        models = ("hatchback", "suv", "pickup", "delivery_van")
+        sprites = {
+            model: pixel_art._ambient_vehicle_surface(model, paint)
+            for model in models
+        }
+        interior = (17, 25, 32, 255)
+        trim = (91, 106, 113, 255)
+        tail_colors = {
+            (208, 48, 42, 255),
+            (198, 42, 38, 255),
+            (206, 48, 41, 255),
+            (198, 43, 40, 255),
+            (250, 125, 55, 255),
+            (247, 118, 50, 255),
+            (248, 130, 53, 255),
+            (242, 116, 49, 255),
+        }
+        lamp_hashes: set[str] = set()
+
+        for model, sprite in sprites.items():
+            width, height = sprite.get_size()
+            upper = pygame.Rect(0, 0, width, height // 2)
+            interior_pixels = sum(
+                sprite.get_at((x, y)) == interior
+                for x in range(upper.left, upper.right)
+                for y in range(upper.top, upper.bottom)
+            )
+            tail_width = max(10, round(width * 0.15))
+            tail = sprite.subsurface((0, 0, tail_width, height)).copy()
+            nose = sprite.subsurface((width - tail_width, 0, tail_width, height)).copy()
+            tail_rows = {
+                y
+                for x in range(tail.get_width())
+                for y in range(tail.get_height())
+                if tuple(tail.get_at((x, y))) in tail_colors
+            }
+            bright_nose = sum(
+                1
+                for x in range(nose.get_width())
+                for y in range(nose.get_height())
+                if (
+                    nose.get_at((x, y)).r >= 245
+                    and nose.get_at((x, y)).g >= 220
+                    and nose.get_at((x, y)).b >= 145
+                )
+            )
+            lamp_hashes.add(
+                hashlib.sha256(
+                    pygame.image.tobytes(tail, "RGBA", False)
+                    + pygame.image.tobytes(nose, "RGBA", False)
+                ).hexdigest()
+            )
+            reverse = pixel_art._ambient_vehicle_surface(model, paint, facing=-1)
+            self.assertEqual(
+                pygame.image.tobytes(reverse, "RGBA", False),
+                pygame.image.tobytes(
+                    pygame.transform.flip(sprite, True, False),
+                    "RGBA",
+                    False,
+                ),
+            )
+            with self.subTest(model=model):
+                self.assertGreaterEqual(interior_pixels, 6)
+                self.assertGreaterEqual(len(tail_rows), 5)
+                self.assertGreaterEqual(bright_nose, 4)
+
+        self.assertEqual(len(lamp_hashes), len(models))
+
+        hatch = sprites["hatchback"]
+        self.assertGreaterEqual(
+            sum(
+                hatch.get_at((x, y)) == trim
+                for x in range(18, 40)
+                for y in range(7, 15)
+            ),
+            5,
+        )
+
+        suv = sprites["suv"]
+        suv_deep = (*pixel_art._shade(paint, -64), 255)
+        suv_scale_x = suv.get_width() / pixel_art._AMBIENT_VEHICLE_ART_SIZES["suv"][0]
+        suv_scale_y = suv.get_height() / pixel_art._AMBIENT_VEHICLE_ART_SIZES["suv"][1]
+        for base_seam_x in (43, 63, 84):
+            seam_x = round(base_seam_x * suv_scale_x)
+            top = round(14 * suv_scale_y)
+            bottom = round(29 * suv_scale_y)
+            with self.subTest(suv_door_seam=base_seam_x):
+                self.assertGreaterEqual(
+                    max(
+                        sum(
+                            tuple(suv.get_at((x, y))) == suv_deep
+                            for y in range(top, bottom)
+                        )
+                        for x in range(max(0, seam_x - 2), min(suv.get_width(), seam_x + 3))
+                    ),
+                    10,
+                )
+
+        pickup = sprites["pickup"]
+        bed = pygame.Rect(
+            round(pickup.get_width() * 0.05),
+            round(pickup.get_height() * 0.35),
+            round(pickup.get_width() * 0.29),
+            round(pickup.get_height() * 0.34),
+        )
+        bed_colors = {
+            tuple(pickup.get_at((x, y)))
+            for x in range(bed.left, bed.right)
+            for y in range(bed.top, bed.bottom)
+            if pickup.get_at((x, y)).a
+        }
+        self.assertGreaterEqual(
+            sum(
+                sum(pickup.get_at((x, y))[:3]) < 150
+                for x in range(bed.left, bed.right)
+                for y in range(bed.top, bed.bottom)
+            ),
+            20,
+        )
+        self.assertGreaterEqual(len(bed_colors), 8)
+
+        van = sprites["delivery_van"]
+        cargo = pygame.Rect(
+            round(van.get_width() * 0.10),
+            round(van.get_height() * 0.20),
+            round(van.get_width() * 0.45),
+            round(van.get_height() * 0.48),
+        )
+        cargo_colors = {
+            tuple(van.get_at((x, y)))
+            for x in range(cargo.left, cargo.right)
+            for y in range(cargo.top, cargo.bottom)
+            if van.get_at((x, y)).a
+        }
+        self.assertGreaterEqual(len(cargo_colors), 10)
+
+    def test_non_sedan_passers_keep_native_resolution_and_shading_depth(self) -> None:
+        expected_sizes = {
+            "hatchback": (143, 51),
+            "suv": (162, 57),
+            "pickup": (170, 54),
+            "delivery_van": (159, 59),
+        }
+        paints = (
+            (188, 164, 123),
+            (142, 96, 70),
+            (52, 68, 86),
+        )
+        for model, expected_size in expected_sizes.items():
+            paint_hashes: set[str] = set()
+            for paint in paints:
+                sprite = pixel_art._ambient_vehicle_surface(model, paint)
+                opaque_colors = {
+                    tuple(sprite.get_at((x, y)))
+                    for x in range(sprite.get_width())
+                    for y in range(sprite.get_height())
+                    if sprite.get_at((x, y)).a
+                }
+                value_bands = {
+                    sum(color[:3]) // 30
+                    for color in opaque_colors
+                    if color[3] == 255
+                }
+                paint_hashes.add(
+                    hashlib.sha256(
+                        pygame.image.tobytes(sprite, "RGBA", False)
+                    ).hexdigest()
+                )
+                with self.subTest(model=model, paint=paint):
+                    self.assertEqual(sprite.get_size(), expected_size)
+                    self.assertGreaterEqual(len(opaque_colors), 30)
+                    self.assertGreaterEqual(len(value_bands), 8)
+            self.assertEqual(len(paint_hashes), len(paints))
+
+        shading_source = inspect.getsource(
+            pixel_art._finish_ambient_vehicle_native_shading
+        )
+        self.assertNotIn("smoothscale", shading_source)
+        self.assertIn("paint_top", shading_source)
+        self.assertIn("paint_lower", shading_source)
+        self.assertIn("road_bounce", shading_source)
+
     def test_ambient_planes_move_independently_at_pixel_aligned_rates(self) -> None:
         first = {plane: pixel_art._ambient_plane_offset(400, plane) for plane in ("far", "mid", "world")}
         second = {plane: pixel_art._ambient_plane_offset(500, plane) for plane in ("far", "mid", "world")}
