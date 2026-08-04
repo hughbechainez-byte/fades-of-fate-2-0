@@ -29,6 +29,21 @@ class GameplayConfigTests(unittest.TestCase):
     def test_shipped_engine_configuration_is_valid(self) -> None:
         self.assertEqual(validate_gameplay(deepcopy(self.data))["engine"]["schema_version"], 2)
 
+    def test_playable_display_names_match_the_current_four_character_roster(self) -> None:
+        expected = {
+            "black_dave": "BLACK DAVE",
+            "shelly": "SHELLY",
+            "jermaine": "JERMAINE",
+            "white_dave": "WHITE DAVE",
+        }
+        self.assertEqual(
+            {
+                character: self.data["players"][character]["display_name"]
+                for character in expected
+            },
+            expected,
+        )
+
     def test_invalid_camera_and_physics_tuning_fail_early(self) -> None:
         invalid_camera = deepcopy(self.data)
         invalid_camera["engine"]["camera"]["dead_zone_left"] = 500

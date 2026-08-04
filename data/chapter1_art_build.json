@@ -83,8 +83,8 @@
     },
     {
       "path": "data/gameplay.json",
-      "sha256": "58aa42d688bf93d25c52971558edb03044a46405052fdf3056e9bb2e7b12dfd6",
-      "size": 81057
+      "sha256": "b2a11d512b17c8a57271823464ed92febd7abee2f8755c752cb798a7d2e4d659",
+      "size": 81065
     },
     {
       "path": "tools/build_chapter1_location_art.py",

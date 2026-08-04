@@ -4974,6 +4974,7 @@ class FadesGame:
             for prop in self._content_event_props
         )
         security_bubbles: list[tuple[float, float, int, int]] = []
+        enemy_health_bars: list[tuple[Enemy, pygame.Rect]] = []
         for _, _, _, kind, obj in sorted(drawables, key=lambda item: (item[0], item[1], item[2])):
             mapping_object = kind in {"prop", "scene_object", "content_prop"}
             if kind == "prop" and self._obstacle_health_remaining(obj) <= 0:
@@ -5199,7 +5200,7 @@ class FadesGame:
                     else:
                         enemy_action = obj.state in {"spawn", "hitstun", "down", "dead"}
                         enemy_tick = int(obj.state_clock * ANIMATION_PLAYBACK_HZ) if enemy_action else obj.animation_tick
-                    pixel_art.draw_enemy(
+                    enemy_rect = pixel_art.draw_enemy(
                         surface,
                         x,
                         y,
@@ -5210,6 +5211,10 @@ class FadesGame:
                         frame=enemy_tick,
                         hit_flash=obj.hit_flash,
                     )
+                    if obj.alive:
+                        if not isinstance(enemy_rect, pygame.Rect):
+                            enemy_rect = pygame.Rect(int(round(x - 18)), int(round(y - 56)), 36, 56)
+                        enemy_health_bars.append((obj, enemy_rect))
                     if obj.kind == "security" and obj.enemy_id in self._security_speech_by_enemy:
                         security_bubbles.append((x, y, obj.facing, obj.enemy_id))
                 if self._dave_flame_visuals.get(obj.enemy_id, 0.0) > 0.0:
@@ -5229,6 +5234,9 @@ class FadesGame:
             else:
                 facing = 1 if obj.vx >= 0 else -1
                 pixel_art.draw_projectile(surface, x, y, z=obj.z, facing=facing, kind=obj.kind, frame=self.frame // 2)
+
+        for enemy, enemy_rect in enemy_health_bars:
+            self._draw_enemy_health_bar(surface, enemy, enemy_rect)
 
         for x, y, facing, enemy_id in security_bubbles:
             speech, remaining = self._security_speech_by_enemy.get(enemy_id, ("", 0.0))
@@ -5286,6 +5294,34 @@ class FadesGame:
             self._draw_boss_loading_overlay(surface)
         if self.pause:
             self._draw_pause_menu(surface)
+
+    def _draw_enemy_health_bar(
+        self,
+        surface: pygame.Surface,
+        enemy: Enemy,
+        rendered_rect: pygame.Rect,
+    ) -> None:
+        """Draw a regular enemy's clamped world-space health presentation."""
+
+        max_health = float(enemy.max_health)
+        if not enemy.alive or max_health <= 0.0:
+            return
+        bar_width = 36
+        bar_x = int(
+            clamp(
+                rendered_rect.centerx - bar_width / 2.0,
+                2.0,
+                surface.get_width() - bar_width - 2.0,
+            )
+        )
+        bar_y = int(clamp(rendered_rect.top - 6.0, 2.0, surface.get_height() - 6.0))
+        self._bar(
+            surface,
+            pygame.Rect(bar_x, bar_y, bar_width, 4),
+            clamp(float(enemy.health) / max_health, 0.0, 1.0),
+            (239, 78, 174),
+            (69, 20, 57),
+        )
 
     def _draw_couch_refuge_taunt(self, surface: pygame.Surface) -> None:
         retreat = self.couch_retreat
