@@ -63,6 +63,7 @@ __all__ = [
     "LocationArtError",
     "draw_stage_background",
     "draw_stage_foreground",
+    "prewarm_ambient_traffic",
     "stage_world_debug_snapshot",
     "background_cache_used",
     "draw_physical_scene_object",
@@ -3669,6 +3670,54 @@ def _draw_ambient_particles(
     return count
 
 
+def _ambient_traffic_styles(
+    event: dict[str, object],
+) -> tuple[
+    int,
+    int,
+    tuple[tuple[int, int, int], ...],
+    tuple[str, ...],
+    int,
+]:
+    """Normalize the sparse traffic variants shared by layout and prewarming."""
+
+    count = max(1, min(2, int(event.get("instances", 1))))
+    seed = int(event.get("seed", 0))
+    raw_palette = tuple(event.get("palette", ((93, 104, 112),)))
+    palette = tuple(_rgb(color, (93, 104, 112)) for color in raw_palette)  # type: ignore[arg-type]
+    if not palette:
+        palette = ((93, 104, 112),)
+    raw_models = tuple(str(model) for model in event.get("models", _AMBIENT_VEHICLE_MODELS))  # type: ignore[arg-type]
+    models = tuple(model for model in raw_models if model in _AMBIENT_VEHICLE_SIZES)
+    if not models:
+        models = _AMBIENT_VEHICLE_MODELS
+    direction = -1 if int(event.get("direction", 1)) < 0 else 1
+    return count, seed, palette, models, direction
+
+
+def prewarm_ambient_traffic(theme: object) -> int:
+    """Prepare every reachable passer style before timed gameplay begins."""
+
+    initial_keys = set(_AMBIENT_VEHICLE_CACHE)
+    for event in _CHAPTER_ONE_AMBIENT_EVENTS.get(_theme_key(theme), ()):
+        if event.get("kind") != "traffic":
+            continue
+        count, seed, palette, models, direction = _ambient_traffic_styles(event)
+        pass_cycle = math.lcm(len(models), len(palette))
+        variants = {
+            (
+                models[(seed + index + pass_index) % len(models)],
+                palette[(seed * 3 + index * 2 + pass_index) % len(palette)],
+                direction,
+            )
+            for index in range(count)
+            for pass_index in range(pass_cycle)
+        }
+        for model, color, facing in variants:
+            _ambient_vehicle_surface(model, color, facing)
+    return len(set(_AMBIENT_VEHICLE_CACHE) - initial_keys)
+
+
 def _ambient_traffic_layout(
     surface_width: int,
     cx: float,
@@ -3678,24 +3727,14 @@ def _ambient_traffic_layout(
     """Return sparse traffic slots whose model and paint rotate every pass."""
 
     plane = str(event["plane"])
-    count = max(1, min(2, int(event.get("instances", 1))))
-    seed = int(event.get("seed", 0))
+    count, seed, palette, models, direction = _ambient_traffic_styles(event)
     base_y = _i(float(event.get("y", 252.0)))
-    raw_palette = tuple(event.get("palette", ((93, 104, 112),)))
-    palette = tuple(_rgb(color, (93, 104, 112)) for color in raw_palette)  # type: ignore[arg-type]
-    if not palette:
-        palette = ((93, 104, 112),)
-    raw_models = tuple(str(model) for model in event.get("models", _AMBIENT_VEHICLE_MODELS))  # type: ignore[arg-type]
-    models = tuple(model for model in raw_models if model in _AMBIENT_VEHICLE_SIZES)
-    if not models:
-        models = _AMBIENT_VEHICLE_MODELS
     headway = max(
         _AMBIENT_TRAFFIC_MIN_HEADWAY_PX,
         int(event.get("headway", _AMBIENT_TRAFFIC_MIN_HEADWAY_PX)),
     )
     period = max(1, int(surface_width) + _AMBIENT_VEHICLE_MAX_WIDTH + headway)
     spacing = period // count
-    direction = -1 if int(event.get("direction", 1)) < 0 else 1
     shift = _ambient_plane_offset(cx, plane) + direction * _i(
         motion_tick * float(event.get("speed", 1.0))
     )

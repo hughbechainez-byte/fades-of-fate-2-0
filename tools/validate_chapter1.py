@@ -2025,6 +2025,7 @@ def run_scenery_camera_sweep(
     default_clock = clock_ns is time.perf_counter_ns
     route_reports: list[dict[str, Any]] = []
     saved_frame_cache = dict(getattr(pixel_art, "_STAGE_BACKGROUND_FRAME_CACHE", {}))
+    saved_vehicle_cache = dict(getattr(pixel_art, "_AMBIENT_VEHICLE_CACHE", {}))
     try:
         for route in routes:
             level_id = str(route["level_id"])
@@ -2034,6 +2035,10 @@ def run_scenery_camera_sweep(
             frame_cache = getattr(pixel_art, "_STAGE_BACKGROUND_FRAME_CACHE", None)
             if frame_cache is not None:
                 frame_cache.clear()
+            vehicle_cache = getattr(pixel_art, "_AMBIENT_VEHICLE_CACHE", None)
+            if vehicle_cache is not None:
+                vehicle_cache.clear()
+            pixel_art.prewarm_ambient_traffic(theme)
             for index in range(warmup_frames):
                 warmup_position = positions[index % min(len(positions), 2)]
                 pixel_art.draw_stage_background(
@@ -2131,6 +2136,10 @@ def run_scenery_camera_sweep(
         if frame_cache is not None:
             frame_cache.clear()
             frame_cache.update(saved_frame_cache)
+        vehicle_cache = getattr(pixel_art, "_AMBIENT_VEHICLE_CACHE", None)
+        if vehicle_cache is not None:
+            vehicle_cache.clear()
+            vehicle_cache.update(saved_vehicle_cache)
         if not pygame_was_initialized:
             pygame.quit()
 

@@ -1361,6 +1361,7 @@ class FadesGame:
         # that explicit selection before rebuilding geometry/camera state.
         if str(active_campaign_level(self.data).get("id")) != self.level_id:
             self._select_campaign_level(self.level_id)
+        pixel_art.prewarm_ambient_traffic(self.level_theme)
         self.state = "gameplay"
         self.pause = False
         self.pause_page = "menu"

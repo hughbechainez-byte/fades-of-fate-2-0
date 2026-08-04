@@ -846,6 +846,46 @@ class PixelArtTests(unittest.TestCase):
                 self.assertIn(0, visible_counts)
                 self.assertIn(1, visible_counts)
 
+    def test_traffic_prewarm_builds_only_reachable_route_variants_once(self) -> None:
+        theme = "sprouts_el_cilantro"
+        event = next(
+            event
+            for event in pixel_art._CHAPTER_ONE_AMBIENT_EVENTS[theme]
+            if event["kind"] == "traffic"
+        )
+        models = tuple(event["models"])
+        palette = tuple(event["palette"])
+        seed = int(event["seed"])
+        facing = int(event["direction"])
+        expected_keys = {
+            (
+                models[(seed + pass_index) % len(models)],
+                palette[(seed * 3 + pass_index) % len(palette)],
+                facing,
+            )
+            for pass_index in range(5)
+        }
+        saved_cache = dict(pixel_art._AMBIENT_VEHICLE_CACHE)
+        try:
+            pixel_art._AMBIENT_VEHICLE_CACHE.clear()
+            with patch.object(
+                pixel_art,
+                "_finish_ambient_vehicle_native_shading",
+                wraps=pixel_art._finish_ambient_vehicle_native_shading,
+            ) as finish_shading:
+                self.assertEqual(pixel_art.prewarm_ambient_traffic(theme), 5)
+                self.assertEqual(set(pixel_art._AMBIENT_VEHICLE_CACHE), expected_keys)
+                finish_calls = finish_shading.call_count
+                self.assertEqual(finish_calls, 5)
+                self.assertEqual(pixel_art.prewarm_ambient_traffic(theme), 0)
+                self.assertEqual(finish_shading.call_count, finish_calls)
+                for model, color, direction in expected_keys:
+                    pixel_art._ambient_vehicle_surface(model, color, direction)
+                self.assertEqual(finish_shading.call_count, finish_calls)
+        finally:
+            pixel_art._AMBIENT_VEHICLE_CACHE.clear()
+            pixel_art._AMBIENT_VEHICLE_CACHE.update(saved_cache)
+
     def test_pickup_rear_door_and_van_cargo_cab_doors_remain_defined(self) -> None:
         pickup_paint = (159, 73, 56)
         pickup = pixel_art._ambient_vehicle_surface("pickup", pickup_paint)

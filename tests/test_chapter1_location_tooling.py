@@ -10,12 +10,14 @@ import os
 from pathlib import Path
 import unittest
 from typing import Mapping
+from unittest.mock import patch
 
 os.environ.setdefault("SDL_VIDEODRIVER", "dummy")
 os.environ.setdefault("SDL_AUDIODRIVER", "dummy")
 os.environ.setdefault("PYGAME_HIDE_SUPPORT_PROMPT", "1")
 
 import pygame
+import src.pixel_art as pixel_art
 
 from tools.validate_chapter1 import (
     FIXED_STEP_BUDGET_MS,
@@ -199,11 +201,17 @@ class ChapterOneLocationValidationTests(unittest.TestCase):
             for value in (index * 10_000_000, index * 10_000_000 + 4_000_000)
         )
 
-        report = run_scenery_camera_sweep(
-            frames_per_route=frame_count,
-            warmup_frames=0,
-            clock_ns=lambda: next(ticks),
-        )
+        saved_vehicle_cache = dict(pixel_art._AMBIENT_VEHICLE_CACHE)
+        with patch.object(
+            pixel_art,
+            "prewarm_ambient_traffic",
+            wraps=pixel_art.prewarm_ambient_traffic,
+        ) as prewarm:
+            report = run_scenery_camera_sweep(
+                frames_per_route=frame_count,
+                warmup_frames=0,
+                clock_ns=lambda: next(ticks),
+            )
 
         self.assertEqual(
             report["classification"],
@@ -211,6 +219,11 @@ class ChapterOneLocationValidationTests(unittest.TestCase):
         )
         self.assertEqual(report["fixed_step_budget_ms"], round(FIXED_STEP_BUDGET_MS, 4))
         self.assertEqual(len(report["routes"]), 4)
+        self.assertEqual(
+            [item.args[0] for item in prewarm.call_args_list],
+            [route["theme"] for route in report["routes"]],
+        )
+        self.assertEqual(pixel_art._AMBIENT_VEHICLE_CACHE, saved_vehicle_cache)
         self.assertTrue(report["passed"])
         for route in report["routes"]:
             self.assertEqual(route["timing"]["p95_ms"], 4.0)

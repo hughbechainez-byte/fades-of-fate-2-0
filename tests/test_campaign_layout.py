@@ -207,6 +207,22 @@ class ChapterOneLayoutTests(unittest.TestCase):
             game.close()
             manager.close()
 
+    def test_stage_start_prewarms_the_selected_route_traffic(self) -> None:
+        manager = InputManager(max_players=4, discover_controllers=False)
+        game = FadesGame(manager, mute=True)
+        try:
+            game.select_slots = [
+                SelectSlot({"type": "keyboard"}, character_index=0, confirmed=True)
+            ]
+            with patch("src.game.pixel_art.prewarm_ambient_traffic") as prewarm:
+                game._start_stage()
+
+            prewarm.assert_called_once_with(game.level_theme)
+            self.assertEqual(game.state, "gameplay")
+        finally:
+            game.close()
+            manager.close()
+
     def test_level_one_landmarks_run_from_sprouts_lot_to_goodwill_and_el_cilantro(self) -> None:
         landmark_ids = [landmark["id"] for landmark in self.levels[0]["landmarks"]]
         self.assertEqual(
