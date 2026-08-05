@@ -4502,11 +4502,11 @@ class FadesGame:
                     f"flame_trail_{'right' if player.facing >= 0 else 'left'}",
                     trail_x,
                     player.y,
-                    color=(255, 112, 30),
-                    radius=26,
-                    duration=0.24,
+                    color=(244, 98, 44),
+                    radius=22,
+                    duration=0.20,
                     projected=True,
-                    elevation=player.z + 34.0,
+                    elevation=player.z + 33.0,
                 )
 
         hits = 0

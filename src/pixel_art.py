@@ -6088,6 +6088,7 @@ def draw_fist_flames(
     z: float = 0.0,
     state: object = "idle",
     sprite_tick: int | None = None,
+    variant: str = "dimmer",
 ) -> pygame.Rect:
     """Attach persistent pixel fire to Dave's fists on the exact rendered cel.
 
@@ -6132,101 +6133,138 @@ def draw_fist_flames(
         "air_attack",
         "super",
     }
+    variant_name = str(variant).lower()
+    dimmer = variant_name in {"dimmer", "balanced", ""}
+    smokier = variant_name == "smokier"
+    energetic = variant_name == "energetic"
     rects: list[pygame.Rect] = []
     for index, (cx, cy) in enumerate(centres):
         flicker = ((phase * 3 + index * 5) % 7) - 3
         sway = -1 if (phase + index) % 2 else 1
         if striking:
-            # Three nested, asymmetric ribbons read as a punch carrying fire,
-            # rather than the old small triangle pasted behind the glove.
-            trail = 24 + index * 4 + (phase % 3) * 2
+            # Three nested, asymmetric ribbons keep the strike readable while
+            # letting the glow stay a little softer and less torch-like.
+            trail = (18 if dimmer else 20 if smokier else 22 if energetic else 20) + index * (2 if dimmer else 3) + (phase % (2 if dimmer else 3))
             trail_outer = [
-                (cx + direction * 8, cy - 8),
-                (cx + direction * 13, cy - 2),
-                (cx + direction * 8, cy + 8),
-                (cx - direction * (trail - 5), cy + 10),
-                (cx - direction * (trail + 16), cy + 3 + sway),
-                (cx - direction * (trail + 7), cy - 3),
-                (cx - direction * (trail + 19), cy - 9 - sway),
-                (cx - direction * (trail - 2), cy - 8),
+                (cx + direction * 7, cy - 6),
+                (cx + direction * 11, cy - 1),
+                (cx + direction * 7, cy + 6),
+                (cx - direction * (trail - 4), cy + 8),
+                (cx - direction * (trail + 12), cy + 2 + sway),
+                (cx - direction * (trail + 5), cy - 2),
+                (cx - direction * (trail + 15), cy - 7 - sway),
+                (cx - direction * (trail - 2), cy - 6),
             ]
             trail_mid = [
-                (cx + direction * 9, cy - 5),
-                (cx + direction * 12, cy),
-                (cx + direction * 8, cy + 5),
-                (cx - direction * (trail + 8), cy + 5),
-                (cx - direction * (trail - 1), cy),
-                (cx - direction * (trail + 11), cy - 5),
+                (cx + direction * 8, cy - 4),
+                (cx + direction * 10, cy),
+                (cx + direction * 7, cy + 4),
+                (cx - direction * (trail + 6), cy + 4),
+                (cx - direction * trail, cy),
+                (cx - direction * (trail + 9), cy - 4),
             ]
             trail_inner = [
-                (cx + direction * 8, cy - 2),
-                (cx + direction * 11, cy),
-                (cx + direction * 7, cy + 2),
-                (cx - direction * max(8, trail - 2), cy + 2),
-                (cx - direction * (trail + 6), cy),
-                (cx - direction * max(8, trail - 2), cy - 2),
+                (cx + direction * 7, cy - 1),
+                (cx + direction * 9, cy),
+                (cx + direction * 6, cy + 1),
+                (cx - direction * max(7, trail - 2), cy + 1),
+                (cx - direction * (trail + 4), cy),
+                (cx - direction * max(7, trail - 2), cy - 1),
             ]
-            rects.append(pygame.draw.polygon(surface, (62, 25, 32), [(px + direction * 2, py + 2) for px, py in trail_outer]))
-            rects.append(pygame.draw.polygon(surface, (188, 43, 26), trail_outer))
-            rects.append(pygame.draw.polygon(surface, (255, 101, 24), trail_mid))
-            rects.append(pygame.draw.polygon(surface, (255, 204, 70), trail_inner))
+            outer_shadow = (64, 32, 38) if smokier else (58, 27, 34)
+            outer_body = (150, 48, 34) if dimmer else (168, 51, 32) if smokier else (182, 60, 36) if energetic else (168, 51, 32)
+            mid_body = (220, 99, 41) if dimmer else (236, 107, 38) if smokier else (250, 124, 48) if energetic else (236, 107, 38)
+            inner_body = (246, 200, 101) if dimmer else (255, 203, 88) if smokier else (255, 216, 104) if energetic else (255, 203, 88)
+            veil = [
+                (cx + direction * 5, cy - 3),
+                (cx + direction * 8, cy + 1),
+                (cx + direction * 4, cy + 4),
+                (cx - direction * (trail - 2), cy + 6),
+                (cx - direction * (trail + 8), cy + 1),
+                (cx - direction * (trail + 3), cy - 4),
+                (cx - direction * (trail + 10), cy - 7),
+                (cx - direction * (trail - 1), cy - 4),
+            ]
+            rects.append(pygame.draw.polygon(surface, (42, 20, 26), [(px + direction, py + 1) for px, py in veil]))
+            rects.append(pygame.draw.polygon(surface, (102, 38, 30), veil))
+            rects.append(pygame.draw.polygon(surface, (146, 54, 36), [(px + direction, py) for px, py in veil]))
+            rects.append(pygame.draw.polygon(surface, outer_shadow, [(px + direction * 2, py + 2) for px, py in trail_outer]))
+            rects.append(pygame.draw.polygon(surface, outer_body, trail_outer))
+            rects.append(pygame.draw.polygon(surface, mid_body, trail_mid))
+            rects.append(pygame.draw.polygon(surface, inner_body, trail_inner))
             rects.append(
                 pygame.draw.line(
                     surface,
-                    (255, 248, 185),
-                    (cx - direction * max(7, trail - 7), cy - 1),
-                    (cx + direction * 8, cy - 1),
+                    (255, 244, 188 if not dimmer else 170),
+                    (cx - direction * max(6, trail - 6), cy - 1),
+                    (cx + direction * 7, cy - 1),
                     2,
                 )
             )
-            for spark_index, (distance, dy) in enumerate(((trail + 14, -13), (trail + 3, 13), (trail // 2, -16))):
+            spark_offsets = ((trail + 8, -8), (trail + 2, 10), (trail // 2, -12)) if dimmer else ((trail + 10, -10), (trail + 2, 11), (trail // 2, -13)) if not energetic else ((trail + 12, -12), (trail + 3, 12), (trail // 2, -15))
+            for spark_index, (distance, dy) in enumerate(spark_offsets):
                 spark_x = cx - direction * distance
                 spark_y = cy + dy + ((phase + spark_index + index) % 3) - 1
                 size = 3 if spark_index == 0 else 2
                 spark = pygame.Rect(spark_x - size // 2, spark_y - size // 2, size, size)
-                pygame.draw.rect(surface, (255, 241, 139) if spark_index != 1 else (255, 126, 30), spark)
+                spark_color = (255, 226, 150) if spark_index != 1 else (236, 124, 52) if dimmer else (248, 136, 49) if smokier else (255, 146, 58)
+                pygame.draw.rect(surface, spark_color, spark)
                 rects.append(spark)
 
-        flame_height = 24 + ((phase + index * 2) % 4) + max(0, -flicker)
+        flame_height = (17 if dimmer else 20 if smokier else 22 if energetic else 20) + ((phase + index * 2) % (2 if dimmer else 3 if smokier else 4)) + max(0, -flicker)
+        hand_window = pygame.Rect(cx - 12, cy - 6, 24, 14)
+        pygame.draw.ellipse(surface, (66, 32, 30, 88 if dimmer else 72), hand_window)
+        pygame.draw.ellipse(surface, (221, 183, 148, 92 if dimmer else 78), hand_window.inflate(-6, -4))
         outer = [
-            (cx - 12, cy + 8),
-            (cx - 11, cy - 3),
-            (cx - 7, cy - 11 - sway),
-            (cx - 3, cy - 7),
+            (cx - 10, cy + 6),
+            (cx - 9, cy - 2),
+            (cx - 5, cy - 8 - sway),
+            (cx - 2, cy - 5),
             (cx + sway, cy - flame_height),
-            (cx + 4, cy - 12 + flicker),
-            (cx + 8, cy - 17 - sway),
-            (cx + 9, cy - 5),
-            (cx + 12, cy + 8),
+            (cx + 3, cy - 9 + flicker),
+            (cx + 6, cy - 13 - sway),
+            (cx + 7, cy - 4),
+            (cx + 10, cy + 6),
         ]
         shadow = [(px + direction * 2, py + 2) for px, py in outer]
         rects.append(pygame.draw.polygon(surface, (56, 23, 31), shadow))
-        rects.append(pygame.draw.polygon(surface, (185, 42, 26), outer))
+        rects.append(pygame.draw.polygon(surface, (156, 49, 34) if dimmer else (170, 53, 34) if smokier else (181, 62, 38) if energetic else (170, 53, 34), outer))
+        shell = [
+            (cx - 8, cy + 4),
+            (cx - 6, cy - 1),
+            (cx - 3, cy - 6 - sway),
+            (cx, cy - 4),
+            (cx + 2, cy - 9 - flicker),
+            (cx + 5, cy - 3),
+            (cx + 6, cy + 4),
+        ]
+        rects.append(pygame.draw.polygon(surface, (74, 27, 29), shell))
         middle = [
-            (cx - 8, cy + 7),
-            (cx - 7, cy - 3),
-            (cx - 3, cy - 11 + sway),
-            (cx, cy - 6),
-            (cx + 3, cy - 18 - flicker),
-            (cx + 7, cy - 5),
-            (cx + 8, cy + 7),
+            (cx - 6, cy + 5),
+            (cx - 5, cy - 2),
+            (cx - 2, cy - 8 + sway),
+            (cx, cy - 5),
+            (cx + 2, cy - 12 - flicker),
+            (cx + 5, cy - 4),
+            (cx + 6, cy + 5),
         ]
-        rects.append(pygame.draw.polygon(surface, (255, 93, 23), middle))
+        rects.append(pygame.draw.polygon(surface, (228, 100, 40, 160) if dimmer else (242, 107, 38, 170) if smokier else (255, 118, 46, 178) if energetic else (242, 107, 38, 170), middle))
         inner = [
-            (cx - 5, cy + 6),
-            (cx - 4, cy - 3),
-            (cx - 1, cy - 8 - sway),
-            (cx + 2, cy - 4),
-            (cx + 4, cy - 12 + flicker),
-            (cx + 6, cy + 6),
+            (cx - 3, cy + 4),
+            (cx - 2, cy - 2),
+            (cx - 1, cy - 5 - sway),
+            (cx + 1, cy - 3),
+            (cx + 2, cy - 7 + flicker),
+            (cx + 4, cy + 4),
         ]
-        rects.append(pygame.draw.polygon(surface, (255, 174, 40), inner))
-        core = [(cx - 2, cy + 5), (cx - 2, cy - 2), (cx + 1, cy - 7), (cx + 3, cy + 5)]
-        rects.append(pygame.draw.polygon(surface, (255, 244, 139), core))
-        rects.append(pygame.draw.rect(surface, (255, 255, 224), (cx - 1, cy, 3, 5)))
+        rects.append(pygame.draw.polygon(surface, (250, 180, 74, 182) if dimmer else (255, 191, 79, 188) if smokier else (255, 209, 90, 196) if energetic else (255, 191, 79, 188), inner))
+        core = [(cx - 1, cy + 3), (cx - 1, cy - 1), (cx + 1, cy - 4), (cx + 1, cy + 3)]
+        rects.append(pygame.draw.polygon(surface, (255, 240, 184, 188) if dimmer else (255, 246, 176, 192) if smokier else (255, 250, 200, 198) if energetic else (255, 246, 176, 192), core))
+        rects.append(pygame.draw.arc(surface, (255, 222, 136, 160) if dimmer else (255, 230, 146, 170), (cx - 7, cy - 2, 14, 9), math.pi * 1.05, math.tau - 0.15, 1))
+        rects.append(pygame.draw.rect(surface, (255, 250, 228, 125), (cx, cy + 1, 2, 3 if dimmer else 4)))
         # A glowing cuff grounds each silhouette directly on its authored fist.
         rects.append(pygame.draw.ellipse(surface, (83, 28, 29), (cx - 11, cy + 3, 22, 9)))
-        rects.append(pygame.draw.arc(surface, (255, 195, 58), (cx - 9, cy + 3, 18, 7), math.pi, math.tau, 2))
+        rects.append(pygame.draw.arc(surface, (255, 203, 72 if not dimmer else 60), (cx - 9, cy + 3, 18, 7), math.pi, math.tau, 2))
         # Broken heat contours and three independent ember paths create motion
         # even while Dave holds an idle pose.
         heat_shift = (phase + index * 2) % 3
@@ -6235,17 +6273,18 @@ def draw_fist_flames(
             rects.append(
                 pygame.draw.arc(
                     surface,
-                    (245, 112 + heat_index * 35, 64),
+                    (224 if dimmer else 232 if smokier else 240, 104 + heat_index * (22 if dimmer else 28 if smokier else 32), 70 if dimmer else 72 if smokier else 78),
                     heat_box,
                     3.65 + heat_shift * 0.08,
                     4.45 + heat_shift * 0.08,
                     1,
                 )
             )
-        for ember_index, (dx, dy, size) in enumerate(((-15, -12, 3), (12, -20, 2), (-6, -30, 2))):
+        ember_offsets = ((-11, -8, 3), (9, -14, 2), (-4, -20, 2)) if dimmer else ((-13, -10, 3), (10, -17, 2), (-5, -24, 2)) if smokier else ((-15, -12, 3), (12, -20, 2), (-6, -28, 2))
+        for ember_index, (dx, dy, size) in enumerate(ember_offsets):
             drift = sway * (1 + ember_index)
             ember = pygame.Rect(cx + dx + drift, cy + dy + (phase + ember_index) % 4, size, size)
-            pygame.draw.rect(surface, (255, 224, 99) if ember_index != 1 else (255, 91, 25), ember)
+            pygame.draw.rect(surface, (255, 224, 129) if ember_index != 1 else (240, 100, 40) if dimmer else (255, 229, 121) if smokier else (255, 146, 58), ember)
             rects.append(ember)
     return rects[0].unionall(rects[1:]).inflate(6, 6)
 
