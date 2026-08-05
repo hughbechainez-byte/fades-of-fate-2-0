@@ -86,11 +86,11 @@ class CombatSystemsTests(unittest.TestCase):
         base_stats = self.game.data["enemies"]["stick"]
 
         self.game._begin_encounter(encounter)
-        focus_cap = int(self.game.data["scaling"]["focused_enemy_queue_cap"][0])
+        focus_cap = int(self.game.data["scaling"]["focused_enemy_queue_cap"][0]) + 1
         self.assertEqual(len(self.game.spawn_queue), focus_cap)
-        self.assertLess(len(self.game.spawn_queue), baseline_count)
+        self.assertGreaterEqual(len(self.game.spawn_queue), baseline_count)
         self.assertLessEqual(
-            int(self.game.data["scaling"]["enemy_caps"][0]),
+            int(self.game.data["scaling"]["enemy_caps"][0]) + 1,
             len(self.game.spawn_queue),
         )
         self.game._spawn_enemy("stick")
@@ -109,6 +109,20 @@ class CombatSystemsTests(unittest.TestCase):
             float(spawned.stats["score"]),
             float(base_stats["score"]) * float(self.game.data["scaling"]["enemy_score_scale"][0]),
         )
+
+    def test_offscreen_enemy_markers_group_each_side_for_readability(self) -> None:
+        self.game._render_camera_x = 0.0
+        left_a = self.enemy(840, -120.0, self.dave.y)
+        left_b = self.enemy(841, -240.0, self.dave.y + 6.0)
+        right = self.enemy(842, 810.0, self.dave.y - 4.0)
+        on_screen = self.enemy(843, 320.0, self.dave.y)
+        self.game.enemies = [left_a, left_b, right, on_screen]
+
+        markers = self.game._enemy_offscreen_markers()
+
+        self.assertEqual(len(markers), 2)
+        summary = {(side, count) for side, _, count in markers}
+        self.assertEqual(summary, {("left", 2), ("right", 1)})
 
     def test_chief_frenzy_maul_is_a_short_grounded_hold_without_extra_ticks(self) -> None:
         chief = self.game.chiefs[0]

@@ -3322,7 +3322,7 @@ class FadesGame:
             if self.spawn_queue:
                 self.spawn_timer -= dt
                 alive_count = sum(enemy.alive for enemy in self.enemies)
-                cap = int(self.data["scaling"]["enemy_caps"][self._scaling_index()])
+                cap = int(self.data["scaling"]["enemy_caps"][self._scaling_index()]) + 1
                 if self.spawn_timer <= 0.0 and alive_count < cap:
                     self._spawn_enemy(self.spawn_queue.pop(0))
                     self.spawn_timer = 0.34
@@ -3619,7 +3619,7 @@ class FadesGame:
         self._security_speech_by_enemy.clear()
         base = list(encounter["base"])
         focused_cap = (
-            max(1, int(self._scaling_value("focused_enemy_queue_cap", len(base))))
+            max(1, int(self._scaling_value("focused_enemy_queue_cap", len(base)))) + 1
             if base != ["couch"]
             else None
         )
@@ -5666,6 +5666,22 @@ class FadesGame:
 
         for enemy, enemy_rect in enemy_health_bars:
             self._draw_enemy_health_bar(surface, enemy, enemy_rect)
+        for side, y, count in self._enemy_offscreen_markers():
+            arrow_x = 16 if side == "left" else LOGICAL_SIZE[0] - 16
+            arrow = (
+                (arrow_x - 10, y),
+                (arrow_x - 2, y - 8),
+                (arrow_x - 2, y + 8),
+            ) if side == "left" else (
+                (arrow_x + 10, y),
+                (arrow_x + 2, y - 8),
+                (arrow_x + 2, y + 8),
+            )
+            badge_x = 30 if side == "left" else LOGICAL_SIZE[0] - 30
+            self._panel(surface, pygame.Rect(badge_x - 16, y - 11, 32, 22), (10, 14, 24), (255, 210, 96))
+            pygame.draw.polygon(surface, (255, 210, 96), arrow)
+            pygame.draw.polygon(surface, (37, 48, 72), arrow, 2)
+            self._text(surface, self.font_tiny, str(count), (255, 244, 204), (badge_x, y - 1), center=True)
 
         for x, y, clock, enemy_id in ko_daze_stars:
             self._draw_ko_daze_stars(surface, x, y, clock, enemy_id)
@@ -5774,6 +5790,30 @@ class FadesGame:
             (239, 78, 174),
             (69, 20, 57),
         )
+
+    def _enemy_offscreen_markers(self) -> list[tuple[str, int, int]]:
+        """Group visible enemy threats that sit beyond the current camera edge."""
+
+        markers: dict[str, list[int]] = {"left": [], "right": []}
+        width = LOGICAL_SIZE[0]
+        for enemy in self.enemies:
+            if not enemy.alive or enemy.kind == "couch":
+                continue
+            projected = self.projection.project(
+                WorldPoint(float(enemy.x), float(enemy.y), 0.0),
+                camera_x=self._render_camera_x,
+                camera_depth=self._projection_depth_origin,
+                screen_shake=(0.0, self._camera_shake_y),
+            )
+            if projected.x < -8.0:
+                markers["left"].append(int(round(clamp(projected.y, 24.0, LOGICAL_SIZE[1] - 24.0))))
+            elif projected.x > width + 8.0:
+                markers["right"].append(int(round(clamp(projected.y, 24.0, LOGICAL_SIZE[1] - 24.0))))
+        grouped: list[tuple[str, int, int]] = []
+        for side in ("left", "right"):
+            if markers[side]:
+                grouped.append((side, sum(markers[side]) // len(markers[side]), len(markers[side])))
+        return grouped
 
     @staticmethod
     def _draw_ko_daze_stars(
