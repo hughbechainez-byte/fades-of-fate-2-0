@@ -14,6 +14,7 @@ from src.animation_manifest import action_segment_tick, clip_for, timed_action_t
 from src.entities import ANIMATION_TICKS_PER_SECOND, Enemy, _HERO_STRIDE_DISTANCE, _animation_tick
 from src.game import FadesGame, SelectSlot
 from src.input_manager import InputManager, InputSnapshot
+from src import pixel_art
 from src import sprite_atlas
 
 
@@ -205,6 +206,28 @@ class RuntimeAnimationClockTests(unittest.TestCase):
         self.assertEqual(player.state, "walk")
         self.assertAlmostEqual(player.locomotion_distance, travelled_before_stop + 2.0)
         self.assertGreaterEqual(player.animation_tick, walk_tick_before_stop)
+
+    def test_jump_render_clock_advances_and_keeps_facing_in_air(self) -> None:
+        player = next(candidate for candidate in self.game.players if not candidate.is_cpu)
+        player.set_state("jump")
+        player.z = 16.0
+        player.vz = 0.0
+        player.state_clock = 0.0
+        player.facing = 1
+
+        first_tick = player.animation_tick
+        player.state_clock = 0.5
+        second_tick = player.animation_tick
+        self.assertGreater(second_tick, first_tick)
+
+        right = pygame.Surface((640, 360), pygame.SRCALPHA)
+        left = pygame.Surface((640, 360), pygame.SRCALPHA)
+        right_rect = sprite_atlas.player_frame("black_dave", "jump", second_tick)
+        self.assertIsNotNone(right_rect)
+        if right_rect is not None:
+            pixel_art.draw_player(right, player.x, player.y, player.z, 1, "jump", "black_dave", second_tick, "#ef5547")
+            pixel_art.draw_player(left, player.x, player.y, player.z, -1, "jump", "black_dave", second_tick, "#ef5547")
+            self.assertNotEqual(pygame.image.tobytes(right, "RGBA"), pygame.image.tobytes(left, "RGBA"))
 
     def test_normal_dave_speed_holds_twelve_stable_poses_for_eighty_ms(self) -> None:
         player = next(candidate for candidate in self.game.players if not candidate.is_cpu)
