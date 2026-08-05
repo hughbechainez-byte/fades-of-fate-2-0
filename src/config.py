@@ -16,6 +16,7 @@ from .location_lock import (
     load_location_lock,
     validate_gameplay_locations,
 )
+from .chapter_two import chapter_two_gameplay_levels
 
 
 GAME_NAME = "The Fades of Fate"
@@ -229,6 +230,26 @@ def load_json(relative: str) -> dict[str, Any]:
 
 def load_gameplay() -> dict[str, Any]:
     data = load_json("data/gameplay.json")
+    enemies = data.setdefault("enemies", {})
+    if "debo" not in enemies and "couch" in enemies:
+        debo = deepcopy(enemies["couch"])
+        debo.update(
+            {
+                "display_name": "DEBO",
+                "health": max(float(debo.get("health", 620.0)), 760.0),
+                "damage": max(float(debo.get("damage", 14.0)), 18.0),
+                "speed": min(float(debo.get("speed", 92.0)), 84.0),
+                "attack_range": 56.0,
+                "depth_range": 18.0,
+                "windup": 0.78,
+                "active": 0.42,
+                "recovery": 0.86,
+                "cooldown": 1.08,
+                "attack_style": "debo_swing",
+                "token_cost": 2,
+            }
+        )
+        enemies["debo"] = debo
     return validate_gameplay(data)
 
 
@@ -251,26 +272,30 @@ def _location_manifest_for_gameplay(data: Mapping[str, Any] | None = None) -> di
     )
 
 
-def campaign_levels(data: dict[str, Any]) -> tuple[dict[str, Any], ...]:
+def campaign_levels(data: dict[str, Any], *, include_chapter_two: bool = False) -> tuple[dict[str, Any], ...]:
     """Flatten the authored campaign in stable chapter/level order."""
 
     levels: list[dict[str, Any]] = []
     for chapter in data.get("campaign", {}).get("chapters", ()):
         levels.extend(level for level in chapter.get("levels", ()) if isinstance(level, dict))
+    if include_chapter_two:
+        chapter_two_levels = chapter_two_gameplay_levels(data)
+        if chapter_two_levels:
+            levels = [*levels, *chapter_two_levels[len(levels):]]
     return tuple(levels)
 
 
-def active_campaign_level(data: dict[str, Any]) -> dict[str, Any]:
+def active_campaign_level(data: dict[str, Any], *, include_chapter_two: bool = False) -> dict[str, Any]:
     """Return the level descriptor selected by campaign.active_level_id."""
 
     active_id = str(data.get("campaign", {}).get("active_level_id", "")).strip()
-    for level in campaign_levels(data):
+    for level in campaign_levels(data, include_chapter_two=include_chapter_two):
         if str(level.get("id", "")) == active_id:
             return level
     raise ConfigError(f"campaign.active_level_id does not name an authored level: {active_id or '<empty>'}")
 
 
-def activate_campaign_level(data: dict[str, Any], level_id: str) -> dict[str, Any]:
+def activate_campaign_level(data: dict[str, Any], level_id: str, *, include_chapter_two: bool = False) -> dict[str, Any]:
     """Make an authored campaign level the live runtime stage.
 
     The editable file retains a Level 1-compatible top-level runtime snapshot
@@ -281,7 +306,11 @@ def activate_campaign_level(data: dict[str, Any], level_id: str) -> dict[str, An
 
     target_id = str(level_id).strip()
     level = next(
-        (candidate for candidate in campaign_levels(data) if str(candidate.get("id", "")) == target_id),
+        (
+            candidate
+            for candidate in campaign_levels(data, include_chapter_two=include_chapter_two)
+            if str(candidate.get("id", "")) == target_id
+        ),
         None,
     )
     if level is None:
@@ -289,7 +318,41 @@ def activate_campaign_level(data: dict[str, Any], level_id: str) -> dict[str, An
     if str(level.get("status", "")).strip().lower() != "playable":
         raise ConfigError(f"campaign level is not playable: {target_id}")
 
+    route = None
+    try:
+        route = location_lock.route_for_level(target_id, _location_manifest_for_gameplay(data))
+    except Exception:
+        route = None
+
     data["campaign"]["active_level_id"] = target_id
+    if route is not None:
+        landmarks = {str(item["id"]): item for item in route.get("landmarks", ()) if isinstance(item, Mapping)}
+        level["background_theme"] = str(route.get("theme", level.get("background_theme", "")))
+        level["stage_width"] = int(route.get("world_width", level.get("stage_width", 0)))
+        start_anchor = str(route.get("start_anchor_id", ""))
+        end_anchor = str(route.get("end_anchor_id", ""))
+        if start_anchor in landmarks:
+            level["start"] = dict(landmarks[start_anchor])
+        if end_anchor in landmarks:
+            level["end"] = dict(landmarks[end_anchor])
+        level["landmark_ids"] = [str(item["id"]) for item in route.get("landmarks", ())]
+        level["landmarks"] = [
+            {
+                "id": str(landmark["id"]),
+                "x": int(landmark["world_x"]),
+                "layer": (
+                    "intersection"
+                    if "intersection" in str(landmark.get("setback", ""))
+                    else "infrastructure"
+                    if str(landmark["id"]) in {"freeway_approach", "i8_underpass"}
+                    else "story_prop"
+                    if str(landmark["id"]) == "daves_bmx"
+                    else "play_side"
+                ),
+                "display_name": str(landmark["display_name"]),
+            }
+            for landmark in route.get("landmarks", ())
+        ]
     meta = data["meta"]
     meta.update(
         {

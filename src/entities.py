@@ -885,10 +885,10 @@ class Enemy:
     @property
     def animation_tick(self) -> int:
         if self.state == "chase":
-            stride_distance = _COUCH_STRIDE_DISTANCE if self.kind == "couch" else _ENEMY_STRIDE_DISTANCE
+            stride_distance = _COUCH_STRIDE_DISTANCE if self.kind in {"couch", "debo"} else _ENEMY_STRIDE_DISTANCE
             actor = (
                 "couch"
-                if self.kind == "couch"
+                if self.kind in {"couch", "debo"}
                 else enemy_animation_actor(self.kind, self.variant_id or None)
             )
             return _distance_animation_tick(
@@ -904,7 +904,7 @@ class Enemy:
         identity = 1009 + self.enemy_id * 13 + kind_salt
         self.animation_state = state
         self.animation_clock = _animation_phase_offset(identity, "idle")
-        stride_distance = _COUCH_STRIDE_DISTANCE if self.kind == "couch" else _ENEMY_STRIDE_DISTANCE
+        stride_distance = _COUCH_STRIDE_DISTANCE if self.kind in {"couch", "debo"} else _ENEMY_STRIDE_DISTANCE
         phase_fraction = (
             _animation_tick(_animation_phase_offset(identity, "chase"))
             % _ANIMATION_PHASE_COUNT
@@ -1001,6 +1001,21 @@ class Enemy:
                 )
                 self._set_state("chase")
             return
+        if self.kind == "debo" and self.state == "guard":
+            self.state_clock += dt
+            target = game.nearest_player(self.x, self.y)
+            if target is not None:
+                dx = self.x - target.x
+                dy = self.y - target.y
+                nx, ny = normalized(dx, dy)
+                speed = 112.0
+                applied_x, applied_y = game.move_actor(self, nx * speed * dt, ny * speed * 0.52 * dt)
+                if abs(applied_x) + abs(applied_y) > 0.015:
+                    self.locomotion_distance += math.hypot(applied_x, applied_y)
+                self.facing = 1 if dx >= 0 else -1
+            if self.state_clock >= self.state_duration:
+                self._finish_attack(game)
+            return
         if self.state == "windup":
             self.state_clock += dt
             if self.state_clock >= self.state_duration:
@@ -1008,7 +1023,7 @@ class Enemy:
             return
         if self.state == "charge":
             self.state_clock += dt
-            speed = 205.0 if self.kind == "cart" else 168.0
+            speed = 205.0 if self.kind == "cart" else 140.0 if self.kind == "debo" else 168.0
             game.move_actor(
                 self,
                 self.charge_vector[0] * speed * dt,
@@ -1130,6 +1145,15 @@ class Enemy:
                 self.attack_pattern = "laugh"
             else:
                 self.attack_pattern = "stick"
+        elif self.kind == "debo":
+            distance = math.hypot(target.x - self.x, (target.y - self.y) * 1.25)
+            roll = random.random()
+            if distance > 96.0 or (self.health < self.max_health * 0.58 and roll < 0.48):
+                self.attack_pattern = "debo_charge"
+            elif distance < 52.0 or roll < 0.34:
+                self.attack_pattern = "debo_swing"
+            else:
+                self.attack_pattern = "debo_guard"
         if self.kind == "cart" or self.attack_pattern == "pump":
             self.charge_vector = normalized(target.x - self.x, target.y - self.y)
         duration = float(self.stats["windup"])
@@ -1164,6 +1188,9 @@ class Enemy:
                 game.spawn_enemy_projectile(self, target, self.attack_pattern)
             self._set_state("attack", float(self.stats["active"]))
             self.attack_fired = True
+        elif self.kind == "debo" and self.attack_pattern == "debo_guard":
+            self.attack_fired = False
+            self._set_state("guard", max(0.42, float(self.stats["active"]) * 1.1))
         elif self.attack_pattern == "laugh":
             game.add_effect("shock", self.x, self.y, radius=45, color=(255, 120, 210), duration=0.38)
             self.attack_fired = True
@@ -1177,6 +1204,7 @@ class Enemy:
         return (
             76.0 if self.kind == "whip"
             else 58.0 if self.kind == "couch"
+            else 54.0 if self.kind == "debo"
             else 46.0 if self.kind == "police"
             else 42.0 if self.kind == "security"
             else 34.0
@@ -1226,6 +1254,8 @@ class Enemy:
                     applied_amount = self.health - retreat_health
                 else:
                     retreat_health = None
+        elif self.kind == "debo" and self.state == "guard":
+            applied_amount *= 0.72
         game.release_attack_token(self)
         self.token_held = 0
         self.health -= applied_amount
@@ -1330,7 +1360,7 @@ class Enemy:
             "ko_companion_dazed_enemy",
             enemy=self.kind,
             enemy_id=self.enemy_id,
-            boss=self.kind == "couch",
+            boss=self.kind in {"couch", "debo"},
         )
         return True
 

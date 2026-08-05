@@ -5,7 +5,11 @@
     "chapter_1_level_1": "chapter_1_sunset",
     "chapter_1_level_2": "i8_underpass_dimming",
     "chapter_1_level_3": "broadway_blue_hour",
-    "chapter_1_level_4": "awaken_finale"
+    "chapter_1_level_4": "awaken_finale",
+    "chapter_2_level_1": "i8_underpass_dimming",
+    "chapter_2_level_2": "broadway_blue_hour",
+    "chapter_2_level_3": "broadway_blue_hour",
+    "chapter_2_level_4": "awaken_finale"
   },
   "profiles": {
     "chapter_1_sunset": {

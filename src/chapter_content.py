@@ -25,21 +25,26 @@ from .location_lock import (
     load_location_lock,
     validate_chapter_content_locations,
 )
+from .chapter_two import (
+    CHAPTER_ONE_LEVEL_IDS,
+    CHAPTER_TWO_LEVEL_IDS,
+    chapter_two_chapter_content_levels,
+    chapter_two_level_id,
+    chapter_two_level_index,
+    chapter_two_is_level,
+    chapter_two_base_level_index,
+)
 
 
 class ChapterContentError(ValueError):
     """Raised when the editable Chapter 1 content contract is incomplete."""
 
 
-_LEVEL_IDS = (
-    "chapter_1_level_1",
-    "chapter_1_level_2",
-    "chapter_1_level_3",
-    "chapter_1_level_4",
-)
+_PRIMARY_LEVEL_IDS = CHAPTER_ONE_LEVEL_IDS
+_LEVEL_IDS = (*CHAPTER_ONE_LEVEL_IDS, *CHAPTER_TWO_LEVEL_IDS)
 _PROFILE_NAMES = ("normal", "experienced", "minimum")
 _PLAYER_COUNTS = (1, 2, 3, 4)
-_RUNTIME_ENEMY_KINDS = {"stick", "cart", "whip", "pipe", "security", "homeless", "police", "couch"}
+_RUNTIME_ENEMY_KINDS = {"stick", "cart", "whip", "pipe", "security", "homeless", "police", "couch", "debo"}
 _VARIANT_ATTACK_STYLES = {
     "homeless": {"glass_bottle", "bike_tire"},
     "security": {"security_flashlight"},
@@ -57,7 +62,10 @@ class PacingProfile:
 
     @property
     def total_minutes(self) -> float:
-        return sum(minutes for _, minutes in self.level_minutes) + self.travel_dialogue_minutes
+        primary_minutes = sum(
+            minutes for level_id, minutes in self.level_minutes if level_id in _PRIMARY_LEVEL_IDS
+        )
+        return primary_minutes + self.travel_dialogue_minutes
 
     def minutes_for_level(self, level_id: str) -> float:
         for candidate_id, minutes in self.level_minutes:
@@ -70,6 +78,7 @@ def load_chapter_content(
     relative: str = "data/chapter_content.json",
     *,
     gameplay: Mapping[str, Any] | None = None,
+    include_chapter_two: bool = False,
 ) -> dict[str, Any]:
     """Load and validate the editable Chapter 1 production-content file.
 
@@ -79,7 +88,75 @@ def load_chapter_content(
     """
 
     data = load_json(relative)
-    return validate_chapter_content(data, gameplay=gameplay)
+    if include_chapter_two:
+        data["levels"] = chapter_two_chapter_content_levels(data)
+        travel = list(data.get("inter_level_travel", ()))
+        if len(travel) == 3:
+            travel.extend(
+                [
+                    {
+                        "from_level_id": "chapter_1_level_4",
+                        "to_level_id": "chapter_2_level_1",
+                        "heading": "CHAPTER 2 - EAST SIDE SOUTHBOUND",
+                        "beats": [
+                            "The crew turns south onto the east side.",
+                            "Bostonia Post Office is ahead of them.",
+                        ],
+                    },
+                    {
+                        "from_level_id": "chapter_2_level_1",
+                        "to_level_id": "chapter_2_level_2",
+                        "heading": "I-8 TO BROADWAY",
+                        "beats": [
+                            "The underpass falls behind as the Promenade side opens up.",
+                        ],
+                    },
+                    {
+                        "from_level_id": "chapter_2_level_2",
+                        "to_level_id": "chapter_2_level_3",
+                        "heading": "BROADWAY TO THE PROMENADE",
+                        "beats": [
+                            "Chris's warning pushes the crew deeper south.",
+                        ],
+                    },
+                    {
+                        "from_level_id": "chapter_2_level_3",
+                        "to_level_id": "chapter_2_level_4",
+                        "heading": "PROMENADE SHOWDOWN",
+                        "beats": [
+                            "DeBo is waiting at the promenade.",
+                        ],
+                    },
+                ]
+            )
+        data["inter_level_travel"] = travel
+        pacing = data.get("pacing", {})
+        targets = pacing.get("targets", {})
+        if isinstance(targets, dict) and isinstance(targets.get("level_target_minutes"), dict):
+            level_minutes = dict(targets["level_target_minutes"])
+            for level_number, chapter1_level_id in enumerate(_PRIMARY_LEVEL_IDS, start=1):
+                source_index = chapter_two_base_level_index(level_number) - 1
+                level_minutes[chapter_two_level_id(level_number)] = level_minutes[_PRIMARY_LEVEL_IDS[source_index]]
+            targets["level_target_minutes"] = level_minutes
+        profiles = pacing.get("profiles", {})
+        if isinstance(profiles, dict):
+            for profile_name, profile in profiles.items():
+                minutes = profile.get("level_minutes", {})
+                if isinstance(minutes, dict):
+                    for level_number, chapter1_level_id in enumerate(_PRIMARY_LEVEL_IDS, start=1):
+                        source_index = chapter_two_base_level_index(level_number) - 1
+                        minutes[chapter_two_level_id(level_number)] = minutes[_PRIMARY_LEVEL_IDS[source_index]]
+                    profile["level_minutes"] = minutes
+        data["enemy_variants"] = [
+            *data.get("enemy_variants", []),
+            {
+                "id": "debo",
+                "runtime_kind": "debo",
+                "fictional_role": "promenade boss",
+                "behavior_note": "slow, deliberate boss pressure with heavy swings and a looming advance",
+            },
+        ]
+    return validate_chapter_content(data, gameplay=gameplay, include_chapter_two=include_chapter_two)
 
 
 def chapter_levels(data: Mapping[str, Any]) -> tuple[dict[str, Any], ...]:
@@ -98,7 +175,7 @@ def level_content(data: Mapping[str, Any], level_id: str) -> dict[str, Any]:
     for level in chapter_levels(data):
         if str(level.get("runtime_level_id", "")) == target:
             return level
-    raise ChapterContentError(f"No Chapter 1 content exists for level {target or '<empty>'}")
+    raise ChapterContentError(f"No Chapter content exists for level {target or '<empty>'}")
 
 
 def enemy_variants(data: Mapping[str, Any]) -> dict[str, dict[str, Any]]:
@@ -127,9 +204,10 @@ def pace_profile(data: Mapping[str, Any], name: str) -> PacingProfile:
     level_minutes = profile.get("level_minutes", {})
     if not isinstance(level_minutes, Mapping):
         raise ChapterContentError(f"Pacing profile {profile_name}.level_minutes must be an object")
+    available_level_ids = _LEVEL_IDS if all(level_id in level_minutes for level_id in _LEVEL_IDS) else _PRIMARY_LEVEL_IDS
     return PacingProfile(
         name=profile_name,
-        level_minutes=tuple((level_id, float(level_minutes[level_id])) for level_id in _LEVEL_IDS),
+        level_minutes=tuple((level_id, float(level_minutes[level_id])) for level_id in available_level_ids),
         travel_dialogue_minutes=float(profile.get("travel_dialogue_minutes", 0.0)),
     )
 
@@ -152,7 +230,8 @@ def compile_level_content(
         raise ChapterContentError("player_count must be between 1 and 4")
     # Validate before compiling so packaged overrides fail at the menu rather
     # than half-way through an encounter.
-    validate_chapter_content(dict(data))
+    include_chapter_two = len(tuple(data.get("levels", ()))) > len(_PRIMARY_LEVEL_IDS)
+    validate_chapter_content(dict(data), include_chapter_two=include_chapter_two)
     compiled = deepcopy(level_content(data, level_id))
     variants = enemy_variants(data)
     scale = deepcopy(data["player_count_scaling"][str(int(player_count))])
@@ -173,7 +252,7 @@ def compile_level_content(
     compiled["pacing_minutes"] = {
         name: pace_profile(data, name).minutes_for_level(str(level_id)) for name in _PROFILE_NAMES
     }
-    if str(level_id) == _LEVEL_IDS[-1]:
+    if str(level_id) == "chapter_1_level_4":
         compiled["couch_boss"] = compile_couch_contract(data, player_count)
     return compiled
 
@@ -189,7 +268,8 @@ def compile_couch_contract(data: Mapping[str, Any], player_count: int) -> dict[s
 
     if int(player_count) not in _PLAYER_COUNTS:
         raise ChapterContentError("player_count must be between 1 and 4")
-    validate_chapter_content(dict(data))
+    include_chapter_two = len(tuple(data.get("levels", ()))) > len(_PRIMARY_LEVEL_IDS)
+    validate_chapter_content(dict(data), include_chapter_two=include_chapter_two)
     compiled = deepcopy(data["couch_boss_contract"])
     variants = enemy_variants(data)
     scale = data["player_count_scaling"][str(int(player_count))]
@@ -397,7 +477,7 @@ def _validate_level(
         raise ChapterContentError(f"{label}.checkpoints must be unique")
 
 
-def _validate_pacing(data: Mapping[str, Any]) -> None:
+def _validate_pacing(data: Mapping[str, Any], *, include_chapter_two: bool) -> None:
     pacing = _require_mapping(data.get("pacing"), "pacing")
     targets = _require_mapping(pacing.get("targets"), "pacing.targets")
     ranges = {
@@ -422,8 +502,20 @@ def _validate_pacing(data: Mapping[str, Any]) -> None:
         "chapter_1_level_3": (12.0, 15.0),
         "chapter_1_level_4": (10.0, 15.0),
     }
-    if tuple(level_targets.keys()) != _LEVEL_IDS:
-        raise ChapterContentError("pacing.targets.level_target_minutes must follow Chapter 1 route order")
+    if include_chapter_two:
+        expected_level_ranges |= {
+            "chapter_2_level_1": (10.0, 13.0),
+            "chapter_2_level_2": (12.0, 15.0),
+            "chapter_2_level_3": (10.0, 13.0),
+            "chapter_2_level_4": (10.0, 15.0),
+        }
+    expected_level_ids = _LEVEL_IDS if include_chapter_two else _PRIMARY_LEVEL_IDS
+    if tuple(level_targets.keys()) != expected_level_ids:
+        raise ChapterContentError(
+            "pacing.targets.level_target_minutes must follow Chapter 1 and Chapter 2 route order"
+            if include_chapter_two
+            else "pacing.targets.level_target_minutes must follow Chapter 1 route order"
+        )
     for level_id, expected in expected_level_ranges.items():
         supplied = level_targets[level_id]
         if not isinstance(supplied, list) or tuple(float(value) for value in supplied) != expected:
@@ -436,8 +528,13 @@ def _validate_pacing(data: Mapping[str, Any]) -> None:
         raise ChapterContentError(f"pacing.profiles must be ordered as {list(_PROFILE_NAMES)}")
     for name in _PROFILE_NAMES:
         profile = pace_profile(data, name)
-        if set(level_id for level_id, _ in profile.level_minutes) != set(_LEVEL_IDS):
-            raise ChapterContentError(f"pacing profile {name} must budget every Chapter 1 level")
+        expected_level_set = set(_LEVEL_IDS if include_chapter_two else _PRIMARY_LEVEL_IDS)
+        if set(level_id for level_id, _ in profile.level_minutes) != expected_level_set:
+            raise ChapterContentError(
+                f"pacing profile {name} must budget every Chapter 1 and Chapter 2 level"
+                if include_chapter_two
+                else f"pacing profile {name} must budget every Chapter 1 level"
+            )
         if any(minutes <= 0 for _, minutes in profile.level_minutes):
             raise ChapterContentError(f"pacing profile {name} level minutes must be positive")
         if profile.travel_dialogue_minutes <= 0:
@@ -466,7 +563,7 @@ def _validate_pacing(data: Mapping[str, Any]) -> None:
 
 def _validate_couch_contract(data: Mapping[str, Any], known_variants: Mapping[str, Mapping[str, Any]]) -> None:
     contract = _require_mapping(data.get("couch_boss_contract"), "couch_boss_contract")
-    if _require_text(contract.get("runtime_level_id"), "couch_boss_contract.runtime_level_id") != _LEVEL_IDS[-1]:
+    if _require_text(contract.get("runtime_level_id"), "couch_boss_contract.runtime_level_id") != _PRIMARY_LEVEL_IDS[-1]:
         raise ChapterContentError("Couch content must belong to the Level 4 finale")
     if _require_text(contract.get("boss_variant"), "couch_boss_contract.boss_variant") != "couch":
         raise ChapterContentError("couch_boss_contract.boss_variant must be couch")
@@ -519,6 +616,7 @@ def validate_chapter_content(
     *,
     gameplay: Mapping[str, Any] | None = None,
     location_manifest: Mapping[str, Any] | None = None,
+    include_chapter_two: bool = False,
 ) -> dict[str, Any]:
     """Validate every production requirement needed by the runtime hook."""
 
@@ -573,21 +671,31 @@ def validate_chapter_content(
             _require_positive(entry.get(field), f"{label}.{field}")
 
     levels = chapter_levels(data)
-    if len(levels) != len(_LEVEL_IDS):
-        raise ChapterContentError("Chapter 1 content requires exactly four ordered levels")
+    expected_level_count = len(_LEVEL_IDS if include_chapter_two else _PRIMARY_LEVEL_IDS)
+    if len(levels) != expected_level_count:
+        raise ChapterContentError(
+            "Chapter content requires exactly eight ordered levels"
+            if include_chapter_two
+            else "Chapter content requires exactly four ordered levels"
+        )
     for number, level in enumerate(levels, start=1):
         _validate_level(level, known_variants, number)
 
     travel = data.get("inter_level_travel", ())
-    if not isinstance(travel, list) or len(travel) != 3:
-        raise ChapterContentError("inter_level_travel must contain all three route handoffs")
+    expected_travel_count = 7 if include_chapter_two else 3
+    if not isinstance(travel, list) or len(travel) != expected_travel_count:
+        raise ChapterContentError(
+            "inter_level_travel must contain all route handoffs for both chapters"
+            if include_chapter_two
+            else "inter_level_travel must contain the three Chapter 1 route handoffs"
+        )
     for index, handoff in enumerate(travel):
         label = f"inter_level_travel[{index}]"
         handoff = _require_mapping(handoff, label)
         if _require_text(handoff.get("from_level_id"), f"{label}.from_level_id") != _LEVEL_IDS[index]:
-            raise ChapterContentError(f"{label}.from_level_id breaks Chapter 1 route order")
+            raise ChapterContentError(f"{label}.from_level_id breaks chapter route order")
         if _require_text(handoff.get("to_level_id"), f"{label}.to_level_id") != _LEVEL_IDS[index + 1]:
-            raise ChapterContentError(f"{label}.to_level_id breaks Chapter 1 route order")
+            raise ChapterContentError(f"{label}.to_level_id breaks chapter route order")
         _require_text(handoff.get("heading"), f"{label}.heading")
         beats = handoff.get("beats", ())
         if not isinstance(beats, list) or not beats:
@@ -596,7 +704,7 @@ def validate_chapter_content(
         if index == 1 and not ("690" in travel_copy and "fuel" in travel_copy):
             raise ChapterContentError("I-8 to Soapy Joe's handoff must cover the 690 showroom and fuel corridor")
 
-    _validate_pacing(data)
+    _validate_pacing(data, include_chapter_two=include_chapter_two)
     _validate_couch_contract(data, known_variants)
 
     if gameplay is not None:
@@ -613,9 +721,17 @@ def validate_chapter_content(
                 "gameplay enemies are missing authored runtime kinds: "
                 + ", ".join(sorted(missing_runtime_kinds))
             )
-        runtime_ids = tuple(str(level.get("id", "")) for level in campaign_levels(dict(gameplay)))
-        if runtime_ids[: len(_LEVEL_IDS)] != _LEVEL_IDS:
-            raise ChapterContentError("gameplay campaign no longer matches the Chapter 1 content route")
+        runtime_ids = tuple(
+            str(level.get("id", ""))
+            for level in campaign_levels(dict(gameplay), include_chapter_two=include_chapter_two)
+        )
+        expected_runtime_ids = _LEVEL_IDS if include_chapter_two else _PRIMARY_LEVEL_IDS
+        if runtime_ids[: len(expected_runtime_ids)] != expected_runtime_ids:
+            raise ChapterContentError(
+                "gameplay campaign no longer matches the Chapter 1 content route"
+                if not include_chapter_two
+                else "gameplay campaign no longer matches the Chapter 1 and Chapter 2 content route"
+            )
     try:
         if location_manifest is None:
             manifest_path = resource_path("data/chapter1_location_lock.json")
@@ -628,6 +744,7 @@ def validate_chapter_content(
             data,
             location_manifest,
             gameplay=gameplay,
+            include_chapter_two=include_chapter_two,
         )
     except LocationLockError as exc:
         raise ChapterContentError(f"Chapter 1 location lock: {exc}") from exc

@@ -478,6 +478,7 @@ ENEMY_RUNTIME_ANIMATION_ACTORS = {
     "guard": "stick",
     "homeless": "stick",
     "police": "stick",
+    "debo": "couch",
 }
 
 
@@ -862,6 +863,9 @@ def clip_for(actor: str, state: str) -> AnimationClip:
         normalized_state = CHIEF_ALIASES.get(normalized_state, normalized_state)
     elif normalized_actor in {*ENEMY_KINDS, *ENEMY_VARIANT_KINDS}:
         normalized_state = ENEMY_ALIASES.get(normalized_state, normalized_state)
+    elif normalized_actor == "debo":
+        normalized_actor = "couch"
+        normalized_state = COUCH_ALIASES.get(normalized_state, normalized_state)
     elif normalized_actor == "couch":
         normalized_state = COUCH_ALIASES.get(normalized_state, normalized_state)
     elif normalized_actor == "jerry":

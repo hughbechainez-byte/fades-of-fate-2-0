@@ -6682,6 +6682,83 @@ def draw_boss(
     """Draw Couch with boss-scale mass, personality and readable weapons."""
 
     state_name = _state_name(state)
+    boss_name = "debo" if state_name.startswith("debo_") else "couch"
+    if boss_name == "debo":
+        state_name = state_name[len("debo_") :] or "idle"
+    if boss_name == "debo":
+        _shadow(surface, x, y, 84, 13, elevation=z)
+        sprite = pygame.Surface((146, 112), pygame.SRCALPHA)
+        outline = (34, 28, 27)
+        skin_dark = (103, 66, 51)
+        skin = (182, 122, 84)
+        skin_light = (219, 160, 111)
+        jacket_dark = (62, 72, 57)
+        jacket = (88, 101, 74)
+        jacket_light = (130, 142, 106)
+        pants_dark = (47, 54, 42)
+        pants = (72, 84, 62)
+        boots = (48, 43, 38)
+        metal = (132, 138, 142)
+        shadow = (23, 24, 27)
+        # Boots and planted stance.
+        pygame.draw.rect(sprite, outline, (43, 74, 20, 24))
+        pygame.draw.rect(sprite, pants_dark, (46, 76, 13, 19))
+        pygame.draw.rect(sprite, outline, (82, 73, 21, 25))
+        pygame.draw.rect(sprite, pants, (85, 75, 13, 20))
+        pygame.draw.rect(sprite, boots, (37, 93, 28, 10))
+        pygame.draw.rect(sprite, boots, (78, 92, 30, 11))
+        pygame.draw.rect(sprite, outline, (36, 100, 30, 4))
+        pygame.draw.rect(sprite, outline, (77, 100, 31, 4))
+        # Jacket body.
+        body = [(50, 31), (64, 23), (97, 23), (111, 35), (116, 61), (104, 77), (55, 77), (43, 62)]
+        pygame.draw.polygon(sprite, outline, body)
+        pygame.draw.polygon(sprite, jacket, [(53, 33), (65, 26), (95, 26), (107, 36), (112, 60), (101, 73), (58, 73), (47, 60)])
+        pygame.draw.polygon(sprite, jacket_dark, [(52, 50), (66, 27), (74, 29), (67, 73), (57, 72), (47, 59)])
+        pygame.draw.polygon(sprite, jacket_light, [(74, 28), (95, 26), (106, 36), (108, 61), (100, 71), (90, 71), (95, 42)])
+        pygame.draw.rect(sprite, shadow, (69, 53, 11, 17))
+        pygame.draw.rect(sprite, metal, (73, 52, 3, 18))
+        pygame.draw.rect(sprite, (166, 92, 58), (84, 52, 6, 13))
+        # Arms.
+        if state_name == "guard":
+            pygame.draw.line(sprite, outline, (56, 40), (73, 58), 7)
+            pygame.draw.line(sprite, outline, (98, 39), (82, 56), 7)
+            pygame.draw.rect(sprite, skin_dark, (66, 49, 10, 11))
+            pygame.draw.rect(sprite, skin_dark, (84, 48, 10, 11))
+            pygame.draw.rect(sprite, (131, 82, 52), (61, 45, 13, 9))
+            pygame.draw.rect(sprite, (131, 82, 52), (83, 44, 13, 9))
+        elif state_name == "charge":
+            pygame.draw.line(sprite, outline, (59, 39), (42, 55), 8)
+            pygame.draw.line(sprite, outline, (98, 38), (117, 46), 8)
+            pygame.draw.rect(sprite, skin, (37, 50, 13, 10))
+            pygame.draw.rect(sprite, jacket_light, (110, 41, 11, 8))
+            pygame.draw.rect(sprite, (166, 92, 58), (35, 46, 9, 7))
+            pygame.draw.rect(sprite, (210, 148, 97), (108, 40, 5, 4))
+        else:
+            attack = state_name in {"attack", "laugh", "windup"} or "debo" in state_name
+            if attack and int(frame) % 2 == 0:
+                pygame.draw.line(sprite, outline, (58, 40), (35, 38), 8)
+                pygame.draw.line(sprite, outline, (100, 40), (124, 49), 8)
+                pygame.draw.rect(sprite, skin, (29, 34, 10, 10))
+                pygame.draw.rect(sprite, jacket_light, (118, 45, 11, 8))
+            else:
+                pygame.draw.line(sprite, outline, (58, 40), (40, 50), 8)
+                pygame.draw.line(sprite, outline, (100, 40), (117, 59), 8)
+                pygame.draw.rect(sprite, skin, (34, 46, 10, 10))
+                pygame.draw.rect(sprite, jacket_light, (111, 55, 11, 8))
+        # Head and facial planes.
+        pygame.draw.ellipse(sprite, outline, (60, 4, 34, 30))
+        pygame.draw.ellipse(sprite, skin, (63, 7, 28, 24))
+        pygame.draw.rect(sprite, skin_dark, (67, 11, 6, 5))
+        pygame.draw.rect(sprite, skin_dark, (79, 11, 6, 5))
+        pygame.draw.rect(sprite, outline, (68, 20, 12, 3))
+        pygame.draw.rect(sprite, outline, (70, 16, 3, 3))
+        pygame.draw.rect(sprite, outline, (78, 16, 3, 3))
+        pygame.draw.rect(sprite, skin_light, (71, 8, 14, 4))
+        pygame.draw.rect(sprite, skin_dark, (72, 23, 10, 2))
+        pygame.draw.rect(sprite, shadow, (68, 28, 6, 4))
+        rendered = _hit_flash_sprite(_material_lit_sprite(sprite, "denim", cache=False), hit_flash, cache=False)
+        return _blit_grounded(surface, rendered, x, y, z, facing, 104)
+
     authored = sprite_atlas.boss_frame(state_name, int(frame)) if sprite_atlas is not None else None
     if authored is not None:
         _shadow(surface, x, y, 82, 12, elevation=z)

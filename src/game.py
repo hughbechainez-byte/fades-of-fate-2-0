@@ -58,7 +58,7 @@ from .entities import (
 from .input_manager import InputManager, InputSnapshot
 from .logger import breadcrumb, get_log_paths
 from .level_complete import CompletionStats, LevelCompleteTimeline, LevelStatTracker, RankRules
-from .level_outro import JerryLevelOneOutro, LevelOutroFrame
+from .level_outro import JerryLevelOneOutro, LevelOutroFrame, WheelchairChrisLevelTwoOutro
 from .progression import GameOptions, RunStats, SaveData, SaveRepository
 from .provenance import build_runtime_provenance
 from .stage_transition import BossLoadingTransition, TransitionFrame
@@ -254,7 +254,7 @@ class FadesGame:
         # Production-facing Chapter content stays separate from the compact
         # combat configuration.  Validating it at boot catches a broken route
         # contract before a player reaches a later stage.
-        self.chapter_content = load_chapter_content(gameplay=self.data)
+        self.chapter_content = load_chapter_content(gameplay=self.data, include_chapter_two=True)
         self.enemy_variant_catalog = enemy_variants(self.chapter_content)
         self.runtime_chapter_content: dict[str, Any] = {}
         self._content_major_by_hook: dict[str, dict[str, Any]] = {}
@@ -280,7 +280,8 @@ class FadesGame:
             self.save_data.atmosphere.to_mapping()
         )
         self.meta = self.data["meta"]
-        self.level_data = active_campaign_level(self.data)
+        self.campaign_levels = campaign_levels(self.data, include_chapter_two=True)
+        self.level_data = active_campaign_level(self.data, include_chapter_two=True)
         self.level_id = str(self.level_data["id"])
         self.level_number = int(self.level_data["number"])
         self.level_title = str(self.level_data["title"])
@@ -293,7 +294,8 @@ class FadesGame:
         self._refresh_runtime_provenance()
         self.atmosphere.set_profile_for_route(self.level_id)
         self.level_is_chapter_finale = bool(self.level_data.get("chapter_finale", False))
-        self.level_has_couch = self.level_data.get("boss") == "couch"
+        self.level_boss_kind = str(self.level_data.get("boss", "")).strip() or None
+        self.level_has_couch = self.level_boss_kind == "couch"
         self.development_unlimited_lives = bool(
             self.data.get("players", {}).get("global", {}).get("unlimited_lives", False)
         )
@@ -924,12 +926,16 @@ class FadesGame:
             return levels[current_index + 1]
         return None
 
+    def _all_campaign_levels(self) -> tuple[dict[str, Any], ...]:
+        return getattr(self, "campaign_levels", campaign_levels(self.data, include_chapter_two=True))
+
     def _select_campaign_level(self, level_id: str) -> None:
         """Switch the live in-memory stage snapshot to an authored level."""
 
-        self.data = activate_campaign_level(self.data, level_id)
+        self.data = activate_campaign_level(self.data, level_id, include_chapter_two=True)
         self.meta = self.data["meta"]
-        self.level_data = active_campaign_level(self.data)
+        self.campaign_levels = campaign_levels(self.data, include_chapter_two=True)
+        self.level_data = active_campaign_level(self.data, include_chapter_two=True)
         self.level_id = str(self.level_data["id"])
         self.level_number = int(self.level_data["number"])
         self.level_title = str(self.level_data["title"])
@@ -942,7 +948,8 @@ class FadesGame:
         self._refresh_runtime_provenance()
         self.atmosphere.set_profile_for_route(self.level_id)
         self.level_is_chapter_finale = bool(self.level_data.get("chapter_finale", False))
-        self.level_has_couch = self.level_data.get("boss") == "couch"
+        self.level_boss_kind = str(self.level_data.get("boss", "")).strip() or None
+        self.level_has_couch = self.level_boss_kind == "couch"
         self.log_breadcrumb(
             "campaign_level_selected",
             level_id=self.level_id,
@@ -1232,7 +1239,7 @@ class FadesGame:
     def _go_title(self) -> None:
         # A fresh title-screen run always begins at the authored Chapter 1
         # opener instead of retaining a previously completed route segment.
-        first_level = campaign_levels(self.data)[0]
+        first_level = self._all_campaign_levels()[0]
         if self.level_id != str(first_level["id"]):
             self._select_campaign_level(str(first_level["id"]))
         self.state = "title"
@@ -1393,6 +1400,10 @@ class FadesGame:
             "chapter_1_level_2": "FOLLOW THE CLUE NORTH TO I-8",
             "chapter_1_level_3": "CROSS THE WASH • TURN FOR REVIVE",
             "chapter_1_level_4": "HOLD THE LOT • FACE COUCH AT THE BMX",
+            "chapter_2_level_1": "ROLL SOUTH FROM BOSTONIA POST",
+            "chapter_2_level_2": "MEET CHRIS AT THE UNDERPASS",
+            "chapter_2_level_3": "PUSH THE PROMENADE ROUTE",
+            "chapter_2_level_4": "DEBO HOLDS THE PROMENADE",
         }.get(self.level_id, "KEEP THE ROUTE MOVING NORTH")
 
     def _update_character_select(self, dt: float) -> None:
@@ -1448,7 +1459,7 @@ class FadesGame:
         # Tests and debug tools may select an authored level before invoking
         # the normal menu flow.  Keep the runtime snapshot synchronized with
         # that explicit selection before rebuilding geometry/camera state.
-        if str(active_campaign_level(self.data).get("id")) != self.level_id:
+        if str(active_campaign_level(self.data, include_chapter_two=True).get("id")) != self.level_id:
             self._select_campaign_level(self.level_id)
         pixel_art.prewarm_ambient_traffic(self.level_theme)
         self.state = "gameplay"
@@ -3380,9 +3391,9 @@ class FadesGame:
                         self.data.get("transitions", {}).get("boss_loading", {}).get("enabled", False)
                     )
                     if (
-                        self.level_has_couch
+                        self.level_boss_kind is not None
                         and boss_loading_enabled
-                        and list(next_encounter.get("base", ())) == ["couch"]
+                        and list(next_encounter.get("base", ())) == [self.level_boss_kind]
                     ):
                         self._start_boss_transition()
             return
@@ -3399,7 +3410,7 @@ class FadesGame:
 
         enabled = bool(self.data.get("transitions", {}).get("boss_loading", {}).get("enabled", False))
         if (
-            not self.level_has_couch
+            not self.level_boss_kind
             or not enabled
             or self.boss_transition is not None
             or self.encounter_index >= len(self.data["encounters"])
@@ -3422,7 +3433,7 @@ class FadesGame:
                 player.set_state("idle")
         for chief in self.chiefs:
             chief.state = "sit"
-        self.log_breadcrumb("boss_loading_started", encounter_index=self.encounter_index)
+        self.log_breadcrumb("boss_loading_started", encounter_index=self.encounter_index, boss_kind=self.level_boss_kind)
 
     def _update_boss_transition(self, dt: float) -> None:
         transition = self.boss_transition
@@ -3475,7 +3486,11 @@ class FadesGame:
 
         if self.level_outro is not None:
             return
-        self.level_outro = JerryLevelOneOutro()
+        outro_kind = str(self.level_data.get("outro", "")).strip()
+        if outro_kind == "wheelchair_chris":
+            self.level_outro = WheelchairChrisLevelTwoOutro()
+        else:
+            self.level_outro = JerryLevelOneOutro()
         self.level_outro_frame = self.level_outro.current_frame()
         self._level_outro_mouse_advance_pending = False
         self.encounter_active = False
@@ -3509,9 +3524,9 @@ class FadesGame:
             chief.x, chief.y, chief.state = point.x, point.depth, "sit"
         camera_target = max(0.0, float(self.meta["stage_width"]) - LOGICAL_SIZE[0])
         self.camera.pan_to(camera_target, 0.55)
-        self.stage_banner = "EL CILANTRO  •  JERRY"
+        self.stage_banner = "PROMENADE  •  WHEELCHAIR CHRIS" if self.level_data.get("outro") == "wheelchair_chris" else "EL CILANTRO  •  JERRY"
         self.stage_banner_timer = 1.4
-        self.log_breadcrumb("level_outro_started", level_id=self.level_id, npc="jerry")
+        self.log_breadcrumb("level_outro_started", level_id=self.level_id, npc=("wheelchair_chris" if self.level_data.get("outro") == "wheelchair_chris" else "jerry"))
 
     def _update_level_outro(self, dt: float, snapshots: list[InputSnapshot]) -> None:
         timeline = self.level_outro
@@ -3554,7 +3569,8 @@ class FadesGame:
     def _finish_level(self, *, after_outro: bool = False) -> None:
         if self.state == "complete":
             return
-        if self.level_data.get("outro") == "jerry_warning" and not after_outro:
+        outro_kind = str(self.level_data.get("outro", "")).strip()
+        if outro_kind in {"jerry_warning", "wheelchair_chris"} and not after_outro:
             self._start_level_outro()
             return
         self.state = "complete"
@@ -3636,13 +3652,15 @@ class FadesGame:
         self._security_spawn_speech = ""
         self._security_speech_by_enemy.clear()
         base = list(encounter["base"])
+        boss_kind = self.level_boss_kind
+        boss_base = [boss_kind] if boss_kind else ["couch"]
         focused_cap = (
             max(1, int(self._scaling_value("focused_enemy_queue_cap", len(base)))) + 1
-            if base != ["couch"]
+            if base != boss_base
             else None
         )
         content_fight = self._content_major_by_hook.get(str(encounter.get("name", "")).strip().lower())
-        if base != ["couch"] and content_fight is not None:
+        if base != boss_base and content_fight is not None:
             authored_roles = self._spawn_identifiers_from_groups(
                 content_fight.get("spawn_groups", ()),
                 focused_limit=focused_cap,
@@ -3655,7 +3673,7 @@ class FadesGame:
                 # archetypes; otherwise the solo cap consumes only the four
                 # legacy kinds and every detailed model is silently skipped.
                 base = self._anti_clone_order([*authored_roles, *base])
-        if base == ["couch"]:
+        if boss_kind is not None and base == [boss_kind]:
             self.spawn_queue = base
             self._encounter_enemy_durability_scale = 1.0
             self._encounter_enemy_damage_scale = 1.0
@@ -3989,7 +4007,7 @@ class FadesGame:
             x = max(35.0, self.camera_x + random.uniform(-35, 15))
         y = random.uniform(float(self.meta["lane_top"]) + 10, float(self.meta["lane_bottom"]) - 6)
         scale = 1.0
-        if kind == "couch":
+        if kind in {"couch", "debo"}:
             scale = float(self.data["scaling"]["boss_health"][self._scaling_index()])
             x = min(float(self.meta["stage_width"]) - 160.0, self.camera_x + 565.0)
             y = 275.0
@@ -5527,7 +5545,7 @@ class FadesGame:
                 )
                 pixel_art.draw_chief(surface, x, y, z=0, facing=obj.facing, state=chief_state, frame=chief_tick)
             elif kind == "enemy":
-                if obj.kind == "couch":
+                if obj.kind in {"couch", "debo"}:
                     if obj.state in {"bike_retreat", "bike_return"}:
                         # Couch visibly jumps toward/from the one authored BMX
                         # landmark. The parabolic lift is continuous with the
@@ -5556,17 +5574,21 @@ class FadesGame:
                             frame=int(obj.state_clock * ANIMATION_PLAYBACK_HZ),
                         )
                         continue
-                    if obj.state == "ko_dazed":
+                    if obj.kind == "couch" and obj.state == "ko_dazed":
                         boss_state = "hitstun"
-                    elif obj.state == "ko_fall":
+                    elif obj.kind == "couch" and obj.state == "ko_fall":
                         boss_state = "down"
+                    elif obj.kind == "debo" and obj.state == "guard":
+                        boss_state = "guard"
                     elif obj.state == "recovery" and obj.attack_pattern:
                         boss_state = f"{obj.attack_pattern}_recovery"
                     else:
                         boss_state = obj.attack_pattern if obj.state in {"windup", "attack", "charge"} and obj.attack_pattern else obj.state
-                    if obj.state == "windup":
+                    if obj.kind == "debo" and obj.state == "guard":
+                        boss_tick = int(obj.state_clock * ANIMATION_PLAYBACK_HZ)
+                    elif obj.state == "windup":
                         boss_tick = action_segment_tick(
-                            "couch",
+                            obj.kind,
                             boss_state,
                             "startup",
                             obj.state_clock,
@@ -5574,7 +5596,7 @@ class FadesGame:
                         )
                     elif obj.state in {"attack", "charge"}:
                         boss_tick = action_segment_tick(
-                            "couch",
+                            obj.kind,
                             boss_state,
                             "active",
                             obj.state_clock,
@@ -5582,7 +5604,7 @@ class FadesGame:
                         )
                     elif obj.state == "recovery" and obj.attack_pattern:
                         boss_tick = action_segment_tick(
-                            "couch",
+                            obj.kind,
                             boss_state,
                             "recovery",
                             obj.state_clock,
@@ -5591,13 +5613,14 @@ class FadesGame:
                     else:
                         boss_action = obj.state in {"spawn", "hitstun", "down", "dead", "ko_dazed", "ko_fall"}
                         boss_tick = int(obj.state_clock * ANIMATION_PLAYBACK_HZ) if boss_action else obj.animation_tick
+                    boss_render_state = f"debo_{boss_state}" if obj.kind == "debo" else boss_state
                     pixel_art.draw_boss(
                         surface,
                         x,
                         y,
                         z=0,
                         facing=obj.facing,
-                        state=boss_state,
+                        state=boss_render_state,
                         frame=boss_tick,
                         hit_flash=obj.hit_flash,
                     )
@@ -5894,6 +5917,68 @@ class FadesGame:
             center=True,
         )
 
+    def _draw_wheelchair_chris_overlay(self, surface: pygame.Surface, frame: LevelOutroFrame) -> None:
+        world_x = max(132.0, float(self.meta["stage_width"]) - 160.0)
+        world_y = 288.0
+        point = self.projection.project(
+            WorldPoint(world_x, world_y),
+            camera_x=self._render_camera_x,
+            camera_depth=self._projection_depth_origin,
+            screen_shake=(0.0, self._camera_shake_y),
+        )
+        x, y = int(point.x), int(point.y)
+        shadow = pygame.Surface((120, 92), pygame.SRCALPHA)
+        pygame.draw.ellipse(shadow, (10, 12, 18, 110), (8, 56, 92, 24))
+        pygame.draw.circle(shadow, (10, 12, 18, 90), (32, 58), 24)
+        pygame.draw.circle(shadow, (10, 12, 18, 90), (82, 62), 24)
+        surface.blit(shadow, shadow.get_rect(midbottom=(x, y)))
+
+        figure = pygame.Surface((128, 108), pygame.SRCALPHA)
+        outline = (39, 34, 30)
+        skin = (216, 177, 142)
+        skin_shadow = (166, 120, 90)
+        cloth = (104, 98, 91)
+        cloth_dark = (68, 64, 61)
+        metal = (118, 126, 134)
+        wheel_dark = (29, 31, 38)
+        wheel_mid = (63, 69, 78)
+        wheel_light = (152, 157, 163)
+        pygame.draw.line(figure, outline, (25, 68), (58, 28), 5)
+        pygame.draw.line(figure, outline, (58, 28), (88, 43), 5)
+        pygame.draw.line(figure, outline, (25, 68), (62, 68), 5)
+        pygame.draw.line(figure, outline, (62, 68), (88, 43), 5)
+        pygame.draw.circle(figure, wheel_dark, (28, 72), 24, 6)
+        pygame.draw.circle(figure, wheel_mid, (28, 72), 18, 2)
+        pygame.draw.circle(figure, wheel_dark, (81, 74), 16, 5)
+        pygame.draw.circle(figure, wheel_light, (81, 74), 10, 2)
+        pygame.draw.line(figure, metal, (25, 68), (81, 74), 2)
+        pygame.draw.line(figure, metal, (58, 28), (72, 14), 2)
+        pygame.draw.rect(figure, metal, (66, 18, 20, 5))
+        pygame.draw.rect(figure, outline, (14, 60, 44, 6))
+        pygame.draw.rect(figure, cloth_dark, (48, 52, 22, 18))
+        pygame.draw.ellipse(figure, outline, (49, 8, 24, 26))
+        pygame.draw.ellipse(figure, skin, (51, 10, 20, 22))
+        pygame.draw.rect(figure, cloth_dark, (43, 28, 38, 25))
+        pygame.draw.rect(figure, cloth, (45, 30, 34, 20))
+        pygame.draw.rect(figure, skin_shadow, (56, 31, 6, 13))
+        pygame.draw.rect(figure, outline, (58, 16, 4, 3))
+        pygame.draw.rect(figure, outline, (64, 16, 4, 3))
+        pygame.draw.rect(figure, outline, (58, 24, 8, 2))
+        pygame.draw.rect(figure, cloth, (29, 34, 20, 10))
+        pygame.draw.line(figure, outline, (26, 39), (54, 47), 3)
+        pygame.draw.line(figure, skin, (31, 37), (18, 54), 4)
+        pygame.draw.line(figure, skin, (71, 43), (88, 52), 4)
+        pygame.draw.rect(figure, cloth_dark, (67, 48, 14, 6))
+        pygame.draw.rect(figure, cloth_dark, (40, 49, 18, 5))
+        pygame.draw.line(figure, outline, (52, 48), (72, 49), 2)
+        pygame.draw.line(figure, outline, (52, 48), (55, 63), 2)
+        pygame.draw.line(figure, outline, (53, 53), (42, 78), 4)
+        pygame.draw.line(figure, skin, (53, 53), (44, 77), 2)
+        pygame.draw.rect(figure, cloth_dark, (39, 74, 16, 6))
+        pygame.draw.rect(figure, skin, (42, 76, 11, 6))
+        figure = pixel_art.shade_authored_sprite(figure, "jerry")
+        surface.blit(figure, figure.get_rect(midbottom=(x, y)))
+
     def _draw_shelly_frenzy_cinematic(self, surface: pygame.Surface) -> None:
         cinematic = self.shelly_frenzy_cinematic
         if cinematic is None:
@@ -5980,27 +6065,32 @@ class FadesGame:
             "reaction": "idle",
             "finished": "idle",
         }.get(frame.beat, "idle")
-        jerry_provider = getattr(sprite_atlas, "jerry_frame", None)
-        jerry_art = jerry_provider(pose_state, int(frame.beat_elapsed * 12.0)) if callable(jerry_provider) else None
-        if jerry_art is not None:
-            jerry_art = pixel_art.shade_authored_sprite(jerry_art, "jerry")
-            max_height = 150
-            if jerry_art.get_height() > max_height:
-                scale = max_height / jerry_art.get_height()
-                jerry_art = pygame.transform.scale(
-                    jerry_art,
-                    (max(1, int(jerry_art.get_width() * scale)), max_height),
+        speaker_key = str(frame.speaker or "").strip().lower().replace(" ", "_")
+        is_chris_scene = str(self.level_data.get("outro", "")).strip() == "wheelchair_chris"
+        if is_chris_scene:
+            self._draw_wheelchair_chris_overlay(surface, frame)
+        else:
+            jerry_provider = getattr(sprite_atlas, "jerry_frame", None)
+            jerry_art = jerry_provider(pose_state, int(frame.beat_elapsed * 12.0)) if callable(jerry_provider) else None
+            if jerry_art is not None:
+                jerry_art = pixel_art.shade_authored_sprite(jerry_art, "jerry")
+                max_height = 150
+                if jerry_art.get_height() > max_height:
+                    scale = max_height / jerry_art.get_height()
+                    jerry_art = pygame.transform.scale(
+                        jerry_art,
+                        (max(1, int(jerry_art.get_width() * scale)), max_height),
+                    )
+                jerry_world = self.projection.project(
+                    WorldPoint(float(self.meta["stage_width"]) - 118.0, 274.0),
+                    camera_x=self._render_camera_x,
+                    camera_depth=self._projection_depth_origin,
+                    screen_shake=(0.0, self._camera_shake_y),
                 )
-            jerry_world = self.projection.project(
-                WorldPoint(float(self.meta["stage_width"]) - 118.0, 274.0),
-                camera_x=self._render_camera_x,
-                camera_depth=self._projection_depth_origin,
-                screen_shake=(0.0, self._camera_shake_y),
-            )
-            surface.blit(jerry_art, jerry_art.get_rect(midbottom=(int(jerry_world.x), int(jerry_world.y))))
+                surface.blit(jerry_art, jerry_art.get_rect(midbottom=(int(jerry_world.x), int(jerry_world.y))))
 
         panel = pygame.Rect(34, 28, 572, 110)
-        accent = (244, 203, 112) if frame.speaker == "Jerry" else (98, 220, 255)
+        accent = (244, 203, 112) if speaker_key in {"jerry", ""} else (98, 220, 255)
         self._panel(surface, panel, (10, 14, 24), accent)
         speaker = (frame.speaker or "EL CILANTRO • LEVEL 1 END").upper()
         self._text(surface, self.font_small, speaker, accent, (53, 40))
@@ -6023,6 +6113,13 @@ class FadesGame:
             ),
             "finished": ("JERRY POINTS BACK DOWN SECOND STREET.",),
         }.get(frame.beat, (frame.dialogue.upper(),))
+        if is_chris_scene:
+            dialogue_lines = {
+                "arrival": ("A WORN MAN IN A WHEELCHAIR ROLLS UP TO THE CURB.",),
+                "warning": ("I HEARD DEBO GOT OUT OF JAIL.",),
+                "clarification": ("HE'S AT THE PROMENADE.",),
+                "finished": ("CHRIS POINTS THE PARTY SOUTH.",),
+            }.get(frame.beat, (frame.dialogue.upper(),))
         for index, line in enumerate(dialogue_lines):
             self._text(surface, self.font, line, (242, 236, 211), (53, 66 + index * 24))
         if frame.awaiting_continue:
@@ -6065,44 +6162,59 @@ class FadesGame:
         transition = self.boss_transition
         assert transition is not None
         relocate_at = transition.relocate_seconds
+        boss_kind = self.level_boss_kind or "couch"
         if frame.elapsed_seconds < relocate_at:
             overlay = pygame.Surface(LOGICAL_SIZE, pygame.SRCALPHA)
             overlay.fill((3, 4, 12, 235))
             panel = pygame.Rect(118, 112, 404, 132)
             self._panel(overlay, panel, (8, 12, 24), (255, 190, 82))
             dots = "." * (1 + int(frame.elapsed_seconds * 4.0) % 3)
-            self._text(overlay, self.font_big, f"LOADING COUCH'S BLOCK{dots}", (255, 226, 136), (320, 139), center=True)
-            self._text(overlay, self.font, "PREPARING AWAKEN CHURCH SHOWDOWN", (142, 225, 255), (320, 181), center=True)
+            title = "COUCH" if boss_kind == "couch" else "DEBO"
+            line = "PREPARING AWAKEN CHURCH SHOWDOWN" if boss_kind == "couch" else "PREPARING PROMENADE SHOWDOWN"
+            self._text(overlay, self.font_big, f"LOADING {title}'S BLOCK{dots}", (255, 226, 136), (320, 139), center=True)
+            self._text(overlay, self.font, line, (142, 225, 255), (320, 181), center=True)
             overlay.set_alpha(max(0, min(255, int(round(255 * frame.overlay_alpha)))))
             surface.blit(overlay, (0, 0))
             return
         # A short comic-book confrontation replaces the silent pre-boss freeze.
         scene_time = frame.elapsed_seconds - relocate_at
         # The single BMX is already painted at its manifest world coordinate;
-        # only Couch is added here, beside that same persistent prop.
-        bmx_screen_x = self._landmark_world_x("daves_bmx") - self._render_camera_x
-        couch_screen_x = clamp(bmx_screen_x + 56.0, 54.0, LOGICAL_SIZE[0] - 54.0)
+        # only the boss is added here, beside that same persistent prop.
+        boss_anchor_id = "daves_bmx" if boss_kind == "couch" else str(self.location_route.get("end_anchor_id", "daves_bmx"))
+        boss_screen_x = clamp(
+            self._landmark_world_x(boss_anchor_id) - self._render_camera_x + 56.0,
+            54.0,
+            LOGICAL_SIZE[0] - 54.0,
+        )
         pixel_art.draw_boss(
             surface,
-            couch_screen_x,
+            boss_screen_x,
             278,
             facing=-1,
-            state="laugh" if scene_time > 4.0 else "idle",
+            state=("debo_laugh" if boss_kind == "debo" else "laugh") if scene_time > 4.0 else ("debo_idle" if boss_kind == "debo" else "idle"),
             frame=self.frame,
         )
         panel_index = 0 if scene_time < 2.0 else 1 if scene_time < 4.0 else 2
         speakers = (
-            ("COUCH", "WHAT DO YOU WANT, DAVID?", (255, 142, 201), pygame.Rect(42, 28, 300, 68)),
-            ("DAVE", "YOU KNOW THAT'S MY BIKE, COUCH.", (105, 225, 255), pygame.Rect(42, 28, 330, 68)),
-            ("COUCH", "OH REALLY? I PAID FOR IT SO HA HA.", (255, 142, 201), pygame.Rect(30, 20, 368, 86)),
+            ("DEBO", "WHAT YOU WANT HERE?", (255, 170, 123), pygame.Rect(42, 28, 300, 68))
+            if boss_kind == "debo"
+            else ("COUCH", "WHAT DO YOU WANT, DAVID?", (255, 142, 201), pygame.Rect(42, 28, 300, 68)),
+            ("DAVE", "WE'RE COMING FOR THE PROMENADE.", (105, 225, 255), pygame.Rect(42, 28, 330, 68))
+            if boss_kind == "debo"
+            else ("DAVE", "YOU KNOW THAT'S MY BIKE, COUCH.", (105, 225, 255), pygame.Rect(42, 28, 330, 68)),
+            ("DEBO", "PROMENADE'S MINE. COME TAKE IT.", (255, 170, 123), pygame.Rect(30, 20, 368, 86))
+            if boss_kind == "debo"
+            else ("COUCH", "OH REALLY? I PAID FOR IT SO HA HA.", (255, 142, 201), pygame.Rect(30, 20, 368, 86)),
         )
         speaker, line, accent, rect = speakers[panel_index]
         self._panel(surface, rect, (10, 14, 28), accent)
         self._text(surface, self.font_tiny, speaker, accent, (rect.x + 12, rect.y + 9))
         self._text(surface, self.font, line, (255, 243, 216), (rect.x + 12, rect.y + 26))
         if panel_index == 2:
-            self._text(surface, self.font, "WHAT YOU GONNA DO?  HA HA!", (255, 243, 216), (rect.x + 12, rect.y + 49))
-        self._text(surface, self.font_tiny, "AWAKEN CHURCH PARKING LOT  •  FINAL SHOWDOWN", (255, 219, 118), (320, 337), center=True)
+            bonus = "WE'LL SEE." if boss_kind == "debo" else "WHAT YOU GONNA DO?  HA HA!"
+            self._text(surface, self.font, bonus, (255, 243, 216), (rect.x + 12, rect.y + 49))
+        footer = "PROMENADE  •  FINAL SHOWDOWN" if boss_kind == "debo" else "AWAKEN CHURCH PARKING LOT  •  FINAL SHOWDOWN"
+        self._text(surface, self.font_tiny, footer, (255, 219, 118), (320, 337), center=True)
 
     def _draw_pause_menu(self, surface: pygame.Surface) -> None:
         shade = pygame.Surface(LOGICAL_SIZE, pygame.SRCALPHA)
@@ -6479,7 +6591,7 @@ class FadesGame:
             if status:
                 self._text(layer, self.font_tiny, status, (255, 231, 94), (rect.right - inset, resource_y - 1), right=True)
 
-        boss = next((enemy for enemy in self.enemies if enemy.kind == "couch" and enemy.alive), None)
+        boss = next((enemy for enemy in self.enemies if enemy.kind == self.level_boss_kind and enemy.alive), None)
         if boss:
             top_card_width = cards[0].width if cards else 0
             center_space = LOGICAL_SIZE[0] - top_card_width * (2 if len(cards) >= 2 else 1) - 18
@@ -6491,7 +6603,9 @@ class FadesGame:
                 boss_rect = pygame.Rect((LOGICAL_SIZE[0] - boss_w) // 2, lowest + 7, boss_w, 18)
             self._panel(layer, boss_rect, (27, 11, 27), (255, 102, 206))
             boss_label = (
-                f"COUCH • CREW {boss.couch_retreats_started}/2"
+                "DEBO"
+                if boss.kind == "debo"
+                else f"COUCH • CREW {boss.couch_retreats_started}/2"
                 if boss.state in COUCH_RETREAT_STATES
                 else "COUCH"
             )
@@ -6503,7 +6617,7 @@ class FadesGame:
     def _activate_visual_evidence_scene(self, *, cpu_companion_index: int | None = None) -> None:
         """Open the same fixed-camera Level 1 proof scene on PC and Android."""
 
-        first_level_id = str(campaign_levels(self.data)[0]["id"])
+        first_level_id = str(self._all_campaign_levels()[0]["id"])
         self.select_slots = [
             SelectSlot(
                 {"type": "keyboard", "instance_id": -1},
@@ -6927,7 +7041,8 @@ class FadesGame:
         shade = pygame.Surface(LOGICAL_SIZE, pygame.SRCALPHA)
         shade.fill((4, 5, 15, 156 if self.victory_frame.show_results else 118))
         surface.blit(shade, (0, 0))
-        heading = "CHAPTER 1 COMPLETE!" if self.level_is_chapter_finale else f"LEVEL {self.level_number} COMPLETE!"
+        chapter_number = int(self.level_data.get("chapter_number", 1))
+        heading = f"CHAPTER {chapter_number} COMPLETE!" if self.level_is_chapter_finale else f"LEVEL {self.level_number} COMPLETE!"
         self._text(surface, self.font_big, heading, (255, 226, 98), (320, 20), center=True)
 
         phase_label = f"{self.level_title.upper()} CLEAR"
@@ -6937,7 +7052,7 @@ class FadesGame:
             elif self.victory_frame.phase == "treat_toss":
                 phase_label = "TREATS FOR CHIEF!"
             else:
-                phase_label = f"COUCH DEFEATED AT {self.level_title.upper()}"
+                phase_label = f"{'DEBO' if chapter_number == 2 else 'COUCH'} DEFEATED AT {self.level_title.upper()}"
             art_index = self._victory_art_index()
             victory_art = sprite_atlas.victory_frame(art_index)
             if victory_art is not None:
@@ -6970,7 +7085,9 @@ class FadesGame:
         self._text(surface, self.font_small, "RANK", (255, 195, 112), (271, 292), right=True)
         self._text(surface, self.font_huge, stats.rank, (255, 110, 194), (322, 304), center=True)
         continue_label = (
-            "PRESS ANY BUTTON FOR THE RIDE HOME"
+            "PRESS ANY BUTTON FOR THE NEXT UPDATE"
+            if self.level_is_chapter_finale and chapter_number == 2
+            else "PRESS ANY BUTTON FOR THE RIDE HOME"
             if self.level_is_chapter_finale
             else "PRESS ANY BUTTON FOR LEVEL OPTIONS"
         )
@@ -6981,7 +7098,7 @@ class FadesGame:
 
         atmosphere = self.atmosphere.snapshot()
         next_level = next(
-            (level for level in campaign_levels(self.data) if str(level.get("id")) == self.pending_level_id),
+            (level for level in self._all_campaign_levels() if str(level.get("id")) == self.pending_level_id),
             None,
         )
         travel = self.interlevel_travel_panel

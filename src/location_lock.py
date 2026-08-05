@@ -14,6 +14,8 @@ from pathlib import Path
 from typing import Any, Mapping, Sequence
 from urllib.parse import urlparse
 
+from .chapter_two import CHAPTER_TWO_LEVEL_IDS, chapter_two_location_routes, chapter_two_travel_panels, chapter_two_is_level
+
 
 LOGICAL_HEIGHT = 360
 SUPPORTED_PHYSICAL_SCENE_OBJECT_KINDS = frozenset({"sedan"})
@@ -839,9 +841,14 @@ def route_for_level(
     manifest: Mapping[str, Any] | None = None,
 ) -> Mapping[str, Any]:
     target = str(level_id).strip()
-    for route in location_routes(manifest):
+    source = manifest if manifest is not None else load_location_lock()
+    for route in location_routes(source):
         if str(route.get("level_id", "")) == target:
             return route
+    if chapter_two_is_level(target):
+        for route in chapter_two_location_routes(source):
+            if str(route.get("level_id", "")) == target:
+                return route
     raise LocationLockError(f"no location-locked route exists for level {target or '<empty>'}")
 
 
@@ -850,7 +857,11 @@ def route_for_theme(
     manifest: Mapping[str, Any] | None = None,
 ) -> Mapping[str, Any]:
     target = str(theme).strip()
-    for route in location_routes(manifest):
+    source = manifest if manifest is not None else load_location_lock()
+    for route in location_routes(source):
+        if str(route.get("theme", "")) == target:
+            return route
+    for route in chapter_two_location_routes(source):
         if str(route.get("theme", "")) == target:
             return route
     raise LocationLockError(f"no location-locked route exists for theme {target or '<empty>'}")
@@ -884,7 +895,7 @@ def travel_panel_between(
     manifest: Mapping[str, Any] | None = None,
 ) -> Mapping[str, Any]:
     source = manifest if manifest is not None else load_location_lock()
-    for panel in source.get("travel_panels", ()):
+    for panel in chapter_two_travel_panels(source):
         if (
             isinstance(panel, Mapping)
             and str(panel.get("from_level_id", "")) == str(from_level_id)
@@ -1015,13 +1026,17 @@ def validate_chapter_content_locations(
     manifest: Mapping[str, Any],
     *,
     gameplay: Mapping[str, Any] | None = None,
+    include_chapter_two: bool = False,
 ) -> None:
     """Cross-check narrative endpoints and travel handoffs against geography."""
 
     levels = content.get("levels", ())
-    if not isinstance(levels, Sequence) or len(levels) != len(LEVEL_IDS):
-        raise LocationLockError("chapter content must contain four location-locked levels")
-    for level, level_id in zip(levels, LEVEL_IDS):
+    route_level_ids = (*LEVEL_IDS, *CHAPTER_TWO_LEVEL_IDS) if include_chapter_two else LEVEL_IDS
+    if not isinstance(levels, Sequence) or len(levels) != len(route_level_ids):
+        raise LocationLockError(
+            "chapter content must contain eight location-locked levels" if include_chapter_two else "chapter content must contain four location-locked levels"
+        )
+    for level, level_id in zip(levels, route_level_ids):
         if not isinstance(level, Mapping) or str(level.get("runtime_level_id", "")) != level_id:
             raise LocationLockError("chapter content level order disagrees with location manifest")
         route = route_for_level(level_id, manifest)
@@ -1041,7 +1056,7 @@ def validate_chapter_content_locations(
             raise LocationLockError(f"chapter content {level_id} route endpoints drifted")
 
     content_travel = content.get("inter_level_travel", ())
-    manifest_travel = manifest.get("travel_panels", ())
+    manifest_travel = chapter_two_travel_panels(manifest) if include_chapter_two else list(manifest.get("travel_panels", ()))
     if not isinstance(content_travel, list) or len(content_travel) != len(manifest_travel):
         raise LocationLockError("chapter content travel handoffs disagree with location manifest")
     for index, (content_panel, manifest_panel) in enumerate(zip(content_travel, manifest_travel)):
