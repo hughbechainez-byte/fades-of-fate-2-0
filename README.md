@@ -58,7 +58,7 @@ The demo contains four selectable adult heroes plus autonomous CPU support choic
 
 ## Start playing
 
-Double-click **The Fades of Fate** Desktop shortcut or `The Fades of Fate.exe` inside the demo folder. On the roster screen, choose a hero with left/right and solo CPU support with up/down (or click the bottom CPU cards), then confirm and press confirm/Start again after everyone is ready. A one-human run defaults to player-controlled Black Dave plus CPU Shelly and Chief, but CPU Dave, Shelly, or KO can be selected from the start. Human players replace solo CPU support in 2–4 player games.
+Double-click **The Fades of Fate** Desktop shortcut or `The Fades of Fate.exe` inside the demo folder. On the roster screen, choose a hero with left/right and solo CPU support with up/down (or click the bottom CPU cards), then confirm and press confirm/Start again after everyone is ready. A one-human run defaults to player-controlled Black Dave plus CPU Shelly and Chief, but CPU Dave, Shelly, KO, or White Dave can be selected from the start. Human players replace solo CPU support in 2–4 player games.
 
 Clearing Level 1 introduces Jerry, a skinny old man with shoulder-length wiry white hair, a low black cowboy hat, leather trench coat and walker. He warns the party that he saw Couch by the 7-Eleven while coming to El Cilantro next to Goodwill. Choose **Start Level 2/3/4** on each results screen; a named travel card makes the I-8, Broadway, and Awaken transitions explicit. Couch, her comic confrontation, the BMX prop and the hug/treat/BMX sunset celebration are reserved for the Level 4 Awaken Church finale.
 

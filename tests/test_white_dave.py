@@ -10,7 +10,7 @@ os.environ.setdefault("PYGAME_HIDE_SUPPORT_PROMPT", "1")
 import pygame
 
 from src import pixel_art, sprite_atlas
-from src.game import FadesGame, PLAYABLE_CHARACTERS, SelectSlot
+from src.game import FadesGame, PLAYABLE_CHARACTERS, SOLO_CPU_COMPANIONS, SelectSlot
 from src.input_manager import InputManager
 
 
@@ -52,8 +52,30 @@ class WhiteDaveIntegrationTests(unittest.TestCase):
         self.assertGreater(white_dave["max_health"], jermaine["max_health"])
         self.assertEqual(white_dave["weapon"], "BOLT CUTTERS")
 
-    def test_white_dave_has_dedicated_wide_procedural_model(self) -> None:
-        self.assertIsNone(sprite_atlas.player_frame("white_dave", "idle", 0))
+    def test_white_dave_is_optional_standard_cpu_support(self) -> None:
+        self.assertEqual(SOLO_CPU_COMPANIONS[2], "ko")
+        self.assertEqual(SOLO_CPU_COMPANIONS[3], "white_dave")
+        self.game.select_slots = [
+            SelectSlot(
+                {"type": "keyboard"},
+                character_index=0,
+                confirmed=True,
+                cpu_companion_index=3,
+            )
+        ]
+        self.game._start_stage()
+        cpu_players = [player for player in self.game.players if player.is_cpu]
+        self.assertEqual(len(cpu_players), 1)
+        self.assertEqual(cpu_players[0].character, "white_dave")
+        self.assertEqual(cpu_players[0].binding, {"type": "cpu", "instance_id": -2})
+        self.assertIsNone(self.game.ko_companion)
+
+    def test_white_dave_uses_dedicated_authored_foundation_model(self) -> None:
+        self.assertIsNotNone(sprite_atlas.player_frame("white_dave", "idle", 0))
+        self.assertEqual(len(sprite_atlas.foundation_character_frames("white_dave", "idle")), 8)
+        self.assertEqual(len(sprite_atlas.foundation_character_frames("white_dave", "walk")), 12)
+        self.assertEqual(len(sprite_atlas.foundation_character_frames("white_dave", "attack_1")), 8)
+        self.assertIsNone(sprite_atlas.player_frame("white_dave", "hurt", 0))
         canvas = pygame.Surface((240, 180), pygame.SRCALPHA)
         rect = pixel_art.draw_player(canvas, 120, 165, 0, 1, "idle", "white_dave", 0, (205, 82, 57))
         jermaine_canvas = pygame.Surface((240, 180), pygame.SRCALPHA)
@@ -61,8 +83,8 @@ class WhiteDaveIntegrationTests(unittest.TestCase):
             jermaine_canvas, 120, 165, 0, 1, "idle", "jermaine", 0, (255, 218, 76)
         )
         self.assertGreaterEqual(rect.height, 100)
-        self.assertGreater(rect.width, jermaine_rect.width + 20)
-        self.assertGreater(pygame.mask.from_surface(canvas).count(), 650)
+        self.assertGreaterEqual(jermaine_rect.height, 100)
+        self.assertGreater(pygame.mask.from_surface(canvas).count(), 1_000)
 
     def test_white_dave_loading_pose_is_visible(self) -> None:
         canvas = pygame.Surface((180, 140), pygame.SRCALPHA)

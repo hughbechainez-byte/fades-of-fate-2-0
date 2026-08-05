@@ -5732,21 +5732,37 @@ def draw_player(
     accent = _rgb(player_color, accent_default)
     authored = sprite_atlas.player_frame(name, state_name, int(frame)) if sprite_atlas is not None else None
     if authored is not None:
+        foundation_character = name in {"jermaine", "white_dave"}
+        authored_ground_y = (
+            sprite_atlas.FOUNDATION_CHARACTER_GROUND_Y
+            if foundation_character
+            else authored.get_height() - 4
+        )
+        shadow_width = (
+            58
+            if name == "white_dave"
+            else 39
+            if name == "jermaine"
+            else 51
+            if name in {"black_dave", "dave", "blackdave"}
+            else 53
+        )
         _shadow(
             surface,
             x,
             y,
-            51 if name in {"black_dave", "dave", "blackdave"} else 53,
+            shadow_width,
             10,
             elevation=z,
         )
         profile = "dave" if name in {"black_dave", "dave", "blackdave"} else "shelly"
         clean_dave_walk = profile == "dave" and state_name == "walk"
-        if clean_dave_walk:
-            # The stable walk strip owns Dave's palette, light direction,
-            # landmarks and weight arc. Frame-driven embellishments made the
-            # same held pose shimmer, so walking uses only the authored pixels
-            # plus the intentional combat hit flash.
+        clean_authored = clean_dave_walk or foundation_character
+        if clean_authored:
+            # Motion-locked strips own their palette, light direction,
+            # landmarks and weight arc. Frame-driven embellishments would move
+            # or recolor reviewed pixels, so use only the authored cel plus the
+            # intentional combat hit flash.
             rendered = _hit_flash_sprite(authored, hit_flash)
         else:
             rendered = _state_rim_sprite(
@@ -5765,12 +5781,13 @@ def draw_player(
             _draw_footfall_ticks(surface, x, y, z, facing, state_name, int(frame))
             _draw_stride_accents(surface, x, y, z, facing, state_name, int(frame))
             _draw_walk_followthrough(surface, x, y, z, facing, state_name, int(frame))
-            _draw_walk_echo(surface, rendered, x, y, z, facing, authored.get_height() - 4, state_name, int(frame))
-        _draw_action_ribbon(surface, x, y, z, facing, state_name, authored.get_height() - 4, int(frame))
-        _draw_motion_echo(surface, rendered, x, y, z, facing, authored.get_height() - 4, state_name, int(frame))
+            _draw_walk_echo(surface, rendered, x, y, z, facing, authored_ground_y, state_name, int(frame))
+        if not foundation_character:
+            _draw_action_ribbon(surface, x, y, z, facing, state_name, authored_ground_y, int(frame))
+            _draw_motion_echo(surface, rendered, x, y, z, facing, authored_ground_y, state_name, int(frame))
         draw_y = (
             y - _walk_bob(int(frame))
-            if not clean_dave_walk and state_name in {"walk", "run", "move", "jog"}
+            if not clean_authored and state_name in {"walk", "run", "move", "jog"}
             else y
         )
         return _blit_grounded(
@@ -5780,7 +5797,7 @@ def draw_player(
             draw_y,
             z,
             facing,
-            authored.get_height() - 4,
+            authored_ground_y,
         )
 
     if name == "jermaine":

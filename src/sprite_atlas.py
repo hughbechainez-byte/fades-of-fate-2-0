@@ -108,6 +108,17 @@ DAVE_STABLE_WALK_TICK_MAP = (
 )
 DAVE_STABLE_WALK_STRIP = "assets/sprites/black_dave_walk_identity_v1.png"
 ENEMY_VARIANT_ANCHORS = "assets/sprites/enemies/enemy_variant_anchors.json"
+FOUNDATION_CHARACTER_COLUMNS = 12
+FOUNDATION_CHARACTER_ROWS = 3
+FOUNDATION_CHARACTER_GROUND_Y = 126
+FOUNDATION_CHARACTER_ATLASES = {
+    "jermaine": "assets/sprites/jermaine_foundation_atlas.png",
+    "white_dave": "assets/sprites/white_dave_foundation_atlas.png",
+}
+FOUNDATION_CHARACTER_FRAME_COUNTS = {
+    "jermaine": (8, 8, 8),
+    "white_dave": (8, 12, 8),
+}
 
 
 @lru_cache(maxsize=128)
@@ -198,6 +209,48 @@ def animation_frame(actor: object, state: object, tick: int) -> pygame.Surface |
     return _clip_frame(clip, tick)
 
 
+def foundation_character_frames(
+    character: object,
+    state: object,
+) -> tuple[pygame.Surface, ...]:
+    """Return the approved authored foundation row without pose synthesis.
+
+    Jermaine and White Dave have reviewed idle, walk, and cutter/stick attack
+    rows.  Unsupported reactions deliberately return no authored frame so the
+    existing readable procedural hurt/down fallback remains available until a
+    separately reviewed cel exists.
+    """
+
+    name = str(character or "").strip().lower().replace("-", "_").replace(" ", "_")
+    state_name = _state_name(state)
+    relative = FOUNDATION_CHARACTER_ATLASES.get(name)
+    counts = FOUNDATION_CHARACTER_FRAME_COUNTS.get(name)
+    if relative is None or counts is None:
+        return ()
+    if state_name in {"idle"}:
+        row = 0
+    elif state_name in {"walk", "run", "move", "jog"}:
+        row = 1
+    elif state_name.startswith("attack_") or state_name in {
+        "light",
+        "heavy",
+        "air_attack",
+        "super",
+    }:
+        row = 2
+    else:
+        return ()
+    atlas = _load_frames(
+        relative,
+        FOUNDATION_CHARACTER_COLUMNS,
+        FOUNDATION_CHARACTER_ROWS,
+    )
+    if len(atlas) != FOUNDATION_CHARACTER_COLUMNS * FOUNDATION_CHARACTER_ROWS:
+        return ()
+    start = row * FOUNDATION_CHARACTER_COLUMNS
+    return atlas[start : start + counts[row]]
+
+
 def ko_frame(state: object, tick: int) -> pygame.Surface:
     """Return an exact authored KO pose and never substitute another actor.
 
@@ -228,7 +281,12 @@ def player_frame(character: object, state: object, tick: int) -> pygame.Surface 
     if name == "ko":
         return ko_frame(state, tick)
     if name in {"jermaine", "white_dave"}:
-        return None
+        state_name = _state_name(state)
+        poses = foundation_character_frames(name, state_name)
+        if not poses:
+            return None
+        clip = clip_for("black_dave", state_name)
+        return poses[_clip_phase_index(clip, max(0, int(tick)), len(poses))]
     name = "shelly" if name in {"shelly", "shellie"} else "black_dave"
     state_name = _state_name(state)
     tick = max(0, int(tick))
@@ -640,6 +698,7 @@ __all__ = [
     "jerry_frame",
     "ko_frame",
     "player_frame",
+    "foundation_character_frames",
     "player_fist_anchors",
     "sunset_frame",
     "total_authored_poses",

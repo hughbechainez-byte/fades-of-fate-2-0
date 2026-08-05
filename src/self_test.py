@@ -12,7 +12,7 @@ from . import sprite_atlas
 from .animation_manifest import ANIMATION_CLIPS, total_authored_poses
 from .config import LOGICAL_SIZE, campaign_levels, executable_root, resource_path
 from .entities import AmmoPickup, Enemy, SuperButanePickup
-from .game import COUCH_DOPE_OFFER_TAUNT, FadesGame, SelectSlot
+from .game import COUCH_DOPE_OFFER_TAUNT, FadesGame, SOLO_CPU_COMPANIONS, SelectSlot
 from .input_manager import InputManager, InputSnapshot
 from .level_outro import JERRY_LEVEL_ONE_BEATS
 from .logger import breadcrumb, get_log_paths
@@ -392,6 +392,34 @@ def run_foundation_self_test(output_dir: Path | None = None) -> dict[str, Any]:
             report,
             "all 202 active clips provide 8-16 rooted, translation-normalized authored keys (1836 total) on a 30 Hz presentation clock",
         )
+        foundation_rows = {
+            (character, state): sprite_atlas.foundation_character_frames(character, state)
+            for character in ("jermaine", "white_dave")
+            for state in ("idle", "walk", "attack_1")
+        }
+        foundation_expected = {
+            ("jermaine", "idle"): 8,
+            ("jermaine", "walk"): 8,
+            ("jermaine", "attack_1"): 8,
+            ("white_dave", "idle"): 8,
+            ("white_dave", "walk"): 12,
+            ("white_dave", "attack_1"): 8,
+        }
+        foundation_frames = tuple(
+            frame for frames in foundation_rows.values() for frame in frames
+        )
+        _check(
+            all(len(foundation_rows[key]) == expected for key, expected in foundation_expected.items())
+            and all(
+                set(pygame.image.tobytes(frame, "RGBA")[3::4]) <= {0, 255}
+                and frame.get_bounding_rect(min_alpha=1).bottom == 127
+                for frame in foundation_frames
+            )
+            and resource_path("assets/portraits/white_dave_portrait_pixel_v2.png").is_file(),
+            "foundation_character_authored_runtime",
+            report,
+            "Jermaine and White Dave load hard-alpha authored idle/walk/attack rows on the locked ground line with White Dave's matching menu portrait",
+        )
         fist_cell_size, fist_metadata = sprite_atlas._load_dave_fist_metadata()
         _check(
             fist_cell_size == (128, 128)
@@ -486,6 +514,26 @@ def run_foundation_self_test(output_dir: Path | None = None) -> dict[str, Any]:
             "solo_ko_cpu_selection",
             report,
             "start-screen KO choice creates one authored CPU support fighter and no Player placeholder",
+        )
+
+        game.select_slots = [
+            SelectSlot(
+                keyboard_binding,
+                character_index=0,
+                confirmed=True,
+                cpu_companion_index=SOLO_CPU_COMPANIONS.index("white_dave"),
+            )
+        ]
+        game._start_stage()
+        _check(
+            SOLO_CPU_COMPANIONS[2] == "ko"
+            and len(game.players) == 2
+            and game.players[1].is_cpu
+            and game.players[1].character == "white_dave"
+            and game.ko_companion is None,
+            "solo_white_dave_cpu_selection",
+            report,
+            "start-screen White Dave choice creates a standard Player CPU while KO remains roster index 2",
         )
 
         # Solo still defaults to human Dave plus CPU Shelly and Chief, without

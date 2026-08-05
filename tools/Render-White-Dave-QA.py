@@ -15,7 +15,7 @@ import pygame
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from src.game import FadesGame, SelectSlot
+from src.game import FadesGame, SOLO_CPU_COMPANIONS, SelectSlot
 from src.input_manager import InputManager
 
 
@@ -31,11 +31,25 @@ def main() -> None:
     game.draw(canvas)
     pygame.image.save(canvas, output / "loading_screen.png")
     game.state = "character_select"
-    game.select_slots = [SelectSlot({"type": "keyboard"}, character_index=3, confirmed=True)]
+    game.select_slots = [
+        SelectSlot(
+            {"type": "keyboard"},
+            character_index=0,
+            confirmed=True,
+            cpu_companion_index=SOLO_CPU_COMPANIONS.index("white_dave"),
+        )
+    ]
     game.draw(canvas)
-    pygame.image.save(canvas, output / "character_select.png")
+    pygame.image.save(canvas, output / "character_select_cpu_white_dave.png")
     game._start_stage()
     white_dave = next(player for player in game.players if player.character == "white_dave")
+    white_dave.x = game.camera_x + 360.0
+    white_dave.y = 275.0
+    white_dave.facing = 1
+    for player in game.players:
+        if player is not white_dave:
+            player.x = game.camera_x + 150.0
+            player.y = 245.0
     white_dave.set_state("heavy", 0.52)
     white_dave.state_clock = 0.12
     game.draw(canvas)
@@ -43,7 +57,11 @@ def main() -> None:
     game.close()
     manager.close()
     pygame.quit()
-    for name in ("loading_screen.png", "character_select.png", "gameplay_bolt_cutters.png"):
+    for name in (
+        "loading_screen.png",
+        "character_select_cpu_white_dave.png",
+        "gameplay_bolt_cutters.png",
+    ):
         print(output / name)
 
 

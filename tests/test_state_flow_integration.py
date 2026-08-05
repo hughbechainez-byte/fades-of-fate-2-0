@@ -14,7 +14,7 @@ import pygame
 
 from src.entities import Enemy, KOCompanion
 from src.config import campaign_levels, resource_path
-from src.game import FadesGame, SelectSlot
+from src.game import FadesGame, SOLO_CPU_COMPANIONS, SelectSlot
 from src.input_manager import InputManager, InputSnapshot
 from src.world_engine import WorldPoint
 
@@ -73,7 +73,7 @@ class StateFlowIntegrationTests(unittest.TestCase):
             "black_dave": "assets/portraits/dave_portrait_lean_young_v2.png",
             "shelly": "assets/portraits/shelly_portrait_curvy_v1.png",
             "jermaine": "assets/portraits/jermaine_portrait_v1.png",
-            "white_dave": "assets/portraits/white_dave_portrait_v1.png",
+            "white_dave": "assets/portraits/white_dave_portrait_pixel_v2.png",
             "ko": "assets/portraits/ko_portrait_v1.png",
         }
         try:
@@ -284,6 +284,32 @@ class StateFlowIntegrationTests(unittest.TestCase):
             controller_game.close()
             controller_manager.close()
 
+    def test_controller_can_cycle_past_ko_and_start_with_cpu_white_dave(self) -> None:
+        manager = InputManager(max_players=4, discover_controllers=False)
+        instance_id = 45
+        manager.add_synthetic_controller(instance_id)
+        game = FadesGame(manager, mute=True)
+        try:
+            game.state = "title"
+            self._tap_controller(game, manager, instance_id, pygame.CONTROLLER_BUTTON_START)
+            self._tap_controller(game, manager, instance_id, pygame.CONTROLLER_BUTTON_DPAD_DOWN)
+            self.assertEqual(game.select_slots[0].cpu_companion_index, 2)
+            game.select_slots[0].nav_cooldown = 0.0
+            self._tap_controller(game, manager, instance_id, pygame.CONTROLLER_BUTTON_DPAD_DOWN)
+            self.assertEqual(
+                game.select_slots[0].cpu_companion_index,
+                SOLO_CPU_COMPANIONS.index("white_dave"),
+            )
+            self.assertIn("CPU COMPANION: WHITE DAVE", game._selection_footer_lines()[0])
+            self._tap_controller(game, manager, instance_id, pygame.CONTROLLER_BUTTON_A)
+            self._tap_controller(game, manager, instance_id, pygame.CONTROLLER_BUTTON_A)
+            cpu_players = [player for player in game.players if player.is_cpu]
+            self.assertEqual([player.character for player in cpu_players], ["white_dave"])
+            self.assertIsNone(game.ko_companion)
+        finally:
+            game.close()
+            manager.close()
+
     def test_two_player_selection_keeps_both_human_owners_and_one_shared_chief(self) -> None:
         manager = InputManager(max_players=4, discover_controllers=False)
         instance_id = 42
@@ -339,6 +365,7 @@ class StateFlowIntegrationTests(unittest.TestCase):
             self.assertIn("SHELLY + CHIEF", rendered_labels)
             self.assertIn("JERMAINE", rendered_labels)
             self.assertIn("WHITE DAVE", rendered_labels)
+            self.assertGreaterEqual(rendered_labels.count("WHITE DAVE"), 2)
             self.assertIn("KO", rendered_labels)
             self.assertIn("CPU SUPPORT", rendered_labels)
             self.assertIn("YOU CONTROL: WHITE DAVE  •  CPU COMPANION: SHELLY", rendered_labels)
@@ -380,11 +407,21 @@ class StateFlowIntegrationTests(unittest.TestCase):
             game.handle_events([
                 pygame.event.Event(pygame.MOUSEBUTTONDOWN, {"button": 1, "pos": (320, 325)})
             ])
+            solo_rects = game._character_select_lower_card_rects()
+            self.assertEqual(len(solo_rects), 5)
+            self.assertTrue(all(pygame.Rect(0, 0, 640, 360).contains(rect) for rect in solo_rects))
+            self.assertTrue(all(left.right < right.left for left, right in zip(solo_rects, solo_rects[1:])))
             game.handle_events([
-                pygame.event.Event(pygame.MOUSEBUTTONDOWN, {"button": 1, "pos": (556, 275)})
+                pygame.event.Event(pygame.MOUSEBUTTONDOWN, {"button": 1, "pos": solo_rects[3].center})
             ])
             self.assertEqual(game.select_slots[0].cpu_companion_index, 2)
             self.assertIn("CPU COMPANION: KO", game._selection_footer_lines()[0])
+
+            game.handle_events([
+                pygame.event.Event(pygame.MOUSEBUTTONDOWN, {"button": 1, "pos": solo_rects[4].center})
+            ])
+            self.assertEqual(game.select_slots[0].cpu_companion_index, 3)
+            self.assertIn("CPU COMPANION: WHITE DAVE", game._selection_footer_lines()[0])
 
             game.select_slots.append(
                 SelectSlot(
@@ -392,6 +429,11 @@ class StateFlowIntegrationTests(unittest.TestCase):
                     character_index=1,
                     confirmed=True,
                 )
+            )
+            multiplayer_rects = game._character_select_lower_card_rects()
+            self.assertEqual(
+                tuple((rect.x, rect.y, rect.w, rect.h) for rect in multiplayer_rects),
+                tuple((16 + index * 156, 229, 144, 91) for index in range(4)),
             )
             game.select_slots[0].confirmed = True
             game._start_stage()

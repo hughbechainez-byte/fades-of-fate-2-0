@@ -84,7 +84,7 @@ PLAYER_COLORS = (
 )
 
 PLAYABLE_CHARACTERS = ("black_dave", "shelly", "jermaine", "white_dave")
-SOLO_CPU_COMPANIONS = ("black_dave", "shelly", "ko")
+SOLO_CPU_COMPANIONS = ("black_dave", "shelly", "ko", "white_dave")
 CHARACTER_LABELS = {
     "black_dave": "BLACK DAVE",
     "shelly": "SHELLY",
@@ -332,7 +332,7 @@ class FadesGame:
             "black_dave": "assets/portraits/dave_portrait_lean_young_v2.png",
             "shelly": "assets/portraits/shelly_portrait_curvy_v1.png",
             "jermaine": "assets/portraits/jermaine_portrait_v1.png",
-            "white_dave": "assets/portraits/white_dave_portrait_v1.png",
+            "white_dave": "assets/portraits/white_dave_portrait_pixel_v2.png",
             "ko": "assets/portraits/ko_portrait_v1.png",
         }
         self.character_portraits: dict[str, pygame.Surface] = {}
@@ -760,9 +760,12 @@ class FadesGame:
                     self.audio.play("menu")
                     self.log_breadcrumb("character_selected", player=1, character=PLAYABLE_CHARACTERS[index], source="mouse")
                     return
+            lower_card_rects = self._character_select_lower_card_rects()
             if len(self.select_slots) == 1:
-                for cpu_index, character in enumerate(SOLO_CPU_COMPANIONS):
-                    if pygame.Rect(172 + cpu_index * 156, 229, 144, 91).collidepoint(point):
+                for cpu_index, (character, rect) in enumerate(
+                    zip(SOLO_CPU_COMPANIONS, lower_card_rects[1:])
+                ):
+                    if rect.collidepoint(point):
                         slot = self.select_slots[0]
                         slot.cpu_companion_index = cpu_index
                         slot.confirmed = False
@@ -773,7 +776,7 @@ class FadesGame:
                             source="mouse",
                         )
                         return
-            if pygame.Rect(16, 229, 144, 91).collidepoint(point):
+            if lower_card_rects[0].collidepoint(point):
                 slot = self._keyboard_select_slot()
                 if slot.confirmed:
                     self._start_stage()
@@ -1300,6 +1303,13 @@ class FadesGame:
             controller_line,
         )
 
+    def _character_select_lower_card_rects(self) -> tuple[pygame.Rect, ...]:
+        """Return the shared draw/click targets for the lower roster row."""
+
+        if len(self.select_slots) == 1:
+            return tuple(pygame.Rect(8 + index * 126, 229, 120, 91) for index in range(5))
+        return tuple(pygame.Rect(16 + index * 156, 229, 144, 91) for index in range(4))
+
     @staticmethod
     def _automatic_solo_cpu_character(controlled_character: str) -> str:
         return "black_dave" if controlled_character == "shelly" else "shelly"
@@ -1526,10 +1536,10 @@ class FadesGame:
             )
             self.players.append(player)
 
-        # Solo play exposes Dave, Shelly, and KO as explicit CPU support
+        # Solo play exposes the standard heroes plus KO as explicit CPU support
         # choices. KO keeps his dedicated low-frequency one-hit state machine;
         # he must never be forced through Player's generic CPU combat states.
-        if solo_cpu_character in {"black_dave", "shelly"}:
+        if solo_cpu_character in {"black_dave", "shelly", "white_dave"}:
             human = self.players[0]
             companion = Player(
                 slot=1,
@@ -5267,11 +5277,11 @@ class FadesGame:
             "black_dave": (24, 91, 119),
             "shelly": (112, 50, 86),
             "ko": (73, 66, 98),
+            "white_dave": (105, 54, 42),
         }
-        for index in range(4):
-            x = 16 + index * 156
-            rect = pygame.Rect(x, 229, 144, 91)
-            color = PLAYER_COLORS[index]
+        lower_card_rects = self._character_select_lower_card_rects()
+        for index, rect in enumerate(lower_card_rects):
+            x = rect.x
             hovered = self.mouse_position is not None and rect.collidepoint(self.mouse_position)
             if len(self.select_slots) == 1 and index > 0:
                 cpu_character = SOLO_CPU_COMPANIONS[index - 1]
@@ -5279,39 +5289,44 @@ class FadesGame:
                 border = (255, 222, 99) if selected or hovered else (104, 229, 255)
                 background = cpu_card_colors[cpu_character]
                 self._panel(surface, rect, background, border)
-                surface.blit(self.cpu_companion_portraits[cpu_character], (x + 7, 239))
-                self._text(surface, self.font_tiny, "CPU SUPPORT", (255, 240, 174), (x + 94, 239), center=True)
+                surface.blit(self.cpu_companion_portraits[cpu_character], (x + 5, 239))
+                text_x = x + 82
+                self._text(surface, self.font_tiny, "CPU SUPPORT", (255, 240, 174), (text_x, 239), center=True)
                 self._text(
                     surface,
-                    self.font_small,
+                    self.font_tiny,
                     CHARACTER_LABELS[cpu_character],
                     (255, 246, 210),
-                    (x + 94, 254),
+                    (text_x, 254),
                     center=True,
                 )
-                status = "SELECTED" if selected else "CLICK TO CHOOSE"
-                self._text(surface, self.font_tiny, status, border, (x + 94, 275), center=True)
+                status = "SELECTED" if selected else "CLICK"
+                self._text(surface, self.font_tiny, status, border, (text_x, 275), center=True)
                 if cpu_character == "ko":
-                    self._text(surface, self.font_tiny, "LIGHTNING • 1-HIT", (183, 226, 255), (x + 94, 292), center=True)
+                    self._text(surface, self.font_tiny, "LIGHTNING • 1-HIT", (183, 226, 255), (text_x, 292), center=True)
                 else:
-                    self._text(surface, self.font_tiny, "FULL COMBAT AI", (190, 200, 220), (x + 94, 292), center=True)
+                    self._text(surface, self.font_tiny, "FULL COMBAT AI", (190, 200, 220), (text_x, 292), center=True)
                 continue
 
+            color = PLAYER_COLORS[index]
             self._panel(surface, rect, (29, 35, 54) if hovered else (13, 16, 29), (255, 222, 99) if hovered else color)
             if index < len(self.select_slots):
                 slot = self.select_slots[index]
                 character = CHARACTER_LABELS[PLAYABLE_CHARACTERS[slot.character_index]]
                 status = "YOU CONTROL • READY" if slot.confirmed else "YOU CONTROL • SELECTING"
-                self._text(surface, self.font, f"P{index + 1}  {character}", color, (x + 72, 244), center=True)
-                self._text(surface, self.font_tiny, status, (255, 240, 174), (x + 72, 267), center=True)
+                center_x = rect.centerx
+                name_font = self.font_small if len(self.select_slots) == 1 else self.font
+                self._text(surface, name_font, f"P{index + 1}  {character}", color, (center_x, 244), center=True)
+                self._text(surface, self.font_tiny, status, (255, 240, 174), (center_x, 267), center=True)
                 choose_line = "< > HERO • UP/DOWN CPU" if len(self.select_slots) == 1 else "< > CHOOSE  •  A/ENTER CONFIRM"
-                self._text(surface, self.font_tiny, choose_line, (190, 200, 220), (x + 72, 288), center=True)
-                self._text(surface, self.font_tiny, "PRESS AGAIN / START TO BEGIN", (150, 236, 255), (x + 72, 304), center=True)
+                self._text(surface, self.font_tiny, choose_line, (190, 200, 220), (center_x, 288), center=True)
+                begin_line = "CONFIRM / START TO BEGIN" if len(self.select_slots) == 1 else "PRESS AGAIN / START TO BEGIN"
+                self._text(surface, self.font_tiny, begin_line, (150, 236, 255), (center_x, 304), center=True)
             else:
-                self._text(surface, self.font, f"P{index + 1}", color, (x + 72, 247), center=True)
-                self._text(surface, self.font_small, "PRESS A / START", (212, 217, 230), (x + 72, 275), center=True)
+                self._text(surface, self.font, f"P{index + 1}", color, (rect.centerx, 247), center=True)
+                self._text(surface, self.font_small, "PRESS A / START", (212, 217, 230), (rect.centerx, 275), center=True)
                 if index == 0:
-                    self._text(surface, self.font_tiny, "OR ENTER", (155, 166, 188), (x + 72, 294), center=True)
+                    self._text(surface, self.font_tiny, "OR ENTER", (155, 166, 188), (rect.centerx, 294), center=True)
         footer_top, footer_bottom = self._selection_footer_lines()
         self._text(surface, self.font_tiny, footer_top, (177, 229, 255), (320, 336), center=True)
         self._text(surface, self.font_tiny, footer_bottom, (145, 196, 224), (320, 348), center=True)
