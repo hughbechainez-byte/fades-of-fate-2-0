@@ -899,18 +899,17 @@ def _build_sunset_sources(
     frames: list[Image.Image] = []
     for phase, (dave_key, shelly_key, chief_key) in enumerate(zip(dave_keys, shelly_keys, chief_keys)):
         cel = Image.new("RGBA", (256, 144), (0, 0, 0, 0))
-        _draw_bmx(cel, phase)
-        # Dave is deliberately lower and slightly forward over the BMX; his
-        # alternating detailed walk keys read as pedalling rather than the old
-        # rectangle placeholder.  Phase six uses his glasses/hat gesture as a
-        # small farewell beat while the group keeps moving.
+        bike = Image.new("RGBA", (256, 144), (0, 0, 0, 0))
+        _draw_bmx(bike, phase)
+        cel.alpha_composite(bike, (58, 0))
+        # Dave walks as a rooted whole-cel actor beside his grounded BMX. The
+        # separate prop keeps the party readable as three walkers.
         _paste_scaled(
             cel,
             dave_frames[dave_key],
-            x=69 + (phase % 2),
-            bottom=119 - (1 if phase in {1, 3, 5, 7} else 0),
-            scale=0.66,
-            angle=-2.0 if phase in {1, 2} else 0.0,
+            x=12,
+            bottom=132,
+            scale=0.61,
         )
         _paste_scaled(
             cel,
