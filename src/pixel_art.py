@@ -5734,7 +5734,7 @@ def draw_player(
     if authored is not None:
         foundation_character = name in {"jermaine", "white_dave"}
         authored_ground_y = (
-            sprite_atlas.FOUNDATION_CHARACTER_GROUND_Y
+            sprite_atlas.foundation_character_ground_y(name)
             if foundation_character
             else authored.get_height() - 4
         )

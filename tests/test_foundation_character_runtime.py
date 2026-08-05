@@ -149,6 +149,19 @@ class FoundationCharacterRuntimeTests(unittest.TestCase):
         jermaine_walk = sprite_atlas.foundation_character_frames("jermaine", "walk")
         self.assertEqual(len(white_walk), 12)
         self.assertEqual(len(jermaine_walk), 8)
+        for character, frames in (("white_dave", white_walk), ("jermaine", jermaine_walk)):
+            expected_size = round(
+                BUILDER.CELL_SIZE * sprite_atlas.FOUNDATION_CHARACTER_RENDER_SCALE[character]
+            )
+            self.assertTrue(frames)
+            self.assertEqual({frame.get_size() for frame in frames}, {(expected_size, expected_size)})
+            self.assertEqual(
+                sprite_atlas.foundation_character_ground_y(character),
+                round(
+                    sprite_atlas.FOUNDATION_CHARACTER_GROUND_Y
+                    * sprite_atlas.FOUNDATION_CHARACTER_RENDER_SCALE[character]
+                ),
+            )
         self.assertEqual(
             len({pygame.image.tobytes(frame, "RGBA") for frame in white_walk}),
             12,

@@ -405,20 +405,19 @@ def run_foundation_self_test(output_dir: Path | None = None) -> dict[str, Any]:
             ("white_dave", "walk"): 12,
             ("white_dave", "attack_1"): 8,
         }
-        foundation_frames = tuple(
-            frame for frames in foundation_rows.values() for frame in frames
-        )
         _check(
             all(len(foundation_rows[key]) == expected for key, expected in foundation_expected.items())
             and all(
                 set(pygame.image.tobytes(frame, "RGBA")[3::4]) <= {0, 255}
-                and frame.get_bounding_rect(min_alpha=1).bottom == 127
-                for frame in foundation_frames
+                and frame.get_bounding_rect(min_alpha=1).bottom
+                == sprite_atlas.foundation_character_ground_y(character) + 1
+                for (character, _state), frames in foundation_rows.items()
+                for frame in frames
             )
             and resource_path("assets/portraits/white_dave_portrait_pixel_v2.png").is_file(),
             "foundation_character_authored_runtime",
             report,
-            "Jermaine and White Dave load hard-alpha authored idle/walk/attack rows on the locked ground line with White Dave's matching menu portrait",
+            "Jermaine and White Dave load hard-alpha authored idle/walk/attack rows on the uniformly scaled rooted ground line with White Dave's matching menu portrait",
         )
         fist_cell_size, fist_metadata = sprite_atlas._load_dave_fist_metadata()
         _check(

@@ -145,8 +145,6 @@ def _authored_animation_frames(actor: str, state: str) -> tuple[pygame.Surface, 
         # Keep Couch short and broad by respecting the squat source silhouette
         # and enlarging it uniformly—never by squeezing height independently.
         "couch": COUCH_UNIFORM_RENDER_SCALE,
-        "jermaine": FOUNDATION_CHARACTER_RENDER_SCALE["jermaine"],
-        "white_dave": FOUNDATION_CHARACTER_RENDER_SCALE["white_dave"],
     }.get(clip.actor)
     if uniform_scale is None:
         return poses
@@ -215,6 +213,40 @@ def animation_frame(actor: object, state: object, tick: int) -> pygame.Surface |
     return _clip_frame(clip, tick)
 
 
+@lru_cache(maxsize=8)
+def _foundation_character_row(
+    name: str,
+    row: int,
+) -> tuple[pygame.Surface, ...]:
+    relative = FOUNDATION_CHARACTER_ATLASES[name]
+    counts = FOUNDATION_CHARACTER_FRAME_COUNTS[name]
+    atlas = _load_frames(
+        relative,
+        FOUNDATION_CHARACTER_COLUMNS,
+        FOUNDATION_CHARACTER_ROWS,
+    )
+    if len(atlas) != FOUNDATION_CHARACTER_COLUMNS * FOUNDATION_CHARACTER_ROWS:
+        return ()
+    start = row * FOUNDATION_CHARACTER_COLUMNS
+    scale = FOUNDATION_CHARACTER_RENDER_SCALE[name]
+    return tuple(
+        pygame.transform.scale(
+            pose,
+            (
+                max(1, round(pose.get_width() * scale)),
+                max(1, round(pose.get_height() * scale)),
+            ),
+        )
+        for pose in atlas[start : start + counts[row]]
+    )
+
+
+def foundation_character_ground_y(character: object) -> int:
+    name = str(character or "").strip().lower().replace("-", "_").replace(" ", "_")
+    scale = FOUNDATION_CHARACTER_RENDER_SCALE.get(name, 1.0)
+    return round(FOUNDATION_CHARACTER_GROUND_Y * scale)
+
+
 def foundation_character_frames(
     character: object,
     state: object,
@@ -229,9 +261,8 @@ def foundation_character_frames(
 
     name = str(character or "").strip().lower().replace("-", "_").replace(" ", "_")
     state_name = _state_name(state)
-    relative = FOUNDATION_CHARACTER_ATLASES.get(name)
     counts = FOUNDATION_CHARACTER_FRAME_COUNTS.get(name)
-    if relative is None or counts is None:
+    if name not in FOUNDATION_CHARACTER_ATLASES or counts is None:
         return ()
     if state_name in {"idle"}:
         row = 0
@@ -246,15 +277,7 @@ def foundation_character_frames(
         row = 2
     else:
         return ()
-    atlas = _load_frames(
-        relative,
-        FOUNDATION_CHARACTER_COLUMNS,
-        FOUNDATION_CHARACTER_ROWS,
-    )
-    if len(atlas) != FOUNDATION_CHARACTER_COLUMNS * FOUNDATION_CHARACTER_ROWS:
-        return ()
-    start = row * FOUNDATION_CHARACTER_COLUMNS
-    return atlas[start : start + counts[row]]
+    return _foundation_character_row(name, row)
 
 
 def ko_frame(state: object, tick: int) -> pygame.Surface:
