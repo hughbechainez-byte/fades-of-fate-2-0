@@ -58,7 +58,7 @@ class JermaineIntegrationTests(unittest.TestCase):
         self.assertEqual(len(sprite_atlas.foundation_character_frames("jermaine", "idle")), 8)
         self.assertEqual(len(sprite_atlas.foundation_character_frames("jermaine", "walk")), 8)
         self.assertEqual(len(sprite_atlas.foundation_character_frames("jermaine", "attack_1")), 8)
-        self.assertIsNone(sprite_atlas.player_frame("jermaine", "hurt", 0))
+        self.assertIsNotNone(sprite_atlas.player_frame("jermaine", "hurt", 0))
         canvas = pygame.Surface((220, 180), pygame.SRCALPHA)
         rect = pixel_art.draw_player(
             canvas, 110, 165, 0, 1, "idle", "jermaine", 0, (255, 218, 76)
@@ -66,6 +66,11 @@ class JermaineIntegrationTests(unittest.TestCase):
         self.assertGreaterEqual(rect.height, 96)
         self.assertLess(rect.width, rect.height + 15)
         self.assertGreater(pygame.mask.from_surface(canvas).count(), 300)
+        hurt_canvas = pygame.Surface((220, 180), pygame.SRCALPHA)
+        hurt_rect = pixel_art.draw_player(
+            hurt_canvas, 110, 165, 0, 1, "hurt", "jermaine", 0, (255, 218, 76)
+        )
+        self.assertGreaterEqual(hurt_rect.height, rect.height)
 
     def test_jermaine_loading_pose_has_money_and_cigarette_pixels(self) -> None:
         canvas = pygame.Surface((160, 120), pygame.SRCALPHA)

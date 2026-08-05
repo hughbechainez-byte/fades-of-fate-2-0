@@ -91,6 +91,10 @@ SHELLY_REFILL_WINDOW = (int(ANIMATION_PLAYBACK_HZ * 7), int(ANIMATION_PLAYBACK_H
 SHELLY_PANTS_WINDOW = (int(ANIMATION_PLAYBACK_HZ * 2), int(ANIMATION_PLAYBACK_HZ * 5.5))
 DAVE_UNIFORM_RENDER_SCALE = 1.12
 COUCH_UNIFORM_RENDER_SCALE = 1.08
+FOUNDATION_CHARACTER_RENDER_SCALE = {
+    "jermaine": 1.16,
+    "white_dave": 1.16,
+}
 DAVE_STABLE_WALK_POSES = 12
 DAVE_STABLE_WALK_TICK_MAP = (
     0, 0, 0,
@@ -141,6 +145,8 @@ def _authored_animation_frames(actor: str, state: str) -> tuple[pygame.Surface, 
         # Keep Couch short and broad by respecting the squat source silhouette
         # and enlarging it uniformly—never by squeezing height independently.
         "couch": COUCH_UNIFORM_RENDER_SCALE,
+        "jermaine": FOUNDATION_CHARACTER_RENDER_SCALE["jermaine"],
+        "white_dave": FOUNDATION_CHARACTER_RENDER_SCALE["white_dave"],
     }.get(clip.actor)
     if uniform_scale is None:
         return poses
@@ -284,8 +290,11 @@ def player_frame(character: object, state: object, tick: int) -> pygame.Surface 
         state_name = _state_name(state)
         poses = foundation_character_frames(name, state_name)
         if not poses:
+            poses = foundation_character_frames(name, "idle")
+        if not poses:
             return None
-        clip = clip_for("black_dave", state_name)
+        clip_state = state_name if state_name in {"idle", "walk", "run", "move", "jog"} or state_name.startswith("attack_") or state_name in {"light", "heavy", "air_attack", "super"} else "idle"
+        clip = clip_for("black_dave", clip_state)
         return poses[_clip_phase_index(clip, max(0, int(tick)), len(poses))]
     name = "shelly" if name in {"shelly", "shellie"} else "black_dave"
     state_name = _state_name(state)

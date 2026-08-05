@@ -75,16 +75,21 @@ class WhiteDaveIntegrationTests(unittest.TestCase):
         self.assertEqual(len(sprite_atlas.foundation_character_frames("white_dave", "idle")), 8)
         self.assertEqual(len(sprite_atlas.foundation_character_frames("white_dave", "walk")), 12)
         self.assertEqual(len(sprite_atlas.foundation_character_frames("white_dave", "attack_1")), 8)
-        self.assertIsNone(sprite_atlas.player_frame("white_dave", "hurt", 0))
+        self.assertIsNotNone(sprite_atlas.player_frame("white_dave", "hurt", 0))
         canvas = pygame.Surface((240, 180), pygame.SRCALPHA)
         rect = pixel_art.draw_player(canvas, 120, 165, 0, 1, "idle", "white_dave", 0, (205, 82, 57))
         jermaine_canvas = pygame.Surface((240, 180), pygame.SRCALPHA)
         jermaine_rect = pixel_art.draw_player(
             jermaine_canvas, 120, 165, 0, 1, "idle", "jermaine", 0, (255, 218, 76)
         )
-        self.assertGreaterEqual(rect.height, 100)
+        self.assertGreaterEqual(rect.height, 106)
         self.assertGreaterEqual(jermaine_rect.height, 100)
         self.assertGreater(pygame.mask.from_surface(canvas).count(), 1_000)
+        hurt_canvas = pygame.Surface((240, 180), pygame.SRCALPHA)
+        hurt_rect = pixel_art.draw_player(
+            hurt_canvas, 120, 165, 0, 1, "hurt", "white_dave", 0, (205, 82, 57)
+        )
+        self.assertGreaterEqual(hurt_rect.height, rect.height)
 
     def test_white_dave_loading_pose_is_visible(self) -> None:
         canvas = pygame.Surface((180, 140), pygame.SRCALPHA)

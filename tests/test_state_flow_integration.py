@@ -82,13 +82,21 @@ class StateFlowIntegrationTests(unittest.TestCase):
                     path = Path(resource_path(relative))
                     self.assertTrue(path.is_file())
                     authored = pygame.image.load(str(path)).convert()
-                    crop_width = min(authored.get_width(), round(authored.get_height() * 90 / 145))
+                    portrait_sizes = {
+                        "black_dave": (90, 145),
+                        "shelly": (90, 145),
+                        "jermaine": (98, 158),
+                        "white_dave": (98, 158),
+                        "ko": (90, 145),
+                    }
+                    target_width, target_height = portrait_sizes[character]
+                    crop_width = min(authored.get_width(), round(authored.get_height() * target_width / target_height))
                     crop_left = max(0, (authored.get_width() - crop_width) // 2)
                     expected = pygame.transform.smoothscale(
                         authored.subsurface(pygame.Rect(crop_left, 0, crop_width, authored.get_height())).copy(),
-                        (90, 145),
+                        portrait_sizes[character],
                     )
-                    self.assertEqual(game.character_portraits[character].get_size(), (90, 145))
+                    self.assertEqual(game.character_portraits[character].get_size(), portrait_sizes[character])
                     self.assertEqual(
                         pygame.image.tobytes(game.character_portraits[character], "RGBA"),
                         pygame.image.tobytes(expected, "RGBA"),

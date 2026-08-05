@@ -335,6 +335,13 @@ class FadesGame:
             "white_dave": "assets/portraits/white_dave_portrait_pixel_v2.png",
             "ko": "assets/portraits/ko_portrait_v1.png",
         }
+        portrait_sizes = {
+            "black_dave": (90, 145),
+            "shelly": (90, 145),
+            "jermaine": (98, 158),
+            "white_dave": (98, 158),
+            "ko": (90, 145),
+        }
         self.character_portraits: dict[str, pygame.Surface] = {}
         for name, rect in portrait_rects.items():
             # The title art remains a resilient fallback, but the character
@@ -356,14 +363,15 @@ class FadesGame:
                 # faces and torso readable in the established tall card slot
                 # without stretching their proportions.
                 source_rect = authored_portrait.get_rect()
-                crop_width = min(source_rect.width, round(source_rect.height * 90 / 145))
+                target_width, target_height = portrait_sizes[name]
+                crop_width = min(source_rect.width, round(source_rect.height * target_width / target_height))
                 crop_left = max(0, (source_rect.width - crop_width) // 2)
                 portrait = authored_portrait.subsurface(
                     pygame.Rect(crop_left, 0, crop_width, source_rect.height)
                 ).copy()
-            self.character_portraits[name] = pygame.transform.smoothscale(portrait, (90, 145))
+            self.character_portraits[name] = pygame.transform.smoothscale(portrait, portrait_sizes[name])
         self.cpu_companion_portraits = {
-            name: pygame.transform.smoothscale(self.character_portraits[name], (40, 64))
+            name: pygame.transform.smoothscale(self.character_portraits[name], (42, 67))
             for name in SOLO_CPU_COMPANIONS
         }
         self.state = "loading"
