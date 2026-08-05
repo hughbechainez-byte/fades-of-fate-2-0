@@ -47,7 +47,7 @@ class DaveCombatTests(unittest.TestCase):
         target = self.enemy(201, self.dave.x + 32.0, self.dave.y, "security")
         self.game.enemies = [target]
         sequence = self.dave._light_sequence()
-        self.assertEqual(sequence, (0, 1, 2, 3, 4, 5))
+        self.assertEqual(sequence, (0, 1, 2, 4, 3, 5))
         finisher = self.game.data["moves"]["light_combo"][sequence[-1]]
         self.assertTrue(finisher["knockdown"])
         self.assertTrue(finisher["launch"])
@@ -69,8 +69,8 @@ class DaveCombatTests(unittest.TestCase):
         self.assertEqual(self.game.data["moves"]["heavy"]["launch"], True)
 
     def test_c_combo_sequence_runs_through_uppercuts_before_the_far_push_kick(self) -> None:
-        self.assertEqual(self.dave._light_sequence(), (0, 1, 2, 3, 4, 5))
         self.dave.combo_style = "c"
+        self.assertEqual(self.dave._light_sequence(), (0, 1, 2, 3))
         self.dave.combo_step = 0
         self.assertEqual(
             self.dave._combo_move(),
@@ -83,10 +83,29 @@ class DaveCombatTests(unittest.TestCase):
         self.assertGreater(final_move["knockback"], self.game.data["moves"]["heavy"]["knockback"])
         self.assertTrue(final_move["knockdown"])
 
-    def test_alt_light_combo_falls_back_to_the_standard_chain_when_no_alt_table_exists(self) -> None:
+    def test_combo_repeat_lock_holds_the_chain_for_five_seconds(self) -> None:
+        self.dave.combo_style = "x"
+        self.dave.combo_repeat_lock = 5.0
+        self.dave.update(
+            InputSnapshot(held=frozenset({"light"}), pressed=frozenset({"light"})),
+            self.game,
+            1.0 / 60.0,
+        )
+        self.assertEqual(self.dave.state, "idle")
+        self.assertEqual(self.dave.combo_step, 0)
+        self.assertGreater(self.dave.combo_repeat_lock, 4.9)
+        self.dave.combo_repeat_lock = 0.0
+        self.dave.update(
+            InputSnapshot(held=frozenset({"light"}), pressed=frozenset({"light"})),
+            self.game,
+            1.0 / 60.0,
+        )
+        self.assertEqual(self.dave.state, "light")
+
+    def test_alt_light_combo_uses_the_authorized_z_chain(self) -> None:
         self.dave.combo_style = "z"
         self.dave.combo_step = 2
-        self.assertEqual(self.dave._alt_light_move(), self.game.data["moves"]["light_combo"][2])
+        self.assertEqual(self.dave._alt_light_move(), self.game.data["moves"]["light_combo"][3])
 
     def test_heavy_combo_uses_the_authorized_c_chain(self) -> None:
         self.dave.combo_style = "c"

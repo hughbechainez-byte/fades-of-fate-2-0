@@ -126,6 +126,7 @@ class Player:
     combo_step: int = 0
     combo_style: str = "x"
     combo_grace: float = 0.0
+    combo_repeat_lock: float = 0.0
     queued_light: bool = False
     queued_alt_light: bool = False
     queued_heavy: bool = False
@@ -300,6 +301,7 @@ class Player:
         self.bb_cooldown = max(0.0, self.bb_cooldown - dt)
         self.jermaine_bark_cooldown = max(0.0, self.jermaine_bark_cooldown - dt)
         self.combo_grace = max(0.0, self.combo_grace - dt)
+        self.combo_repeat_lock = max(0.0, self.combo_repeat_lock - dt)
         self.light_buffer_remaining = max(0.0, self.light_buffer_remaining - dt)
         self.heavy_buffer_remaining = max(0.0, self.heavy_buffer_remaining - dt)
         if self.light_buffer_remaining <= 0.0:
@@ -409,6 +411,8 @@ class Player:
             return
 
         if "heavy" in snapshot.pressed and self.z <= 1.0:
+            if self.combo_repeat_lock > 0.0 and self.combo_style == "c":
+                return
             game.audio.play_character(self.character, "grunt")
             self.combo_style = "c"
             self.combo_step = self.combo_step if self.combo_grace > 0 else 0
@@ -425,6 +429,8 @@ class Player:
             if self.z > 1.0:
                 self.set_state("air_attack", self._move_total(self.moves["air"]))
             else:
+                if self.combo_repeat_lock > 0.0 and self.combo_style == "z":
+                    return
                 self.combo_step = self.combo_step if self.combo_grace > 0 else 0
                 self.combo_style = "z"
                 self.set_state("light", self._move_total(self._alt_light_move()))
@@ -435,6 +441,8 @@ class Player:
             if self.z > 1.0:
                 self.set_state("air_attack", self._move_total(self.moves["air"]))
             else:
+                if self.combo_repeat_lock > 0.0 and self.combo_style == "x":
+                    return
                 self.combo_step = self.combo_step if self.combo_grace > 0 else 0
                 self.combo_style = "x"
                 self.set_state("light", self._move_total(self._light_move()))
@@ -615,10 +623,18 @@ class Player:
                 self.combo_grace = float(move.get("combo_grace", 0.52))
                 if self.combo_step >= len(light_sequence) - 1:
                     self.combo_step = 0
+                    self.combo_repeat_lock = max(
+                        self.combo_repeat_lock,
+                        float(self.config[self.character].get("combo_repeat_seconds", 5.0)),
+                    )
             elif self.state == "heavy":
                 self.combo_grace = float(move.get("combo_grace", 0.42))
                 if self.combo_style == "c" and "heavy_combo" in self.moves and self.combo_step >= len(self.moves["heavy_combo"]) - 1:
                     self.combo_step = 0
+                    self.combo_repeat_lock = max(
+                        self.combo_repeat_lock,
+                        float(self.config[self.character].get("combo_repeat_seconds", 5.0)),
+                    )
             self.queued_light = False
             self.queued_heavy = False
             self.light_buffer_remaining = 0.0
@@ -678,7 +694,13 @@ class Player:
         """Return character-specific indices into the shared light move table."""
 
         key = self._combo_move_key()
-        configured = self.config[self.character].get(f"{self.combo_style}_combo_sequence")
+        sequence_key = {
+            "light_combo": "light_combo_sequence",
+            "alt_light_combo": "alt_light_combo_sequence",
+            "heavy_combo": "heavy_combo_sequence",
+            "heavy": "heavy_combo_sequence",
+        }.get(key, "light_combo_sequence")
+        configured = self.config[self.character].get(sequence_key)
         if key not in self.moves:
             key = "light_combo"
         if configured is None:

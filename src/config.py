@@ -1121,6 +1121,11 @@ def validate_gameplay(
 
     for character in ("black_dave", "shelly", "jermaine", "white_dave"):
         character_config = data["players"].get(character, {})
+        repeat_seconds = character_config.get("combo_repeat_seconds")
+        if repeat_seconds is not None and _finite_number(
+            repeat_seconds, f"players.{character}.combo_repeat_seconds"
+        ) <= 0.0:
+            raise ConfigError(f"players.{character}.combo_repeat_seconds must be positive")
         for sequence_name, move_key in (
             ("light_combo_sequence", "light_combo"),
             ("alt_light_combo_sequence", "light_combo"),

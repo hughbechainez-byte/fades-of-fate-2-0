@@ -473,15 +473,15 @@
                                                                     0,
                                                                     1,
                                                                     2,
-                                                                    3,
                                                                     4,
+                                                                    3,
                                                                     5
                                                                 ],
                                        "alt_light_combo_sequence":  [
                                                                         1,
                                                                         0,
-                                                                        2,
                                                                         3,
+                                                                        2,
                                                                         5,
                                                                         4
                                                                     ],
@@ -491,6 +491,7 @@
                                                                      2,
                                                                      3
                                                                  ],
+                                       "combo_repeat_seconds":  5.0,
                                        "description":  "Slim and lean in a backward cap, black tank, gold-trim glasses and diamond studs; fists plus a Bluetooth-speaker shockwave."
                                    },
                     "jermaine":  {

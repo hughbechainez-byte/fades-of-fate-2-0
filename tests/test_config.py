@@ -195,6 +195,7 @@ class GameplayConfigTests(unittest.TestCase):
         valid["players"]["shelly"]["light_combo_sequence"] = [0, 2, 3]
         valid["players"]["black_dave"]["alt_light_combo_sequence"] = [1, 0, 2]
         valid["players"]["black_dave"]["heavy_combo_sequence"] = [0, 1, 2, 3]
+        valid["players"]["black_dave"]["combo_repeat_seconds"] = 5.0
         validate_gameplay(valid)
 
         invalid_cases = (
@@ -204,6 +205,7 @@ class GameplayConfigTests(unittest.TestCase):
             ("shelly", [True]),
             ("black_dave", [len(self.data["moves"]["light_combo"])], "alt_light_combo_sequence", "moves.light_combo"),
             ("black_dave", [len(self.data["moves"]["heavy_combo"])], "heavy_combo_sequence", "moves.heavy_combo"),
+            ("black_dave", 0.0, "combo_repeat_seconds", "players.black_dave.combo_repeat_seconds"),
         )
         for case in invalid_cases:
             character, sequence = case[0], case[1]
