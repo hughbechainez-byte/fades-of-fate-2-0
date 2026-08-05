@@ -95,10 +95,114 @@
       "behavior_note": "uses the tent edge and a low crawl to re-enter the lane"
     },
     {
+      "id": "encampment_bottle_scarf",
+      "runtime_kind": "homeless",
+      "display_name": "BOTTLE SCARF DRIFTER",
+      "attack_style": "glass_bottle",
+      "fictional_role": "fictional bottle-scarf drifter",
+      "behavior_note": "keeps distance and telegraphs an overhand bottle throw"
+    },
+    {
+      "id": "encampment_bottle_puffer",
+      "runtime_kind": "homeless",
+      "display_name": "BOTTLE PUFFER",
+      "attack_style": "glass_bottle",
+      "fictional_role": "fictional puffer-coat bottle thrower",
+      "behavior_note": "steps into a chest-high bottle toss after a readable windup"
+    },
+    {
+      "id": "encampment_tire_slinger",
+      "runtime_kind": "homeless",
+      "display_name": "TIRE SLINGER",
+      "attack_style": "bike_tire",
+      "fictional_role": "fictional encampment tire slinger",
+      "behavior_note": "carries a bike tire over one shoulder before an overhead hurl"
+    },
+    {
+      "id": "underpass_tire_runner",
+      "runtime_kind": "homeless",
+      "display_name": "UNDERPASS TIRE RUNNER",
+      "attack_style": "bike_tire",
+      "fictional_role": "fictional underpass tire runner",
+      "behavior_note": "repositions quickly and uses a sidearm tire throw"
+    },
+    {
+      "id": "cart_tent_bottle_pitcher",
+      "runtime_kind": "homeless",
+      "display_name": "BLANKET BOTTLE PITCHER",
+      "attack_style": "glass_bottle",
+      "fictional_role": "fictional blanket-poncho bottle pitcher",
+      "behavior_note": "uses an underhand bottle pitch from behind a broad cloth silhouette"
+    },
+    {
       "id": "parking_security",
       "runtime_kind": "security",
       "fictional_role": "uniformed parking security",
       "behavior_note": "uses badge, flashlight, radio bark, and safe spacing"
+    },
+    {
+      "id": "mall_security_watch",
+      "runtime_kind": "security",
+      "display_name": "MALL WATCH",
+      "attack_style": "security_flashlight",
+      "fictional_role": "fictional mall security watch",
+      "behavior_note": "uses a shoulder radio, silver flashlight, and measured footwork"
+    },
+    {
+      "id": "event_security_heavy",
+      "runtime_kind": "security",
+      "display_name": "EVENT SECURITY",
+      "attack_style": "security_flashlight",
+      "fictional_role": "fictional event security heavy",
+      "behavior_note": "holds the lane in segmented high-visibility gear"
+    },
+    {
+      "id": "night_security_patrol",
+      "runtime_kind": "security",
+      "display_name": "NIGHT PATROL",
+      "attack_style": "security_flashlight",
+      "fictional_role": "fictional night security patrol",
+      "behavior_note": "uses a long flashlight and reflective rain-shell piping"
+    },
+    {
+      "id": "city_patrol_nightstick",
+      "runtime_kind": "police",
+      "display_name": "BEAT PATROL",
+      "attack_style": "nightstick",
+      "fictional_role": "fictional city patrol officer",
+      "behavior_note": "uses a clearly telegraphed close-range nightstick strike"
+    },
+    {
+      "id": "transit_patrol_nightstick",
+      "runtime_kind": "police",
+      "display_name": "TRANSIT PATROL",
+      "attack_style": "nightstick",
+      "fictional_role": "fictional transit patrol officer",
+      "behavior_note": "uses a straight nightstick and tall lane-control stance"
+    },
+    {
+      "id": "riot_line_nightstick",
+      "runtime_kind": "police",
+      "display_name": "RIOT LINE",
+      "attack_style": "nightstick",
+      "fictional_role": "fictional armored line officer",
+      "behavior_note": "uses a side-handle nightstick with a slower armored windup"
+    },
+    {
+      "id": "bike_patrol_taser",
+      "runtime_kind": "police",
+      "display_name": "BIKE PATROL",
+      "attack_style": "taser",
+      "fictional_role": "fictional bike patrol officer",
+      "behavior_note": "keeps range and fires a single short-lived taser dart"
+    },
+    {
+      "id": "tactical_taser_unit",
+      "runtime_kind": "police",
+      "display_name": "TASER UNIT",
+      "attack_style": "taser",
+      "fictional_role": "fictional tactical taser officer",
+      "behavior_note": "uses a compact two-prong taser after a bright electric telegraph"
     },
     {
       "id": "couch",
@@ -179,10 +283,10 @@
             },
             {
               "id": "alarm_security_arrival",
-              "variants": ["parking_security"],
+              "variants": ["mall_security_watch", "event_security_heavy"],
               "player_count_additions": {
-                "3": ["parking_security"],
-                "4": ["parking_security"]
+                "3": ["mall_security_watch"],
+                "4": ["event_security_heavy"]
               }
             }
           ],
@@ -206,10 +310,10 @@
             },
             {
               "id": "corner_flashlight_detail",
-              "variants": ["parking_security"],
+              "variants": ["night_security_patrol"],
               "player_count_additions": {
-                "2": ["parking_security"],
-                "4": ["parking_security"]
+                "2": ["night_security_patrol"],
+                "4": ["night_security_patrol"]
               }
             }
           ],
@@ -250,10 +354,10 @@
           "spawn_groups": [
             {
               "id": "sprouts_tent_wave",
-              "variants": ["encampment_crawler", "encampment_drifter"],
+              "variants": ["encampment_bottle_scarf", "encampment_bottle_puffer", "encampment_tire_slinger"],
               "player_count_additions": {
-                "2": ["cart_tent_lurker"],
-                "3": ["underpass_camp_runner"],
+                "2": ["encampment_crawler"],
+                "3": ["encampment_drifter"],
                 "4": ["cart_tent_lurker", "underpass_camp_runner"]
               }
             }
@@ -274,11 +378,11 @@
           "spawn_groups": [
             {
               "id": "wells_drive_tent_wave",
-              "variants": ["encampment_crawler", "encampment_drifter"],
+              "variants": ["underpass_tire_runner", "cart_tent_bottle_pitcher"],
               "player_count_additions": {
-                "2": ["cart_tent_lurker"],
+                "2": ["encampment_crawler"],
                 "3": ["underpass_camp_runner"],
-                "4": ["cart_tent_lurker", "underpass_camp_runner"]
+                "4": ["cart_tent_lurker", "encampment_drifter"]
               }
             }
           ]
@@ -353,6 +457,10 @@
                 "3": ["road_raider_cart", "road_raider_pipe"],
                 "4": ["road_raider_whip", "road_raider_cart", "road_raider_pipe"]
               }
+            },
+            {
+              "id": "forecourt_patrol_response",
+              "variants": ["city_patrol_nightstick", "bike_patrol_taser"]
             }
           ],
           "completion_note": "Fuel-island bollards create readable cover; no explosive hazard can soft-lock the walk lane."
@@ -399,6 +507,10 @@
                 "3": ["road_raider_cart", "road_raider_whip"],
                 "4": ["road_raider_pipe", "road_raider_cart", "road_raider_whip"]
               }
+            },
+            {
+              "id": "ramp_patrol_response",
+              "variants": ["transit_patrol_nightstick", "tactical_taser_unit"]
             }
           ],
           "completion_note": "The underpass ends with a tonal shift to concrete, water reflection, ramp noise, and a clean camera exit."
@@ -542,10 +654,10 @@
             },
             {
               "id": "broadway_flashlight_detail",
-              "variants": ["parking_security"],
+              "variants": ["night_security_patrol", "riot_line_nightstick"],
               "player_count_additions": {
-                "3": ["parking_security"],
-                "4": ["parking_security"]
+                "3": ["riot_line_nightstick"],
+                "4": ["night_security_patrol"]
               }
             }
           ],

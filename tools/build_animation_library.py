@@ -49,6 +49,7 @@ from src.animation_manifest import (  # noqa: E402
     COUCH_STATES,
     ENEMY_KINDS,
     ENEMY_STATES,
+    ENEMY_VARIANT_KINDS,
     JERRY_STATES,
     PLAYER_STATES,
     total_authored_poses,
@@ -400,6 +401,108 @@ ENEMY_SOURCES = {
     "recovery": (3, 3, 2, 2, 1, 1, 0, 0),
     "hurt": (0, 2, 4, 4, 4, 2, 1, 0),
     "down": (0, 2, 4, 4, 4, 4, 4, 4),
+}
+ENEMY_VARIANT_SOURCES = {
+    # Seven complete source keys: ready, walk A/B, windup, active/release,
+    # hurt, and prone/down. Repeated source keys are expanded below through
+    # declared rooted whole-cel transforms; runtime never layers body parts,
+    # costumes, weapons, or placeholder effects over these drawings.
+    "idle": (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+    "spawn": (6, 6, 5, 2, 1, 0, 0, 0),
+    "walk": (1, 1, 2, 2, 1, 1, 2, 2, 1, 1, 2, 2),
+    # Held weapons recoil through windup and visibly settle to ready.
+    "attack": (0, 0, 3, 3, 4, 4, 3, 0),
+    "charge": (0, 1, 2, 3, 3, 4, 4, 4),
+    "recovery": (4, 4, 3, 3, 3, 0, 0, 0),
+    "hurt": (0, 5, 5, 5, 5, 5, 2, 0),
+    "down": (0, 5, 6, 6, 6, 6, 6, 6),
+}
+THROWABLE_ENEMY_VARIANTS = frozenset(
+    {
+        "encampment_bottle_scarf",
+        "encampment_bottle_puffer",
+        "encampment_tire_slinger",
+        "underpass_tire_runner",
+        "cart_tent_bottle_pitcher",
+    }
+)
+PROJECTILE_ENEMY_VARIANTS = THROWABLE_ENEMY_VARIANTS | frozenset(
+    {"bike_patrol_taser", "tactical_taser_unit"}
+)
+THROWABLE_ENEMY_VARIANT_SOURCES = {
+    # Once the prop leaves the hand, the gear-free hurt/recoil drawing carries
+    # the rest of the action. Re-arming happens only after runtime returns to
+    # idle, so a bottle or tire never pops back into the hand mid-recovery.
+    "attack": (0, 0, 3, 3, 4, 4, 5, 5),
+    "recovery": (4, 4, 5, 5, 5, 5, 5, 5),
+}
+
+
+def _variant_profile(*entries: tuple[float, float, float]) -> tuple[PoseTransform, ...]:
+    return tuple(PoseTransform(angle, scale_x, scale_y) for angle, scale_x, scale_y in entries)
+
+
+# Reviewed whole-cel motion profiles for the seven complete roster keys. Every
+# phase changes the complete silhouette (body, clothes, hands and gear as one
+# cel); offsets stay zero because world locomotion and fixed root registration
+# own translation. Values remain inside the stricter baton/taser-safe limits.
+ENEMY_VARIANT_TRANSFORM_PROFILES: dict[str, tuple[PoseTransform, ...]] = {
+    "idle": _variant_profile(
+        (0.0, 0.990, 0.996), (0.4, 0.994, 0.992), (0.8, 0.998, 0.988),
+        (1.2, 1.002, 0.986), (0.8, 1.006, 0.990), (0.4, 1.010, 0.994),
+        (-0.1, 1.014, 0.998), (-0.4, 1.012, 0.995), (-0.8, 1.008, 0.991),
+        (-1.2, 1.004, 0.987), (-0.8, 1.000, 0.989), (-0.4, 0.996, 0.993),
+    ),
+    "spawn": _variant_profile(
+        (-0.4, 0.990, 0.994), (0.4, 1.006, 0.998), (-0.9, 0.992, 0.988),
+        (-0.5, 0.997, 0.993), (-0.1, 1.002, 0.997), (0.3, 1.007, 0.995),
+        (0.7, 1.012, 0.993), (1.1, 1.015, 0.995),
+    ),
+    "walk": _variant_profile(
+        (-1.2, 0.988, 0.994), (-0.9, 0.993, 0.989), (-0.6, 0.998, 0.985),
+        (-0.3, 1.003, 0.990), (0.0, 1.008, 0.995), (0.3, 1.013, 0.999),
+        (0.6, 1.015, 0.996), (0.9, 1.010, 0.992), (1.2, 1.005, 0.987),
+        (0.8, 1.000, 0.985), (0.4, 0.995, 0.990), (-0.1, 0.990, 0.997),
+    ),
+    "attack": _variant_profile(
+        (-0.5, 0.990, 0.988), (-0.7, 0.995, 0.990), (-0.3, 1.000, 0.986),
+        (0.1, 1.005, 0.991), (0.5, 1.010, 0.996), (0.9, 1.015, 0.999),
+        (0.6, 1.008, 0.993), (0.7, 1.002, 0.987),
+    ),
+    "charge": _variant_profile(
+        (-1.0, 0.991, 0.995), (-0.6, 0.996, 0.989), (-0.2, 1.001, 0.985),
+        (0.2, 1.006, 0.990), (0.6, 1.011, 0.995), (1.0, 1.015, 0.999),
+        (1.3, 1.009, 0.992), (0.8, 1.003, 0.986),
+    ),
+    "recovery": _variant_profile(
+        (1.2, 1.012, 0.998), (0.8, 1.007, 0.994), (0.4, 1.002, 0.990),
+        (0.0, 0.997, 0.986), (-0.4, 0.992, 0.989), (-0.8, 0.988, 0.993),
+        (-0.4, 0.994, 0.988), (-0.6, 1.000, 0.995),
+    ),
+    "hurt": _variant_profile(
+        (-0.5, 0.989, 0.988), (-0.8, 0.994, 0.991), (-0.4, 0.999, 0.986),
+        (0.0, 1.004, 0.990), (0.4, 1.009, 0.995), (0.8, 1.014, 0.999),
+        (1.2, 1.008, 0.993), (0.6, 1.002, 0.987),
+    ),
+    "down": _variant_profile(
+        (-0.4, 0.991, 0.988), (-0.2, 0.996, 0.990), (-0.5, 0.990, 0.990),
+        (-0.3, 0.990, 0.990), (-0.1, 0.990, 0.990), (0.1, 0.990, 0.990),
+        (0.3, 0.990, 0.990), (0.5, 0.990, 0.990),
+    ),
+}
+ENEMY_VARIANT_TRANSFORM_PROFILE_IDS = {
+    state: f"enemy_variant_{state}_whole_cel_v1"
+    for state in ENEMY_VARIANT_TRANSFORM_PROFILES
+}
+ENEMY_VARIANT_ACTOR_TRANSFORM_OVERRIDES: dict[tuple[str, str, int], PoseTransform] = {
+    # At +0.5 degrees this particular prone tire closes its reviewed 3px
+    # shadow gap during nearest-neighbour sampling. +0.35 preserves both
+    # detached components and remains a distinct settled silhouette.
+    ("underpass_tire_runner", "down", 7): PoseTransform(0.35, 0.990, 0.990),
+    # The compact tactical ready cel rounds the shared phase-0/6 sway to the
+    # same pixels. This equally rooted compression remains inside the closed
+    # idle arc while producing a distinct full-silhouette breath phase.
+    ("tactical_taser_unit", "idle", 6): PoseTransform(-0.10, 0.985, 0.985),
 }
 COUCH_SOURCES = {
     "idle": (0, 1, 2, 3, 4, 3, 2, 1, 0, 2, 4, 1),
@@ -1017,6 +1120,194 @@ def _render_pose(
     return result
 
 
+def _render_enemy_variant_pose(
+    source: Image.Image,
+    transform: PoseTransform,
+    source_anchors: dict[str, object],
+) -> tuple[Image.Image, dict[str, object], int]:
+    """Apply one declared rooted affine transform to a complete roster cel.
+
+    The source and output stay on the fixed 160x128 canvas. The affine pivots
+    at the explicitly authored root, and a final ground-normalization delta is
+    applied identically to the cel and every non-root landmark. No fitting,
+    clamping, landmark inference, body-part compositing, or runtime overlay is
+    permitted. The returned ground delta is recorded as transform provenance.
+    """
+
+    cell_size = (160, 128)
+    root_value = source_anchors.get("root")
+    if not isinstance(root_value, list) or len(root_value) != 2:
+        raise ValueError("enemy variant source pose has no explicit root")
+    root = (float(root_value[0]), float(root_value[1]))
+    if root != (80.0, 118.0):
+        raise ValueError(f"enemy variant root must be (80, 118), got {root}")
+    if not (0.985 <= transform.scale_x <= 1.015 and 0.985 <= transform.scale_y <= 1.015):
+        raise ValueError(f"enemy variant scale escapes reviewed limits: {transform}")
+    if abs(transform.scale_x - transform.scale_y) > 0.0201:
+        raise ValueError(f"enemy variant anisotropy escapes reviewed limits: {transform}")
+    if abs(transform.angle) > 1.5:
+        raise ValueError(f"enemy variant rotation escapes thin-gear limit: {transform}")
+    if transform.offset_x or transform.offset_y:
+        raise ValueError(f"enemy variant profiles may not use translation filler: {transform}")
+
+    theta = math.radians(transform.angle)
+    cosine = math.cos(theta)
+    sine = math.sin(theta)
+    a = cosine * transform.scale_x
+    b = -sine * transform.scale_y
+    d = sine * transform.scale_x
+    e = cosine * transform.scale_y
+    c = root[0] - a * root[0] - b * root[1]
+    f = root[1] - d * root[0] - e * root[1]
+    determinant = a * e - b * d
+    inverse_a = e / determinant
+    inverse_b = -b / determinant
+    inverse_d = -d / determinant
+    inverse_e = a / determinant
+    inverse_c = -(inverse_a * c + inverse_b * f)
+    inverse_f = -(inverse_d * c + inverse_e * f)
+    transformed = source.transform(
+        cell_size,
+        Image.Transform.AFFINE,
+        (inverse_a, inverse_b, inverse_c, inverse_d, inverse_e, inverse_f),
+        resample=Image.Resampling.NEAREST,
+        fillcolor=(0, 0, 0, 0),
+    )
+    expected_components = int(source_anchors.get("component_count", 0))
+    transformed = _retain_largest_alpha_components(transformed, expected_components)
+    bounds = transformed.getchannel("A").getbbox()
+    if bounds is None:
+        raise ValueError("enemy variant affine produced an empty cel")
+    ground_delta_y = 117 - (bounds[3] - 1)
+    shifted_bounds = (
+        bounds[0],
+        bounds[1] + ground_delta_y,
+        bounds[2],
+        bounds[3] + ground_delta_y,
+    )
+    if (
+        shifted_bounds[0] < 2
+        or shifted_bounds[1] < 2
+        or shifted_bounds[2] > cell_size[0] - 2
+        or shifted_bounds[3] > cell_size[1] - 2
+    ):
+        raise ValueError(
+            f"enemy variant transform would require clipping or fitting: {shifted_bounds} from {transform}"
+        )
+    grounded = Image.new("RGBA", cell_size, (0, 0, 0, 0))
+    grounded.paste(transformed, (0, ground_delta_y))
+
+    point_fields = ("rear_hand", "lead_hand", "weapon_anchor", "release_anchor")
+    transformed_anchors: dict[str, object] = {"root": [80, 118]}
+    for field in point_fields:
+        value = source_anchors.get(field)
+        if value is None:
+            transformed_anchors[field] = None
+            continue
+        if not isinstance(value, list) or len(value) != 2:
+            raise ValueError(f"enemy variant source pose has invalid {field}")
+        point_x = a * float(value[0]) + b * float(value[1]) + c
+        point_y = d * float(value[0]) + e * float(value[1]) + f + ground_delta_y
+        rendered_point = (round(point_x), round(point_y))
+        if not (0 <= rendered_point[0] < cell_size[0] and 0 <= rendered_point[1] < cell_size[1]):
+            raise ValueError(f"enemy variant transformed {field} escapes cell: {rendered_point}")
+        transformed_anchors[field] = list(rendered_point)
+    alpha = grounded.getchannel("A")
+    for field in ("rear_hand", "lead_hand", "weapon_anchor"):
+        point = transformed_anchors[field]
+        if point is None:
+            continue
+        point_x, point_y = point
+        visible = any(
+            alpha.getpixel((sample_x, sample_y)) > 0
+            for sample_y in range(max(0, point_y - 4), min(cell_size[1], point_y + 5))
+            for sample_x in range(max(0, point_x - 4), min(cell_size[0], point_x + 5))
+        )
+        if not visible:
+            raise ValueError(f"enemy variant transformed {field} misses visible authored pixels: {point}")
+    return grounded, transformed_anchors, ground_delta_y
+
+
+def _retain_largest_alpha_components(source: Image.Image, expected_count: int) -> Image.Image:
+    """Keep only the authored body and optional detached-gear components.
+
+    Nearest-neighbour affine sampling can strand one-to-five outline pixels.
+    They are neither anatomy nor gear and caused the visible placeholder specks
+    this pipeline replaces. Source metadata declares whether the whole cel has
+    one integrated body or body plus one detached prop, so every other alpha>0
+    8-connected component is deterministically cleared from RGBA.
+    """
+
+    if expected_count not in {1, 2}:
+        raise ValueError(f"unsupported enemy variant component contract: {expected_count}")
+    width, height = source.size
+    rgba = bytearray(source.tobytes())
+    alpha = rgba[3::4]
+    visited = bytearray(width * height)
+    components: list[list[int]] = []
+    for origin, value in enumerate(alpha):
+        if value == 0 or visited[origin]:
+            continue
+        visited[origin] = 1
+        stack = [origin]
+        component: list[int] = []
+        while stack:
+            index = stack.pop()
+            component.append(index)
+            x = index % width
+            y = index // width
+            for neighbor_y in range(max(0, y - 1), min(height, y + 2)):
+                row = neighbor_y * width
+                for neighbor_x in range(max(0, x - 1), min(width, x + 2)):
+                    neighbor = row + neighbor_x
+                    if visited[neighbor] or alpha[neighbor] == 0:
+                        continue
+                    visited[neighbor] = 1
+                    stack.append(neighbor)
+        components.append(component)
+    components.sort(key=len, reverse=True)
+    if len(components) < expected_count:
+        raise ValueError(
+            f"enemy variant transform merged authored components: {len(components)} < {expected_count}"
+        )
+    for component in components[expected_count:]:
+        for pixel_index in component:
+            byte_index = pixel_index * 4
+            rgba[byte_index : byte_index + 4] = b"\x00\x00\x00\x00"
+    return Image.frombytes("RGBA", source.size, bytes(rgba))
+
+
+def _visible_component_count(image: Image.Image, *, threshold: int = 7, minimum: int = 20) -> int:
+    """Count production-size 8-connected alpha components deterministically."""
+
+    width, height = image.size
+    alpha = image.getchannel("A").tobytes()
+    visited = bytearray(width * height)
+    component_count = 0
+    for origin, value in enumerate(alpha):
+        if value <= threshold or visited[origin]:
+            continue
+        visited[origin] = 1
+        stack = [origin]
+        pixels = 0
+        while stack:
+            index = stack.pop()
+            pixels += 1
+            x = index % width
+            y = index // width
+            for neighbor_y in range(max(0, y - 1), min(height, y + 2)):
+                row = neighbor_y * width
+                for neighbor_x in range(max(0, x - 1), min(width, x + 2)):
+                    neighbor = row + neighbor_x
+                    if visited[neighbor] or alpha[neighbor] <= threshold:
+                        continue
+                    visited[neighbor] = 1
+                    stack.append(neighbor)
+        if pixels >= minimum:
+            component_count += 1
+    return component_count
+
+
 _BREATH_SHAPES = (
     (0, 0, 0),
     (1, 0, 0),
@@ -1115,6 +1406,11 @@ def _sources_for(
             # the upright key, then settle into that purpose-drawn prone cell.
             local_indices = (0, 0, 0, 0, 0, 0, 4, 4)
         return source_sets["enemies"], tuple(row * 5 + index for index in local_indices)
+    if actor in ENEMY_VARIANT_KINDS:
+        indices = ENEMY_VARIANT_SOURCES[state]
+        if actor in THROWABLE_ENEMY_VARIANTS:
+            indices = THROWABLE_ENEMY_VARIANT_SOURCES.get(state, indices)
+        return source_sets[actor], indices
     if actor == "couch":
         return source_sets["couch"], COUCH_SOURCES[state]
     if actor == "jerry":
@@ -1126,52 +1422,73 @@ def _sources_for(
     raise KeyError(f"No animation source mapping for {actor}:{state}")
 
 
-def _make_atlases(output_root: Path) -> dict[tuple[str, str], list[Image.Image]]:
+def _make_atlases(
+    output_root: Path,
+    *,
+    enemy_roster_only: bool = False,
+) -> dict[tuple[str, str], list[Image.Image]]:
     sprite_root = PROJECT_ROOT / "assets" / "sprites"
-    source_sets: dict[str, list[Image.Image]] = {
-        "black_dave": _split(sprite_root / "black_dave_atlas.png", 5, 4),
-        "shelly": [
-            _add_shelly_microtorch(frame, SHELLY_MICROTORCH_ANCHORS[index])
-            for index, frame in enumerate(_split(sprite_root / "shelly_atlas.png", 5, 4))
-        ],
-        "black_dave_walk": [
-            _remove_distant_walk_ghosts(frame)
-            for frame in _split(PROJECT_ROOT / "assets" / "reference" / "black_dave_walk_reference_v2.png", 6, 2)
-        ],
-        "shelly_walk": [
-            _remove_distant_walk_ghosts(frame)
-            for frame in _split(PROJECT_ROOT / "assets" / "reference" / "shelly_walk_reference_v2.png", 6, 2)
-        ],
-        "shelly_extras": [
-            _add_shelly_microtorch(frame, SHELLY_REFILL_TORCH_ANCHORS[index])
-            if index < len(SHELLY_REFILL_TORCH_ANCHORS) else frame
-            for index, frame in enumerate(_split(sprite_root / "shelly_idle_extended.png", 8, 2))
-        ],
-        "chief": _split(sprite_root / "chief_atlas.png", 5, 3),
-        "enemies": _canonicalize(_split(sprite_root / "enemies_atlas.png", 5, 4), {8, 18}),
-        "couch": [
-            _remove_tiny_alpha_components(frame)
-            for frame in _canonicalize(_split(sprite_root / "couch_denim_v2_atlas.png", 5, 2), {6, 7})
-        ],
-        "jerry": _split_jerry_reference(PROJECT_ROOT / "assets" / "reference" / "jerry_pose_reference_v2.png"),
-        "victory": _split(sprite_root / "victory_hug_treats.png", 4, 1),
-    }
-    reference_root = PROJECT_ROOT / "assets" / "reference"
-    for (actor, state), (filename, columns, rows) in DIRECT_REFERENCE_SPECS.items():
-        source_sets[_direct_reference_key(actor, state)] = _split_direct_reference(
-            reference_root / filename,
-            columns,
-            rows,
+    source_sets: dict[str, list[Image.Image]] = {}
+    if not enemy_roster_only:
+        source_sets.update(
+            {
+                "black_dave": _split(sprite_root / "black_dave_atlas.png", 5, 4),
+                "shelly": [
+                    _add_shelly_microtorch(frame, SHELLY_MICROTORCH_ANCHORS[index])
+                    for index, frame in enumerate(_split(sprite_root / "shelly_atlas.png", 5, 4))
+                ],
+                "black_dave_walk": [
+                    _remove_distant_walk_ghosts(frame)
+                    for frame in _split(PROJECT_ROOT / "assets" / "reference" / "black_dave_walk_reference_v2.png", 6, 2)
+                ],
+                "shelly_walk": [
+                    _remove_distant_walk_ghosts(frame)
+                    for frame in _split(PROJECT_ROOT / "assets" / "reference" / "shelly_walk_reference_v2.png", 6, 2)
+                ],
+                "shelly_extras": [
+                    _add_shelly_microtorch(frame, SHELLY_REFILL_TORCH_ANCHORS[index])
+                    if index < len(SHELLY_REFILL_TORCH_ANCHORS) else frame
+                    for index, frame in enumerate(_split(sprite_root / "shelly_idle_extended.png", 8, 2))
+                ],
+                "chief": _split(sprite_root / "chief_atlas.png", 5, 3),
+                "enemies": _canonicalize(_split(sprite_root / "enemies_atlas.png", 5, 4), {8, 18}),
+                "couch": [
+                    _remove_tiny_alpha_components(frame)
+                    for frame in _canonicalize(_split(sprite_root / "couch_denim_v2_atlas.png", 5, 2), {6, 7})
+                ],
+                "jerry": _split_jerry_reference(PROJECT_ROOT / "assets" / "reference" / "jerry_pose_reference_v2.png"),
+                "victory": _split(sprite_root / "victory_hug_treats.png", 4, 1),
+            }
         )
-    source_sets["sunset"] = _build_sunset_sources(
-        source_sets["black_dave"],
-        source_sets["shelly"],
-        source_sets["chief"],
+        reference_root = PROJECT_ROOT / "assets" / "reference"
+        for (actor, state), (filename, columns, rows) in DIRECT_REFERENCE_SPECS.items():
+            source_sets[_direct_reference_key(actor, state)] = _split_direct_reference(
+                reference_root / filename,
+                columns,
+                rows,
+            )
+        source_sets["sunset"] = _build_sunset_sources(
+            source_sets["black_dave"],
+            source_sets["shelly"],
+            source_sets["chief"],
+        )
+    enemy_source_root = sprite_root / "enemies"
+    for actor in ENEMY_VARIANT_KINDS:
+        source_sets[actor] = _split(enemy_source_root / f"{actor}_source_atlas.png", 7, 1)
+    variant_source_metadata = json.loads(
+        (enemy_source_root / "enemy_variant_source_anchors.json").read_text(encoding="utf-8")
     )
     rendered: dict[tuple[str, str], list[Image.Image]] = {}
     dave_fist_metadata: dict[str, list[dict[str, object]]] = {}
+    variant_anchor_metadata: dict[str, object] = {
+        "version": 1,
+        "cell_size": [160, 128],
+        "actors": {},
+    }
     atlas_groups: dict[str, list] = {}
     for clip in ANIMATION_CLIPS:
+        if enemy_roster_only and clip.actor not in ENEMY_VARIANT_KINDS:
+            continue
         atlas_groups.setdefault(clip.atlas, []).append(clip)
 
     for relative, clips in atlas_groups.items():
@@ -1215,7 +1532,124 @@ def _make_atlases(output_root: Path) -> dict[tuple[str, str], list[Image.Image]]
                     }
                 )
 
-            if clip.actor in {"black_dave", "shelly"} and clip.state == "idle":
+            if clip.actor in ENEMY_VARIANT_KINDS:
+                # Each runtime phase is a deterministic progressive transform
+                # of one approved complete 160x128 source cel. The transform
+                # acts on body/clothes/hands/gear together and is recorded with
+                # exact source-key and landmark provenance below.
+                source_actor = variant_source_metadata["actors"][clip.actor]
+                runtime_actors = variant_anchor_metadata["actors"]
+                runtime_actor = runtime_actors.setdefault(
+                    clip.actor,
+                    {
+                        "role": source_actor["role"],
+                        "weapon": source_actor["weapon"],
+                        "atlas": clip.atlas,
+                        "source_atlas": source_actor["source_atlas"],
+                        "reference": source_actor["reference"],
+                        "reference_sha256": source_actor["reference_sha256"],
+                        "states": {},
+                    },
+                )
+                if runtime_actor["atlas"] != clip.atlas:
+                    raise ValueError(f"{clip.actor} spans multiple runtime atlases")
+                source_keys = variant_source_metadata["source_keys"]
+                transforms = ENEMY_VARIANT_TRANSFORM_PROFILES[clip.state]
+                if len(transforms) != len(indices):
+                    raise ValueError(
+                        f"{clip.actor}:{clip.state} has {len(transforms)} whole-cel transforms "
+                        f"for {len(indices)} runtime phases"
+                    )
+                profile_id = ENEMY_VARIANT_TRANSFORM_PROFILE_IDS[clip.state]
+                state_phases: list[dict[str, object]] = []
+                for phase_index, (phase_name, source_index, transform) in enumerate(
+                    zip(clip.phases, indices, transforms, strict=True)
+                ):
+                    override_key = (clip.actor, clip.state, phase_index)
+                    if override_key in ENEMY_VARIANT_ACTOR_TRANSFORM_OVERRIDES:
+                        transform = ENEMY_VARIANT_ACTOR_TRANSFORM_OVERRIDES[override_key]
+                    source_key = source_keys[source_index]
+                    source_phase = source_actor["source_keys"][source_key]
+                    if source_key == "down" and (
+                        abs(transform.angle) > 0.5
+                        or not (0.99 <= transform.scale_x <= 1.01)
+                        or not (0.99 <= transform.scale_y <= 1.01)
+                    ):
+                        raise ValueError(
+                            f"{clip.actor}:{clip.state}:{phase_index} double-transforms prone source: {transform}"
+                        )
+                    pose, transformed_anchors, ground_delta_y = _render_enemy_variant_pose(
+                        sources[source_index],
+                        transform,
+                        source_phase,
+                    )
+                    transformed_component_count = _visible_component_count(pose)
+                    if transformed_component_count != source_phase["component_count"]:
+                        raise ValueError(
+                            f"{clip.actor}:{clip.state}:{phase_index} component count changed "
+                            f"from {source_phase['component_count']} to {transformed_component_count}"
+                        )
+                    key_poses.append(pose)
+                    state_phases.append(
+                        {
+                            "phase_index": phase_index,
+                            "phase": phase_name,
+                            "source_index": source_index,
+                            "source_key": source_key,
+                            "transform_profile": (
+                                f"{profile_id}:actor_override_v1"
+                                if override_key in ENEMY_VARIANT_ACTOR_TRANSFORM_OVERRIDES
+                                else profile_id
+                            ),
+                            "transform": {
+                                "angle": transform.angle,
+                                "scale_x": transform.scale_x,
+                                "scale_y": transform.scale_y,
+                                "offset_x": transform.offset_x,
+                                "offset_y": transform.offset_y,
+                                "ground_offset_y": ground_delta_y,
+                            },
+                            "root": transformed_anchors["root"],
+                            "rear_hand": transformed_anchors["rear_hand"],
+                            "lead_hand": transformed_anchors["lead_hand"],
+                            "weapon_anchor": transformed_anchors["weapon_anchor"],
+                            "release_anchor": transformed_anchors["release_anchor"],
+                            "held_gear": source_phase["held_gear"],
+                            "gear_state": source_phase["gear_state"],
+                            "component_count": transformed_component_count,
+                        }
+                    )
+                runtime_actor["states"][clip.state] = state_phases
+                if clip.state == "attack" and clip.actor in PROJECTILE_ENEMY_VARIANTS:
+                    release_four = state_phases[4]["release_anchor"]
+                    release_five = state_phases[5]["release_anchor"]
+                    if not (
+                        isinstance(release_four, list)
+                        and len(release_four) == 2
+                        and isinstance(release_five, list)
+                        and len(release_five) == 2
+                    ):
+                        raise ValueError(f"{clip.actor} has no authored active release landmark")
+                    drift = math.hypot(
+                        release_five[0] - release_four[0],
+                        release_five[1] - release_four[1],
+                    )
+                    if drift > 4.0:
+                        raise ValueError(f"{clip.actor} active release landmark drifts {drift:.2f}px")
+                normalized_signatures: set[tuple[tuple[int, int], bytes]] = set()
+                for pose in key_poses:
+                    bounds = pose.getchannel("A").getbbox()
+                    if bounds is None:
+                        raise ValueError(f"{clip.actor}:{clip.state} produced an empty runtime cel")
+                    cropped = pose.crop(bounds)
+                    normalized_signatures.add((cropped.size, cropped.tobytes()))
+                if len({pose.tobytes() for pose in key_poses}) != len(key_poses):
+                    raise ValueError(f"{clip.actor}:{clip.state} repeats a raw whole-cel drawing")
+                if len(normalized_signatures) != len(key_poses):
+                    raise ValueError(
+                        f"{clip.actor}:{clip.state} uses translation-only or rounded duplicate filler"
+                    )
+            elif clip.actor in {"black_dave", "shelly"} and clip.state == "idle":
                 for phase, source_index in enumerate(indices):
                     sink: list[tuple[int, int]] = []
                     key_poses.append(
@@ -1293,7 +1727,13 @@ def _make_atlases(output_root: Path) -> dict[tuple[str, str], list[Image.Image]]
                     raise ValueError(f"{clip.state} fist landmark metadata is incomplete")
                 dave_fist_metadata[clip.state] = phase_fist_anchors
             for phase, pose in enumerate(poses):
-                atlas.alpha_composite(pose, (phase * clip.cell_width, clip.row * clip.cell_height))
+                destination_xy = (phase * clip.cell_width, clip.row * clip.cell_height)
+                if clip.actor in ENEMY_VARIANT_KINDS:
+                    # paste without a mask preserves straight-alpha edge RGB
+                    # byte-for-byte; alpha_composite premultiplies/rounds it.
+                    atlas.paste(pose, destination_xy)
+                else:
+                    atlas.alpha_composite(pose, destination_xy)
         destination = output_root / relative
         destination.parent.mkdir(parents=True, exist_ok=True)
         atlas.save(destination, optimize=True)
@@ -1301,21 +1741,34 @@ def _make_atlases(output_root: Path) -> dict[tuple[str, str], list[Image.Image]]
             f"Wrote {destination.relative_to(output_root)}: "
             f"{len(clips)} clips / {sum(clip.frame_count for clip in clips)} poses"
         )
-    metadata_destination = output_root / "assets" / "sprites" / "black_dave_fist_anchors.json"
-    metadata_destination.parent.mkdir(parents=True, exist_ok=True)
-    metadata_destination.write_text(
-        json.dumps(
-            {
-                "version": 1,
-                "cell_size": [128, 128],
-                "states": dave_fist_metadata,
-            },
-            indent=2,
-        )
-        + "\n",
+    variant_metadata_destination = (
+        output_root / "assets" / "sprites" / "enemies" / "enemy_variant_anchors.json"
+    )
+    variant_metadata_destination.parent.mkdir(parents=True, exist_ok=True)
+    variant_metadata_destination.write_text(
+        json.dumps(variant_anchor_metadata, indent=2) + "\n",
         encoding="utf-8",
     )
-    print(f"Wrote {metadata_destination.relative_to(output_root)}: {sum(len(phases) for phases in dave_fist_metadata.values())} pose landmarks")
+    print(
+        f"Wrote {variant_metadata_destination.relative_to(output_root)}: "
+        f"{len(variant_anchor_metadata['actors'])} actors"
+    )
+    if not enemy_roster_only:
+        metadata_destination = output_root / "assets" / "sprites" / "black_dave_fist_anchors.json"
+        metadata_destination.parent.mkdir(parents=True, exist_ok=True)
+        metadata_destination.write_text(
+            json.dumps(
+                {
+                    "version": 1,
+                    "cell_size": [128, 128],
+                    "states": dave_fist_metadata,
+                },
+                indent=2,
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        print(f"Wrote {metadata_destination.relative_to(output_root)}: {sum(len(phases) for phases in dave_fist_metadata.values())} pose landmarks")
     return rendered
 
 
@@ -1417,11 +1870,23 @@ def main() -> None:
         type=Path,
         default=PROJECT_ROOT / "build" / "walk_root_cadence_qa.png",
     )
+    parser.add_argument(
+        "--enemy-roster-only",
+        action="store_true",
+        help="rebuild only the thirteen dedicated enemy atlases and their authored anchors",
+    )
     args = parser.parse_args()
-    rendered = _make_atlases(args.output_root.resolve())
-    _contact_sheet(rendered, args.qa_output.resolve())
-    _walk_root_cadence_sheet(rendered, args.walk_qa_output.resolve())
-    print(f"Animation floor complete: {len(ANIMATION_CLIPS)} clips, {total_authored_poses()} authored poses")
+    rendered = _make_atlases(
+        args.output_root.resolve(),
+        enemy_roster_only=args.enemy_roster_only,
+    )
+    if not args.enemy_roster_only:
+        _contact_sheet(rendered, args.qa_output.resolve())
+        _walk_root_cadence_sheet(rendered, args.walk_qa_output.resolve())
+    print(
+        f"Animation floor complete: {len(rendered)} clips, "
+        f"{sum(len(poses) for poses in rendered.values())} authored poses"
+    )
 
 
 if __name__ == "__main__":

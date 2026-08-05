@@ -5,7 +5,7 @@ import random
 from dataclasses import dataclass, field
 from typing import Any
 
-from .animation_manifest import ANIMATION_PLAYBACK_HZ, clip_for
+from .animation_manifest import ANIMATION_PLAYBACK_HZ, clip_for, enemy_animation_actor
 from .input_manager import InputSnapshot
 
 
@@ -703,7 +703,14 @@ class Player:
     def _move_world(self, game: Any, dx: float, dy: float) -> tuple[float, float]:
         return game.move_actor(self, dx, dy)
 
-    def take_damage(self, amount: float, game: Any, source: Any = None) -> bool:
+    def take_damage(
+        self,
+        amount: float,
+        game: Any,
+        source: Any = None,
+        *,
+        hitstun: float = 0.34,
+    ) -> bool:
         if not self.combat_active or self.invulnerable > 0.0:
             return False
         damage_taken = min(self.health, max(0.0, float(amount)))
@@ -731,8 +738,9 @@ class Player:
             self.set_state("downed")
             game.add_effect("text", self.x, self.y - 58, text="REVIVE!", color=(255, 235, 95), duration=1.2)
         else:
-            self.invulnerable = 0.56
-            self.set_state("hurt", 0.34)
+            hurt_seconds = max(0.0, float(hitstun))
+            self.invulnerable = max(0.56, hurt_seconds)
+            self.set_state("hurt", hurt_seconds)
         return True
 
     def revive(self, game: Any) -> None:
@@ -829,9 +837,7 @@ class Enemy:
             actor = (
                 "couch"
                 if self.kind == "couch"
-                else "stick"
-                if self.kind in {"security", "security_guard", "guard", "homeless"}
-                else self.kind
+                else enemy_animation_actor(self.kind, self.variant_id or None)
             )
             return _distance_animation_tick(
                 self.locomotion_distance,
@@ -972,6 +978,14 @@ class Enemy:
             return
         if self.state == "attack":
             self.state_clock += dt
+            if self.attack_pattern in {"glass_bottle", "bike_tire", "taser"}:
+                # The projectile is emitted on the first authored active cel.
+                # Hold that cel family for the configured active interval so
+                # the hand release and the separate projectile remain one
+                # continuous action instead of jumping from windup to recovery.
+                if self.state_clock >= self.state_duration:
+                    self._enter_recovery()
+                return
             landed = game.enemy_attack(
                 self,
                 range_x=self._melee_reach(),
@@ -1002,7 +1016,9 @@ class Enemy:
         dx = target.x - self.x
         dy = target.y - self.y
         self.facing = 1 if dx >= 0 else -1
-        desired_x = float(self.stats["attack_range"]) * (0.75 if self.kind != "pipe" else 0.88)
+        attack_style = str(self.stats.get("attack_style", self.kind))
+        ranged_attack = attack_style in {"pipe", "glass_bottle", "bike_tire", "taser"}
+        desired_x = float(self.stats["attack_range"]) * (0.88 if ranged_attack else 0.75)
         within_x = abs(dx) <= float(self.stats["attack_range"])
         within_y = abs(dy) <= float(self.stats["depth_range"])
         if within_x and within_y and self.cooldown <= 0.0:
@@ -1017,7 +1033,7 @@ class Enemy:
         move_y = 0.0
         hold_hysteresis_x = float(game.data["engine"]["physics"].get("enemy_hold_hysteresis_x", 8.0))
         hold_hysteresis_depth = float(game.data["engine"]["physics"].get("enemy_hold_hysteresis_depth", 5.0))
-        too_close = self.kind in {"pipe", "whip"} and abs(dx) < desired_x * 0.55
+        too_close = (ranged_attack or self.kind == "whip") and abs(dx) < desired_x * 0.55
         if self.nav_holding:
             self.nav_holding = (
                 not too_close
@@ -1053,7 +1069,7 @@ class Enemy:
         self.attack_hit_ids.clear()
         self.attack_hit_counts.clear()
         self.attack_last_hit_times.clear()
-        self.attack_pattern = self.kind
+        self.attack_pattern = str(self.stats.get("attack_style", self.kind))
         if self.kind == "couch":
             roll = random.random()
             if self.health < self.max_health * 0.55 and roll < 0.44:
@@ -1090,6 +1106,12 @@ class Enemy:
                 game.spawn_pipe(self, target)
             self.attack_fired = True
             self._enter_recovery()
+        elif self.attack_pattern in {"glass_bottle", "bike_tire", "taser"}:
+            target = game.player_by_slot(self.target_slot)
+            if target is not None:
+                game.spawn_enemy_projectile(self, target, self.attack_pattern)
+            self._set_state("attack", float(self.stats["active"]))
+            self.attack_fired = True
         elif self.attack_pattern == "laugh":
             game.add_effect("shock", self.x, self.y, radius=45, color=(255, 120, 210), duration=0.38)
             self.attack_fired = True
@@ -1103,6 +1125,7 @@ class Enemy:
         return (
             76.0 if self.kind == "whip"
             else 58.0 if self.kind == "couch"
+            else 46.0 if self.kind == "police"
             else 42.0 if self.kind == "security"
             else 34.0
         )
@@ -2178,19 +2201,36 @@ class Projectile:
             if self.ttl <= 0.0:
                 self.spent = True
             return
+        if self.kind == "taser":
+            old_x = self.x
+            old_y = self.y
+            old_z = self.z
+            self.x += self.vx * travel_dt
+            self.y += self.vy * travel_dt
+            self.z += self.vz * travel_dt
+            projectile_hit = getattr(game, "enemy_projectile_hit", None)
+            if callable(projectile_hit) and projectile_hit(self, old_x, old_y, old_z):
+                self.spent = True
+            if self.ttl <= 0.0:
+                self.spent = True
+            return
         old_x = self.x
         old_y = self.y
         old_z = self.z
         self.x += self.vx * travel_dt
         self.y += self.vy * travel_dt
-        self.vz -= 420.0 * dt
-        self.z += self.vz * dt
+        self.vz -= 420.0 * travel_dt
+        self.z += self.vz * travel_dt
+        glass_bottle_landed = False
         if self.z <= 0.0:
             self.z = 0.0
-            self.vz *= -0.26
-            self.vx *= 0.72
-            if abs(self.vz) < 28.0:
-                self.spent = True
+            if self.kind == "glass_bottle":
+                glass_bottle_landed = True
+            else:
+                self.vz *= -0.26
+                self.vx *= 0.72
+                if abs(self.vz) < 28.0:
+                    self.spent = True
         if self.owner_team == "enemy":
             projectile_hit = getattr(game, "enemy_projectile_hit", None)
             if callable(projectile_hit) and projectile_hit(
@@ -2200,6 +2240,12 @@ class Projectile:
                 old_z,
             ):
                 self.spent = True
+        if glass_bottle_landed:
+            landed = getattr(game, "enemy_projectile_landed", None)
+            if callable(landed):
+                landed(self)
+            self.spent = True
+            return
         if self.ttl <= 0.0:
             self.spent = True
 

@@ -23,6 +23,10 @@ For every `v*` tag, `.github/workflows/windows-desktop-release.yml` repeats the 
 
 All gameplay art is authored and composited on the 640x360 logical canvas. Keep silhouettes, outlines, material accents, and small props crisp with integer-aligned pixels. When an external or high-resolution source is needed, crop its alpha bounds and resize with nearest-neighbor only; never use `smoothscale` for gameplay characters, tents, vehicles, or foreground props. Background vehicles may be compact, but must preserve the same hard-edged palette and deliberate pixel clusters. Add a render-contract test whenever a new asset path is introduced.
 
+### Enemy model rule
+
+Refer to the repository-wide character-art approach as the **rooted whole-cel authored pixel-animation standard**. A requested named enemy model must be a dedicated, manifest-backed sprite actor made from complete pose-integrated source art and registered through the authoritative animation builder and atlas. Sharing AI, timing, or motion structure is allowed; shipping another actor's rendered body with runtime recolors, alpha-bound or centroid-attached `pygame.draw` clothing/anatomy, heuristic weapon erasure, or floating equipment is not a new model. Bake the body, clothing, hands, held gear, lighting, and front/behind occlusion into every cel; keep only released projectiles and transient VFX separate, with authored hand and release anchors controlling continuity. Every registered animation phase must remain a distinct progressive whole-body cel after translation normalization; repeated timing holds do not count as authored poses. Approval GIFs must show production gameplay rendering without reticles, anchors, phase labels, or debug effects; emit any debug-overlay sheets separately. Add render-contract tests for dedicated clip coverage, provenance, unique phase silhouettes, root/ground stability, hand-to-gear attachment, release timing, state/phase distinction, and cell-edge clipping.
+
 ## Canonical Main Integration, Build Verification, and Publishing Protocol
 
 Apply this protocol to every task in this repository.

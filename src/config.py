@@ -749,10 +749,13 @@ def validate_gameplay(
                             f"campaign level {level_id} encounter {encounter_index} reinforcement {reinforcement_index} requires speech"
                         )
                 if is_finale and (
-                    "security" in base
-                    or any("security" in reinforcement["base"] for reinforcement in reinforcements)
+                    any(kind in {"security", "police"} for kind in base)
+                    or any(
+                        any(kind in {"security", "police"} for kind in reinforcement["base"])
+                        for reinforcement in reinforcements
+                    )
                 ):
-                    raise ConfigError("Couch finale cannot include security reinforcements")
+                    raise ConfigError("Couch finale cannot include security or police reinforcements")
                 previous_level_trigger = trigger
                 couch_waves += sum(1 for kind in base if str(kind) == "couch")
             boss = level.get("boss")
@@ -804,7 +807,7 @@ def validate_gameplay(
         if (
             not isinstance(wave, list)
             or not wave
-            or any(str(kind) not in enemy_kinds or str(kind) in {"couch", "security"} for kind in wave)
+            or any(str(kind) not in enemy_kinds or str(kind) in {"couch", "security", "police"} for kind in wave)
         ):
             raise ConfigError(f"enemies.couch.retreat_add_waves[{wave_index}] references an invalid dope-fiend enemy")
     for field in (
@@ -1143,6 +1146,12 @@ def validate_gameplay(
             raise ConfigError(f"{label} must be an object")
         if _finite_number(enemy.get("active"), f"{label}.active") <= 0.0:
             raise ConfigError(f"{label}.active must be positive")
+        if str(enemy_name) == "police" or any(
+            field in enemy for field in ("ranged_attack_range", "ranged_depth_range")
+        ):
+            for field in ("ranged_attack_range", "ranged_depth_range"):
+                if _finite_number(enemy.get(field), f"{label}.{field}") <= 0.0:
+                    raise ConfigError(f"{label}.{field} must be positive")
 
     scoring = data.get("scoring", {})
     _positive_integer(scoring.get("combo_step_hits"), "scoring.combo_step_hits")

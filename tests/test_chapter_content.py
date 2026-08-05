@@ -79,7 +79,7 @@ class ChapterContentTests(unittest.TestCase):
             for kind in group["runtime_kinds"]
         ]
         self.assertGreater(len(four_kinds), len(solo_kinds))
-        self.assertTrue(set(four_kinds).issubset({"stick", "cart", "whip", "pipe", "security", "couch"}))
+        self.assertTrue(set(four_kinds).issubset({"stick", "cart", "whip", "pipe", "security", "homeless", "police", "couch"}))
         source_group = level_content(self.content, "chapter_1_level_2")["major_fights"][0]["spawn_groups"][0]
         self.assertNotIn("runtime_kinds", source_group)
         self.assertNotIn("resolved_variant_ids", source_group)

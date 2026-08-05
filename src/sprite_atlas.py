@@ -11,9 +11,12 @@ import pygame
 from .animation_manifest import (
     ANIMATION_CLIPS,
     ANIMATION_PLAYBACK_HZ,
+    ENEMY_STATES,
+    ENEMY_VARIANT_KINDS,
     AnimationClip,
     KO_STATES,
     clip_for,
+    enemy_animation_actor,
     total_authored_poses,
 )
 from .config import resource_path
@@ -104,6 +107,7 @@ DAVE_STABLE_WALK_TICK_MAP = (
     11, 11, 11,
 )
 DAVE_STABLE_WALK_STRIP = "assets/sprites/black_dave_walk_identity_v1.png"
+ENEMY_VARIANT_ANCHORS = "assets/sprites/enemies/enemy_variant_anchors.json"
 
 
 @lru_cache(maxsize=128)
@@ -402,19 +406,185 @@ def chief_frame(state: object, tick: int) -> pygame.Surface | None:
     return animation_frame("chief", runtime_state, tick)
 
 
-def enemy_frame(kind: object, state: object, tick: int) -> pygame.Surface | None:
+def enemy_frame(
+    kind: object,
+    state: object,
+    tick: int,
+    variant_id: object | None = None,
+) -> pygame.Surface | None:
+    """Return a complete authored enemy cel for a runtime kind/variant pair.
+
+    Named variants resolve to their own manifest actors. Legacy homeless roles
+    retain their existing procedural presentation by returning ``None`` when
+    they do not have a dedicated actor.
+    """
+
     enemy_kind = str(kind or "stick").strip().lower().replace("-", "_").replace(" ", "_")
+    variant = str(variant_id or "").strip().lower().replace("-", "_").replace(" ", "_")
     if enemy_kind in {"shopping_cart", "cart_pusher"}:
         enemy_kind = "cart"
     elif enemy_kind in {"makeshift_whip", "cord"}:
         enemy_kind = "whip"
     elif enemy_kind in {"broken_pipe", "thrower"}:
         enemy_kind = "pipe"
-    if enemy_kind == "homeless":
+    actor = enemy_animation_actor(enemy_kind, variant or None)
+    if enemy_kind == "homeless" and actor != variant:
         return None
-    if enemy_kind not in {"stick", "cart", "whip", "pipe", "security"}:
-        raise ValueError(f"unknown enemy kind: {enemy_kind}")
-    return animation_frame(enemy_kind, state, tick)
+    return animation_frame(actor, state, tick)
+
+
+@lru_cache(maxsize=1)
+def _load_enemy_variant_anchor_metadata() -> tuple[
+    tuple[int, int],
+    dict[str, dict[str, tuple[dict[str, object], ...]]],
+]:
+    """Load builder-authored cel landmarks without deriving them from pixels."""
+
+    try:
+        payload = json.loads(Path(resource_path(ENEMY_VARIANT_ANCHORS)).read_text(encoding="utf-8"))
+        if payload.get("version") != 1:
+            raise ValueError("unsupported enemy variant anchor metadata version")
+        raw_cell_size = payload.get("cell_size")
+        if not (
+            isinstance(raw_cell_size, list)
+            and len(raw_cell_size) == 2
+            and all(isinstance(value, int) and not isinstance(value, bool) for value in raw_cell_size)
+        ):
+            raise ValueError("invalid enemy variant anchor cell size")
+        cell_size = (raw_cell_size[0], raw_cell_size[1])
+        if cell_size[0] <= 0 or cell_size[1] <= 0:
+            raise ValueError("invalid enemy variant anchor dimensions")
+        raw_actors = payload.get("actors")
+        if not isinstance(raw_actors, dict):
+            raise ValueError("enemy variant anchor metadata has no actors")
+        expected_actors = frozenset(ENEMY_VARIANT_KINDS)
+        normalized_actor_names = {
+            str(name).strip().lower().replace("-", "_").replace(" ", "_")
+            for name in raw_actors
+        }
+        if normalized_actor_names != expected_actors or len(raw_actors) != len(expected_actors):
+            raise ValueError("enemy variant anchor metadata actor roster is incomplete")
+
+        actors: dict[str, dict[str, tuple[dict[str, object], ...]]] = {}
+        point_fields = ("root", "rear_hand", "lead_hand", "weapon_anchor", "release_anchor")
+        for raw_actor, raw_actor_payload in raw_actors.items():
+            actor = str(raw_actor).strip().lower().replace("-", "_").replace(" ", "_")
+            if not actor or not isinstance(raw_actor_payload, dict):
+                raise ValueError("invalid enemy variant anchor actor")
+            raw_states = raw_actor_payload.get("states")
+            if not isinstance(raw_states, dict):
+                raise ValueError(f"enemy variant anchor actor {actor!r} has no states")
+            states: dict[str, tuple[dict[str, object], ...]] = {}
+            for raw_state, raw_phases in raw_states.items():
+                state = _state_name(raw_state)
+                if state in states:
+                    raise ValueError(f"enemy variant anchor actor {actor!r} repeats {state!r}")
+                if not isinstance(raw_phases, list) or not raw_phases:
+                    raise ValueError(f"enemy variant anchor actor {actor!r} has invalid {state!r} phases")
+                expected_phase_count = clip_for(actor, state).frame_count
+                if len(raw_phases) != expected_phase_count:
+                    raise ValueError(
+                        f"enemy variant anchor actor {actor!r} has {len(raw_phases)} {state!r} phases; "
+                        f"expected {expected_phase_count}"
+                    )
+                phases: list[dict[str, object]] = []
+                for raw_phase in raw_phases:
+                    if not isinstance(raw_phase, dict):
+                        raise ValueError(f"enemy variant anchor actor {actor!r} has invalid {state!r} phase")
+                    source_key = raw_phase.get("source_key")
+                    held_gear = raw_phase.get("held_gear")
+                    if not isinstance(source_key, str) or not source_key.strip():
+                        raise ValueError(f"enemy variant anchor actor {actor!r} has no source key")
+                    if not isinstance(held_gear, bool):
+                        raise ValueError(f"enemy variant anchor actor {actor!r} has invalid held-gear state")
+                    phase: dict[str, object] = {
+                        "source_key": source_key,
+                        "held_gear": held_gear,
+                    }
+                    for field in point_fields:
+                        raw_point = raw_phase.get(field)
+                        if raw_point is None:
+                            point = None
+                        elif (
+                            isinstance(raw_point, list)
+                            and len(raw_point) == 2
+                            and all(isinstance(value, int) and not isinstance(value, bool) for value in raw_point)
+                        ):
+                            point = (raw_point[0], raw_point[1])
+                            if not (0 <= point[0] < cell_size[0] and 0 <= point[1] < cell_size[1]):
+                                raise ValueError(
+                                    f"enemy variant anchor actor {actor!r} has out-of-cell {field!r}"
+                                )
+                        else:
+                            raise ValueError(
+                                f"enemy variant anchor actor {actor!r} has invalid {field!r}"
+                            )
+                        phase[field] = point
+                    if phase["root"] is None:
+                        raise ValueError(f"enemy variant anchor actor {actor!r} has no root")
+                    phases.append(phase)
+                states[state] = tuple(phases)
+            if frozenset(states) != frozenset(ENEMY_STATES):
+                raise ValueError(f"enemy variant anchor actor {actor!r} has an incomplete state roster")
+            actors[actor] = states
+        return cell_size, actors
+    except (OSError, ValueError, TypeError, json.JSONDecodeError):
+        # Dedicated weapon release points must never be guessed from alpha
+        # bounds or a silhouette centroid. Callers can fail closed when a
+        # required authored landmark is absent.
+        return (0, 0), {}
+
+
+def enemy_pose_anchors(
+    kind: object,
+    state: object,
+    tick: int,
+    variant_id: object | None = None,
+) -> dict[str, object]:
+    """Return authored cell-local landmarks for the selected enemy cel.
+
+    Points use the canonical right-facing atlas cell. A left-facing caller
+    mirrors X as ``frame_width - 1 - x``. Legacy actors return an empty map.
+    """
+
+    variant = str(variant_id or "").strip().lower().replace("-", "_").replace(" ", "_")
+    actor = enemy_animation_actor(kind, variant or None)
+    if not variant or actor != variant:
+        return {}
+    _, actors = _load_enemy_variant_anchor_metadata()
+    states = actors.get(actor)
+    if not states:
+        return {}
+    clip = clip_for(actor, _state_name(state))
+    phases = states.get(clip.state)
+    if not phases:
+        return {}
+    phase = _clip_phase_index(clip, tick, len(phases))
+    return dict(phases[phase])
+
+
+def enemy_root_anchor(
+    kind: object,
+    state: object,
+    tick: int,
+    variant_id: object | None = None,
+) -> tuple[int, int] | None:
+    """Return the authored ground root for one dedicated enemy pose."""
+
+    point = enemy_pose_anchors(kind, state, tick, variant_id).get("root")
+    return point if isinstance(point, tuple) else None
+
+
+def enemy_release_anchor(
+    kind: object,
+    state: object,
+    tick: int,
+    variant_id: object | None = None,
+) -> tuple[int, int] | None:
+    """Return the authored projectile-release point for one enemy pose."""
+
+    point = enemy_pose_anchors(kind, state, tick, variant_id).get("release_anchor")
+    return point if isinstance(point, tuple) else None
 
 
 def boss_frame(state: object, tick: int) -> pygame.Surface | None:
@@ -453,6 +623,7 @@ def clear_cache() -> None:
     _dave_stable_walk_frames.cache_clear()
     _load_dave_fist_metadata.cache_clear()
     _dave_fist_anchors.cache_clear()
+    _load_enemy_variant_anchor_metadata.cache_clear()
 
 
 __all__ = [
@@ -463,6 +634,9 @@ __all__ = [
     "chief_frame",
     "clear_cache",
     "enemy_frame",
+    "enemy_pose_anchors",
+    "enemy_release_anchor",
+    "enemy_root_anchor",
     "jerry_frame",
     "ko_frame",
     "player_frame",

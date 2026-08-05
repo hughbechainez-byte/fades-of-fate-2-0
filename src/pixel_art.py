@@ -23,13 +23,14 @@ import pygame
 
 try:  # resource_path also understands one-file executable extraction roots.
     from .config import resource_path
-    from . import location_lock, sprite_atlas
+    from . import animation_manifest, location_lock, sprite_atlas
     from . import backdrop
     from .stage_world import StageLayerPiece, StageWorld, StageWorldError
 except ImportError:  # pragma: no cover - supports direct module experiments.
     def resource_path(relative: str) -> Path:
         return Path(__file__).resolve().parents[1] / relative
     import location_lock  # type: ignore[no-redef]
+    import animation_manifest  # type: ignore[no-redef]
     import backdrop  # type: ignore[no-redef]
     sprite_atlas = None  # type: ignore[assignment]
     from stage_world import StageLayerPiece, StageWorld, StageWorldError  # type: ignore[no-redef]
@@ -787,10 +788,15 @@ def _character_emblem_sprite(
     return lit
 
 
-_SECURITY_UNIFORM_CACHE: dict[tuple[int, str], tuple[pygame.Surface, pygame.Surface]] = {}
+_SECURITY_UNIFORM_CACHE: dict[tuple[int, str, str], tuple[pygame.Surface, pygame.Surface]] = {}
 
 
-def _security_uniform_frame(authored: pygame.Surface, state_name: str) -> pygame.Surface:
+def _security_uniform_frame(
+    authored: pygame.Surface,
+    state_name: str,
+    variant_id: str = "",
+    action_phase: str | None = None,
+) -> pygame.Surface:
     """Turn the full authored stick pose into a readable, geared guard.
 
     The source pose supplies the high-frame-count anatomy.  A fast material tint
@@ -800,7 +806,8 @@ def _security_uniform_frame(authored: pygame.Surface, state_name: str) -> pygame
     first-use pixel-scan hitch.
     """
 
-    cache_key = (id(authored), str(state_name))
+    normalized_variant = str(variant_id).strip().lower().replace("-", "_").replace(" ", "_")
+    cache_key = (id(authored), str(state_name), normalized_variant)
     cached = _SECURITY_UNIFORM_CACHE.get(cache_key)
     if cached is not None and cached[0] is authored:
         return cached[1]
@@ -969,11 +976,15 @@ _DETAILED_ENEMY_VARIANT_BASES = {
 }
 
 
-def _encampment_variant_frame(
+
+
+def _legacy_encampment_variant_frame(
     authored: pygame.Surface,
     variant_id: str,
     state_name: str,
 ) -> pygame.Surface:
+    """Preserve the four pre-existing camp-role accents on their old cels."""
+
     sprite = authored.copy()
     outline = (30, 26, 28)
     blanket = {
@@ -4781,6 +4792,26 @@ def _blit_grounded(
     return body
 
 
+def _blit_enemy_variant_rooted(
+    surface: pygame.Surface,
+    sprite: pygame.Surface,
+    x: float,
+    y: float,
+    z: float,
+    facing: object,
+    root: tuple[int, int],
+) -> pygame.Rect:
+    """Blit a dedicated cel so its authored root stays on the world actor."""
+
+    image, bounds = _grounded_sprite_variant(sprite, facing)
+    root_x = root[0] if _face_sign(facing) >= 0 else image.get_width() - 1 - root[0]
+    destination = (_i(x) - root_x, _i(y - z) - root[1])
+    body = surface.blit(image, destination)
+    if bounds.w and bounds.h:
+        return bounds.move(destination)
+    return body
+
+
 def draw_stage_prop(
     surface: pygame.Surface,
     x: float,
@@ -6355,11 +6386,43 @@ def draw_enemy(
         enemy_kind = "pipe"
     homeless = enemy_kind == "homeless"
     security = enemy_kind in {"security", "security_guard", "guard"}
-    state_name = _state_name(state)
+    police = enemy_kind == "police"
+    action_phase = _state_name(state)
+    dedicated_variant = variant_key in getattr(animation_manifest, "ENEMY_VARIANT_KINDS", ())
+    if dedicated_variant:
+        # Dedicated actors author every runtime phase, including recovery.
+        # The attack remap below exists only for legacy strips that never had
+        # distinct windup/recovery clips.
+        state_name = action_phase
+        if sprite_atlas is None:
+            raise ValueError(f"dedicated enemy atlas unavailable: {variant_key}")
+        authored = sprite_atlas.enemy_frame(
+            enemy_kind,
+            state_name,
+            int(frame),
+            variant_key,
+        )
+        root = sprite_atlas.enemy_root_anchor(
+            enemy_kind,
+            state_name,
+            int(frame),
+            variant_key,
+        )
+        if authored is None or root is None:
+            raise ValueError(f"missing dedicated enemy cel metadata: {variant_key}:{state_name}")
+        _shadow(surface, x, y, 47, 9, elevation=z)
+        profile = "security_uniform" if security or police else "enemy_cloth"
+        rendered = _hit_flash_sprite(_material_lit_sprite(authored, profile), hit_flash)
+        return _blit_enemy_variant_rooted(surface, rendered, x, y, z, facing, root)
+
+    state_name = "attack" if action_phase in {"windup", "recovery"} else action_phase
     # Security guards deliberately reuse the authored sixteen-pose stick
     # motion strip. Their uniform overlay makes the role readable without
     # introducing a low-frame-count exception to the animation-floor rule.
-    authored_kind = _DETAILED_ENEMY_VARIANT_BASES.get(variant_key, "stick" if security else enemy_kind)
+    authored_kind = _DETAILED_ENEMY_VARIANT_BASES.get(
+        variant_key,
+        "stick" if security or police else enemy_kind,
+    )
     authored = None if homeless else sprite_atlas.enemy_frame(authored_kind, state_name, int(frame)) if sprite_atlas is not None else None
     if authored is None and homeless and variant_key and sprite_atlas is not None:
         detailed_kind = _DETAILED_ENEMY_VARIANT_BASES.get(variant_key)
@@ -6368,12 +6431,17 @@ def draw_enemy(
     if authored is not None:
         _shadow(surface, x, y, 67 if enemy_kind == "cart" else 47, 9, elevation=z)
         if homeless:
-            sprite = _encampment_variant_frame(authored, variant_key, state_name)
+            sprite = _legacy_encampment_variant_frame(authored, variant_key, state_name)
         elif security:
-            sprite = _security_uniform_frame(authored, state_name)
+            sprite = _security_uniform_frame(
+                authored,
+                state_name,
+                variant_key,
+                action_phase=action_phase,
+            )
         else:
             sprite = authored
-        profile = "security_uniform" if security else "enemy_cloth"
+        profile = "security_uniform" if security or police else "enemy_cloth"
         rendered = _hit_flash_sprite(_material_lit_sprite(sprite, profile), hit_flash)
         return _blit_grounded(
             surface,
@@ -6395,6 +6463,7 @@ def draw_enemy(
         "whip": ((76, 45, 42), (112, 67, 60), (151, 96, 76), (190, 130, 97), (115, 72, 105), (51, 39, 39)),
         "pipe": ((103, 65, 49), (146, 93, 66), (190, 140, 99), (224, 177, 125), (67, 87, 110), (68, 45, 39)),
         "security": ((63, 43, 36), (104, 72, 56), (154, 108, 78), (211, 159, 112), (27, 47, 91), (31, 29, 34)),
+        "police": ((63, 43, 36), (104, 72, 56), (154, 108, 78), (211, 159, 112), (31, 58, 92), (27, 31, 39)),
     }
     skin_deep, skin_shadow, skin, skin_light, clothes_default, hair = palette.get(enemy_kind, palette["stick"])
     clothes = _rgb(tint, clothes_default)
@@ -6412,7 +6481,7 @@ def draw_enemy(
         pygame.draw.rect(sprite, clothes, (22, 68, 42, 10))
         _toned_oval(sprite, (63, 63, 22, 21), outline, skin_deep, skin, skin_light)
         pygame.draw.rect(sprite, hair, (67, 62, 15, 6))
-        profile = "security_uniform" if security else "enemy_cloth"
+        profile = "security_uniform" if security or police else "enemy_cloth"
         rendered = _hit_flash_sprite(
             _material_lit_sprite(sprite, profile, cache=False),
             hit_flash,
@@ -6534,7 +6603,7 @@ def draw_enemy(
     if hurt:
         pygame.draw.rect(sprite, (255, 244, 187), (center - 20, 13, 3, 20))
         pygame.draw.rect(sprite, (255, 92, 69), (center - 25, 19, 4, 9))
-    profile = "security_uniform" if security else "enemy_cloth"
+    profile = "security_uniform" if security or police else "enemy_cloth"
     rendered = _hit_flash_sprite(
         _material_lit_sprite(sprite, profile, cache=False),
         hit_flash,
@@ -6752,6 +6821,93 @@ def draw_projectile(
         pygame.draw.rect(surface, (235, 255, 255), (px + direction * (radius - 1), py - 2, 5, 5))
         pygame.draw.rect(surface, (92, 222, 244), (px - direction * (radius + 5), py - 1, 4, 3))
         return rects[0].unionall(rects[1:]).inflate(7, 7)
+    if projectile in {"glass_bottle", "bottle", "bottle_glass"}:
+        orientations = ((10, -3), (5, -10), (-3, -10), (-9, -4))
+        dx, dy = orientations[phase]
+        start = (px - dx // 2, py - dy // 2)
+        end = (px + dx // 2, py + dy // 2)
+        trail_start = (start[0] - direction * 16, start[1] + 3)
+        pygame.draw.line(surface, (52, 88, 74), trail_start, start, 2)
+        rect = _outlined_line(surface, start, end, (63, 137, 101), 7, (23, 29, 29))
+        pygame.draw.line(surface, (128, 204, 160), (start[0] + 1, start[1] - 1), (end[0] + 1, end[1] - 1), 2)
+        pygame.draw.rect(surface, (226, 248, 226), (px - 1, py - 4, 2, 5))
+        pygame.draw.rect(surface, (247, 255, 245), (px, py - 3, 1, 2))
+        pygame.draw.rect(surface, (42, 60, 53), (end[0] - 2, end[1] - 2, 5, 4))
+        return rect.union(pygame.Rect(trail_start, (2, 2))).inflate(8, 8)
+    if projectile in {"bike_tire", "tire", "bicycle_tire"}:
+        # A loose bicycle tire is a hollow rubber hoop, not a wheel with a
+        # hub. The old cardinal spokes read like a targeting reticle in motion.
+        # Rotate one crisp asymmetric oval so the open center, sidewall, and
+        # tread remain legible through every phase.
+        trail = pygame.draw.line(
+            surface,
+            (47, 50, 53),
+            (px - direction * 25, py + 3),
+            (px - direction * 13, py + 1),
+            3,
+        )
+        tire = pygame.Surface((30, 24), pygame.SRCALPHA)
+        outer = pygame.Rect(2, 4, 26, 16)
+        pygame.draw.ellipse(tire, (17, 20, 23), outer, 5)
+        pygame.draw.ellipse(tire, (72, 78, 77), outer.inflate(-4, -4), 2)
+        # Offset highlights and short tread blocks break the sight-reticle
+        # symmetry while retaining deliberate hard-edged pixel clusters.
+        pygame.draw.arc(tire, (145, 151, 145), outer.inflate(-6, -6), 0.55, 2.40, 2)
+        for tread_rect in (
+            pygame.Rect(5, 3, 4, 2),
+            pygame.Rect(12, 2, 4, 2),
+            pygame.Rect(20, 4, 4, 2),
+            pygame.Rect(8, 19, 4, 2),
+            pygame.Rect(17, 20, 4, 2),
+            pygame.Rect(25, 15, 2, 3),
+        ):
+            pygame.draw.rect(tire, (96, 102, 100), tread_rect)
+        rotated = pygame.transform.rotate(tire, (0, -32, -64, -96)[phase])
+        tire_rect = rotated.get_rect(center=(px, py))
+        surface.blit(rotated, tire_rect)
+        return tire_rect.union(trail).inflate(8, 8)
+    if projectile in {"taser", "taser_dart", "taser_prongs"}:
+        tail_x = px - direction * (15 + phase * 2)
+        rects: list[pygame.Rect] = []
+        for index, offset in enumerate((-3, 3)):
+            bend = 1 if (phase + index) % 2 else -1
+            points = [
+                (tail_x, py + offset),
+                (px - direction * 9, py + offset + bend),
+                (px - direction * 3, py + offset - bend),
+            ]
+            pygame.draw.lines(surface, (25, 40, 48), False, points, 2)
+            pygame.draw.lines(surface, (101, 190, 212), False, points, 1)
+            dart_base = (px - direction * 3, py + offset)
+            dart_tip = (px + direction * 5, py + offset)
+            pygame.draw.line(surface, (31, 38, 43), dart_base, dart_tip, 4)
+            rects.append(pygame.draw.line(surface, (181, 204, 205), dart_base, dart_tip, 2))
+            pygame.draw.line(
+                surface,
+                (236, 245, 232),
+                dart_tip,
+                (dart_tip[0] - direction * 3, dart_tip[1] - 2),
+                1,
+            )
+            pygame.draw.line(
+                surface,
+                (236, 245, 232),
+                dart_tip,
+                (dart_tip[0] - direction * 3, dart_tip[1] + 2),
+                1,
+            )
+        # A short irregular arc reads as electricity between the two physical
+        # prongs without the old crosshair-like placeholder burst.
+        arc_x = px + direction * 2
+        pygame.draw.lines(
+            surface,
+            (157, 231, 244),
+            False,
+            [(arc_x, py - 2), (arc_x - direction * 2, py), (arc_x, py + 2)],
+            1,
+        )
+        wire_rect = pygame.Rect(min(px, tail_x), py - 7, abs(px - tail_x) + 1, 14)
+        return rects[0].unionall(rects[1:]).union(wire_rect).inflate(6, 5)
     if projectile in {"rock", "debris"}:
         points = [(px - 7, py - 3), (px - 2, py - 8), (px + 7, py - 5), (px + 9, py + 2), (px + 3, py + 8), (px - 7, py + 5)]
         rect = pygame.draw.polygon(surface, (37, 34, 37), points)

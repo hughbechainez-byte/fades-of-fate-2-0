@@ -223,7 +223,7 @@ _INTEGRATION_REFERENCE_KEYWORDS = {
     "environment_curb": ("curb", "curbs", "median", "driveway", "street", "sidewalk"),
     "environment_door": ("door",),
     "environment_sedan": ("car", "sedan"),
-    "actor_enemy": ("enemy", "couch", "stick", "cart", "whip", "pipe", "security"),
+    "actor_enemy": ("enemy", "couch", "stick", "cart", "whip", "pipe", "security", "homeless", "police"),
 }
 
 

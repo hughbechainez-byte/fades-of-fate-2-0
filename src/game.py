@@ -14,6 +14,7 @@ from . import location_lock, pixel_art, sprite_atlas
 from .animation_manifest import (
     ANIMATION_PLAYBACK_HZ,
     action_segment_tick,
+    enemy_animation_actor,
     timed_action_tick,
 )
 from .atmosphere import AtmosphereState
@@ -3617,14 +3618,25 @@ class FadesGame:
         self._security_spawn_speech = ""
         self._security_speech_by_enemy.clear()
         base = list(encounter["base"])
+        focused_cap = (
+            max(1, int(self._scaling_value("focused_enemy_queue_cap", len(base))))
+            if base != ["couch"]
+            else None
+        )
         content_fight = self._content_major_by_hook.get(str(encounter.get("name", "")).strip().lower())
         if base != ["couch"] and content_fight is not None:
-            authored_roles = self._spawn_identifiers_from_groups(content_fight.get("spawn_groups", ()))
+            authored_roles = self._spawn_identifiers_from_groups(
+                content_fight.get("spawn_groups", ()),
+                focused_limit=focused_cap,
+            )
             # The content contract contributes role variety, then the focused
             # roster pass below caps the encounter before it becomes a noisy
             # parade of overlapping targets.
             if authored_roles:
-                base = self._anti_clone_order([*base, *authored_roles])
+                # Authored identities must enter the focused queue before raw
+                # archetypes; otherwise the solo cap consumes only the four
+                # legacy kinds and every detailed model is silently skipped.
+                base = self._anti_clone_order([*authored_roles, *base])
         if base == ["couch"]:
             self.spawn_queue = base
             self._encounter_enemy_durability_scale = 1.0
@@ -3635,7 +3647,7 @@ class FadesGame:
             # roster. The cap limits the complete queued fight (not merely the
             # number visible at once), while durability retains real combat
             # time on each target.
-            focused_cap = max(1, int(self._scaling_value("focused_enemy_queue_cap", len(base))))
+            assert focused_cap is not None
             focused_base = self._focused_enemy_wave(base, focused_cap)
             budget_scale = self._scaling_value("wave_budget", 1.0)
             density = max(1.0, self._scaling_value("encounter_density_multiplier", 1.0))
@@ -3891,19 +3903,36 @@ class FadesGame:
             enemies=wave,
         )
 
-    def _spawn_identifiers_from_groups(self, groups: Iterable[object]) -> list[str]:
-        wave: list[str] = []
+    def _spawn_identifiers_from_groups(
+        self,
+        groups: Iterable[object],
+        *,
+        focused_limit: int | None = None,
+    ) -> list[str]:
+        """Resolve authored groups, preserving their order unless explicitly capped."""
+
+        authored_groups: list[list[str]] = []
         for group in groups:
             if not isinstance(group, dict):
                 continue
             resolved = group.get("resolved_variant_ids", ())
             if isinstance(resolved, (list, tuple)) and resolved:
-                wave.extend(str(identifier) for identifier in resolved)
+                authored_groups.append([str(identifier) for identifier in resolved])
                 continue
             runtime_kinds = group.get("runtime_kinds", ())
-            if isinstance(runtime_kinds, (list, tuple)):
-                wave.extend(str(kind) for kind in runtime_kinds)
-        return wave
+            if isinstance(runtime_kinds, (list, tuple)) and runtime_kinds:
+                authored_groups.append([str(kind) for kind in runtime_kinds])
+        if focused_limit is None:
+            return [identifier for group in authored_groups for identifier in group]
+
+        wave: list[str] = []
+        # Only a deliberately capped main encounter round-robins groups. Full
+        # environmental and optional waves retain their authored sequencing.
+        for index in range(max((len(group) for group in authored_groups), default=0)):
+            for group in authored_groups:
+                if index < len(group):
+                    wave.append(group[index])
+        return self._focused_enemy_wave(wave, focused_limit)
 
     def _resolve_enemy_identifier(self, identifier: str) -> tuple[str, str]:
         normalized = str(identifier or "stick").strip().lower().replace("-", "_").replace(" ", "_")
@@ -3916,6 +3945,25 @@ class FadesGame:
         kind, variant_id = self._resolve_enemy_identifier(identifier)
         self.enemy_sequence += 1
         stats = dict(self.data["enemies"][kind])
+        variant = self.enemy_variant_catalog.get(variant_id, {}) if variant_id else {}
+        if variant:
+            display_name = str(variant.get("display_name", "")).strip()
+            if display_name:
+                stats["display_name"] = display_name
+            attack_style = str(variant.get("attack_style", "")).strip()
+            if attack_style:
+                stats["attack_style"] = attack_style
+        if str(stats.get("attack_style", "")) in {"glass_bottle", "bike_tire", "taser"}:
+            for field, ranged_field in (
+                ("attack_range", "ranged_attack_range"),
+                ("depth_range", "ranged_depth_range"),
+                ("windup", "ranged_windup"),
+                ("active", "ranged_active"),
+                ("recovery", "ranged_recovery"),
+                ("cooldown", "ranged_cooldown"),
+            ):
+                if ranged_field in stats:
+                    stats[field] = float(stats[ranged_field])
         direction = -1 if self.enemy_sequence % 3 == 0 else 1
         if direction > 0:
             x = min(float(self.meta["stage_width"]) - 45.0, self.camera_x + 615.0 + random.uniform(0, 45))
@@ -3942,6 +3990,14 @@ class FadesGame:
             self._security_speech_by_enemy[enemy.enemy_id] = (speech, 2.25)
             self.add_effect("spawn", x, y, radius=34, color=(255, 211, 91), duration=0.58)
             self.log_breadcrumb("security_guard_spawned", enemy_id=enemy.enemy_id, speech=speech)
+        elif kind == "police":
+            self.add_effect("spawn", x, y, radius=34, color=(92, 164, 255), duration=0.58)
+            self.log_breadcrumb(
+                "police_enemy_spawned",
+                enemy_id=enemy.enemy_id,
+                variant=variant_id or "generic",
+                weapon=str(stats.get("attack_style", "nightstick")),
+            )
         return enemy
 
     def acquire_attack_token(self, enemy: Enemy, cost: int) -> bool:
@@ -4836,7 +4892,7 @@ class FadesGame:
         hit = False
         for contact in report.results:
             player = players_by_id.get(contact.target_id)
-            if player is not None and player.take_damage(contact.damage, self, enemy):
+            if player is not None and player.take_damage(contact.damage, self, enemy, hitstun=contact.stun):
                 hit_memory.add(contact.target_id)
                 counts[contact.target_id] = counts.get(contact.target_id, 0) + 1
                 times[contact.target_id] = (
@@ -4853,7 +4909,7 @@ class FadesGame:
         old_y: float,
         old_z: float,
     ) -> bool:
-        """Resolve a thrown pipe across its complete fixed-step trajectory."""
+        """Resolve an enemy weapon across its complete fixed-step trajectory."""
 
         radius_x = 7.0
         radius_depth = 5.0
@@ -4873,8 +4929,8 @@ class FadesGame:
             half_depth=radius_depth,
             height=max(10.0, abs(projectile.z - old_z) + 10.0),
             damage=projectile.damage,
-            stun=0.34,
-            knockback_x=(1.0 if projectile.vx >= 0.0 else -1.0) * 18.0,
+            stun=max(0.0, float(projectile.hitstun or 0.34)),
+            knockback_x=(1.0 if projectile.vx >= 0.0 else -1.0) * float(projectile.knockback or 18.0),
             hit_grounded=True,
             hit_airborne=True,
             blocked_tags=frozenset({"downed"}),
@@ -4894,27 +4950,136 @@ class FadesGame:
         players_by_id = {("player", player.slot): player for player in self.players}
         contact = report.results[0]
         player = players_by_id.get(contact.target_id)
-        if player is None or not player.take_damage(contact.damage, self, projectile):
+        if player is None or not player.take_damage(contact.damage, self, projectile, hitstun=contact.stun):
             return False
         self._apply_combat_impact(contact)
+        if projectile.kind == "taser":
+            for offset in (-8.0, 0.0, 8.0):
+                self.add_effect(
+                    "spark",
+                    player.x + offset,
+                    player.y - 34.0,
+                    color=(129, 226, 255),
+                    radius=12,
+                    duration=0.24,
+                    direction=1 if projectile.vx >= 0.0 else -1,
+                )
+            self.add_effect(
+                "text",
+                player.x,
+                player.y - 62.0,
+                text="STUNNED!",
+                color=(160, 237, 255),
+                duration=0.62,
+            )
         return True
 
-    def spawn_pipe(self, enemy: Enemy, target: Player) -> None:
-        travel = 0.72
+    def _enemy_projectile_origin(
+        self,
+        enemy: Enemy,
+        fallback_z: float,
+    ) -> tuple[float, float, float]:
+        """Resolve a dedicated thrower's authored release point in world space."""
+
+        variant_id = str(enemy.variant_id or "").strip().lower().replace("-", "_").replace(" ", "_")
+        actor = enemy_animation_actor(enemy.kind, variant_id or None)
+        if not variant_id or actor != variant_id:
+            return enemy.x, enemy.y - 3.0, fallback_z
+
+        release_tick = action_segment_tick(
+            actor,
+            "attack",
+            "active",
+            0.0,
+            max(0.0, float(enemy.stats.get("active", 0.0))),
+        )
+        frame = sprite_atlas.enemy_frame(
+            enemy.kind,
+            "attack",
+            release_tick,
+            variant_id,
+        )
+        root = sprite_atlas.enemy_root_anchor(
+            enemy.kind,
+            "attack",
+            release_tick,
+            variant_id,
+        )
+        release = sprite_atlas.enemy_release_anchor(
+            enemy.kind,
+            "attack",
+            release_tick,
+            variant_id,
+        )
+        if frame is None or root is None or release is None:
+            raise ValueError(f"missing authored projectile release anchor: {variant_id}")
+        release_x = release[0] if enemy.facing >= 0 else frame.get_width() - 1 - release[0]
+        root_x = root[0] if enemy.facing >= 0 else frame.get_width() - 1 - root[0]
+        world_x = enemy.x + release_x - root_x
+        launch_z = max(0.0, float(root[1] - release[1]))
+        return world_x, enemy.y, launch_z
+
+    def spawn_enemy_projectile(self, enemy: Enemy, target: Player, kind: str) -> None:
+        projectile_kind = str(kind).strip().lower().replace("-", "_").replace(" ", "_")
+        profiles = {
+            "pipe": (0.72, 32.0, 105.0, 1.00, 0.34, 18.0, 3.0),
+            "glass_bottle": (0.74, 30.0, 112.0, 0.90, 0.36, 14.0, 2.2),
+            "bike_tire": (0.82, 24.0, 78.0, 1.10, 0.42, 24.0, 2.7),
+            "taser": (0.42, 25.0, 0.0, 0.58, 0.78, 5.0, 0.52),
+        }
+        if projectile_kind not in profiles:
+            raise ValueError(f"unknown enemy projectile kind: {projectile_kind}")
+        travel, launch_z, launch_vz, damage_scale, hitstun, knockback, ttl = profiles[projectile_kind]
+        origin_x, origin_y, launch_z = self._enemy_projectile_origin(enemy, launch_z)
+        if projectile_kind == "taser":
+            # The authored muzzle sits above a grounded fighter's hurt volume.
+            # Aim the dart through the target's torso while keeping its first
+            # frame exactly on that authored release point.
+            launch_vz = (float(target.z) + 26.0 - launch_z) / travel
         self.projectiles.append(Projectile(
-            x=enemy.x,
-            y=enemy.y - 3,
-            z=32.0,
-            vx=(target.x - enemy.x) / travel,
-            vy=(target.y - enemy.y) / travel,
-            vz=105.0,
-            damage=float(enemy.stats["damage"]),
+            x=origin_x,
+            y=origin_y,
+            z=launch_z,
+            vx=(target.x - origin_x) / travel,
+            vy=(target.y - origin_y) / travel,
+            vz=launch_vz,
+            damage=float(enemy.stats["damage"]) * damage_scale,
             owner_team="enemy",
-            kind="pipe",
+            kind=projectile_kind,
+            ttl=ttl,
             owner_id=enemy.enemy_id,
             attack_instance_id=enemy.attack_instance_id,
+            hitstun=hitstun,
+            knockback=knockback,
         ))
         self.audio.play("hit")
+
+    def spawn_pipe(self, enemy: Enemy, target: Player) -> None:
+        self.spawn_enemy_projectile(enemy, target, "pipe")
+
+    def enemy_projectile_landed(self, projectile: Projectile) -> None:
+        """Emit a material-specific floor impact for a missed enemy throw."""
+
+        if projectile.kind == "glass_bottle":
+            for offset in (-7.0, -2.0, 4.0, 9.0):
+                self.add_effect(
+                    "spark",
+                    projectile.x + offset,
+                    projectile.y - 2.0,
+                    color=(134, 219, 188),
+                    radius=8,
+                    duration=0.22,
+                    direction=-1 if offset < 0.0 else 1,
+                )
+            self.add_effect(
+                "impact",
+                projectile.x,
+                projectile.y - 2.0,
+                color=(92, 167, 142),
+                radius=14,
+                duration=0.20,
+            )
+            self.audio.play("hit")
 
     def award_hit(self, player: Player, enemy: Enemy, amount: float) -> None:
         player.hit_count += 1
@@ -5425,12 +5590,7 @@ class FadesGame:
                         if obj.state in {"windup", "attack", "recovery"}
                         else obj.state
                     )
-                    if obj.kind in {"security", "security_guard", "guard"}:
-                        actor_kind = "security"
-                    elif obj.kind == "homeless":
-                        actor_kind = "homeless"
-                    else:
-                        actor_kind = obj.kind
+                    actor_kind = enemy_animation_actor(obj.kind, obj.variant_id or None)
                     if obj.state == "windup":
                         enemy_tick = action_segment_tick(
                             actor_kind,
@@ -5464,7 +5624,7 @@ class FadesGame:
                         y,
                         z=0,
                         facing=obj.facing,
-                        state=enemy_state,
+                        state=obj.state,
                         kind=f"{obj.kind}:{obj.variant_id}" if obj.variant_id else obj.kind,
                         frame=enemy_tick,
                         hit_flash=obj.hit_flash,
@@ -5485,7 +5645,13 @@ class FadesGame:
                         color=(255, 101, 28),
                         radius=24,
                     )
-                if obj.state == "windup":
+                if (
+                    obj.state == "windup"
+                    and (
+                        not obj.variant_id
+                        or enemy_animation_actor(obj.kind, obj.variant_id) != obj.variant_id
+                    )
+                ):
                     pygame.draw.ellipse(surface, (255, 82, 79), (int(x - 22), int(y - 4), 44, 8), 2)
             elif kind == "pickup":
                 pixel_art.draw_pickup(surface, x, y, kind=obj.kind, frame=int(obj.age * 12.0))

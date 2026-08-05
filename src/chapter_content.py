@@ -39,7 +39,12 @@ _LEVEL_IDS = (
 )
 _PROFILE_NAMES = ("normal", "experienced", "minimum")
 _PLAYER_COUNTS = (1, 2, 3, 4)
-_RUNTIME_ENEMY_KINDS = {"stick", "cart", "whip", "pipe", "security", "homeless", "couch"}
+_RUNTIME_ENEMY_KINDS = {"stick", "cart", "whip", "pipe", "security", "homeless", "police", "couch"}
+_VARIANT_ATTACK_STYLES = {
+    "homeless": {"glass_bottle", "bike_tire"},
+    "security": {"security_flashlight"},
+    "police": {"nightstick", "taser"},
+}
 
 
 @dataclass(frozen=True)
@@ -140,7 +145,7 @@ def compile_level_content(
     ``resolved_variant_ids`` and ``runtime_kinds``.  The engine can therefore
     preserve the authored encounter metadata for dialogue, camera, rewards,
     and replay records while its current enemy factory receives only the
-    familiar ``stick/cart/whip/pipe/security/couch`` strings.
+    familiar ``stick/cart/whip/pipe/security/homeless/police/couch`` strings.
     """
 
     if int(player_count) not in _PLAYER_COUNTS:
@@ -491,7 +496,7 @@ def _validate_couch_contract(data: Mapping[str, Any], known_variants: Mapping[st
             raise ChapterContentError(f"{label}.retreat.taunt must preserve the authored Couch line")
         reinforcements = retreat.get("reinforcement_variants", ())
         _validate_variant_list(reinforcements, known_variants, f"{label}.retreat.reinforcement_variants")
-        if any(known_variants[str(variant)]["runtime_kind"] in {"couch", "security"} for variant in reinforcements):
+        if any(known_variants[str(variant)]["runtime_kind"] in {"couch", "security", "police"} for variant in reinforcements):
             raise ChapterContentError(f"{label}.retreat reinforcements must be fictional road-raider crew variants")
         additions = retreat.get("player_count_additions", {})
         if not isinstance(additions, Mapping):
@@ -503,7 +508,7 @@ def _validate_couch_contract(data: Mapping[str, Any], known_variants: Mapping[st
                 raise ChapterContentError(f"{label}.retreat additions for {player_key} must be a list")
             if extra_variants:
                 _validate_variant_list(extra_variants, known_variants, f"{label}.retreat.player_count_additions")
-            if any(known_variants[str(variant)]["runtime_kind"] in {"couch", "security"} for variant in extra_variants):
+            if any(known_variants[str(variant)]["runtime_kind"] in {"couch", "security", "police"} for variant in extra_variants):
                 raise ChapterContentError(f"{label}.retreat additions must be fictional road-raider crew variants")
         if not bool(retreat.get("returns_targetable_after_clear", False)):
             raise ChapterContentError(f"{label}.retreat must restore Couch targetability after the crew is cleared")
@@ -543,6 +548,13 @@ def validate_chapter_content(
         runtime_kind = _require_text(variant.get("runtime_kind"), f"{label}.runtime_kind")
         if runtime_kind not in _RUNTIME_ENEMY_KINDS:
             raise ChapterContentError(f"{label}.runtime_kind is not supported by the enemy factory")
+        allowed_attack_styles = _VARIANT_ATTACK_STYLES.get(runtime_kind)
+        attack_style = str(variant.get("attack_style", "")).strip()
+        if allowed_attack_styles is not None and attack_style and attack_style not in allowed_attack_styles:
+            allowed = ", ".join(sorted(allowed_attack_styles))
+            raise ChapterContentError(f"{label}.attack_style must be one of: {allowed}")
+        if "display_name" in variant:
+            _require_text(variant.get("display_name"), f"{label}.display_name")
         _require_text(variant.get("fictional_role"), f"{label}.fictional_role")
         known_variants[variant_id] = variant
 
@@ -588,6 +600,19 @@ def validate_chapter_content(
     _validate_couch_contract(data, known_variants)
 
     if gameplay is not None:
+        gameplay_enemy_kinds = {
+            str(kind).strip() for kind in gameplay.get("enemies", {}) if str(kind).strip()
+        }
+        missing_runtime_kinds = {
+            str(variant["runtime_kind"])
+            for variant in known_variants.values()
+            if str(variant["runtime_kind"]) not in gameplay_enemy_kinds
+        }
+        if missing_runtime_kinds:
+            raise ChapterContentError(
+                "gameplay enemies are missing authored runtime kinds: "
+                + ", ".join(sorted(missing_runtime_kinds))
+            )
         runtime_ids = tuple(str(level.get("id", "")) for level in campaign_levels(dict(gameplay)))
         if runtime_ids[: len(_LEVEL_IDS)] != _LEVEL_IDS:
             raise ChapterContentError("gameplay campaign no longer matches the Chapter 1 content route")

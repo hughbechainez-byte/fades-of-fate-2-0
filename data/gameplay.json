@@ -843,7 +843,13 @@
                                      "recovery":  0.50,
                                      "cooldown":  1.10,
                                      "score":  95,
-                                     "token_cost":  1
+                                     "token_cost":  1,
+                                     "ranged_attack_range":  128,
+                                     "ranged_depth_range":  24,
+                                     "ranged_windup":  0.56,
+                                     "ranged_active":  0.10,
+                                     "ranged_recovery":  0.65,
+                                     "ranged_cooldown":  1.90
                                  },
                     "security":  {
                                      "display_name":  "SECOND STREET SECURITY",
@@ -857,8 +863,25 @@
                                      "recovery":  0.45,
                                      "cooldown":  1.05,
                                      "score":  360,
-                                     "token_cost":  2
+                                     "token_cost":  1
                                  },
+                    "police":  {
+                                   "display_name":  "SECOND STREET POLICE",
+                                   "health":  118,
+                                   "speed":  68,
+                                   "damage":  14,
+                                   "attack_range":  48,
+                                   "depth_range":  17,
+                                   "windup":  0.42,
+                                   "active":  0.16,
+                                   "recovery":  0.50,
+                                   "cooldown":  1.20,
+                                   "score":  320,
+                                   "token_cost":  1,
+                                   "attack_style":  "nightstick",
+                                   "ranged_attack_range":  138,
+                                   "ranged_depth_range":  25
+                               },
                     "couch":  {
                                   "display_name":  "COUCH",
                                   "health":  620,

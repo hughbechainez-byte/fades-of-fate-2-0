@@ -452,6 +452,51 @@ COUCH_STATES = (
 )
 JERRY_STATES = ("idle", "support", "talk", "point")
 ENEMY_KINDS = ("stick", "cart", "whip", "pipe")
+ENEMY_VARIANT_KINDS = (
+    "encampment_bottle_scarf",
+    "encampment_bottle_puffer",
+    "encampment_tire_slinger",
+    "underpass_tire_runner",
+    "cart_tent_bottle_pitcher",
+    "mall_security_watch",
+    "event_security_heavy",
+    "night_security_patrol",
+    "city_patrol_nightstick",
+    "transit_patrol_nightstick",
+    "riot_line_nightstick",
+    "bike_patrol_taser",
+    "tactical_taser_unit",
+)
+ENEMY_VARIANT_ANIMATION_ACTORS = {variant: variant for variant in ENEMY_VARIANT_KINDS}
+
+# Runtime/content roles reuse authored enemy motion families.  Keep the
+# mapping explicit so a new role cannot silently fall back to unrelated art,
+# while presentation timing always resolves to a manifest-backed actor.
+ENEMY_RUNTIME_ANIMATION_ACTORS = {
+    "security": "stick",
+    "security_guard": "stick",
+    "guard": "stick",
+    "homeless": "stick",
+    "police": "stick",
+}
+
+
+def enemy_animation_actor(kind: object, variant_id: object | None = None) -> str:
+    """Resolve one supported runtime enemy role to its authored motion actor."""
+
+    normalized = str(kind or "stick").strip().lower().replace("-", "_").replace(" ", "_")
+    normalized_variant = str(variant_id or "").strip().lower().replace("-", "_").replace(" ", "_")
+    variant_actor = ENEMY_VARIANT_ANIMATION_ACTORS.get(normalized_variant)
+    if variant_actor is not None:
+        return variant_actor
+    if normalized in ENEMY_VARIANT_KINDS:
+        return normalized
+    if normalized in ENEMY_KINDS:
+        return normalized
+    actor = ENEMY_RUNTIME_ANIMATION_ACTORS.get(normalized)
+    if actor is None:
+        raise ValueError(f"unknown enemy kind: {normalized}")
+    return actor
 
 
 def _player_phase(actor: str, state: str) -> str:
@@ -538,9 +583,9 @@ def _loop_and_hold(actor: str, state: str) -> tuple[bool, int]:
         return True, 5
     if actor == "chief" and state == "sit":
         return True, 6
-    if actor in ENEMY_KINDS and state == "walk":
+    if actor in {*ENEMY_KINDS, *ENEMY_VARIANT_KINDS} and state == "walk":
         return True, 3
-    if actor in ENEMY_KINDS and state == "idle":
+    if actor in {*ENEMY_KINDS, *ENEMY_VARIANT_KINDS} and state == "idle":
         return True, 5
     if actor == "couch" and state == "walk":
         return True, 3
@@ -630,6 +675,20 @@ ANIMATION_CLIPS: tuple[AnimationClip, ...] = tuple(
             PHASES[_enemy_phase(state)],
         )
         for kind_index, kind in enumerate(ENEMY_KINDS)
+        for row, state in enumerate(ENEMY_STATES)
+    ]
+    + [
+        AnimationClip(
+            actor,
+            state,
+            f"assets/sprites/enemies/{actor}_animation_atlas.png",
+            row,
+            160,
+            128,
+            *_loop_and_hold(actor, state),
+            PHASES[_enemy_phase(state)],
+        )
+        for actor in ENEMY_VARIANT_KINDS
         for row, state in enumerate(ENEMY_STATES)
     ]
     + [
@@ -801,7 +860,7 @@ def clip_for(actor: str, state: str) -> AnimationClip:
         normalized_state = PLAYER_ALIASES.get(normalized_state, normalized_state)
     elif normalized_actor == "chief":
         normalized_state = CHIEF_ALIASES.get(normalized_state, normalized_state)
-    elif normalized_actor in ENEMY_KINDS:
+    elif normalized_actor in {*ENEMY_KINDS, *ENEMY_VARIANT_KINDS}:
         normalized_state = ENEMY_ALIASES.get(normalized_state, normalized_state)
     elif normalized_actor == "couch":
         normalized_state = COUCH_ALIASES.get(normalized_state, normalized_state)
@@ -991,6 +1050,9 @@ __all__ = [
     "CHIEF_STATES",
     "COUCH_STATES",
     "ENEMY_KINDS",
+    "ENEMY_RUNTIME_ANIMATION_ACTORS",
+    "ENEMY_VARIANT_ANIMATION_ACTORS",
+    "ENEMY_VARIANT_KINDS",
     "ENEMY_STATES",
     "EXPANDED_LOCOMOTION_POSES",
     "EXPANDED_PARTY_IDLE_POSES",
@@ -1002,6 +1064,7 @@ __all__ = [
     "POSES_PER_CLIP",
     "action_segment_tick",
     "clip_for",
+    "enemy_animation_actor",
     "timed_action_tick",
     "total_authored_poses",
 ]
