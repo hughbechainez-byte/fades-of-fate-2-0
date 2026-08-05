@@ -208,7 +208,7 @@ class CollisionRegressionTests(unittest.TestCase):
             {("enemy", first.enemy_id), ("enemy", second.enemy_id)},
         )
 
-    def test_fourth_combo_strike_is_a_deterministic_two_target_finisher(self) -> None:
+    def test_fourth_combo_strike_is_a_deterministic_front_crowd_finisher(self) -> None:
         self.shelly.state = "eliminated"
         first = self.enemy(122, self.dave.x + 25.0, self.dave.y)
         second = self.enemy(123, self.dave.x + 29.0, self.dave.y + 2.0)
@@ -216,7 +216,7 @@ class CollisionRegressionTests(unittest.TestCase):
         self.game.enemies = [rear, second, first]
         self.dave.combo_step = 3
         move = self.dave._light_move()
-        self.assertEqual(move["max_targets"], 3)
+        self.assertEqual(move["max_targets"], 4)
         self.dave.set_state("light", self.dave._move_total(move))
 
         for _ in range(20):

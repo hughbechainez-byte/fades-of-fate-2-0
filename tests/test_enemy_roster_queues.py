@@ -76,6 +76,7 @@ class EnemyRosterQueueTests(unittest.TestCase):
                     "mall_security_watch",
                     "road_raider_whip",
                     "event_security_heavy",
+                    "road_raider_cart",
                 ],
             ),
             (
@@ -86,6 +87,7 @@ class EnemyRosterQueueTests(unittest.TestCase):
                     "night_security_patrol",
                     "road_raider_stick",
                     "road_raider_whip",
+                    "road_raider_pipe",
                 ],
             ),
             (
@@ -96,6 +98,7 @@ class EnemyRosterQueueTests(unittest.TestCase):
                     "city_patrol_nightstick",
                     "road_raider_cart",
                     "bike_patrol_taser",
+                    "road_raider_whip",
                 ],
             ),
             (
@@ -106,6 +109,7 @@ class EnemyRosterQueueTests(unittest.TestCase):
                     "transit_patrol_nightstick",
                     "road_raider_cart",
                     "tactical_taser_unit",
+                    "road_raider_pipe",
                 ],
             ),
             (
@@ -116,6 +120,7 @@ class EnemyRosterQueueTests(unittest.TestCase):
                     "night_security_patrol",
                     "road_raider_stick",
                     "riot_line_nightstick",
+                    "road_raider_whip",
                 ],
             ),
         )
