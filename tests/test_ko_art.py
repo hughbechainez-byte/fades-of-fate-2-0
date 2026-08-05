@@ -182,8 +182,8 @@ class KOArtContractTests(unittest.TestCase):
         self.assertTrue(
             all(clip.atlas == "assets/sprites/ko_animation_atlas.png" for clip in clips)
         )
-        self.assertEqual(len(ANIMATION_CLIPS), 98)
-        self.assertEqual(total_authored_poses(), 900)
+        self.assertEqual(len(ANIMATION_CLIPS), 202)
+        self.assertEqual(total_authored_poses(), 1836)
         with self.assertRaisesRegex(ValueError, "unknown KO animation state"):
             clip_for("ko", "recover")
 
@@ -413,9 +413,17 @@ class KOArtContractTests(unittest.TestCase):
         self.assertEqual(report["validation"]["status"], "PASS")
         self.assertEqual(report["output"]["atlas_sha256"], _sha256(atlas_path))
         self.assertEqual(report["validation"]["total_authored_poses"], EXPECTED_TOTAL)
+        for portable_path in (
+            report["generator"]["path"],
+            report["output"]["atlas_path"],
+            report["source_contract"]["root"],
+        ):
+            self.assertFalse(Path(portable_path).is_absolute())
         for state, state_report in report["states"].items():
             for source in state_report["sources"]:
                 source_path = Path(source["path"])
+                self.assertFalse(source_path.is_absolute())
+                source_path = PROJECT_ROOT / source_path
                 self.assertTrue(source_path.is_file(), f"missing {state} source: {source_path}")
                 self.assertEqual(source["sha256"], _sha256(source_path))
         super_report = report["states"]["super"]

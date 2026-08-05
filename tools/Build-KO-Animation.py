@@ -535,6 +535,17 @@ def _generated_utc(value: str | None) -> str:
     return timestamp.isoformat().replace("+00:00", "Z")
 
 
+def _report_path(path: Path) -> str:
+    """Keep repository provenance portable across clean worktrees."""
+
+    resolved = Path(path).resolve()
+    try:
+        return resolved.relative_to(PROJECT_ROOT.resolve()).as_posix()
+    except ValueError:
+        # Temporary/external fixtures still need an unambiguous absolute path.
+        return str(resolved)
+
+
 def _atomic_write(path: Path, payload: bytes) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary = path.with_name(f".{path.name}.{os.getpid()}.tmp")
@@ -637,7 +648,7 @@ def build_ko_animation(
             extracted_sources.append(
                 {
                     "role": role,
-                    "path": str(source_path),
+                    "path": _report_path(source_path),
                     "filename": filename,
                     "sha256": _sha256_bytes(source_bytes),
                     "size_px": list(source.size),
@@ -761,11 +772,11 @@ def build_ko_animation(
         "actor": "ko",
         "generated_utc": _generated_utc(generated_utc),
         "generator": {
-            "path": str(generator_path),
+            "path": _report_path(generator_path),
             "sha256": _sha256_bytes(generator_path.read_bytes()),
         },
         "source_contract": {
-            "root": str(source_root),
+            "root": _report_path(source_root),
             "layout": "left-to-right connected complete bodies",
             "matte_rgb": list(KEY_COLOR),
             "state_order": list(STATE_NAMES),
@@ -782,7 +793,7 @@ def build_ko_animation(
         },
         "states": state_reports,
         "output": {
-            "atlas_path": str(atlas_output),
+            "atlas_path": _report_path(atlas_output),
             "atlas_sha256": _sha256_bytes(atlas_payload),
             "atlas_size_bytes": len(atlas_payload),
             "atlas_size_px": list(atlas.size),

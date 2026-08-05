@@ -2,11 +2,11 @@
   "actor": "ko",
   "generated_utc": "2026-08-04T21:38:40.324474Z",
   "generator": {
-    "path": "C:\\Users\\blowb\\Desktop\\the-fades-of-fate-ko-skater\\tools\\Build-KO-Animation.py",
-    "sha256": "59d29085e06bb489fb4987d47175fe4dbb7ff02475c93db8cb2fbbb6cd20e3e7"
+    "path": "tools/Build-KO-Animation.py",
+    "sha256": "94662c3a9b638ab6f33fcfbecb499fc26504fe42f921c6104f170bd514e85e02"
   },
   "output": {
-    "atlas_path": "C:\\Users\\blowb\\Desktop\\the-fades-of-fate-ko-skater\\assets\\sprites\\ko_animation_atlas.png",
+    "atlas_path": "assets/sprites/ko_animation_atlas.png",
     "atlas_sha256": "55f3195e72b526756ef9d5587b78efe60c9241a5683e91b4b856208448a4014b",
     "atlas_size_bytes": 813233,
     "atlas_size_px": [
@@ -39,7 +39,7 @@
       "super": 12
     },
     "resampling": "nearest-neighbor only",
-    "root": "C:\\Users\\blowb\\Desktop\\the-fades-of-fate-ko-skater\\art_source\\ko",
+    "root": "art_source/ko",
     "state_order": [
       "idle",
       "skate",
@@ -415,7 +415,7 @@
         255
       ],
       "source_mode": "RGBA",
-      "source_path": "C:\\Users\\blowb\\Desktop\\the-fades-of-fate-ko-skater\\art_source\\ko\\ko_idle_source.png",
+      "source_path": "art_source/ko/ko_idle_source.png",
       "source_sha256": "90fdba1ba791d55e2ad52d8a7a433f8e2480e1211483c4692b6fc2b596d0ab9b",
       "source_size_px": [
         2172,
@@ -431,7 +431,7 @@
             "visible_chroma_spill_pixels": 0
           },
           "mode": "RGBA",
-          "path": "C:\\Users\\blowb\\Desktop\\the-fades-of-fate-ko-skater\\art_source\\ko\\ko_idle_source.png",
+          "path": "art_source/ko/ko_idle_source.png",
           "pose_count": 8,
           "role": "primary",
           "segmentation": {
@@ -816,7 +816,7 @@
         255
       ],
       "source_mode": "RGBA",
-      "source_path": "C:\\Users\\blowb\\Desktop\\the-fades-of-fate-ko-skater\\art_source\\ko\\ko_kick_source.png",
+      "source_path": "art_source/ko/ko_kick_source.png",
       "source_sha256": "d9c953ef5a6df10a2cc47539a0d7c233c0eaee66339aa1f8d7afd5b0e4b2486f",
       "source_size_px": [
         2172,
@@ -832,7 +832,7 @@
             "visible_chroma_spill_pixels": 0
           },
           "mode": "RGBA",
-          "path": "C:\\Users\\blowb\\Desktop\\the-fades-of-fate-ko-skater\\art_source\\ko\\ko_kick_source.png",
+          "path": "art_source/ko/ko_kick_source.png",
           "pose_count": 8,
           "role": "primary",
           "segmentation": {
@@ -1217,7 +1217,7 @@
         255
       ],
       "source_mode": "RGBA",
-      "source_path": "C:\\Users\\blowb\\Desktop\\the-fades-of-fate-ko-skater\\art_source\\ko\\ko_prepare_source.png",
+      "source_path": "art_source/ko/ko_prepare_source.png",
       "source_sha256": "f07db2a1a62a32c21fceb527b9420d377dc1fcbd28d587247a17ce95ae4debe8",
       "source_size_px": [
         2172,
@@ -1233,7 +1233,7 @@
             "visible_chroma_spill_pixels": 0
           },
           "mode": "RGBA",
-          "path": "C:\\Users\\blowb\\Desktop\\the-fades-of-fate-ko-skater\\art_source\\ko\\ko_prepare_source.png",
+          "path": "art_source/ko/ko_prepare_source.png",
           "pose_count": 8,
           "role": "primary",
           "segmentation": {
@@ -1618,7 +1618,7 @@
         255
       ],
       "source_mode": "RGBA",
-      "source_path": "C:\\Users\\blowb\\Desktop\\the-fades-of-fate-ko-skater\\art_source\\ko\\ko_punch_1_source.png",
+      "source_path": "art_source/ko/ko_punch_1_source.png",
       "source_sha256": "34f97a312a00595ac86c4d9f8a01f51b002b76230df67a2a893e3e8a80e89554",
       "source_size_px": [
         2172,
@@ -1634,7 +1634,7 @@
             "visible_chroma_spill_pixels": 0
           },
           "mode": "RGBA",
-          "path": "C:\\Users\\blowb\\Desktop\\the-fades-of-fate-ko-skater\\art_source\\ko\\ko_punch_1_source.png",
+          "path": "art_source/ko/ko_punch_1_source.png",
           "pose_count": 8,
           "role": "primary",
           "segmentation": {
@@ -2019,7 +2019,7 @@
         255
       ],
       "source_mode": "RGBA",
-      "source_path": "C:\\Users\\blowb\\Desktop\\the-fades-of-fate-ko-skater\\art_source\\ko\\ko_punch_2_source.png",
+      "source_path": "art_source/ko/ko_punch_2_source.png",
       "source_sha256": "bc93f65739013bc91bea652a169dfd20c99150921a0d1dfb1bea0d6528fb14e0",
       "source_size_px": [
         2172,
@@ -2035,7 +2035,7 @@
             "visible_chroma_spill_pixels": 0
           },
           "mode": "RGBA",
-          "path": "C:\\Users\\blowb\\Desktop\\the-fades-of-fate-ko-skater\\art_source\\ko\\ko_punch_2_source.png",
+          "path": "art_source/ko/ko_punch_2_source.png",
           "pose_count": 8,
           "role": "primary",
           "segmentation": {
@@ -2580,7 +2580,7 @@
         255
       ],
       "source_mode": "RGBA",
-      "source_path": "C:\\Users\\blowb\\Desktop\\the-fades-of-fate-ko-skater\\art_source\\ko\\ko_skate_source.png",
+      "source_path": "art_source/ko/ko_skate_source.png",
       "source_sha256": "baea3222f18bf00ae98de6bd6b3a8451a3ecc915880bf2eec06558e42b562bd5",
       "source_size_px": [
         2172,
@@ -2596,7 +2596,7 @@
             "visible_chroma_spill_pixels": 0
           },
           "mode": "RGBA",
-          "path": "C:\\Users\\blowb\\Desktop\\the-fades-of-fate-ko-skater\\art_source\\ko\\ko_skate_source.png",
+          "path": "art_source/ko/ko_skate_source.png",
           "pose_count": 12,
           "role": "primary",
           "segmentation": {
@@ -3176,7 +3176,7 @@
         255
       ],
       "source_mode": "RGBA",
-      "source_path": "C:\\Users\\blowb\\Desktop\\the-fades-of-fate-ko-skater\\art_source\\ko\\ko_super_source.png",
+      "source_path": "art_source/ko/ko_super_source.png",
       "source_sha256": "0e8f48bdadf31f361234ab1d88a1bdc3e429720f39973bb3205100f9b1e7f9ee",
       "source_size_px": [
         2172,
@@ -3192,7 +3192,7 @@
             "visible_chroma_spill_pixels": 0
           },
           "mode": "RGBA",
-          "path": "C:\\Users\\blowb\\Desktop\\the-fades-of-fate-ko-skater\\art_source\\ko\\ko_super_source.png",
+          "path": "art_source/ko/ko_super_source.png",
           "pose_count": 11,
           "role": "base",
           "segmentation": {
@@ -3230,7 +3230,7 @@
             "visible_chroma_spill_pixels": 0
           },
           "mode": "RGBA",
-          "path": "C:\\Users\\blowb\\Desktop\\the-fades-of-fate-ko-skater\\art_source\\ko\\ko_super_hook_source.png",
+          "path": "art_source/ko/ko_super_hook_source.png",
           "pose_count": 1,
           "role": "hook",
           "segmentation": {

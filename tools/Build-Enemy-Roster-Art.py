@@ -436,7 +436,11 @@ def build(
         "actors": actors_metadata,
     }
     metadata_path = output_dir / "enemy_variant_source_anchors.json"
-    metadata_path.write_text(json.dumps(metadata, indent=2) + "\n", encoding="utf-8")
+    metadata_path.write_text(
+        json.dumps(metadata, indent=2) + "\n",
+        encoding="utf-8",
+        newline="\n",
+    )
     print(f"Wrote {metadata_path.relative_to(output_root)}: {len(ACTORS)} actors")
     _qa_sheet(cels_by_actor, actors_metadata, qa_output, show_anchors=False)
     _qa_sheet(cels_by_actor, actors_metadata, anchor_qa_output, show_anchors=True)

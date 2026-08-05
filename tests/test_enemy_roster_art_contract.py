@@ -377,6 +377,12 @@ class EnemyRosterArtContractTests(unittest.TestCase):
                 temporary_root / "anchor-qa.png",
             )
             self.assertEqual(rebuilt, checked_in_metadata)
+            rebuilt_metadata_path = temporary_root / metadata_path.relative_to(PROJECT_ROOT)
+            self.assertEqual(
+                rebuilt_metadata_path.read_bytes(),
+                metadata_path.read_bytes(),
+                "source landmark metadata is not byte-deterministic across worktrees",
+            )
             for variant_id in MODEL_IDS:
                 relative = checked_in_metadata["actors"][variant_id]["source_atlas"]
                 self.assertEqual(

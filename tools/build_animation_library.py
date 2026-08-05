@@ -1748,6 +1748,7 @@ def _make_atlases(
     variant_metadata_destination.write_text(
         json.dumps(variant_anchor_metadata, indent=2) + "\n",
         encoding="utf-8",
+        newline="\n",
     )
     print(
         f"Wrote {variant_metadata_destination.relative_to(output_root)}: "
@@ -1767,6 +1768,7 @@ def _make_atlases(
             )
             + "\n",
             encoding="utf-8",
+            newline="\n",
         )
         print(f"Wrote {metadata_destination.relative_to(output_root)}: {sum(len(phases) for phases in dave_fist_metadata.values())} pose landmarks")
     return rendered

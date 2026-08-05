@@ -5618,13 +5618,18 @@ class FadesGame:
                     else:
                         enemy_action = obj.state in {"spawn", "hitstun", "down", "dead", "ko_dazed", "ko_fall"}
                         enemy_tick = int(obj.state_clock * ANIMATION_PLAYBACK_HZ) if enemy_action else obj.animation_tick
+                    enemy_render_state = (
+                        enemy_state
+                        if obj.state in {"ko_dazed", "ko_fall"}
+                        else obj.state
+                    )
                     enemy_rect = pixel_art.draw_enemy(
                         surface,
                         x,
                         y,
                         z=0,
                         facing=obj.facing,
-                        state=obj.state,
+                        state=enemy_render_state,
                         kind=f"{obj.kind}:{obj.variant_id}" if obj.variant_id else obj.kind,
                         frame=enemy_tick,
                         hit_flash=obj.hit_flash,
