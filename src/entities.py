@@ -247,6 +247,8 @@ class Player:
                 "walk",
                 _hero_stride_distance(self.character),
             )
+        if self.state in {"jump", "air_attack"}:
+            return _animation_tick(self.state_clock)
         return _animation_tick(self.animation_clock)
 
     @property
@@ -409,11 +411,13 @@ class Player:
         if "heavy" in snapshot.pressed and self.z <= 1.0:
             game.audio.play_character(self.character, "grunt")
             self.combo_style = "c"
+            self.combo_step = self.combo_step if self.combo_grace > 0 else 0
             if game.try_throw(self):
                 self.set_state("heavy", 0.52)
                 self.attack_fired = True
             else:
-                self.set_state("heavy", self._move_total(self.moves["heavy"]))
+                move = self._combo_move() if "heavy_combo" in self.moves else self.moves["heavy"]
+                self.set_state("heavy", self._move_total(move))
             self._maybe_bark_as_jermaine(game)
             return
 
@@ -528,7 +532,10 @@ class Player:
                 self.queued_heavy = True
                 self.heavy_buffer_remaining = float(move.get("buffer_window", 0.22))
         elif self.state == "heavy":
-            move = self.moves["heavy"]
+            move = self._combo_move() if self.combo_style == "c" and "heavy_combo" in self.moves else self.moves["heavy"]
+            if "heavy" in snapshot.pressed and self.combo_style == "c" and "heavy_combo" in self.moves:
+                self.queued_heavy = True
+                self.heavy_buffer_remaining = float(move.get("buffer_window", 0.22))
         else:
             move = self.moves["air"]
 
@@ -582,12 +589,35 @@ class Player:
                     next_move = self._combo_move()
                     self.set_state("light", self._move_total(next_move))
                     return
+        elif self.state == "heavy" and self.combo_style == "c" and "heavy_combo" in self.moves:
+            cancel_start = float(move.get("cancel_start", self.state_duration))
+            can_chain = self.attack_connected or bool(move.get("chain_on_whiff", True))
+            if self.state_clock >= max(active_end, cancel_start):
+                if (
+                    self.queued_heavy
+                    and self.heavy_buffer_remaining > 0.0
+                    and can_chain
+                    and self.combo_step < len(self.moves["heavy_combo"]) - 1
+                ):
+                    self.queued_light = False
+                    self.queued_heavy = False
+                    self.light_buffer_remaining = 0.0
+                    self.heavy_buffer_remaining = 0.0
+                    self.combo_step += 1
+                    self.combo_grace = float(move.get("combo_grace", 0.42))
+                    next_move = self._combo_move()
+                    self.set_state("heavy", self._move_total(next_move))
+                    return
 
         if self.state_clock >= self.state_duration:
             light_sequence = self._light_sequence()
             if self.state == "light":
                 self.combo_grace = float(move.get("combo_grace", 0.52))
                 if self.combo_step >= len(light_sequence) - 1:
+                    self.combo_step = 0
+            elif self.state == "heavy":
+                self.combo_grace = float(move.get("combo_grace", 0.42))
+                if self.combo_style == "c" and "heavy_combo" in self.moves and self.combo_step >= len(self.moves["heavy_combo"]) - 1:
                     self.combo_step = 0
             self.queued_light = False
             self.queued_heavy = False

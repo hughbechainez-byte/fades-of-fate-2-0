@@ -193,6 +193,8 @@ class GameplayConfigTests(unittest.TestCase):
     def test_character_light_combo_sequences_require_valid_integer_indices(self) -> None:
         valid = deepcopy(self.data)
         valid["players"]["shelly"]["light_combo_sequence"] = [0, 2, 3]
+        valid["players"]["black_dave"]["alt_light_combo_sequence"] = [1, 0, 2]
+        valid["players"]["black_dave"]["heavy_combo_sequence"] = [0, 1, 2, 3]
         validate_gameplay(valid)
 
         invalid_cases = (
@@ -200,14 +202,19 @@ class GameplayConfigTests(unittest.TestCase):
             ("shelly", []),
             ("shelly", [1.0]),
             ("shelly", [True]),
+            ("black_dave", [len(self.data["moves"]["light_combo"])], "alt_light_combo_sequence", "moves.light_combo"),
+            ("black_dave", [len(self.data["moves"]["heavy_combo"])], "heavy_combo_sequence", "moves.heavy_combo"),
         )
-        for character, sequence in invalid_cases:
-            with self.subTest(character=character, sequence=sequence):
+        for case in invalid_cases:
+            character, sequence = case[0], case[1]
+            sequence_name = case[2] if len(case) > 2 else "light_combo_sequence"
+            move_key = case[3] if len(case) > 3 else "moves.light_combo"
+            with self.subTest(character=character, sequence=sequence, sequence_name=sequence_name):
                 invalid = deepcopy(self.data)
-                invalid["players"][character]["light_combo_sequence"] = sequence
+                invalid["players"][character][sequence_name] = sequence
                 with self.assertRaisesRegex(
                     ConfigError,
-                    rf"players\.{character}\.light_combo_sequence",
+                    rf"players\.{character}\.{sequence_name}",
                 ):
                     validate_gameplay(invalid)
 

@@ -1121,21 +1121,29 @@ def validate_gameplay(
 
     for character in ("black_dave", "shelly", "jermaine", "white_dave"):
         character_config = data["players"].get(character, {})
-        sequence = character_config.get("light_combo_sequence")
-        if sequence is None:
-            continue
-        label = f"players.{character}.light_combo_sequence"
-        if not isinstance(sequence, list) or not sequence:
-            raise ConfigError(f"{label} must be a non-empty list of move indices")
-        for index, move_index in enumerate(sequence):
-            if (
-                isinstance(move_index, bool)
-                or not isinstance(move_index, int)
-                or not 0 <= move_index < len(light_combo)
-            ):
-                raise ConfigError(
-                    f"{label}[{index}] must index moves.light_combo"
-                )
+        for sequence_name, move_key in (
+            ("light_combo_sequence", "light_combo"),
+            ("alt_light_combo_sequence", "light_combo"),
+            ("heavy_combo_sequence", "heavy_combo"),
+        ):
+            sequence = character_config.get(sequence_name)
+            if sequence is None:
+                continue
+            move_table = moves.get(move_key, ())
+            label = f"players.{character}.{sequence_name}"
+            if not isinstance(sequence, list) or not sequence:
+                raise ConfigError(f"{label} must be a non-empty list of move indices")
+            if not isinstance(move_table, list) or not move_table:
+                raise ConfigError(f"moves.{move_key} must contain at least one attack")
+            for index, move_index in enumerate(sequence):
+                if (
+                    isinstance(move_index, bool)
+                    or not isinstance(move_index, int)
+                    or not 0 <= move_index < len(move_table)
+                ):
+                    raise ConfigError(
+                        f"{label}[{index}] must index moves.{move_key}"
+                    )
 
     enemies = data["enemies"]
     if not isinstance(enemies, dict):
