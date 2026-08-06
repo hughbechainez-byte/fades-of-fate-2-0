@@ -1392,7 +1392,13 @@ class FadesGame:
         if not pool:
             return 0
         if companion_slot == 0:
-            current = 0 if slot.cpu_companion_index is None else slot.cpu_companion_index
+            if slot.cpu_companion_index is None:
+                controlled_character = PLAYABLE_CHARACTERS[slot.character_index]
+                current = SOLO_CPU_COMPANIONS.index(
+                    self._automatic_solo_cpu_character(controlled_character)
+                )
+            else:
+                current = slot.cpu_companion_index
             return (current + 1) % len(pool)
         if companion_slot == 1:
             current = 0 if slot.cpu_companion_index_2 is None else slot.cpu_companion_index_2
@@ -1430,7 +1436,9 @@ class FadesGame:
         if direction < 0:
             pool = self._solo_cpu_companion_pool(slot, 0)
             if slot.cpu_companion_index is None:
-                slot.cpu_companion_index = 0
+                slot.cpu_companion_index = SOLO_CPU_COMPANIONS.index(
+                    self._automatic_solo_cpu_character(PLAYABLE_CHARACTERS[slot.character_index])
+                )
             current = slot.cpu_companion_index % len(pool)
             next_index = (current - 1) % len(pool)
         slot.cpu_companion_index = next_index
@@ -4054,16 +4062,26 @@ class FadesGame:
             runtime_kinds = group.get("runtime_kinds", ())
             if isinstance(runtime_kinds, (list, tuple)) and runtime_kinds:
                 authored_groups.append([str(kind) for kind in runtime_kinds])
+
+        def keep_variant(identifier: str) -> bool:
+            if identifier.endswith(("_fury", "_striker")):
+                return False
+            if identifier.endswith("_heavy") and not identifier.startswith("event_"):
+                return False
+            return True
+
         if focused_limit is None:
-            return [identifier for group in authored_groups for identifier in group]
+            return [identifier for group in authored_groups for identifier in group if keep_variant(identifier)]
 
         wave: list[str] = []
-        # Only a deliberately capped main encounter round-robins groups. Full
-        # environmental and optional waves retain their authored sequencing.
+        # Only a deliberately capped main encounter round-robins groups.
+        # Full environmental and optional waves retain their authored sequencing.
         for index in range(max((len(group) for group in authored_groups), default=0)):
             for group in authored_groups:
                 if index < len(group):
-                    wave.append(group[index])
+                    identifier = group[index]
+                    if keep_variant(identifier):
+                        wave.append(identifier)
         return self._focused_enemy_wave(wave, focused_limit)
 
     def _resolve_enemy_identifier(self, identifier: str) -> tuple[str, str]:
