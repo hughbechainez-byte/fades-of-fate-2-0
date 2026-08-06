@@ -85,6 +85,7 @@ PLAYER_COLORS = (
 )
 
 PLAYABLE_CHARACTERS = ("black_dave", "shelly", "jermaine", "white_dave")
+MAX_CPU_COMPANIONS = 3
 SOLO_CPU_COMPANIONS = ("black_dave", "shelly", "ko", "white_dave")
 CHARACTER_LABELS = {
     "black_dave": "BLACK DAVE",
@@ -149,6 +150,8 @@ class SelectSlot:
     confirmed: bool = False
     nav_cooldown: float = 0.0
     cpu_companion_index: int | None = None
+    cpu_companion_index_2: int | None = None
+    cpu_companion_index_3: int | None = None
 
 
 @dataclass(slots=True)
@@ -375,7 +378,7 @@ class FadesGame:
             self.character_portraits[name] = pygame.transform.smoothscale(portrait, portrait_sizes[name])
         self.cpu_companion_portraits = {
             name: pygame.transform.smoothscale(self.character_portraits[name], (42, 67))
-            for name in SOLO_CPU_COMPANIONS
+            for name in (*PLAYABLE_CHARACTERS, "ko")
         }
         self.state = "loading"
         self.loading_timer = 1.75
@@ -781,9 +784,22 @@ class FadesGame:
                         slot.cpu_companion_index = cpu_index
                         slot.confirmed = False
                         self.audio.play("menu")
+                        self.log_breadcrumb("cpu_companion_selected", character=character, source="mouse", companion_slot=1)
+                        return
+                for companion_slot, rect in enumerate(self._extra_cpu_companion_card_rects(), start=2):
+                    if rect.collidepoint(point):
+                        slot = self.select_slots[0]
+                        next_index = self._next_cpu_companion_index(slot, companion_slot)
+                        if companion_slot == 2:
+                            slot.cpu_companion_index_2 = next_index
+                        else:
+                            slot.cpu_companion_index_3 = next_index
+                        slot.confirmed = False
+                        self.audio.play("menu")
                         self.log_breadcrumb(
                             "cpu_companion_selected",
-                            character=character,
+                            character=self._solo_cpu_companion(slot, companion_slot),
+                            companion_slot=companion_slot,
                             source="mouse",
                         )
                         return
@@ -1308,10 +1324,18 @@ class FadesGame:
             controlled_index = slot.character_index
             controlled_character = PLAYABLE_CHARACTERS[controlled_index]
             controlled = CHARACTER_LABELS[controlled_character]
-            companion_character = self._solo_cpu_character(slot)
-            companion = CHARACTER_LABELS[companion_character]
+            companions = [CHARACTER_LABELS[character] for character in self._solo_cpu_companions(slot)]
+            if not companions:
+                companion = "NONE"
+                companion_label = "CPU COMPANIONS"
+            elif len(companions) == 1:
+                companion = companions[0]
+                companion_label = "CPU COMPANION"
+            else:
+                companion = ", ".join(companions)
+                companion_label = "CPU COMPANIONS"
             return (
-                f"YOU CONTROL: {controlled}  •  CPU COMPANION: {companion}",
+                f"YOU CONTROL: {controlled}  •  {companion_label}: {companion}",
                 f"UP/DOWN OR CLICK TO CHOOSE CPU  •  CHIEF SHARED  •  {controller_line}",
             )
         return (
@@ -1327,22 +1351,92 @@ class FadesGame:
         return tuple(pygame.Rect(16 + index * 156, 229, 144, 91) for index in range(4))
 
     @staticmethod
+    def _extra_cpu_companion_card_rects() -> tuple[pygame.Rect, ...]:
+        return (pygame.Rect(8, 133, 120, 91), pygame.Rect(134, 133, 120, 91))
+
+    def _solo_cpu_companion_pool(self, slot: SelectSlot, companion_slot: int) -> tuple[str | None, ...]:
+        if companion_slot == 0:
+            return SOLO_CPU_COMPANIONS
+        controlled_character = PLAYABLE_CHARACTERS[slot.character_index]
+        primary = self._solo_cpu_companion(slot, 0)
+        previous_companions: list[str] = []
+        for index in range(1, companion_slot):
+            previous = self._solo_cpu_companion(slot, index)
+            if previous is not None:
+                previous_companions.append(previous)
+        excluded = {controlled_character, "ko"}
+        if primary is not None:
+            excluded.add(primary)
+        excluded.update(previous_companions)
+        return (None, *tuple(character for character in PLAYABLE_CHARACTERS if character not in excluded))
+
+    def _solo_cpu_companion(self, slot: SelectSlot, companion_slot: int) -> str | None:
+        pool = self._solo_cpu_companion_pool(slot, companion_slot)
+        if not pool:
+            return None
+        if companion_slot == 0:
+            if slot.cpu_companion_index is None:
+                controlled_character = PLAYABLE_CHARACTERS[slot.character_index]
+                return self._automatic_solo_cpu_character(controlled_character)
+            return SOLO_CPU_COMPANIONS[slot.cpu_companion_index % len(SOLO_CPU_COMPANIONS)]
+        if companion_slot == 1:
+            raw_index = 0 if slot.cpu_companion_index_2 is None else slot.cpu_companion_index_2
+            return pool[raw_index % len(pool)]
+        if companion_slot == 2:
+            raw_index = 0 if slot.cpu_companion_index_3 is None else slot.cpu_companion_index_3
+            return pool[raw_index % len(pool)]
+        return None
+
+    def _next_cpu_companion_index(self, slot: SelectSlot, companion_slot: int) -> int:
+        pool = self._solo_cpu_companion_pool(slot, companion_slot)
+        if not pool:
+            return 0
+        if companion_slot == 0:
+            current = 0 if slot.cpu_companion_index is None else slot.cpu_companion_index
+            return (current + 1) % len(pool)
+        if companion_slot == 1:
+            current = 0 if slot.cpu_companion_index_2 is None else slot.cpu_companion_index_2
+        elif companion_slot == 2:
+            current = 0 if slot.cpu_companion_index_3 is None else slot.cpu_companion_index_3
+        else:
+            return 0
+        return (current + 1) % len(pool)
+
+    def _solo_cpu_companions(self, slot: SelectSlot) -> tuple[str, ...]:
+        companions: list[str] = []
+        primary = self._solo_cpu_companion(slot, 0)
+        if primary is None:
+            return tuple(companions)
+        if primary == "ko":
+            return ("ko",)
+        companions.append(primary)
+        for companion_slot in range(1, MAX_CPU_COMPANIONS):
+            character = self._solo_cpu_companion(slot, companion_slot)
+            if character is not None and character not in companions:
+                companions.append(character)
+                if len(companions) >= MAX_CPU_COMPANIONS:
+                    break
+        return tuple(companions)
+
+    @staticmethod
     def _automatic_solo_cpu_character(controlled_character: str) -> str:
         return "black_dave" if controlled_character == "shelly" else "shelly"
 
     def _solo_cpu_character(self, slot: SelectSlot) -> str:
-        if slot.cpu_companion_index is None:
-            controlled = PLAYABLE_CHARACTERS[slot.character_index]
-            return self._automatic_solo_cpu_character(controlled)
-        return SOLO_CPU_COMPANIONS[slot.cpu_companion_index % len(SOLO_CPU_COMPANIONS)]
+        return self._solo_cpu_companion(slot, 0)
 
     def _cycle_solo_cpu_character(self, slot: SelectSlot, direction: int) -> str:
-        current = self._solo_cpu_character(slot)
-        current_index = SOLO_CPU_COMPANIONS.index(current)
-        slot.cpu_companion_index = (current_index + direction) % len(SOLO_CPU_COMPANIONS)
+        next_index = self._next_cpu_companion_index(slot, 0)
+        if direction < 0:
+            pool = self._solo_cpu_companion_pool(slot, 0)
+            if slot.cpu_companion_index is None:
+                slot.cpu_companion_index = 0
+            current = slot.cpu_companion_index % len(pool)
+            next_index = (current - 1) % len(pool)
+        slot.cpu_companion_index = next_index
         selected = self._solo_cpu_character(slot)
         self.audio.play("menu")
-        self.log_breadcrumb("cpu_companion_selected", character=selected, source="navigation")
+        self.log_breadcrumb("cpu_companion_selected", character=selected, companion_slot=1, source="navigation")
         return selected
 
     def _prepare_runtime_chapter_content(self) -> None:
@@ -1536,10 +1630,10 @@ class FadesGame:
         self.level_outro_frame = None
 
         characters = PLAYABLE_CHARACTERS
-        solo_cpu_character = (
-            self._solo_cpu_character(self.select_slots[0])
+        solo_cpu_characters = (
+            self._solo_cpu_companions(self.select_slots[0])
             if len(self.select_slots) == 1
-            else None
+            else ()
         )
         for index, slot in enumerate(self.select_slots):
             character = characters[slot.character_index]
@@ -1556,23 +1650,24 @@ class FadesGame:
             )
             self.players.append(player)
 
-        # Solo play exposes the standard heroes plus KO as explicit CPU support
-        # choices. KO keeps his dedicated low-frequency one-hit state machine;
-        # he must never be forced through Player's generic CPU combat states.
-        if solo_cpu_character in {"black_dave", "shelly", "white_dave"}:
+        # Solo play exposes standard-hero CPU support up to MAX_CPU_COMPANIONS.
+        # KO is still a dedicated companion object and must never be forced
+        # through Player combat states.
+        if solo_cpu_characters and solo_cpu_characters[0] != "ko":
             human = self.players[0]
-            companion = Player(
-                slot=1,
-                character=solo_cpu_character,
-                binding={"type": "cpu", "instance_id": -2},
-                x=human.x - 42.0,
-                y=human.y + 18.0,
-                config=self.data["players"],
-                moves=self.data["moves"],
-                color_index=1,
-                is_cpu=True,
-            )
-            self.players.append(companion)
+            for companion_slot, character in enumerate(solo_cpu_characters, start=1):
+                companion = Player(
+                    slot=companion_slot,
+                    character=character,
+                    binding={"type": "cpu", "instance_id": -2 - companion_slot + 1},
+                    x=human.x - 42.0 - companion_slot * 14.0,
+                    y=human.y + 18.0 + 3.0 * companion_slot,
+                    config=self.data["players"],
+                    moves=self.data["moves"],
+                    color_index=companion_slot,
+                    is_cpu=True,
+                )
+                self.players.append(companion)
 
         chief_cfg = self.data["chief"]
         chief_meter_start = float(chief_cfg.get("command_start_meter", 100.0))
@@ -1603,7 +1698,7 @@ class FadesGame:
         # KO is CPU-only support, selected from the solo roster rather than an
         # unconditional cameo or a human-playable placeholder.
         ko_cfg = self.data["ko_companion"]
-        if solo_cpu_character == "ko" and self.players and bool(ko_cfg.get("enabled", True)):
+        if solo_cpu_characters and solo_cpu_characters[0] == "ko" and self.players and bool(ko_cfg.get("enabled", True)):
             ko_owner = next((player for player in self.players if not player.is_cpu), self.players[0])
             self.ko_companion = KOCompanion(
                 ko_owner,
@@ -1628,7 +1723,7 @@ class FadesGame:
                 {"slot": p.slot + 1, "character": p.character, "binding": p.binding, "cpu": p.is_cpu}
                 for p in self.players
             ],
-            cpu_support=solo_cpu_character,
+            cpu_support=",".join(solo_cpu_characters) if solo_cpu_characters else None,
         )
 
     def _update_gameplay(self, dt: float) -> None:
@@ -5296,14 +5391,12 @@ class FadesGame:
                 pygame.draw.rect(surface, (255, 151, 112), (x + 25, 57, 94, 149), 2)
                 self._text(surface, self.font_tiny, "CUTTERS • BOLT BREAKER", (255, 188, 155), (x + 72, 205), center=True)
 
-        solo_cpu_character = (
-            self._solo_cpu_character(self.select_slots[0])
-            if len(self.select_slots) == 1
-            else None
-        )
+        solo_cpu_character = self._solo_cpu_character(self.select_slots[0]) if len(self.select_slots) == 1 else None
+        solo_cpu_characters = self._solo_cpu_companions(self.select_slots[0]) if len(self.select_slots) == 1 else ()
         cpu_card_colors = {
             "black_dave": (24, 91, 119),
             "shelly": (112, 50, 86),
+            "jermaine": (205, 82, 57),
             "ko": (73, 66, 98),
             "white_dave": (105, 54, 42),
         }
@@ -5320,14 +5413,7 @@ class FadesGame:
                 surface.blit(self.cpu_companion_portraits[cpu_character], (x + 5, 239))
                 text_x = x + 82
                 self._text(surface, self.font_tiny, "CPU SUPPORT", (255, 240, 174), (text_x, 239), center=True)
-                self._text(
-                    surface,
-                    self.font_tiny,
-                    CHARACTER_LABELS[cpu_character],
-                    (255, 246, 210),
-                    (text_x, 254),
-                    center=True,
-                )
+                self._text(surface, self.font_tiny, CHARACTER_LABELS[cpu_character], (255, 246, 210), (text_x, 254), center=True)
                 status = "SELECTED" if selected else "CLICK"
                 self._text(surface, self.font_tiny, status, border, (text_x, 275), center=True)
                 if cpu_character == "ko":
@@ -5335,7 +5421,6 @@ class FadesGame:
                 else:
                     self._text(surface, self.font_tiny, "FULL COMBAT AI", (190, 200, 220), (text_x, 292), center=True)
                 continue
-
             color = PLAYER_COLORS[index]
             self._panel(surface, rect, (29, 35, 54) if hovered else (13, 16, 29), (255, 222, 99) if hovered else color)
             if index < len(self.select_slots):
@@ -5350,11 +5435,48 @@ class FadesGame:
                 self._text(surface, self.font_tiny, choose_line, (190, 200, 220), (center_x, 288), center=True)
                 begin_line = "CONFIRM / START TO BEGIN" if len(self.select_slots) == 1 else "PRESS AGAIN / START TO BEGIN"
                 self._text(surface, self.font_tiny, begin_line, (150, 236, 255), (center_x, 304), center=True)
-            else:
+            elif len(self.select_slots) == 1:
                 self._text(surface, self.font, f"P{index + 1}", color, (rect.centerx, 247), center=True)
                 self._text(surface, self.font_small, "PRESS A / START", (212, 217, 230), (rect.centerx, 275), center=True)
                 if index == 0:
                     self._text(surface, self.font_tiny, "OR ENTER", (155, 166, 188), (rect.centerx, 294), center=True)
+
+        if len(self.select_slots) == 1:
+            for companion_slot, rect in enumerate(self._extra_cpu_companion_card_rects(), start=2):
+                companion_index = companion_slot - 1
+                hovered = self.mouse_position is not None and rect.collidepoint(self.mouse_position)
+                companion_character = self._solo_cpu_companion(self.select_slots[0], companion_slot)
+                selected = companion_character in solo_cpu_characters
+                border = (255, 222, 99) if selected or hovered else (104, 229, 255)
+                text_x = rect.centerx
+                icon_y = rect.y + 53
+                title_y = rect.y + 68
+                label_y = rect.y + 83
+                status_y = rect.y + 106
+                detail_y = rect.y + 123
+                if companion_character is None:
+                    self._panel(surface, rect, (22, 28, 50), border)
+                    self._text(surface, self.font_tiny, f"SLOT {companion_index}", (255, 240, 174), (text_x, title_y), center=True)
+                    self._text(surface, self.font_tiny, "OFF", (255, 246, 210), (text_x, label_y), center=True)
+                else:
+                    background = cpu_card_colors[companion_character]
+                    self._panel(surface, rect, background, border)
+                    self._text(surface, self.font_tiny, f"SLOT {companion_index}", (255, 240, 174), (text_x, title_y), center=True)
+                    surface.blit(self.cpu_companion_portraits[companion_character], (rect.x + 39, icon_y))
+                    self._text(
+                        surface,
+                        self.font_tiny,
+                        CHARACTER_LABELS[companion_character],
+                        (255, 246, 210),
+                        (text_x, label_y),
+                        center=True,
+                    )
+                status = "SELECTED" if selected else "CLICK"
+                self._text(surface, self.font_tiny, status, border, (text_x, status_y), center=True)
+                if companion_character == "ko":
+                    self._text(surface, self.font_tiny, "LIGHTNING • 1-HIT", (183, 226, 255), (text_x, detail_y), center=True)
+                elif companion_character is not None:
+                    self._text(surface, self.font_tiny, "FULL COMBAT AI", (190, 200, 220), (text_x, detail_y), center=True)
         footer_top, footer_bottom = self._selection_footer_lines()
         self._text(surface, self.font_tiny, footer_top, (177, 229, 255), (320, 336), center=True)
         self._text(surface, self.font_tiny, footer_bottom, (145, 196, 224), (320, 348), center=True)
