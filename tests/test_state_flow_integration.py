@@ -14,7 +14,13 @@ import pygame
 
 from src.entities import Enemy, KOCompanion
 from src.config import campaign_levels, resource_path
-from src.game import FadesGame, SOLO_CPU_COMPANIONS, SelectSlot
+from src.game import (
+    FadesGame,
+    SOLO_CPU_COMPANIONS,
+    SelectSlot,
+    _build_title_foreground_cast,
+    _title_walker_horizontal_pose,
+)
 from src.input_manager import InputManager, InputSnapshot
 from src.world_engine import WorldPoint
 
@@ -65,6 +71,24 @@ class StateFlowIntegrationTests(unittest.TestCase):
                 {"instance_id": instance_id, "button": button},
             ),
         )
+
+    def test_title_walkers_cross_the_full_street_and_reverse(self) -> None:
+        left = _title_walker_horizontal_pose(0.0, left=-48, right=688, period=10.0, phase=0.0)
+        right = _title_walker_horizontal_pose(10.0, left=-48, right=688, period=10.0, phase=0.0)
+        returning = _title_walker_horizontal_pose(15.0, left=-48, right=688, period=10.0, phase=0.0)
+        self.assertEqual(left, (-48, 1))
+        self.assertEqual(right, (688, 1))
+        self.assertEqual(returning, (320, -1))
+
+    def test_title_foreground_cast_keeps_heroes_opaque_only(self) -> None:
+        key_art = pygame.Surface((640, 360))
+        key_art.fill((80, 120, 160))
+        foreground = _build_title_foreground_cast(key_art)
+        self.assertEqual(foreground.get_at((270, 180)).a, 255)
+        self.assertEqual(foreground.get_at((345, 180)).a, 255)
+        self.assertEqual(foreground.get_at((440, 250)).a, 255)
+        self.assertEqual(foreground.get_at((490, 205)).a, 0)
+        self.assertEqual(foreground.get_at((100, 180)).a, 0)
 
     def test_character_select_uses_dedicated_hero_portraits(self) -> None:
         manager = InputManager(max_players=4, discover_controllers=False)

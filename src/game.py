@@ -84,6 +84,165 @@ PLAYER_COLORS = (
     (139, 255, 116),
 )
 
+
+def _extract_title_portrait_subject(
+    portrait: pygame.Surface,
+    *,
+    max_brightness: int = 72,
+    max_channel_spread: int = 18,
+) -> pygame.Surface:
+    """Remove one border-connected dark backdrop from a title portrait crop."""
+
+    subject = portrait.convert_alpha()
+    width, height = subject.get_size()
+    visited = bytearray(width * height)
+    stack: list[tuple[int, int]] = []
+    for x in range(width):
+        stack.append((x, 0))
+        stack.append((x, height - 1))
+    for y in range(height):
+        stack.append((0, y))
+        stack.append((width - 1, y))
+
+    while stack:
+        x, y = stack.pop()
+        index = y * width + x
+        if visited[index]:
+            continue
+        visited[index] = 1
+        red, green, blue, alpha = subject.get_at((x, y))
+        brightness = max(red, green, blue)
+        spread = max(red, green, blue) - min(red, green, blue)
+        if alpha == 0 or brightness > max_brightness or spread > max_channel_spread:
+            continue
+        subject.set_at((x, y), (0, 0, 0, 0))
+        if x > 0:
+            stack.append((x - 1, y))
+        if x + 1 < width:
+            stack.append((x + 1, y))
+        if y > 0:
+            stack.append((x, y - 1))
+        if y + 1 < height:
+            stack.append((x, y + 1))
+    return subject
+
+
+def _apply_top_down_visibility_fade(
+    sprite: pygame.Surface,
+    *,
+    top_alpha: int = 255,
+    bottom_alpha: int = 144,
+) -> pygame.Surface:
+    """Fade a title accent from fully readable at the top toward the bottom."""
+
+    faded = sprite.copy()
+    width, height = faded.get_size()
+    if width <= 0 or height <= 0:
+        return faded
+    mask = pygame.Surface((width, height), pygame.SRCALPHA)
+    top_alpha = max(0, min(255, int(top_alpha)))
+    bottom_alpha = max(0, min(255, int(bottom_alpha)))
+    if height == 1:
+        mask.fill((255, 255, 255, top_alpha))
+    else:
+        for y in range(height):
+            alpha = round(top_alpha + (bottom_alpha - top_alpha) * (y / (height - 1)))
+            pygame.draw.line(mask, (255, 255, 255, alpha), (0, y), (width - 1, y))
+    faded.blit(mask, (0, 0), special_flags=pygame.BLEND_RGBA_MULT)
+    return faded
+
+
+def _draw_title_enemy_walker(
+    surface: pygame.Surface,
+    x: int,
+    y: int,
+    *,
+    scale: float,
+    facing: int,
+    state: str,
+    kind: str,
+    frame: int,
+) -> pygame.Rect:
+    """Draw one scaled title-only enemy so road-depth reads without hero overlap."""
+
+    canvas = pygame.Surface(LOGICAL_SIZE, pygame.SRCALPHA)
+    pixel_art.draw_enemy(
+        canvas,
+        LOGICAL_SIZE[0] // 2,
+        LOGICAL_SIZE[1] // 2,
+        z=0,
+        facing=facing,
+        state=state,
+        kind=kind,
+        frame=frame,
+    )
+    bounds = canvas.get_bounding_rect(min_alpha=1)
+    if not bounds.w or not bounds.h:
+        return pygame.Rect(x, y, 0, 0)
+    sprite = canvas.subsurface(bounds).copy()
+    scaled = pygame.transform.scale(
+        sprite,
+        (
+            max(1, round(sprite.get_width() * scale)),
+            max(1, round(sprite.get_height() * scale)),
+        ),
+    )
+    rect = scaled.get_rect(midbottom=(x, y))
+    surface.blit(scaled, rect)
+    return rect
+
+
+def _title_walker_horizontal_pose(
+    elapsed: float,
+    *,
+    left: int,
+    right: int,
+    period: float,
+    phase: float,
+) -> tuple[int, int]:
+    """Return a full-street ping-pong position and its travel direction."""
+
+    progress = (elapsed / period + phase) % 2.0
+    if progress <= 1.0:
+        return round(left + (right - left) * progress), 1
+    return round(right - (right - left) * (progress - 1.0)), -1
+
+
+def _build_title_foreground_cast(key_art: pygame.Surface) -> pygame.Surface:
+    """Keep the painted hero trio in front of title-only background actors."""
+
+    mask = pygame.Surface(LOGICAL_SIZE, pygame.SRCALPHA)
+    silhouettes = (
+        # Dave
+        (
+            (268, 78), (289, 83), (296, 104), (290, 122), (310, 135),
+            (318, 162), (307, 184), (307, 223), (314, 281), (305, 309),
+            (276, 309), (268, 278), (259, 309), (224, 309), (225, 287),
+            (231, 249), (226, 215), (236, 181), (225, 160), (237, 132),
+            (251, 122), (250, 97),
+        ),
+        # Shelly
+        (
+            (334, 91), (354, 98), (363, 120), (358, 131), (374, 143),
+            (388, 177), (384, 199), (402, 211), (396, 230), (405, 284),
+            (397, 309), (367, 309), (356, 270), (353, 307), (322, 307),
+            (314, 286), (316, 251), (306, 220), (294, 209), (301, 187),
+            (293, 164), (308, 137), (321, 129), (320, 108),
+        ),
+        # Chief
+        (
+            (433, 205), (451, 208), (461, 220), (468, 233), (486, 240),
+            (491, 260), (482, 271), (483, 300), (470, 309), (454, 307),
+            (447, 286), (438, 279), (431, 307), (407, 307), (398, 292),
+            (399, 267), (389, 256), (395, 238), (410, 228), (419, 211),
+        ),
+    )
+    for silhouette in silhouettes:
+        pygame.draw.polygon(mask, (255, 255, 255, 255), silhouette)
+    foreground = key_art.convert_alpha()
+    foreground.blit(mask, (0, 0), special_flags=pygame.BLEND_RGBA_MULT)
+    return foreground
+
 PLAYABLE_CHARACTERS = ("black_dave", "shelly", "jermaine", "white_dave")
 MAX_CPU_COMPANIONS = 3
 SOLO_CPU_COMPANIONS = ("black_dave", "shelly", "ko", "white_dave")
@@ -327,6 +486,7 @@ class FadesGame:
 
         key_art_source = pygame.image.load(str(resource_path("assets/fades_of_fate_key_art.png"))).convert()
         self.key_art = pygame.transform.smoothscale(key_art_source, LOGICAL_SIZE)
+        self.title_foreground_cast = _build_title_foreground_cast(self.key_art)
         portrait_rects = {
             "black_dave": pygame.Rect(455, 170, 405, 750),
             "shelly": pygame.Rect(715, 165, 450, 755),
@@ -347,6 +507,21 @@ class FadesGame:
             "jermaine": (98, 158),
             "white_dave": (98, 158),
             "ko": (90, 145),
+        }
+        title_portrait_assets = {
+            "jermaine": "assets/portraits/jermaine_portrait_v1.png",
+            "white_dave": "assets/portraits/white_dave_portrait_v1.png",
+            "ko": "assets/portraits/ko_portrait_v1.png",
+        }
+        title_portrait_crops = {
+            "jermaine": pygame.Rect(45, 36, 950, 1160),
+            "white_dave": pygame.Rect(0, 28, 1100, 1080),
+            "ko": pygame.Rect(160, 24, 920, 1140),
+        }
+        title_portrait_sizes = {
+            "jermaine": (120, 178),
+            "white_dave": (146, 214),
+            "ko": (112, 156),
         }
         self.character_portraits: dict[str, pygame.Surface] = {}
         for name, rect in portrait_rects.items():
@@ -376,6 +551,16 @@ class FadesGame:
                     pygame.Rect(crop_left, 0, crop_width, source_rect.height)
                 ).copy()
             self.character_portraits[name] = pygame.transform.smoothscale(portrait, portrait_sizes[name])
+        self.title_side_portraits: dict[str, pygame.Surface] = {}
+        for name, relative in title_portrait_assets.items():
+            portrait_path = Path(resource_path(relative))
+            authored_portrait = pygame.image.load(str(portrait_path)).convert_alpha()
+            crop = title_portrait_crops[name].clip(authored_portrait.get_rect())
+            portrait = _extract_title_portrait_subject(authored_portrait.subsurface(crop).copy())
+            self.title_side_portraits[name] = pygame.transform.smoothscale(
+                portrait,
+                title_portrait_sizes[name],
+            )
         self.cpu_companion_portraits = {
             name: pygame.transform.smoothscale(self.character_portraits[name], (42, 67))
             for name in (*PLAYABLE_CHARACTERS, "ko")
@@ -5332,42 +5517,63 @@ class FadesGame:
 
     def _draw_title(self, surface: pygame.Surface) -> None:
         surface.blit(self.key_art, (0, 0))
-        pixel_art.draw_tent_camp(surface, 94, 303, frame=self.frame, smoke_phase=self.elapsed * 2.0)
-        pixel_art.draw_enemy(
-            surface,
-            132,
-            304,
+        accent_layer = pygame.Surface(LOGICAL_SIZE, pygame.SRCALPHA)
+        background_walkers = (
+            (258, 0.52, 8, 632, 18.0, 0.05, "homeless:encampment_crawler"),
+            (244, 0.44, 42, 540, 23.0, 0.42, "homeless:encampment_drifter"),
+            (232, 0.36, 64, 494, 28.0, 0.82, "homeless:underpass_camp_runner"),
+            (222, 0.29, 158, 465, 34.0, 1.18, "homeless:encampment_crawler"),
+            (214, 0.22, 262, 415, 40.0, 1.54, "homeless:encampment_drifter"),
+        )
+        for walker_y, walker_scale, left, right, period, phase, walker_kind in background_walkers:
+            walker_x, walker_facing = _title_walker_horizontal_pose(
+                self.elapsed,
+                left=left,
+                right=right,
+                period=period,
+                phase=phase,
+            )
+            _draw_title_enemy_walker(
+                surface,
+                walker_x,
+                walker_y,
+                scale=walker_scale,
+                facing=walker_facing,
+                state="walk",
+                kind=walker_kind,
+                frame=int(self.elapsed * 7.0 + phase * 13.0),
+            )
+        pixel_art.draw_boss(
+            accent_layer,
+            96,
+            112,
             z=0,
             facing=1,
-            state="chase",
+            state="laugh",
+            frame=int(self.elapsed * 6.0),
+        )
+        pixel_art.draw_tent_camp(surface, 82, 286, frame=self.frame, smoke_phase=self.elapsed * 2.0)
+        pixel_art.draw_enemy(
+            surface,
+            118,
+            288,
+            z=0,
+            facing=1,
+            state="idle",
             kind="homeless:cart_tent_lurker",
-            frame=int(self.elapsed * 8.0),
+            frame=0,
         )
-        pixel_art.draw_player(
-            surface,
-            535,
-            304,
-            0,
-            -1,
-            "idle",
-            "jermaine",
-            int(self.elapsed * 6.0),
-            (255, 218, 76),
+        jermaine = self.title_side_portraits["jermaine"]
+        white_dave = self.title_side_portraits["white_dave"]
+        ko = self.title_side_portraits["ko"]
+        accent_layer.blit(ko, (436, 128))
+        accent_layer.blit(jermaine, (475, 102))
+        accent_layer.blit(white_dave, (522, 88))
+        surface.blit(
+            _apply_top_down_visibility_fade(accent_layer, top_alpha=255, bottom_alpha=132),
+            (0, 0),
         )
-        pixel_art.draw_player(
-            surface,
-            585,
-            304,
-            0,
-            -1,
-            "idle",
-            "white_dave",
-            int(self.elapsed * 5.0),
-            (205, 82, 57),
-        )
-        overlay = pygame.Surface(LOGICAL_SIZE, pygame.SRCALPHA)
-        overlay.fill((5, 4, 16, 35))
-        surface.blit(overlay, (0, 0))
+        surface.blit(self.title_foreground_cast, (0, 0))
         if self.state == "loading":
             self._panel(surface, pygame.Rect(178, 319, 284, 27), (9, 8, 20), (255, 208, 76))
             dots = "." * (1 + int(self.elapsed * 3) % 3)
