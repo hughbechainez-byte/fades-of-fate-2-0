@@ -228,7 +228,7 @@
       "id": "homeless_heavy",
       "runtime_kind": "homeless",
       "display_name": "HARDENED ENCAMPMENT DRIFTER",
-      "attack_style": "close",
+      "attack_style": "glass_bottle",
       "fictional_role": "tankier encampment drifter",
       "behavior_note": "absorbs lane contact and stays menacing longer",
       "stat_multipliers": {
@@ -245,7 +245,7 @@
       "id": "homeless_fury",
       "runtime_kind": "homeless",
       "display_name": "ENCAMPMENT ENFORCER",
-      "attack_style": "close",
+      "attack_style": "bike_tire",
       "fictional_role": "hard-hitting encampment drifter",
       "behavior_note": "strikes harder through the same lane pathing",
       "stat_multipliers": {
@@ -261,7 +261,7 @@
       "id": "homeless_striker",
       "runtime_kind": "homeless",
       "display_name": "ENCAMPMENT RUNNER",
-      "attack_style": "close",
+      "attack_style": "glass_bottle",
       "fictional_role": "rapid encampment drifter",
       "behavior_note": "presses the party with faster approach timing",
       "stat_multipliers": {
