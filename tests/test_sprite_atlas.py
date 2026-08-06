@@ -25,9 +25,11 @@ import src.sprite_atlas as sprite_atlas  # noqa: E402
 from tools.build_animation_library import (  # noqa: E402
     CHIEF_SOURCES,
     COUCH_SOURCES,
+    DAVE_ATTACK_SOURCES,
     DIRECT_RENDER_LIMITS,
     DIRECT_REFERENCE_SPECS,
     DAVE_COMBAT_FIST_LANDMARKS,
+    DAVE_ATTACK_FIST_LANDMARKS,
     DAVE_WALK_FIST_LANDMARKS,
     ENEMY_SOURCES,
     HERO_WALK_TORSO_ROOT_X,
@@ -145,6 +147,18 @@ class SpriteAtlasTests(unittest.TestCase):
                     clip.frame_count,
                     "animation uses translation-only filler instead of a changed silhouette",
                 )
+
+    def test_black_dave_has_dedicated_punch_power_and_shockwave_kick_sources(self) -> None:
+        punch_sources = set().union(
+            DAVE_ATTACK_SOURCES["attack_1"],
+            DAVE_ATTACK_SOURCES["attack_2"],
+            DAVE_ATTACK_SOURCES["attack_3"],
+        )
+        kick_sources = set(DAVE_ATTACK_SOURCES["attack_4"])
+        self.assertGreaterEqual(len(punch_sources), 10)
+        self.assertTrue({5, 6, 8, 9}.issubset(punch_sources), "uppercut and overhand power cels are required")
+        self.assertEqual({12, 13, 14, 15}, kick_sources)
+        self.assertEqual(set(range(16)), set(DAVE_ATTACK_FIST_LANDMARKS))
 
     def test_every_atlas_cell_contains_a_visible_sprite_on_transparency(self) -> None:
         for relative, (_, grid) in ATLAS_SPECS.items():
@@ -540,8 +554,8 @@ class SpriteAtlasTests(unittest.TestCase):
         semantic_goldens = {
             ("idle", 4): ((50, 48), (85, 49)),
             ("walk", 1): ((57, 76), (94, 76)),
-            ("attack_1", 2): ((53, 41), (133, 43)),
-            ("attack_3", 4): ((39, 62), (93, 30)),
+            ("attack_1", 2): ((51, 53), (91, 50)),
+            ("attack_3", 4): ((57, 53), (85, 32)),
             ("heavy", 4): ((39, 62), (93, 30)),
             ("hurt", 4): ((39, 62), (93, 30)),
             ("down", 6): ((83, 98), (93, 129)),

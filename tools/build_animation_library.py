@@ -51,6 +51,8 @@ from src.animation_manifest import (  # noqa: E402
     ENEMY_STATES,
     ENEMY_VARIANT_KINDS,
     JERRY_STATES,
+    KO_PHASES,
+    KO_STATES,
     PLAYER_STATES,
     total_authored_poses,
 )
@@ -321,6 +323,18 @@ HERO_SOURCES = {
     "pants": (4, 3, 2, 1, 0, 1, 2, 4),
 }
 
+# Black Dave's four combat clips use this dedicated, whole-cel source sheet.
+# Its first twelve cels are distinct hand strikes (including the rising
+# uppercut and the overhand), while the last four are the kick route.  The
+# three contact kicks have their ground shockwaves painted into the cel so the
+# effect remains attached to the planted foot in every rendered context.
+DAVE_ATTACK_SOURCES = {
+    "attack_1": (0, 1, 2, 3, 4, 5, 6, 7),
+    "attack_2": (4, 5, 6, 7, 8, 9, 10, 11),
+    "attack_3": (8, 9, 10, 11, 5, 6, 7, 4),
+    "attack_4": (12, 13, 14, 15, 13, 14, 15, 12),
+}
+
 # Canonical ``(rear, lead)`` hand centres authored against the untrimmed source
 # cells.  These are semantic landmarks, not palette samples: shoulders, faces,
 # raised sneakers and impact flashes can share Dave's warm colors, so a color
@@ -348,6 +362,19 @@ DAVE_COMBAT_FIST_LANDMARKS: dict[int, tuple[tuple[int, int], tuple[int, int]]] =
     17: ((39, 66), (79, 43)),
     18: ((51, 64), (91, 57)),
     19: ((46, 46), (83, 41)),
+}
+# Semantic hand centres for the 4x4 dedicated combat sheet above.  They are
+# authored against its 320px source cells and travel through the same crop,
+# scale, and root registration as every body cel.
+DAVE_ATTACK_FIST_LANDMARKS: dict[int, tuple[tuple[int, int], tuple[int, int]]] = {
+    0: ((120, 119), (221, 90)), 1: ((118, 109), (230, 94)),
+    2: ((116, 117), (203, 112)), 3: ((113, 118), (232, 95)),
+    4: ((122, 121), (204, 111)), 5: ((121, 116), (185, 71)),
+    6: ((115, 116), (201, 51)), 7: ((124, 114), (190, 104)),
+    8: ((132, 119), (159, 69)), 9: ((124, 124), (219, 138)),
+    10: ((127, 117), (184, 111)), 11: ((125, 111), (182, 106)),
+    12: ((126, 117), (182, 108)), 13: ((74, 96), (122, 44)),
+    14: ((104, 105), (156, 80)), 15: ((122, 96), (171, 130)),
 }
 DAVE_WALK_FIST_LANDMARKS: tuple[tuple[tuple[int, int], tuple[int, int]], ...] = (
     ((112, 252), (244, 248)),
@@ -1390,11 +1417,17 @@ def _sources_for(
         sources = source_sets[direct_key]
         return sources, tuple(range(len(sources)))
     if actor in {"black_dave", "shelly"}:
+        if actor == "black_dave" and state in DAVE_ATTACK_SOURCES:
+            return source_sets["black_dave_attacks"], DAVE_ATTACK_SOURCES[state]
         if state == "walk":
             return source_sets[f"{actor}_walk"], HERO_SOURCES[state]
         if actor == "shelly" and state in {"refill", "pants"}:
             return source_sets["shelly_extras"], SHELLY_EXTRA_SOURCES[state]
         return source_sets[actor], HERO_SOURCES[state]
+    if actor == "ko":
+        row = KO_STATES.index(state)
+        start = row * 12
+        return source_sets["ko"], tuple(range(start, start + len(KO_PHASES[state])))
     if actor == "chief":
         return source_sets["chief"], CHIEF_SOURCES[state]
     if actor in ENEMY_KINDS:
@@ -1432,6 +1465,15 @@ def _make_atlases(
         source_sets.update(
             {
                 "black_dave": _split(sprite_root / "black_dave_atlas.png", 5, 4),
+                "black_dave_attacks": _split(
+                    PROJECT_ROOT / "art_source" / "black_dave" / "black_dave_combat_moves_v1.png",
+                    4,
+                    4,
+                ),
+                # KO is built by Build-KO-Animation.py from his strict source
+                # strips.  Reuse those validated cels here so rebuilding the
+                # combined contact sheet cannot fail on the separate actor.
+                "ko": _split(sprite_root / "ko_animation_atlas.png", 12, 7),
                 "shelly": [
                     _add_shelly_microtorch(frame, SHELLY_MICROTORCH_ANCHORS[index])
                     for index, frame in enumerate(_split(sprite_root / "shelly_atlas.png", 5, 4))
@@ -1512,6 +1554,8 @@ def _make_atlases(
             def render_landmarks(source_index: int) -> tuple[tuple[int, int], ...]:
                 if clip.actor != "black_dave":
                     return ()
+                if clip.state in DAVE_ATTACK_SOURCES:
+                    return DAVE_ATTACK_FIST_LANDMARKS[source_index]
                 if clip.state == "walk":
                     return DAVE_WALK_FIST_LANDMARKS[source_index]
                 return DAVE_COMBAT_FIST_LANDMARKS[source_index]
@@ -1661,6 +1705,10 @@ def _make_atlases(
                         )
                     )
                     record_landmarks(source_index, sink)
+            elif clip.actor == "ko":
+                # KO's own builder has already validated complete cels, roots,
+                # alpha, and source provenance.  Do not re-transform them.
+                key_poses.extend(sources[source_index].copy() for source_index in indices)
             elif (
                 clip.actor in {"black_dave", "shelly"} and clip.state == "walk"
             ) or (clip.actor, clip.state) in DIRECT_REFERENCE_SPECS:
@@ -1735,6 +1783,15 @@ def _make_atlases(
                     atlas.alpha_composite(pose, destination_xy)
         destination = output_root / relative
         destination.parent.mkdir(parents=True, exist_ok=True)
+        if relative == "assets/sprites/black_dave_animation_atlas.png" and destination.is_file():
+            # Combat work must not rewrite unrelated Dave animation rows merely
+            # because the library is rebuilt under a newer Pillow runtime.
+            previous = Image.open(destination).convert("RGBA")
+            for row, state in enumerate(PLAYER_STATES):
+                if state in DAVE_ATTACK_SOURCES:
+                    continue
+                top = row * clips[0].cell_height
+                atlas.paste(previous.crop((0, top, atlas.width, top + clips[0].cell_height)), (0, top))
         atlas.save(destination, optimize=True)
         print(
             f"Wrote {destination.relative_to(output_root)}: "
@@ -1756,6 +1813,13 @@ def _make_atlases(
     if not enemy_roster_only:
         metadata_destination = output_root / "assets" / "sprites" / "black_dave_fist_anchors.json"
         metadata_destination.parent.mkdir(parents=True, exist_ok=True)
+        if metadata_destination.is_file():
+            prior_metadata = json.loads(metadata_destination.read_text(encoding="utf-8"))
+            prior_states = prior_metadata.get("states", {}) if isinstance(prior_metadata, dict) else {}
+            if isinstance(prior_states, dict):
+                for state, phases in prior_states.items():
+                    if state not in DAVE_ATTACK_SOURCES and state in dave_fist_metadata:
+                        dave_fist_metadata[state] = phases
         metadata_destination.write_text(
             json.dumps(
                 {
