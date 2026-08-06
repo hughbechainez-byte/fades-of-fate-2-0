@@ -4567,7 +4567,10 @@ class FadesGame:
             and player.flaming_fists
         )
         combo_radius = float(move.get("combo_radius", 0.0))
-        follow_through = attack_kind == "light" and player.combo_step > 0
+        follow_through = (
+            (attack_kind == "light" and player.combo_step > 0)
+            or bool(move.get("shockwave", False))
+        )
         if play_whiff:
             # Every hero gets a readable authored-motion accent at the actual
             # attack presentation frame.  Previously only Dave's fist path
@@ -5625,9 +5628,17 @@ class FadesGame:
             elif kind == "player":
                 action_states = {"light", "heavy", "air_attack", "jump", "hurt", "downed", "super", "dodge", "pet", "ranged", "propane"}
                 visual_state = (
-                    "attack_3"
+                    "attack_4"
+                    if obj.state == "heavy" and obj.combo_style == "c" and obj.combo_step >= 4
+                    else "attack_3"
                     if obj.state == "heavy"
-                    else f"attack_{min(obj.combo_step + 1, 4)}"
+                    else (
+                        f"attack_{obj.combo_step + 1}"
+                        if obj.combo_step <= 3
+                        else "attack_4"
+                        if obj.combo_step <= 5
+                        else f"attack_{1 + (obj.combo_step - 6) % 3}"
+                    )
                     if obj.state == "light"
                     else "super" if obj.state == "propane" else obj.state
                 )

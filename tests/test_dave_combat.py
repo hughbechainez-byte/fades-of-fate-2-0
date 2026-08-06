@@ -43,11 +43,11 @@ class DaveCombatTests(unittest.TestCase):
         result.state = "chase"
         return result
 
-    def test_repeated_light_presses_progress_through_four_hit_finisher(self) -> None:
+    def test_repeated_light_presses_preserve_and_extend_the_x_route(self) -> None:
         target = self.enemy(201, self.dave.x + 32.0, self.dave.y, "security")
         self.game.enemies = [target]
         sequence = self.dave._light_sequence()
-        self.assertEqual(sequence, (0, 1, 2, 4, 3, 5))
+        self.assertEqual(sequence, (0, 1, 2, 4, 3, 5, 6, 7, 8, 9, 10, 11))
         finisher = self.game.data["moves"]["light_combo"][sequence[-1]]
         self.assertTrue(finisher["knockdown"])
         self.assertTrue(finisher["launch"])
@@ -68,9 +68,9 @@ class DaveCombatTests(unittest.TestCase):
         self.assertEqual(self.dave._light_move(), self.game.data["moves"]["light_combo"][5])
         self.assertEqual(self.game.data["moves"]["heavy"]["launch"], True)
 
-    def test_c_combo_sequence_runs_through_uppercuts_before_the_far_push_kick(self) -> None:
+    def test_c_combo_preserves_uppercuts_then_appends_all_shockwave_kicks(self) -> None:
         self.dave.combo_style = "c"
-        self.assertEqual(self.dave._light_sequence(), (0, 1, 2, 3))
+        self.assertEqual(self.dave._light_sequence(), (0, 1, 2, 3, 4, 5, 6))
         self.dave.combo_step = 0
         self.assertEqual(
             self.dave._combo_move(),
@@ -78,8 +78,11 @@ class DaveCombatTests(unittest.TestCase):
         )
         self.dave.combo_step = 2
         self.assertTrue(self.dave._combo_move()["launch"])
-        final_move = self.game.data["moves"]["heavy_combo"][3]
-        self.assertGreater(final_move["knockback"], self.game.data["moves"]["heavy_combo"][2]["knockback"])
+        kick_moves = self.game.data["moves"]["heavy_combo"][4:]
+        final_move = kick_moves[-1]
+        self.assertEqual(len(kick_moves), 3)
+        self.assertTrue(all(move["shockwave"] for move in kick_moves))
+        self.assertGreater(final_move["knockback"], self.game.data["moves"]["heavy_combo"][3]["knockback"])
         self.assertGreater(final_move["knockback"], self.game.data["moves"]["heavy"]["knockback"])
         self.assertTrue(final_move["knockdown"])
 
@@ -104,8 +107,19 @@ class DaveCombatTests(unittest.TestCase):
 
     def test_alt_light_combo_uses_the_authorized_z_chain(self) -> None:
         self.dave.combo_style = "z"
-        self.dave.combo_step = 2
-        self.assertEqual(self.dave._alt_light_move(), self.game.data["moves"]["light_combo"][3])
+        self.assertEqual(
+            self.dave._light_sequence(),
+            (1, 0, 3, 2, 5, 4, 12, 13, 14, 15, 16, 17),
+        )
+        self.dave.combo_step = 6
+        self.assertEqual(self.dave._alt_light_move(), self.game.data["moves"]["light_combo"][12])
+
+    def test_appended_c_kick_emits_a_gameplay_shockwave(self) -> None:
+        self.dave.combo_style = "c"
+        self.dave.combo_step = 4
+        kick = self.dave._combo_move()
+        self.game.player_attack(self.dave, kick, "heavy", already_hit=set())
+        self.assertTrue(any(effect.kind == "shock" for effect in self.game.effects))
 
     def test_heavy_combo_uses_the_authorized_c_chain(self) -> None:
         self.dave.combo_style = "c"

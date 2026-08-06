@@ -475,7 +475,13 @@
                                                                     2,
                                                                     4,
                                                                     3,
-                                                                    5
+                                                                    5,
+                                                                    6,
+                                                                    7,
+                                                                    8,
+                                                                    9,
+                                                                    10,
+                                                                    11
                                                                 ],
                                        "alt_light_combo_sequence":  [
                                                                         1,
@@ -483,13 +489,22 @@
                                                                         3,
                                                                         2,
                                                                         5,
-                                                                        4
+                                                                        4,
+                                                                        12,
+                                                                        13,
+                                                                        14,
+                                                                        15,
+                                                                        16,
+                                                                        17
                                                                     ],
                                        "heavy_combo_sequence":  [
                                                                      0,
                                                                      1,
                                                                      2,
-                                                                     3
+                                                                     3,
+                                                                     4,
+                                                                     5,
+                                                                     6
                                                                  ],
                                        "combo_repeat_seconds":  5.0,
                                        "description":  "Slim and lean in a backward cap, black tank, gold-trim glasses and diamond studs; fists plus a Bluetooth-speaker shockwave."
@@ -750,7 +765,19 @@
                                                                   {"at":  0.5, "reach_scale":  1.20, "depth_scale":  1.10, "height_scale":  1.14, "offset_x":  6.0},
                                                                   {"at":  1.0, "reach_scale":  1.00, "depth_scale":  1.14, "height_scale":  1.06, "offset_x":  2.0}
                                                               ]
-                                      }
+                                      },
+                                      {"startup":0.10,"active":0.08,"recovery":0.16,"damage":14,"range_x":47,"range_y":23,"hitstun":0.30,"knockback":18,"meter":9,"buffer_window":0.24,"cancel_start":0.18,"combo_grace":0.56,"chain_on_whiff":true,"heavy_cancel":true,"max_targets":2,"max_hits_per_target":1,"rehit_delay":0.0,"hit_downed":false,"reach_forgiveness":5.0,"depth_forgiveness":2.0,"elevation_forgiveness":3.0,"lane_assist":14.0,"aim_range_bonus":12.0,"lunge":3.0,"combo_radius":72},
+                                      {"startup":0.11,"active":0.08,"recovery":0.17,"damage":15,"range_x":49,"range_y":23,"hitstun":0.33,"knockback":21,"meter":10,"buffer_window":0.24,"cancel_start":0.19,"combo_grace":0.57,"chain_on_whiff":true,"heavy_cancel":true,"max_targets":2,"max_hits_per_target":1,"rehit_delay":0.0,"hit_downed":false,"reach_forgiveness":5.0,"depth_forgiveness":2.0,"elevation_forgiveness":3.0,"lane_assist":15.0,"aim_range_bonus":13.0,"lunge":4.0,"combo_radius":78},
+                                      {"startup":0.12,"active":0.09,"recovery":0.18,"damage":17,"range_x":51,"range_y":24,"hitstun":0.36,"knockback":25,"meter":11,"buffer_window":0.25,"cancel_start":0.21,"combo_grace":0.58,"chain_on_whiff":true,"heavy_cancel":true,"max_targets":3,"max_hits_per_target":1,"rehit_delay":0.0,"hit_downed":false,"reach_forgiveness":6.0,"depth_forgiveness":2.5,"elevation_forgiveness":4.0,"lane_assist":16.0,"aim_range_bonus":14.0,"lunge":5.0,"combo_radius":84},
+                                      {"startup":0.13,"active":0.09,"recovery":0.20,"damage":19,"range_x":53,"range_y":24,"hitstun":0.40,"knockback":30,"meter":12,"buffer_window":0.25,"cancel_start":0.22,"combo_grace":0.60,"chain_on_whiff":true,"heavy_cancel":true,"max_targets":3,"max_hits_per_target":1,"rehit_delay":0.0,"hit_downed":false,"reach_forgiveness":6.0,"depth_forgiveness":3.0,"elevation_forgiveness":4.0,"lane_assist":17.0,"aim_range_bonus":15.0,"lunge":6.0,"combo_radius":90},
+                                      {"startup":0.14,"active":0.10,"recovery":0.22,"damage":21,"range_x":55,"range_y":25,"hitstun":0.44,"knockback":38,"meter":14,"buffer_window":0.26,"cancel_start":0.25,"combo_grace":0.62,"chain_on_whiff":true,"heavy_cancel":true,"max_targets":3,"max_hits_per_target":1,"rehit_delay":0.0,"hit_downed":false,"reach_forgiveness":7.0,"depth_forgiveness":3.0,"elevation_forgiveness":5.0,"lane_assist":18.0,"aim_range_bonus":16.0,"lunge":7.0,"combo_radius":96},
+                                      {"startup":0.15,"active":0.10,"recovery":0.24,"damage":23,"range_x":57,"range_y":25,"hitstun":0.48,"knockback":48,"knockdown":true,"meter":16,"buffer_window":0.27,"cancel_start":0.25,"combo_grace":0.64,"chain_on_whiff":true,"heavy_cancel":false,"max_targets":4,"max_hits_per_target":1,"rehit_delay":0.0,"hit_downed":false,"reach_forgiveness":7.0,"depth_forgiveness":3.5,"elevation_forgiveness":5.0,"lane_assist":19.0,"aim_range_bonus":17.0,"lunge":8.0,"combo_radius":102,"launch":true},
+                                      {"startup":0.10,"active":0.08,"recovery":0.16,"damage":14,"range_x":48,"range_y":24,"hitstun":0.31,"knockback":19,"meter":9,"buffer_window":0.24,"cancel_start":0.18,"combo_grace":0.56,"chain_on_whiff":true,"heavy_cancel":true,"max_targets":2,"max_hits_per_target":1,"rehit_delay":0.0,"hit_downed":false,"reach_forgiveness":5.0,"depth_forgiveness":2.5,"elevation_forgiveness":3.0,"lane_assist":14.0,"aim_range_bonus":12.0,"lunge":3.0,"combo_radius":72},
+                                      {"startup":0.11,"active":0.08,"recovery":0.17,"damage":16,"range_x":50,"range_y":24,"hitstun":0.34,"knockback":23,"meter":10,"buffer_window":0.24,"cancel_start":0.19,"combo_grace":0.57,"chain_on_whiff":true,"heavy_cancel":true,"max_targets":2,"max_hits_per_target":1,"rehit_delay":0.0,"hit_downed":false,"reach_forgiveness":5.0,"depth_forgiveness":2.5,"elevation_forgiveness":3.0,"lane_assist":15.0,"aim_range_bonus":13.0,"lunge":4.0,"combo_radius":78},
+                                      {"startup":0.12,"active":0.09,"recovery":0.18,"damage":18,"range_x":52,"range_y":25,"hitstun":0.37,"knockback":27,"meter":11,"buffer_window":0.25,"cancel_start":0.21,"combo_grace":0.58,"chain_on_whiff":true,"heavy_cancel":true,"max_targets":3,"max_hits_per_target":1,"rehit_delay":0.0,"hit_downed":false,"reach_forgiveness":6.0,"depth_forgiveness":3.0,"elevation_forgiveness":4.0,"lane_assist":16.0,"aim_range_bonus":14.0,"lunge":5.0,"combo_radius":84},
+                                      {"startup":0.13,"active":0.09,"recovery":0.20,"damage":20,"range_x":54,"range_y":25,"hitstun":0.41,"knockback":34,"meter":12,"buffer_window":0.25,"cancel_start":0.22,"combo_grace":0.60,"chain_on_whiff":true,"heavy_cancel":true,"max_targets":3,"max_hits_per_target":1,"rehit_delay":0.0,"hit_downed":false,"reach_forgiveness":6.0,"depth_forgiveness":3.5,"elevation_forgiveness":4.0,"lane_assist":17.0,"aim_range_bonus":15.0,"lunge":6.0,"combo_radius":90},
+                                      {"startup":0.14,"active":0.10,"recovery":0.22,"damage":22,"range_x":56,"range_y":26,"hitstun":0.45,"knockback":42,"meter":14,"buffer_window":0.26,"cancel_start":0.25,"combo_grace":0.62,"chain_on_whiff":true,"heavy_cancel":true,"max_targets":4,"max_hits_per_target":1,"rehit_delay":0.0,"hit_downed":false,"reach_forgiveness":7.0,"depth_forgiveness":3.5,"elevation_forgiveness":5.0,"lane_assist":18.0,"aim_range_bonus":16.0,"lunge":7.0,"combo_radius":96},
+                                      {"startup":0.15,"active":0.10,"recovery":0.24,"damage":24,"range_x":58,"range_y":26,"hitstun":0.50,"knockback":52,"knockdown":true,"meter":16,"buffer_window":0.27,"cancel_start":0.25,"combo_grace":0.64,"chain_on_whiff":true,"heavy_cancel":false,"max_targets":4,"max_hits_per_target":1,"rehit_delay":0.0,"hit_downed":false,"reach_forgiveness":7.0,"depth_forgiveness":4.0,"elevation_forgiveness":5.0,"lane_assist":19.0,"aim_range_bonus":17.0,"lunge":8.0,"combo_radius":102,"launch":true}
                                   ],
                   "heavy_combo":  [
                                        {
@@ -884,7 +911,10 @@
                                                                    {"at":  0.5, "reach_scale":  1.16, "depth_scale":  1.08, "height_scale":  1.10, "offset_x":  5.0},
                                                                    {"at":  1.0, "reach_scale":  1.02, "depth_scale":  1.12, "height_scale":  1.06, "offset_x":  2.0}
                                                                ]
-                                       }
+                                       },
+                                       {"startup":0.16,"active":0.11,"recovery":0.24,"damage":24,"range_x":60,"range_y":27,"hitstun":0.54,"knockback":72,"knockdown":true,"meter":16,"buffer_window":0.28,"cancel_start":0.28,"combo_grace":0.60,"chain_on_whiff":true,"heavy_cancel":true,"max_targets":3,"max_hits_per_target":1,"rehit_delay":0.0,"hit_downed":false,"reach_forgiveness":8.0,"depth_forgiveness":4.0,"elevation_forgiveness":5.0,"lane_assist":18.0,"aim_range_bonus":16.0,"lunge":8.0,"combo_radius":108,"shockwave":true},
+                                       {"startup":0.18,"active":0.12,"recovery":0.27,"damage":28,"range_x":66,"range_y":28,"hitstun":0.62,"knockback":94,"knockdown":true,"meter":19,"buffer_window":0.30,"cancel_start":0.31,"combo_grace":0.64,"chain_on_whiff":true,"heavy_cancel":true,"max_targets":4,"max_hits_per_target":1,"rehit_delay":0.0,"hit_downed":false,"reach_forgiveness":9.0,"depth_forgiveness":4.5,"elevation_forgiveness":6.0,"lane_assist":20.0,"aim_range_bonus":18.0,"lunge":10.0,"combo_radius":122,"shockwave":true,"launch":true},
+                                       {"startup":0.20,"active":0.13,"recovery":0.32,"damage":34,"range_x":72,"range_y":30,"hitstun":0.74,"knockback":122,"knockdown":true,"meter":24,"buffer_window":0.32,"cancel_start":0.34,"combo_grace":0.70,"chain_on_whiff":true,"heavy_cancel":false,"max_targets":5,"max_hits_per_target":1,"rehit_delay":0.0,"hit_downed":false,"reach_forgiveness":10.0,"depth_forgiveness":5.0,"elevation_forgiveness":7.0,"lane_assist":22.0,"aim_range_bonus":20.0,"lunge":12.0,"combo_radius":140,"shockwave":true,"launch":true,"chain_finisher":true}
                                    ],
                   "heavy":  {
                                 "startup":  0.24,
