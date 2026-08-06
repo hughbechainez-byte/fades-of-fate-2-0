@@ -45,7 +45,8 @@ class CollisionRegressionTests(unittest.TestCase):
 
     def test_attack_queries_full_active_window_and_hits_each_target_once(self) -> None:
         self.shelly.state = "eliminated"
-        target = self.enemy(100, self.dave.x + 120.0, self.dave.y)
+        self.game.data["stage_geometry"]["obstacles"] = ()
+        target = self.enemy(100, self.dave.x + 240.0, self.dave.y)
         self.game.enemies = [target]
         move = self.game.data["moves"]["light_combo"][0]
         self.dave.combo_step = 0
@@ -80,6 +81,7 @@ class CollisionRegressionTests(unittest.TestCase):
 
     def test_player_attack_hits_when_target_is_slightly_behind_but_crossed_forward(self) -> None:
         self.dave.x, self.dave.y, self.dave.facing = 260.0, 270.0, 1
+        self.game.data["stage_geometry"]["obstacles"] = ()
         move = self.game.data["moves"]["light_combo"][1]
         target = self.enemy(102, self.dave.x - 10.0, self.dave.y)
         target.hitbox_sweep_x = self.dave.x + 14.0
@@ -93,6 +95,7 @@ class CollisionRegressionTests(unittest.TestCase):
 
     def test_player_attack_connects_with_small_depth_mismatch(self) -> None:
         self.dave.x, self.dave.y, self.dave.facing = 260.0, 270.0, 1
+        self.game.data["stage_geometry"]["obstacles"] = ()
         move = self.game.data["moves"]["light_combo"][0]
         target = self.enemy(103, self.dave.x + 24.0, self.dave.y + 20.0)
         self.game.enemies = [target]
@@ -104,6 +107,7 @@ class CollisionRegressionTests(unittest.TestCase):
 
     def test_player_attack_centers_depth_assist_across_two_nearby_targets(self) -> None:
         self.dave.x, self.dave.y, self.dave.facing = 260.0, 270.0, 1
+        self.game.data["stage_geometry"]["obstacles"] = ()
         move = self.game.data["moves"]["light_combo"][0]
         upper = self.enemy(104, self.dave.x + 25.0, self.dave.y - 28.0)
         lower = self.enemy(110, self.dave.x + 27.0, self.dave.y + 28.0)
@@ -117,11 +121,12 @@ class CollisionRegressionTests(unittest.TestCase):
 
     def test_player_punch_hits_two_nearest_front_targets_not_rear_targets(self) -> None:
         self.dave.x, self.dave.y, self.dave.facing = 280.0, 270.0, 1
+        self.game.data["stage_geometry"]["obstacles"] = ()
         move = self.game.data["moves"]["light_combo"][1]
         self.dave.combo_step = 1
         nearest = self.enemy(105, self.dave.x + 26.0, self.dave.y)
         side = self.enemy(106, self.dave.x + 18.0, self.dave.y + 17.0)
-        rear = self.enemy(107, self.dave.x - 26.0, self.dave.y)
+        rear = self.enemy(107, self.dave.x - 54.0, self.dave.y)
         self.game.enemies = [side, rear, nearest]
 
         hits = self.game.player_attack(self.dave, move, "light", already_hit=set())
@@ -133,6 +138,7 @@ class CollisionRegressionTests(unittest.TestCase):
 
     def test_player_attack_sweep_catches_an_enemy_that_crossed_the_fist_lane(self) -> None:
         self.dave.x, self.dave.y, self.dave.facing = 260.0, 270.0, 1
+        self.game.data["stage_geometry"]["obstacles"] = ()
         move = self.game.data["moves"]["light_combo"][0]
         target = self.enemy(108, self.dave.x + 80.0, self.dave.y)
         # The enemy was in the fist lane at the prior authoritative sample,
@@ -148,6 +154,7 @@ class CollisionRegressionTests(unittest.TestCase):
 
     def test_player_lunge_lane_assist_reaches_slightly_out_of_base_range(self) -> None:
         self.dave.x, self.dave.y, self.dave.facing = 260.0, 270.0, 1
+        self.game.data["stage_geometry"]["obstacles"] = ()
         move = self.game.data["moves"]["heavy"]
         physics = self.game.data["engine"]["physics"]
         sampled = self.game._sample_move_hitbox(move, 0.0)
@@ -159,7 +166,7 @@ class CollisionRegressionTests(unittest.TestCase):
         assist_range = base_reach + float(physics.get("player_attack_aim_range_bonus", 0.0))
         target = self.enemy(
             109,
-            self.dave.x + assist_range + float(move["lunge"]) - 0.5,
+            self.dave.x + assist_range + float(move["lunge"]) - 10.0,
             self.dave.y,
         )
         self.game.enemies = [target]
@@ -169,13 +176,24 @@ class CollisionRegressionTests(unittest.TestCase):
         self.assertEqual(hits, 1)
         self.assertLess(target.health, target.max_health)
 
+    def test_black_dave_forgiveness_scalars_are_exact_doubles(self) -> None:
+        physics = self.game.data["engine"]["physics"]
+        self.assertEqual(physics["player_attack_reach_bonus"], 28)
+        self.assertEqual(physics["player_attack_aim_range_bonus"], 28)
+        self.assertEqual(physics["player_attack_lane_assist"], 22)
+        self.assertEqual(physics["player_attack_depth_tolerance"], 16)
+        self.assertEqual(physics["player_attack_elevation_forgiveness"], 4.0)
+        self.assertEqual(physics["player_attack_temporal_forgiveness"], 0.18)
+        self.assertEqual(physics["player_attack_rear_tolerance"], 6)
+
     def test_player_attack_lands_slightly_beyond_previous_reach(self) -> None:
         self.dave.x, self.dave.y, self.dave.facing = 260.0, 270.0, 1
+        self.game.data["stage_geometry"]["obstacles"] = ()
         move = self.game.data["moves"]["light_combo"][0]
         physics = self.game.data["engine"]["physics"]
         sampled = self.game._sample_move_hitbox(move, 0.0)
         configured_bonus = float(physics["player_attack_reach_bonus"])
-        self.assertEqual(configured_bonus, 14.0)
+        self.assertEqual(configured_bonus, 28.0)
         previous_reach = (
             float(move["range_x"])
             + (configured_bonus - 4.0)
@@ -189,6 +207,81 @@ class CollisionRegressionTests(unittest.TestCase):
 
         self.assertEqual(hits, 1)
         self.assertLess(target.health, target.max_health)
+
+    def test_black_dave_light_combo_hits_at_doubled_outer_horizontal_boundary(self) -> None:
+        self.dave.x, self.dave.y, self.dave.facing = 260.0, 270.0, 1
+        self.game.data["stage_geometry"]["obstacles"] = ()
+        move = self.game.data["moves"]["light_combo"][0]
+        physics = self.game.data["engine"]["physics"]
+        sampled = self.game._sample_move_hitbox(move, 0.0)
+        max_reach = (
+            (float(move["range_x"]) + float(physics["player_attack_reach_bonus"]) + float(move["reach_forgiveness"]))
+            * sampled["reach_scale"]
+            + float(move.get("aim_range_bonus", physics["player_attack_aim_range_bonus"]))
+            + float(move.get("lunge", 0.0))
+        )
+        target = self.enemy(1122, self.dave.x + max_reach - 0.5, self.dave.y)
+        self.game.enemies = [target]
+
+        hits = self.game.player_attack(self.dave, move, "light", already_hit=set())
+
+        self.assertGreaterEqual(hits, 1)
+        self.assertLess(target.health, target.max_health)
+
+    def test_black_dave_light_combo_misses_clearly_beyond_doubled_outer_horizontal_boundary(self) -> None:
+        self.dave.x, self.dave.y, self.dave.facing = 260.0, 270.0, 1
+        self.game.data["stage_geometry"]["obstacles"] = ()
+        move = self.game.data["moves"]["light_combo"][0]
+        physics = self.game.data["engine"]["physics"]
+        sampled = self.game._sample_move_hitbox(move, 0.0)
+        max_reach = (
+            (float(move["range_x"]) + float(physics["player_attack_reach_bonus"]) + float(move["reach_forgiveness"]))
+            * sampled["reach_scale"]
+            + float(move.get("aim_range_bonus", physics["player_attack_aim_range_bonus"]))
+            + float(move.get("lunge", 0.0))
+        )
+        target = self.enemy(1123, self.dave.x + max_reach + 40.0, self.dave.y)
+        self.game.enemies = [target]
+
+        hits = self.game.player_attack(self.dave, move, "light", already_hit=set())
+
+        self.assertEqual(hits, 0)
+        self.assertEqual(target.health, target.max_health)
+
+    def test_black_dave_light_combo_locks_depth_boundary_and_keeps_front_arc_target_caps(self) -> None:
+        self.dave.x, self.dave.y, self.dave.facing = 260.0, 270.0, 1
+        self.game.data["stage_geometry"]["obstacles"] = ()
+        move = self.game.data["moves"]["light_combo"][0]
+        physics = self.game.data["engine"]["physics"]
+        sampled = self.game._sample_move_hitbox(move, 0.0)
+        depth = float(move["range_y"]) * sampled["depth_scale"]
+        lane_assist = float(move.get("lane_assist", physics["player_attack_lane_assist"]))
+        assist_depth = lane_assist + float(
+            physics.get("player_attack_depth_tolerance", 0.0)
+        ) + float(move.get("depth_forgiveness", 0.0))
+        near_boundary = self.enemy(1124, self.dave.x + 24.0, self.dave.y + depth + assist_depth - 1.0)
+        self.game.enemies = [near_boundary]
+        self.assertGreaterEqual(
+            self.game.player_attack(self.dave, move, "light", already_hit=set()),
+            1,
+        )
+
+        far_depth = self.enemy(1125, self.dave.x + 24.0, self.dave.y + depth + assist_depth + 3.0)
+        self.game.enemies = [far_depth]
+        self.assertEqual(
+            self.game.player_attack(self.dave, move, "light", already_hit=set()),
+            0,
+        )
+
+        rear = self.enemy(1126, self.dave.x - 60.0, self.dave.y)
+        self.game.enemies = [rear]
+        self.assertEqual(self.game.player_attack(self.dave, move, "light", already_hit=set()), 0)
+
+        self.assertGreaterEqual(
+            int(move["max_targets"]),
+            2,
+            msg="Front/back and target caps should still reflect configured move values.",
+        )
 
     def test_two_target_cap_applies_to_the_whole_attack_execution(self) -> None:
         self.shelly.state = "eliminated"
