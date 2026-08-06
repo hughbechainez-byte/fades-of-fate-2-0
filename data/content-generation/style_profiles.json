@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "profiles": {
+    "fades_environment_v1": {
+      "version": 1,
+      "logical_canvas": [640, 360],
+      "pixel_grid": 1,
+      "filtering": "nearest",
+      "anti_aliasing": "disabled",
+      "approved_assets": [
+        "assets/stage/chapter1_location_locked/chunks/awaken_church_finale/chunk_00_architecture_v1.png",
+        "assets/stage/chapter1_location_locked/chunks/awaken_church_finale/chunk_00_far_skyline_v1.png",
+        "assets/stage/chapter1_location_locked/chunks/awaken_church_finale/chunk_00_ground_v1.png",
+        "assets/stage/chapter1_location_locked/chunks/awaken_church_finale/chunk_00_near_occluder_v1.png",
+        "assets/stage/chapter1_location_locked/chunks/awaken_church_finale/chunk_01_architecture_v1.png",
+        "assets/stage/chapter1_location_locked/chunks/awaken_church_finale/chunk_01_far_skyline_v1.png",
+        "assets/stage/chapter1_location_locked/chunks/awaken_church_finale/chunk_01_ground_v1.png",
+        "assets/stage/chapter1_location_locked/chunks/awaken_church_finale/chunk_01_near_occluder_v1.png",
+        "assets/stage/chapter1_location_locked/chunks/awaken_church_finale/atmosphere_haze_tile_v1.png",
+        "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_00_architecture_v1.png",
+        "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_00_far_skyline_v1.png",
+        "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_00_ground_v1.png",
+        "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_00_near_occluder_v1.png",
+        "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_01_architecture_v1.png",
+        "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_01_far_skyline_v1.png",
+        "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_01_ground_v1.png",
+        "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/chunk_01_near_occluder_v1.png",
+        "assets/stage/chapter1_location_locked/chunks/sprouts_el_cilantro/atmosphere_haze_tile_v1.png",
+        "assets/stage/second_street_level1_near_props_v1.png",
+        "assets/stage/second_street_market_block_v1.png",
+        "assets/stage/second_street_level1_sprouts_el_cilantro_v1.png"
+      ],
+      "denied_patterns": [
+        "placeholder",
+        "debug",
+        "legacy",
+        "obsolete",
+        "old_",
+        "source_concept",
+        "preview"
+      ],
+      "approved_engine_sources": [
+        "src/pixel_art.py::draw_stage_prop",
+        "src/pixel_art.py::draw_ambient_plant",
+        "src/atmosphere.py::AtmosphereSnapshot"
+      ],
+      "camera_profile": "chapter1_oblique_v2",
+      "horizon_range": [190, 235],
+      "gameplay_lane": [235, 326],
+      "parallax_range": [0.25, 1.15],
+      "foreground_occlusion_budget": 0.12,
+      "foliage_density_range": [0.002, 0.02],
+      "prop_density_range": [0.002, 0.02],
+      "outline_policy": "existing-authored-edges-only",
+      "ground_shadow_policy": "authored-or-native-stage-prop-shadow",
+      "palette_families": {
+        "sunset": ["#f2baa4", "#de875e", "#8f5a46", "#5c3d40"],
+        "dusk_cyan": ["#202336", "#303849", "#596f78", "#c2d0dd"],
+        "accent": ["#39d9e6", "#f56db5", "#ffc94f"]
+      },
+      "time_of_day_modifiers": {
+        "sunset": {"contrast": 1.0, "saturation": 1.0, "ambient": 0.92},
+        "dusk": {"contrast": 1.05, "saturation": 0.96, "ambient": 0.78}
+      }
+    }
+  }
+}
