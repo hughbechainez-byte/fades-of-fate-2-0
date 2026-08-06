@@ -20,6 +20,7 @@ from dataclasses import dataclass
 from typing import Any, Mapping, Sequence
 
 from .config import campaign_levels, load_json, resource_path
+from .enemy_variants import validate_enemy_variant_profile
 from .location_lock import (
     LocationLockError,
     load_location_lock,
@@ -654,6 +655,7 @@ def validate_chapter_content(
         if "display_name" in variant:
             _require_text(variant.get("display_name"), f"{label}.display_name")
         _require_text(variant.get("fictional_role"), f"{label}.fictional_role")
+        validate_enemy_variant_profile(variant, label)
         known_variants[variant_id] = variant
 
     scaling = _require_mapping(data.get("player_count_scaling"), "player_count_scaling")

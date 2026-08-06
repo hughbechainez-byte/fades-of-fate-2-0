@@ -20,6 +20,7 @@ from .animation_manifest import (
 from .atmosphere import AtmosphereState
 from .audio import AudioManager
 from .chapter_content import compile_level_content, enemy_variants, load_chapter_content
+from .enemy_variants import apply_enemy_variant_profile
 from .combat_engine import (
     AABB2,
     AttackQueryReport,
@@ -3989,6 +3990,7 @@ class FadesGame:
             attack_style = str(variant.get("attack_style", "")).strip()
             if attack_style:
                 stats["attack_style"] = attack_style
+        stats = apply_enemy_variant_profile(stats, variant)
         if str(stats.get("attack_style", "")) in {"glass_bottle", "bike_tire", "taser"}:
             for field, ranged_field in (
                 ("attack_range", "ranged_attack_range"),
@@ -5678,6 +5680,7 @@ class FadesGame:
                         state=enemy_render_state,
                         kind=f"{obj.kind}:{obj.variant_id}" if obj.variant_id else obj.kind,
                         frame=enemy_tick,
+                        tint=obj.stats.get("render_tint"),
                         hit_flash=obj.hit_flash,
                     )
                     if obj.alive and obj.state not in {"ko_dazed", "ko_fall"}:

@@ -244,6 +244,7 @@ def _render_model(
             state=state,
             kind=f"{runtime_kind}:{variant_id}",
             frame=tick,
+            tint=enemy.stats.get("render_tint"),
             hit_flash=enemy.hit_flash,
         )
         for projectile in game.projectiles:

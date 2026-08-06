@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 import unittest
+from unittest import mock
 
 os.environ.setdefault("SDL_VIDEODRIVER", "dummy")
 os.environ.setdefault("SDL_AUDIODRIVER", "dummy")
@@ -11,6 +12,7 @@ import pygame
 
 from src.animation_manifest import action_segment_tick, enemy_animation_actor
 from src.chapter_content import compile_level_content, load_chapter_content
+from src.enemy_variants import apply_enemy_variant_profile
 from src.entities import Projectile
 from src.game import FadesGame, SelectSlot
 from src.input_manager import InputManager
@@ -89,6 +91,40 @@ class EnemyRosterExpansionTests(unittest.TestCase):
                 if expected["attack_style"] == "taser":
                     self.assertEqual(enemy.stats["attack_range"], enemy.stats["ranged_attack_range"])
                 self.game.enemies.remove(enemy)
+
+    def test_variant_profiles_can_tune_function_and_color_without_new_code_paths(self) -> None:
+        synthetic_variant = {
+            "runtime_kind": "homeless",
+            "display_name": "SYNTHETIC BOTTLE SLINGER",
+            "attack_style": "glass_bottle",
+            "fictional_role": "synthetic bottle slinger",
+            "behavior_note": "uses the generic homeless runtime but reads as a tougher themed variant",
+            "stat_multipliers": {"health": 1.35, "damage": 1.10, "speed": 0.92, "cooldown": 0.85},
+            "render_tint": [182, 128, 92],
+        }
+        base_stats = self.game.data["enemies"]["homeless"]
+        tuned = apply_enemy_variant_profile(base_stats, synthetic_variant)
+        self.assertGreater(tuned["health"], base_stats["health"])
+        self.assertLess(tuned["speed"], base_stats["speed"])
+        self.assertEqual(tuned["render_tint"], (182, 128, 92))
+
+        self.game.enemy_variant_catalog["synthetic_bottle_slinger"] = synthetic_variant
+        enemy = self.game._spawn_enemy("synthetic_bottle_slinger")
+        try:
+            self.assertEqual(enemy.kind, "homeless")
+            self.assertEqual(enemy.stats["attack_style"], "glass_bottle")
+            self.assertEqual(enemy.stats["render_tint"], (182, 128, 92))
+            self.assertGreater(enemy.stats["health"], base_stats["health"])
+
+            surface = pygame.Surface((640, 360), pygame.SRCALPHA)
+            with mock.patch("src.pixel_art.draw_enemy", return_value=pygame.Rect(0, 0, 1, 1)) as draw_enemy:
+                self.game.enemies = [enemy]
+                self.game._draw_gameplay(surface)
+
+            self.assertEqual(draw_enemy.call_args.kwargs["tint"], (182, 128, 92))
+        finally:
+            self.game.enemies.remove(enemy)
+            self.game.enemy_variant_catalog.pop("synthetic_bottle_slinger", None)
 
     def test_requested_models_are_reachable_in_authored_waves_and_compact_solo_queues(self) -> None:
         content = load_chapter_content(gameplay=self.game.data)
