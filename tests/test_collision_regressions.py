@@ -176,15 +176,15 @@ class CollisionRegressionTests(unittest.TestCase):
         self.assertEqual(hits, 1)
         self.assertLess(target.health, target.max_health)
 
-    def test_black_dave_forgiveness_scalars_are_exact_doubles(self) -> None:
+    def test_black_dave_forgiveness_scalars_are_exact_25_percent_increase(self) -> None:
         physics = self.game.data["engine"]["physics"]
-        self.assertEqual(physics["player_attack_reach_bonus"], 28)
-        self.assertEqual(physics["player_attack_aim_range_bonus"], 28)
-        self.assertEqual(physics["player_attack_lane_assist"], 22)
-        self.assertEqual(physics["player_attack_depth_tolerance"], 16)
-        self.assertEqual(physics["player_attack_elevation_forgiveness"], 4.0)
-        self.assertEqual(physics["player_attack_temporal_forgiveness"], 0.18)
-        self.assertEqual(physics["player_attack_rear_tolerance"], 6)
+        self.assertEqual(physics["player_attack_reach_bonus"], 17.5)
+        self.assertEqual(physics["player_attack_aim_range_bonus"], 17.5)
+        self.assertEqual(physics["player_attack_lane_assist"], 13.75)
+        self.assertEqual(physics["player_attack_depth_tolerance"], 10.0)
+        self.assertEqual(physics["player_attack_elevation_forgiveness"], 2.5)
+        self.assertAlmostEqual(physics["player_attack_temporal_forgiveness"], 0.1125)
+        self.assertEqual(physics["player_attack_rear_tolerance"], 3.75)
 
     def test_player_attack_lands_slightly_beyond_previous_reach(self) -> None:
         self.dave.x, self.dave.y, self.dave.facing = 260.0, 270.0, 1
@@ -193,7 +193,7 @@ class CollisionRegressionTests(unittest.TestCase):
         physics = self.game.data["engine"]["physics"]
         sampled = self.game._sample_move_hitbox(move, 0.0)
         configured_bonus = float(physics["player_attack_reach_bonus"])
-        self.assertEqual(configured_bonus, 28.0)
+        self.assertEqual(configured_bonus, 17.5)
         previous_reach = (
             float(move["range_x"])
             + (configured_bonus - 4.0)
@@ -208,7 +208,7 @@ class CollisionRegressionTests(unittest.TestCase):
         self.assertEqual(hits, 1)
         self.assertLess(target.health, target.max_health)
 
-    def test_black_dave_light_combo_hits_at_doubled_outer_horizontal_boundary(self) -> None:
+    def test_black_dave_light_combo_hits_at_25_percent_outer_horizontal_boundary(self) -> None:
         self.dave.x, self.dave.y, self.dave.facing = 260.0, 270.0, 1
         self.game.data["stage_geometry"]["obstacles"] = ()
         move = self.game.data["moves"]["light_combo"][0]
@@ -228,7 +228,7 @@ class CollisionRegressionTests(unittest.TestCase):
         self.assertGreaterEqual(hits, 1)
         self.assertLess(target.health, target.max_health)
 
-    def test_black_dave_light_combo_misses_clearly_beyond_doubled_outer_horizontal_boundary(self) -> None:
+    def test_black_dave_light_combo_misses_clearly_beyond_25_percent_outer_horizontal_boundary(self) -> None:
         self.dave.x, self.dave.y, self.dave.facing = 260.0, 270.0, 1
         self.game.data["stage_geometry"]["obstacles"] = ()
         move = self.game.data["moves"]["light_combo"][0]
