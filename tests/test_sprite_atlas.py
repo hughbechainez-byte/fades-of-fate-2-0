@@ -177,6 +177,30 @@ class SpriteAtlasTests(unittest.TestCase):
                         self.assertGreater(visible, cell_area * 0.02, "sprite cell is empty or nearly empty")
                         self.assertLess(visible, cell_area * 0.85, "sprite cell lost its transparent background")
 
+    def test_black_dave_attack_frames_keep_transparency_and_stable_bounds(self) -> None:
+        for state in ("attack_1", "attack_2", "attack_3", "attack_4"):
+            with self.subTest(state=state):
+                frames = sprite_atlas.animation_frames("black_dave", state)
+                bounds = [frame.get_bounding_rect(min_alpha=16) for frame in frames]
+                visible_pixels = [
+                    sum(1 for y in range(frame.get_height()) for x in range(frame.get_width()) if frame.get_at((x, y)).a >= 16)
+                    for frame in frames
+                ]
+                cell_area = frames[0].get_width() * frames[0].get_height()
+                for visible in visible_pixels:
+                    transparent_fraction = 1.0 - visible / cell_area
+                    self.assertLess(visible / cell_area, 0.90, "attack frame became too opaque")
+                    self.assertGreater(transparent_fraction, 0.10, "attack frame lost substantial matte transparency")
+                widths = [entry.w for entry in bounds]
+                heights = [entry.h for entry in bounds]
+                bottoms = [entry.bottom for entry in bounds]
+                tops = [entry.top for entry in bounds]
+                self.assertLessEqual(max(widths), frames[0].get_width(), "attack source bounds left frame edges")
+                self.assertLessEqual(max(widths) - min(widths), 120, "attack bounds are drifting by too much")
+                self.assertLessEqual(max(heights) - min(heights), 40, "attack bounds are drifting by too much")
+                self.assertLessEqual(max(bottoms) - min(bottoms), 2, "attack baseline shifted between attack frames")
+                self.assertLessEqual(max(tops), 40, "attack upper bound moved above the grounded baseline contract")
+
     def test_no_visible_hot_magenta_chroma_key_residue(self) -> None:
         for relative in ATLAS_SPECS:
             atlas = pygame.image.load(str(resource_path(relative)))

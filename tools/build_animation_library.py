@@ -713,6 +713,54 @@ def _split_jerry_reference(path: Path) -> list[Image.Image]:
     return frames
 
 
+def _extract_black_dave_combat_transparency(frame: Image.Image) -> Image.Image:
+    """Extract transparent matte for combat-sheet cels without punching dark body pixels.
+
+    The combat source is authored on a very dark matte with occasional mid-dark
+    tones.  A brightness/chroma threshold captures the matte first, then only
+    enclosed matte islands are preserved to keep authentic near-black anatomy and
+    shadows opaque.
+    """
+
+    matte = Image.new("L", frame.size)
+    matte.putdata(
+        [
+            255
+            if max(red, green, blue) - min(red, green, blue) > 8
+            or (red + green + blue) / 3 > 45
+            else 0
+            for red, green, blue, _alpha in frame.get_flattened_data()
+        ]
+    )
+    matte = matte.filter(ImageFilter.MaxFilter(7)).filter(ImageFilter.MinFilter(5))
+    matte = _fill_enclosed_alpha_holes(matte)
+    result = frame.copy()
+    result.putalpha(matte)
+    return result
+
+
+def _split_black_dave_combat_moves(path: Path, columns: int, rows: int) -> list[Image.Image]:
+    """Split Black Dave combat attacks with a dedicated edge-matte cleanup."""
+
+    if not path.is_file():
+        raise FileNotFoundError(f"missing combat reference: {path}")
+    atlas = Image.open(path).convert("RGBA")
+    cell_width, cell_height = atlas.width // columns, atlas.height // rows
+    frames: list[Image.Image] = []
+    for row in range(rows):
+        for column in range(columns):
+            frame = atlas.crop(
+                (
+                    column * cell_width,
+                    row * cell_height,
+                    (column + 1) * cell_width,
+                    (row + 1) * cell_height,
+                )
+            )
+            frames.append(_extract_black_dave_combat_transparency(frame))
+    return frames
+
+
 def _fill_enclosed_alpha_holes(alpha: Image.Image) -> Image.Image:
     """Make enclosed matte holes opaque while retaining exterior transparency."""
 
@@ -1465,7 +1513,7 @@ def _make_atlases(
         source_sets.update(
             {
                 "black_dave": _split(sprite_root / "black_dave_atlas.png", 5, 4),
-                "black_dave_attacks": _split(
+                "black_dave_attacks": _split_black_dave_combat_moves(
                     PROJECT_ROOT / "art_source" / "black_dave" / "black_dave_combat_moves_v1.png",
                     4,
                     4,
