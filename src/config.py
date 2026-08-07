@@ -837,7 +837,8 @@ def validate_gameplay(
         elif couch_levels:
             raise ConfigError("Couch is reserved for the Chapter 1 finale")
 
-    active_level = active_campaign_level(data)
+    include_chapter_two = str(data.get("campaign", {}).get("active_level_id", "")).startswith("chapter_2_")
+    active_level = active_campaign_level(data, include_chapter_two=include_chapter_two)
     if str(active_level.get("status")) != "playable":
         raise ConfigError("campaign.active_level_id must select a playable level")
     for key in ("level_id", "level_title", "background_theme"):

@@ -121,6 +121,102 @@ WHEELCHAIR_CHRIS_LEVEL_TWO_BEATS: tuple[OutroBeat, ...] = (
 
 
 @dataclass(frozen=True, slots=True)
+class ChapterTwoIntroFrame:
+    beat: str
+    elapsed_seconds: float
+    beat_elapsed: float
+    beat_progress: float
+    dialogue: str
+    camera_focus: str
+    events: tuple[str, ...]
+    finished: bool
+    awaiting_continue: bool
+
+
+@dataclass(slots=True)
+class ChapterTwoLevelOneIntro:
+    walking_seconds: float = 0.90
+    binocular_seconds: float = 0.95
+    debo_seconds: float = 1.15
+    elapsed_seconds: float = 0.0
+    _beat_index: int = field(default=0, init=False)
+    _beat_elapsed: float = field(default=0.0, init=False)
+    _advance_was_down: bool = False
+
+    def __post_init__(self) -> None:
+        self.walking_seconds = _positive_seconds(self.walking_seconds, "walking_seconds")
+        self.binocular_seconds = _positive_seconds(self.binocular_seconds, "binocular_seconds")
+        self.debo_seconds = _positive_seconds(self.debo_seconds, "debo_seconds")
+        self.elapsed_seconds = _non_negative_seconds(self.elapsed_seconds, "elapsed_seconds")
+
+    @property
+    def finished(self) -> bool:
+        return self._beat_index >= 3
+
+    @property
+    def beat(self) -> str:
+        return ("walking", "binoculars", "debo", "finished")[min(self._beat_index, 3)]
+
+    def current_frame(self, events: tuple[str, ...] = ()) -> ChapterTwoIntroFrame:
+        beat = self.beat
+        if beat == "walking":
+            progress = min(1.0, self._beat_elapsed / self.walking_seconds)
+            dialogue = "DAVE, SHELLY, AND CHIEF HEAD SOUTH WITH THE BLUE BMX."
+        elif beat == "binoculars":
+            progress = min(1.0, self._beat_elapsed / self.binocular_seconds)
+            dialogue = "SOMEONE WATCHES FROM AFAR THROUGH BINOCULARS."
+        elif beat == "debo":
+            progress = min(1.0, self._beat_elapsed / self.debo_seconds)
+            dialogue = "I WANT THAT BIKE, BLOOD."
+        else:
+            progress = 1.0
+            dialogue = ""
+        return ChapterTwoIntroFrame(
+            beat=beat,
+            elapsed_seconds=self.elapsed_seconds,
+            beat_elapsed=self._beat_elapsed,
+            beat_progress=progress,
+            dialogue=dialogue,
+            camera_focus=beat,
+            events=events,
+            finished=self.finished,
+            awaiting_continue=not self.finished,
+        )
+
+    def advance(self, dt: float, *, advance_input: bool = False) -> ChapterTwoIntroFrame:
+        dt = _non_negative_seconds(dt, "dt")
+        advance_down = bool(advance_input)
+        advance_edge = advance_down and not self._advance_was_down
+        self._advance_was_down = advance_down
+        if self.finished:
+            return self.current_frame()
+        self.elapsed_seconds += dt
+        self._beat_elapsed += dt
+        if self._beat_index == 0 and self._beat_elapsed >= self.walking_seconds:
+            if advance_edge or self._beat_elapsed >= self.walking_seconds + 0.35:
+                self._beat_index = 1
+                self._beat_elapsed = 0.0
+                return self.current_frame(("walking_settled",))
+        elif self._beat_index == 1 and self._beat_elapsed >= self.binocular_seconds:
+            if advance_edge or self._beat_elapsed >= self.binocular_seconds + 0.35:
+                self._beat_index = 2
+                self._beat_elapsed = 0.0
+                return self.current_frame(("binoculars_spotted",))
+        elif self._beat_index == 2 and self._beat_elapsed >= self.debo_seconds:
+            if advance_edge or self._beat_elapsed >= self.debo_seconds + 0.35:
+                self._beat_index = 3
+                self._beat_elapsed = 0.0
+                return self.current_frame(("debo_revealed", "finished"))
+        return self.current_frame()
+
+    def reset(self) -> None:
+        self.elapsed_seconds = 0.0
+        self._beat_index = 0
+        self._beat_elapsed = 0.0
+        self._advance_was_down = False
+
+
+@dataclass(frozen=True, slots=True)
 class LevelOutroFrame:
     """Complete presentation snapshot returned after every simulation step."""
 
@@ -446,6 +542,8 @@ class WheelchairChrisLevelTwoOutro:
 
 
 __all__ = [
+    "ChapterTwoIntroFrame",
+    "ChapterTwoLevelOneIntro",
     "JERRY_LEVEL_ONE_BEATS",
     "JerryLevelOneOutro",
     "LevelOutroFrame",

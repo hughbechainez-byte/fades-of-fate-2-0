@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 import unittest
+from unittest import mock
 from unittest.mock import patch
 
 os.environ.setdefault("SDL_VIDEODRIVER", "dummy")
@@ -353,6 +354,35 @@ class ChapterOneLayoutTests(unittest.TestCase):
                     self.assertEqual(order[0], "background")
                     self.assertEqual(order[-1], "foreground")
                     self.assertTrue(all(entry == "prop" for entry in order[1:-1]))
+        finally:
+            game.close()
+            manager.close()
+
+    def test_chapter_two_level_one_plays_an_intro_scene(self) -> None:
+        manager = InputManager(max_players=4, discover_controllers=False)
+        game = FadesGame(manager, mute=True)
+        try:
+            game.select_slots = [SelectSlot({"type": "keyboard"}, character_index=0, confirmed=True)]
+            game._select_campaign_level("chapter_2_level_1")
+            game._start_stage()
+            self.assertIsNotNone(game.level_intro)
+            surface = pygame.Surface((640, 360), pygame.SRCALPHA)
+
+            with (
+                mock.patch("src.game.pixel_art.draw_bmx_bike") as draw_bmx,
+                mock.patch("src.game.pixel_art.draw_player") as draw_player,
+                mock.patch("src.game.pixel_art.draw_chief") as draw_chief,
+            ):
+                game._draw_gameplay(surface)
+
+            self.assertGreater(pygame.mask.from_surface(surface).count(), 10_000)
+            self.assertTrue(draw_bmx.called or draw_player.called or draw_chief.called)
+            for _ in range(540):
+                game.update(1.0 / 60.0)
+                if game.level_intro is None:
+                    break
+            self.assertIsNone(game.level_intro)
+            self.assertEqual(game.state, "gameplay")
         finally:
             game.close()
             manager.close()

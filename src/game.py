@@ -59,7 +59,7 @@ from .entities import (
 from .input_manager import InputManager, InputSnapshot
 from .logger import breadcrumb, get_log_paths
 from .level_complete import CompletionStats, LevelCompleteTimeline, LevelStatTracker, RankRules
-from .level_outro import JerryLevelOneOutro, LevelOutroFrame, WheelchairChrisLevelTwoOutro
+from .level_outro import ChapterTwoLevelOneIntro, JerryLevelOneOutro, LevelOutroFrame, WheelchairChrisLevelTwoOutro
 from .progression import GameOptions, RunStats, SaveData, SaveRepository
 from .provenance import build_runtime_provenance
 from .stage_transition import BossLoadingTransition, TransitionFrame
@@ -679,6 +679,8 @@ class FadesGame:
         self.couch_retreat: CouchRetreat | None = None
         self.level_outro: JerryLevelOneOutro | None = None
         self.level_outro_frame: LevelOutroFrame | None = None
+        self.level_intro: ChapterTwoLevelOneIntro | None = None
+        self.level_intro_frame: object | None = None
         # Mouse clicks are events rather than retained input state. Latch one
         # until the next fixed update so the dialogue consumes it only once.
         self._level_outro_mouse_advance_pending = False
@@ -864,6 +866,20 @@ class FadesGame:
                     self.audio.play("menu")
                 elif event.key == pygame.K_F4:
                     self._activate_visual_evidence_scene()
+                elif event.key == pygame.K_1 and self.state in {"loading", "title"}:
+                    chapter_level = self._title_start_level_id(1)
+                    if chapter_level is not None:
+                        self._open_character_select_from_mouse(
+                            start_level_id=chapter_level,
+                            source="keyboard_1",
+                        )
+                elif event.key == pygame.K_2 and self.state in {"loading", "title"}:
+                    chapter_level = self._title_start_level_id(2)
+                    if chapter_level is not None:
+                        self._open_character_select_from_mouse(
+                            start_level_id=chapter_level,
+                            source="keyboard_2",
+                        )
                 elif event.key == pygame.K_ESCAPE:
                     if self.state == "gameplay":
                         if self.pause:
@@ -910,14 +926,21 @@ class FadesGame:
         self._join_source(keyboard)
         return self.select_slots[-1]
 
-    def _open_character_select_from_mouse(self) -> None:
+    def _open_character_select_from_mouse(
+        self,
+        start_level_id: str | None = None,
+        *,
+        source: str = "mouse",
+    ) -> None:
         if self.state not in {"loading", "title"}:
             return
         self.loading_timer = 0.0
         self.state = "character_select"
+        if start_level_id is not None and str(start_level_id) != self.level_id:
+            self._select_campaign_level(str(start_level_id))
         self._keyboard_select_slot()
         self.audio.play("menu")
-        self.log_breadcrumb("character_select_opened", source="mouse")
+        self.log_breadcrumb("character_select_opened", source=source)
 
     def _activate_pause_selection(self, *, source: str) -> None:
         """Apply the selected pause action for keyboards, pads, and clicks."""
@@ -947,8 +970,14 @@ class FadesGame:
             self._level_outro_mouse_advance_pending = True
             return
         if self.state in {"loading", "title"}:
-            if pygame.Rect(145, 307, 350, 39).collidepoint(point):
-                self._open_character_select_from_mouse()
+            chapter_one_level_id = self._title_start_level_id(1)
+            chapter_two_level_id = self._title_start_level_id(2)
+            chapter_one_button = pygame.Rect(145, 296, 170, 34)
+            chapter_two_button = pygame.Rect(325, 296, 170, 34)
+            if chapter_one_button.collidepoint(point) and chapter_one_level_id is not None:
+                self._open_character_select_from_mouse(chapter_one_level_id)
+            elif chapter_two_button.collidepoint(point) and chapter_two_level_id is not None:
+                self._open_character_select_from_mouse(chapter_two_level_id)
             return
         if self.state == "character_select":
             for index in range(len(PLAYABLE_CHARACTERS)):
@@ -1119,13 +1148,32 @@ class FadesGame:
     def _next_campaign_level(self) -> dict[str, Any] | None:
         """Return the authored successor of the currently completed level."""
 
-        levels = campaign_levels(self.data)
+        levels = campaign_levels(self.data, include_chapter_two=True)
         current_index = next(
             (index for index, level in enumerate(levels) if str(level.get("id")) == self.level_id),
             -1,
         )
         if 0 <= current_index < len(levels) - 1:
             return levels[current_index + 1]
+        return None
+
+    def _title_start_level_id(self, chapter_number: int) -> str | None:
+        """Return the first authored level id for a chapter."""
+
+        try:
+            target_chapter = int(chapter_number)
+        except (TypeError, ValueError):
+            return None
+        for level in self._all_campaign_levels():
+            chapter_value = level.get("chapter_number", 0)
+            try:
+                chapter = int(chapter_value)
+            except (TypeError, ValueError):
+                continue
+            if chapter == target_chapter:
+                level_id = level.get("id")
+                if level_id is not None:
+                    return str(level_id)
         return None
 
     def _all_campaign_levels(self) -> tuple[dict[str, Any], ...]:
@@ -1237,6 +1285,7 @@ class FadesGame:
 
     def _activate_epilogue_selection(self) -> None:
         action = ("next_level", "replay", "main_menu", "options")[self.epilogue_selection]
+        chapter_number = int(self.level_data.get("chapter_number", 1))
         if action == "next_level":
             next_level = self._next_campaign_level()
             if next_level is not None and str(next_level.get("status", "")).lower() == "playable":
@@ -1244,7 +1293,7 @@ class FadesGame:
                 self.log_breadcrumb("epilogue_action", action=action, level_id=next_level["id"])
                 return
             if next_level is None:
-                self.epilogue_notice = "CHAPTER COMPLETE"
+                self.epilogue_notice = f"CHAPTER {chapter_number} COMPLETE"
             else:
                 self.epilogue_notice = f"LEVEL {next_level['number']} IS LOCKED"
         elif action == "replay":
@@ -1439,8 +1488,8 @@ class FadesGame:
         return self.music_started
 
     def _go_title(self) -> None:
-        # A fresh title-screen run always begins at the authored Chapter 1
-        # opener instead of retaining a previously completed route segment.
+        # A fresh title-screen run defaults to the authored Chapter 1 opener
+        # instead of retaining a previously completed route segment.
         first_level = self._all_campaign_levels()[0]
         if self.level_id != str(first_level["id"]):
             self._select_campaign_level(str(first_level["id"]))
@@ -1478,6 +1527,8 @@ class FadesGame:
         self.couch_retreat = None
         self.level_outro = None
         self.level_outro_frame = None
+        self.level_intro = None
+        self.level_intro_frame = None
         self.completion_stats = None
         self.victory_timeline.reset()
         self.victory_frame = self.victory_timeline.current_frame()
@@ -1821,6 +1872,8 @@ class FadesGame:
         self.couch_retreat = None
         self.level_outro = None
         self.level_outro_frame = None
+        self.level_intro = None
+        self.level_intro_frame = None
 
         characters = PLAYABLE_CHARACTERS
         solo_cpu_characters = (
@@ -1904,6 +1957,8 @@ class FadesGame:
         self._prepare_runtime_chapter_content()
         self.route_card_timer = 2.7
         self.route_card_objective = self._route_card_objective()
+        self.level_intro = ChapterTwoLevelOneIntro() if self.level_id == "chapter_2_level_1" else None
+        self.level_intro_frame = self.level_intro.current_frame() if self.level_intro is not None else None
 
         if not self.mute:
             filename = str(self.data.get("audio", {}).get("stage_music", "second_street_loop.wav"))
@@ -1932,6 +1987,9 @@ class FadesGame:
         # directly in ``handle_events``.
         if self.level_outro is not None:
             self._update_level_outro(dt, human_snapshots)
+            return
+        if self.level_intro is not None:
+            self._update_level_intro(dt, human_snapshots)
             return
         if self.pause_release_guard:
             if self._pause_input_is_neutral(human_snapshots):
@@ -5580,11 +5638,49 @@ class FadesGame:
             self._text(surface, self.font, f"LOADING SECOND STREET{dots}", (255, 238, 181), (320, 333), center=True)
         else:
             pulse = 175 + int(70 * (0.5 + 0.5 * math.sin(self.elapsed * 5.0)))
-            title_button = pygame.Rect(145, 307, 350, 39)
-            hovered = self.mouse_position is not None and title_button.collidepoint(self.mouse_position)
-            self._panel(surface, title_button, (18, 22, 39) if hovered else (8, 7, 18), (255, 220, 104) if hovered else (70, 218, 255))
-            self._text(surface, self.font, "PRESS ENTER OR CONTROLLER A / START", (pulse, 240, 255), (320, 322), center=True)
-            self._text(surface, self.font_tiny, "1-4 PLAYER LOCAL CO-OP  •  FOUNDATION DEMO", (255, 221, 125), (320, 338), center=True)
+            chapter_one_level_id = self._title_start_level_id(1)
+            chapter_two_level_id = self._title_start_level_id(2)
+            chapter_one_button = pygame.Rect(145, 296, 170, 34)
+            chapter_two_button = pygame.Rect(325, 296, 170, 34)
+            if chapter_one_level_id is not None:
+                hovered = self.mouse_position is not None and chapter_one_button.collidepoint(self.mouse_position)
+                self._panel(
+                    surface,
+                    chapter_one_button,
+                    (18, 22, 39) if hovered else (8, 7, 18),
+                    (255, 220, 104) if hovered else (70, 218, 255),
+                )
+                self._text(
+                    surface,
+                    self.font_tiny,
+                    "CHAPTER 1",
+                    (pulse, 240, 255),
+                    chapter_one_button.center,
+                    center=True,
+                )
+            if chapter_two_level_id is not None:
+                hovered = self.mouse_position is not None and chapter_two_button.collidepoint(self.mouse_position)
+                self._panel(
+                    surface,
+                    chapter_two_button,
+                    (18, 22, 39) if hovered else (8, 7, 18),
+                    (255, 220, 104) if hovered else (70, 218, 255),
+                )
+                self._text(
+                    surface,
+                    self.font_tiny,
+                    "CHAPTER 2",
+                    (pulse, 240, 255),
+                    chapter_two_button.center,
+                    center=True,
+                )
+            start_hint = (
+                "1 = CHAPTER 1 • 2 = CHAPTER 2 • CLICK A BUTTON"
+                if chapter_two_level_id is not None
+                else "PRESS 1 TO BEGIN CHAPTER 1 • CLICK BUTTON"
+            )
+            self._text(surface, self.font_tiny, start_hint, (255, 240, 255), (320, 338), center=True)
+            self._text(surface, self.font_tiny, "PRESS ENTER / A / START TO BEGIN CHAPTER 1", (255, 221, 125), (320, 352), center=True)
 
     def _draw_character_select(self, surface: pygame.Surface) -> None:
         surface.blit(self.key_art, (0, 0))
@@ -6162,6 +6258,8 @@ class FadesGame:
         self._draw_couch_refuge_taunt(surface)
         if self.debug:
             self._draw_debug(surface)
+        if self.level_intro is not None and self.level_intro_frame is not None:
+            self._draw_level_intro_overlay(surface)
         if self.level_outro is not None and self.level_outro_frame is not None:
             self._draw_level_outro_overlay(surface)
         if self.boss_transition is not None:
@@ -6514,6 +6612,54 @@ class FadesGame:
                 (320, 343),
                 center=True,
             )
+
+    def _draw_level_intro_overlay(self, surface: pygame.Surface) -> None:
+        frame = self.level_intro_frame
+        if frame is None:
+            return
+        overlay = pygame.Surface(LOGICAL_SIZE, pygame.SRCALPHA)
+        overlay.fill((3, 4, 12, 224))
+        surface.blit(overlay, (0, 0))
+        self._panel(surface, pygame.Rect(26, 24, 588, 110), (9, 10, 24), (102, 220, 255))
+        self._text(surface, self.font_small, "CHAPTER 2 - EAST SIDE SOUTHBOUND", (255, 222, 124), (42, 35))
+        self._text(surface, self.font, "DAVE, SHELLY, AND CHIEF ROLL SOUTH WITH THE BLUE BMX.", (235, 232, 240), (42, 61))
+        self._text(surface, self.font_tiny, "AFTER A FEW BLOCKS, SOMEONE STARTS WATCHING THEM.", (203, 220, 236), (42, 87))
+        if getattr(frame, "beat", "") == "walking":
+            pixel_art.draw_bmx_bike(surface, 305, 300, frame=int(frame.beat_elapsed * 8.0))
+            pixel_art.draw_player(surface, 152, 302, 0, 1, "walk", "black_dave", int(frame.beat_elapsed * 10.0), (217, 72, 64))
+            pixel_art.draw_player(surface, 244, 305, 0, 1, "walk", "shelly", int(frame.beat_elapsed * 10.0), (195, 74, 124))
+            pixel_art.draw_chief(surface, 346, 309, 0, 1, "idle", int(frame.beat_elapsed * 10.0))
+        elif getattr(frame, "beat", "") == "binoculars":
+            self._panel(surface, pygame.Rect(386, 68, 214, 64), (10, 14, 26), (255, 146, 201))
+            self._text(surface, self.font_small, "BINOCULARS VIEW", (255, 232, 139), (493, 80), center=True)
+            self._text(surface, self.font_tiny, "SOMEONE IS WATCHING THE STREET.", (235, 232, 240), (493, 102), center=True)
+            for cx, cy in ((478, 94), (520, 94)):
+                pygame.draw.circle(surface, (12, 18, 30), (cx, cy), 18)
+                pygame.draw.circle(surface, (103, 224, 255), (cx, cy), 16, 2)
+                pygame.draw.line(surface, (103, 224, 255), (cx + 14, cy), (cx + 28, cy), 4)
+        else:
+            self._panel(surface, pygame.Rect(30, 140, 378, 118), (13, 10, 22), (255, 96, 155))
+            self._text(surface, self.font_small, "DEBO", (255, 170, 123), (45, 153))
+            self._text(surface, self.font, "I WANT THAT BIKE, BLOOD.", (255, 243, 216), (45, 178))
+            self._text(surface, self.font_tiny, "PROMENADE HENCHMEN SHADOW THE BLOCK.", (203, 197, 219), (45, 204))
+            pixel_art.draw_boss(surface, 482, 300, facing=-1, state="debo_idle", frame=int(frame.beat_elapsed * 10.0))
+            for x in (515, 556):
+                pygame.draw.rect(surface, (24, 18, 24), (x, 266, 10, 30))
+        self._text(surface, self.font_tiny, "PRESS A BUTTON TO CONTINUE", (214, 232, 246), (320, 340), center=True)
+
+    def _update_level_intro(self, dt: float, snapshots: list[InputSnapshot]) -> None:
+        intro = self.level_intro
+        if intro is None:
+            return
+        advance = any(
+            snapshot.pressed & {"confirm", "join", "light", "heavy", "jump", "interact", "super", "chief", "secondary"}
+            for snapshot in snapshots
+        )
+        frame = intro.advance(dt, advance_input=advance)
+        self.level_intro_frame = frame
+        if frame.finished:
+            self.level_intro = None
+            self.level_intro_frame = None
 
     def _draw_boss_loading_overlay(self, surface: pygame.Surface) -> None:
         frame = self.boss_transition_frame
@@ -7576,7 +7722,8 @@ class FadesGame:
         shade = pygame.Surface(LOGICAL_SIZE, pygame.SRCALPHA)
         shade.fill((12, 10, 30, 52 if self.level_is_chapter_finale else 116))
         surface.blit(shade, (0, 0))
-        heading = "SECOND STREET: SUNSET" if self.level_is_chapter_finale else f"CHAPTER 1  •  LEVEL {self.level_number} CLEAR"
+        chapter_number = int(self.level_data.get("chapter_number", 1))
+        heading = "SECOND STREET: SUNSET" if self.level_is_chapter_finale else f"CHAPTER {chapter_number}  •  LEVEL {self.level_number} CLEAR"
         subtitle = (
             "DAVE RIDES HOME • SHELLY AND CHIEF WALK BESIDE HIM"
             if self.level_is_chapter_finale
@@ -7605,7 +7752,7 @@ class FadesGame:
         next_label = (
             f"START LEVEL {int(next_level['number'])}"
             if next_level is not None and str(next_level.get("status", "")).lower() == "playable"
-            else "CHAPTER 1 COMPLETE"
+            else f"CHAPTER {chapter_number} COMPLETE"
         )
         menu = (
             next_label,
