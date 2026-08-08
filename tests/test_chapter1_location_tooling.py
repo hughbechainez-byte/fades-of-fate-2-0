@@ -400,6 +400,8 @@ class ChapterOneWindowsBuildGateTests(unittest.TestCase):
         self.assertIn("Render-Route-Scenery-QA.py", script)
         self.assertEqual(script.count("Render-Route-Scenery-QA.py"), 1)
         self.assertIn("Render-Projection-Calibration.py", script)
+        self.assertIn("branch --show-current | Out-String", script)
+        self.assertIn("$sourceBranchName = 'detached'", script)
         self.assertIn("$VisualReviewApproved", script)
         self.assertIn("Remove-Item -LiteralPath $staleArtifact", script)
         self.assertIn("asset_inventory_sha256", script)

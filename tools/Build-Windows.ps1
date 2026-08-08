@@ -16,7 +16,7 @@ if (-not (Test-Path -LiteralPath $python -PathType Leaf)) {
 Push-Location $projectRoot
 try {
     $sourceCommitSha = (& git -C $projectRoot rev-parse HEAD).Trim()
-    $sourceBranchName = (& git -C $projectRoot branch --show-current).Trim()
+    $sourceBranchName = (& git -C $projectRoot branch --show-current | Out-String).Trim()
     if ([string]::IsNullOrWhiteSpace($sourceBranchName)) {
         $sourceBranchName = 'detached'
     }
