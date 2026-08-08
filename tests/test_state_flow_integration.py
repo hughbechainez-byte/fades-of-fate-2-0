@@ -388,7 +388,7 @@ class StateFlowIntegrationTests(unittest.TestCase):
             click = lambda point: game.handle_events([
                 pygame.event.Event(pygame.MOUSEBUTTONDOWN, {"button": 1, "pos": point})
             ])
-            click((320, 325))
+            click((230, 313))
             self.assertEqual(game.state, "character_select")
             click((244, 120))  # Shelly card
             self.assertEqual(game.select_slots[0].character_index, 1)
@@ -432,7 +432,7 @@ class StateFlowIntegrationTests(unittest.TestCase):
             game._go_title()
             self.assertEqual(game.state, "title")
             self.assertEqual((game.select_slots, game.players, game.chiefs), ([], [], []))
-            click((320, 325))
+            click((230, 313))
             self.assertEqual(game.state, "character_select")
             self.assertEqual(game.select_slots[0].character_index, 0)
         finally:
@@ -445,7 +445,7 @@ class StateFlowIntegrationTests(unittest.TestCase):
         try:
             game.state = "title"
             game.handle_events([
-                pygame.event.Event(pygame.MOUSEBUTTONDOWN, {"button": 1, "pos": (320, 325)})
+                pygame.event.Event(pygame.MOUSEBUTTONDOWN, {"button": 1, "pos": (230, 313)})
             ])
             solo_rects = game._character_select_lower_card_rects()
             self.assertEqual(len(solo_rects), 5)
@@ -677,7 +677,8 @@ class StateFlowIntegrationTests(unittest.TestCase):
             self.assertGreater(pygame.mask.from_surface(sunset).count(), 10_000)
             game.epilogue_selection = 0
             game._activate_epilogue_selection()
-            self.assertIn("CHAPTER COMPLETE", game.epilogue_notice)
+            self.assertEqual(game.state, "interlevel")
+            self.assertEqual(game.pending_level_id, "chapter_2_level_1")
         finally:
             game.close()
             manager.close()

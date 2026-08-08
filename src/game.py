@@ -1175,15 +1175,17 @@ class FadesGame:
         except (TypeError, ValueError):
             return None
         for level in self._all_campaign_levels():
-            chapter_value = level.get("chapter_number", 0)
+            level_id = str(level.get("id", ""))
+            chapter_value = level.get("chapter_number")
+            if chapter_value is None and level_id.startswith("chapter_"):
+                chapter_value = level_id.removeprefix("chapter_").split("_", 1)[0]
             try:
                 chapter = int(chapter_value)
             except (TypeError, ValueError):
                 continue
             if chapter == target_chapter:
-                level_id = level.get("id")
-                if level_id is not None:
-                    return str(level_id)
+                if level_id:
+                    return level_id
         return None
 
     def _all_campaign_levels(self) -> tuple[dict[str, Any], ...]:

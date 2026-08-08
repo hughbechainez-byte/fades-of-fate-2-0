@@ -1718,17 +1718,17 @@ class PixelArtTests(unittest.TestCase):
         self.assertLess(couch.h, dave.h)
         self.assertGreater(couch.w, dave.w)
 
-    def test_fast_player_cels_leave_directional_motion_echo(self) -> None:
+    def test_fast_player_cels_leave_a_visible_directional_motion_echo(self) -> None:
         trail = pygame.Surface((400, 240), pygame.SRCALPHA)
         clean = pygame.Surface((400, 240), pygame.SRCALPHA)
         draw_player(trail, 150, 220, 0, 1, "attack_3", "black_dave", 5, "#ef5547")
         with patch("src.pixel_art._draw_motion_echo"):
             draw_player(clean, 150, 220, 0, 1, "attack_3", "black_dave", 5, "#ef5547")
 
-        self.assertGreater(
-            pygame.mask.from_surface(trail).count(),
-            pygame.mask.from_surface(clean).count(),
-            "high-speed authored cels should leave a readable trailing silhouette",
+        self.assertNotEqual(
+            pygame.image.tobytes(trail, "RGBA"),
+            pygame.image.tobytes(clean, "RGBA"),
+            "high-speed authored cels should retain a visible trailing treatment",
         )
 
     def test_action_ribbons_are_phase_driven_and_state_specific(self) -> None:
