@@ -9,6 +9,8 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
+import src.config as config_module
+
 from src.config import (
     CONTENT_ROOT_ENV,
     ConfigError,
@@ -28,6 +30,19 @@ class GameplayConfigTests(unittest.TestCase):
 
     def test_shipped_engine_configuration_is_valid(self) -> None:
         self.assertEqual(validate_gameplay(deepcopy(self.data))["engine"]["schema_version"], 2)
+
+    def test_runtime_load_can_skip_expensive_location_image_decoding(self) -> None:
+        with patch.object(
+            config_module,
+            "_location_manifest_for_gameplay",
+            wraps=config_module._location_manifest_for_gameplay,
+        ) as manifest_loader:
+            loaded = load_gameplay(validate_location_assets=False)
+        self.assertEqual(loaded["engine"]["schema_version"], 2)
+        manifest_loader.assert_called_once_with(
+            loaded,
+            validate_assets=False,
+        )
 
     def test_playable_display_names_match_the_current_four_character_roster(self) -> None:
         expected = {

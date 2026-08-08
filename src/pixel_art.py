@@ -115,6 +115,7 @@ def _location_manifest() -> Mapping[str, Any]:
         _LOCATION_LOCK_CACHE = location_lock.load_location_lock(
             manifest_path,
             project_root=manifest_path.parent.parent,
+            validate_assets=False,
         )
     return _LOCATION_LOCK_CACHE
 

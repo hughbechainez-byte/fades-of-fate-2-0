@@ -228,7 +228,7 @@ def load_json(relative: str) -> dict[str, Any]:
         return json.load(handle)
 
 
-def load_gameplay() -> dict[str, Any]:
+def load_gameplay(*, validate_location_assets: bool = True) -> dict[str, Any]:
     data = load_json("data/gameplay.json")
     enemies = data.setdefault("enemies", {})
     if "debo" not in enemies and "couch" in enemies:
@@ -250,10 +250,17 @@ def load_gameplay() -> dict[str, Any]:
             }
         )
         enemies["debo"] = debo
-    return validate_gameplay(data)
+    return validate_gameplay(
+        data,
+        validate_location_assets=validate_location_assets,
+    )
 
 
-def _location_manifest_for_gameplay(data: Mapping[str, Any] | None = None) -> dict[str, Any]:
+def _location_manifest_for_gameplay(
+    data: Mapping[str, Any] | None = None,
+    *,
+    validate_assets: bool = True,
+) -> dict[str, Any]:
     relative = str(
         (data or {}).get("campaign", {}).get(
             "location_manifest",
@@ -268,7 +275,7 @@ def _location_manifest_for_gameplay(data: Mapping[str, Any] | None = None) -> di
     return load_location_lock(
         path,
         project_root=path.parent.parent,
-        validate_assets=True,
+        validate_assets=validate_assets,
     )
 
 
@@ -671,6 +678,7 @@ def validate_gameplay(
     data: dict[str, Any],
     *,
     location_manifest: Mapping[str, Any] | None = None,
+    validate_location_assets: bool = True,
 ) -> dict[str, Any]:
     """Validate the small set of invariants every engine system relies on."""
 
@@ -700,7 +708,10 @@ def validate_gameplay(
         manifest = (
             dict(location_manifest)
             if location_manifest is not None
-            else _location_manifest_for_gameplay(data)
+            else _location_manifest_for_gameplay(
+                data,
+                validate_assets=validate_location_assets,
+            )
         )
         validate_gameplay_locations(data, manifest)
         hydrate_gameplay_locations(data, manifest)

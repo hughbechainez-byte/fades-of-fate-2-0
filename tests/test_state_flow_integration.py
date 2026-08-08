@@ -72,6 +72,14 @@ class StateFlowIntegrationTests(unittest.TestCase):
             ),
         )
 
+    def test_launch_loading_state_has_only_a_brief_transition(self) -> None:
+        manager = InputManager(max_players=4, discover_controllers=False)
+        game = FadesGame(manager, mute=True)
+        self.assertEqual(game.state, "loading")
+        self.assertEqual(game.loading_timer, 0.0)
+        game.update(1.0 / 60.0)
+        self.assertEqual(game.state, "title")
+
     def test_title_walkers_cross_the_full_street_and_reverse(self) -> None:
         left = _title_walker_horizontal_pose(0.0, left=-48, right=688, period=10.0, phase=0.0)
         right = _title_walker_horizontal_pose(10.0, left=-48, right=688, period=10.0, phase=0.0)

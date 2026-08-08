@@ -80,6 +80,7 @@ def load_chapter_content(
     *,
     gameplay: Mapping[str, Any] | None = None,
     include_chapter_two: bool = False,
+    location_manifest: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Load and validate the editable Chapter 1 production-content file.
 
@@ -157,7 +158,12 @@ def load_chapter_content(
                 "behavior_note": "slow, deliberate boss pressure with heavy swings and a looming advance",
             },
         ]
-    return validate_chapter_content(data, gameplay=gameplay, include_chapter_two=include_chapter_two)
+    return validate_chapter_content(
+        data,
+        gameplay=gameplay,
+        include_chapter_two=include_chapter_two,
+        location_manifest=location_manifest,
+    )
 
 
 def chapter_levels(data: Mapping[str, Any]) -> tuple[dict[str, Any], ...]:

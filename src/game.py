@@ -407,17 +407,25 @@ class FadesGame:
     VERSION = VERSION
 
     def __init__(self, input_manager: InputManager, *, mute: bool = False) -> None:
-        self.data = load_gameplay()
+        # Builds and dedicated location QA decode every authored panorama.
+        # Ordinary play keeps the same manifest/schema checks but avoids
+        # re-decoding all route art before the first interactive frame.
+        self.data = load_gameplay(validate_location_assets=False)
         location_manifest_path = resource_path("data/chapter1_location_lock.json")
         self.location_manifest_path = location_manifest_path
         self.location_manifest = location_lock.load_location_lock(
             location_manifest_path,
             project_root=location_manifest_path.parent.parent,
+            validate_assets=False,
         )
         # Production-facing Chapter content stays separate from the compact
         # combat configuration.  Validating it at boot catches a broken route
         # contract before a player reaches a later stage.
-        self.chapter_content = load_chapter_content(gameplay=self.data, include_chapter_two=True)
+        self.chapter_content = load_chapter_content(
+            gameplay=self.data,
+            include_chapter_two=True,
+            location_manifest=self.location_manifest,
+        )
         self.enemy_variant_catalog = enemy_variants(self.chapter_content)
         self.runtime_chapter_content: dict[str, Any] = {}
         self._content_major_by_hook: dict[str, dict[str, Any]] = {}
@@ -566,7 +574,9 @@ class FadesGame:
             for name in (*PLAYABLE_CHARACTERS, "ko")
         }
         self.state = "loading"
-        self.loading_timer = 1.75
+        # Construction has completed before the loop can draw this state, so
+        # do not hold players on a second, artificial loading delay.
+        self.loading_timer = 0.0
         self.select_slots: list[SelectSlot] = []
         self.select_start_armed = False
         self.pause = False
