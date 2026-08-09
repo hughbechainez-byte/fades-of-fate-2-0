@@ -607,6 +607,28 @@ def _loop_and_hold(actor: str, state: str) -> tuple[bool, int]:
     return False, 1
 
 
+FOUNDATION_PLAYER_STATES = PLAYER_STATES
+FOUNDATION_ATTACK_STATES = frozenset(
+    {"attack_1", "attack_2", "attack_3", "attack_4", "heavy", "air_attack", "super"}
+)
+
+
+def _foundation_row(actor: str, state: str) -> int:
+    if state == "walk":
+        return 1
+    if state in FOUNDATION_ATTACK_STATES:
+        return 2
+    return 0
+
+
+def _foundation_loop_and_hold(state: str) -> tuple[bool, int]:
+    if state == "idle":
+        return True, 6
+    if state == "walk":
+        return True, 3
+    return False, 2
+
+
 ANIMATION_CLIPS: tuple[AnimationClip, ...] = tuple(
     [
         AnimationClip(
@@ -744,6 +766,20 @@ ANIMATION_CLIPS: tuple[AnimationClip, ...] = tuple(
             PHASES["ride"],
         )
     ]
+    + [
+        AnimationClip(
+            actor,
+            state,
+            f"assets/sprites/{actor}_foundation_atlas.png",
+            _foundation_row(actor, state),
+            128,
+            128,
+            *_foundation_loop_and_hold(state),
+            PHASES[_player_phase("black_dave", state)],
+        )
+        for actor in ("jermaine", "white_dave")
+        for state in FOUNDATION_PLAYER_STATES
+    ]
 )
 
 
@@ -850,7 +886,7 @@ def clip_for(actor: str, state: str) -> AnimationClip:
     if normalized_actor in {"dave", "blackdave"}:
         normalized_actor = "black_dave"
     elif normalized_actor in {"jermaine", "white_dave"}:
-        normalized_actor = "black_dave"
+        normalized_state = PLAYER_ALIASES.get(normalized_state, normalized_state)
     elif normalized_actor == "shellie":
         normalized_actor = "shelly"
     if normalized_actor == "ko":

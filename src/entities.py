@@ -23,6 +23,7 @@ _WHITE_DAVE_STRIDE_DISTANCE = 146.0
 _CHIEF_STRIDE_DISTANCE = 140.0
 _ENEMY_STRIDE_DISTANCE = 70.0
 _COUCH_STRIDE_DISTANCE = 106.0
+HIT_FLASH_SECONDS = 0.10
 COUCH_RETREAT_STATES = frozenset({"bike_retreat", "bike_refuge", "bike_return"})
 KO_LIGHTNING_STYLES: dict[
     str,
@@ -139,6 +140,10 @@ class Player:
     attack_last_hit_times: dict[tuple[str, int], float] = field(default_factory=dict)
     attack_instance_sequence: int = 0
     attack_instance_id: int = 0
+    # Captured when the attack state begins.  Rendering reads these values;
+    # it must never call a move resolver that mutates combo_style.
+    attack_animation_clip: str = "idle"
+    attack_move_key: str = ""
     # Previous active-window fist centre.  The combat engine uses this only
     # while an attack is active, so an old idle location cannot extend a fresh
     # strike after a state change.
@@ -214,6 +219,17 @@ class Player:
         if state in {"light", "heavy", "air_attack", "super"}:
             self.attack_instance_sequence += 1
             self.attack_instance_id = self.attack_instance_sequence
+            self.attack_animation_clip = self._animation_clip_for_state(state)
+            self.attack_move_key = (
+                self._combo_move_key()
+                if state == "light" or (state == "heavy" and self.combo_style == "c")
+                else "heavy"
+                if state == "heavy"
+                else state
+            )
+        else:
+            self.attack_animation_clip = state
+            self.attack_move_key = ""
         if state in {"hurt", "downed", "dead", "eliminated"}:
             # Damage is a hard combo interruption.  Retaining a queued edge
             # here caused one later button press to launch an unrequested
@@ -297,7 +313,7 @@ class Player:
             self.chief_meter + float(chief_cfg.get("command_recharge_per_second", 7.0)) * dt,
         )
         self.invulnerable = max(0.0, self.invulnerable - dt)
-        self.hit_flash = max(0.0, self.hit_flash - dt)
+        self.hit_flash = max(0.0, self.hit_flash - dt / HIT_FLASH_SECONDS)
         self.bb_cooldown = max(0.0, self.bb_cooldown - dt)
         self.jermaine_bark_cooldown = max(0.0, self.jermaine_bark_cooldown - dt)
         self.combo_grace = max(0.0, self.combo_grace - dt)
@@ -717,6 +733,26 @@ class Player:
             return "heavy_combo" if "heavy_combo" in self.moves else "heavy"
         return "light_combo"
 
+    def _animation_clip_sequence(self, style: str) -> tuple[str, ...]:
+        configured = self.config[self.character].get("animation_clip_sequences", {})
+        sequence = configured.get(style) if isinstance(configured, dict) else None
+        if isinstance(sequence, list) and sequence:
+            return tuple(str(clip) for clip in sequence)
+        if style == "c":
+            return ("heavy", "heavy", "heavy", "heavy", "attack_4", "attack_4", "attack_4")
+        if style == "z":
+            return ("attack_2", "attack_1", "attack_4", "attack_3")
+        return ("attack_1", "attack_2", "attack_3", "attack_4")
+
+    def _animation_clip_for_state(self, state: str) -> str:
+        if state == "light":
+            sequence = self._animation_clip_sequence(self.combo_style)
+            return sequence[min(max(0, self.combo_step), len(sequence) - 1)]
+        if state == "heavy":
+            sequence = self._animation_clip_sequence("c") if self.combo_style == "c" else ("heavy",)
+            return sequence[min(max(0, self.combo_step), len(sequence) - 1)]
+        return state
+
     def _combo_move(self) -> dict[str, Any]:
         move_key = self._combo_move_key()
         if self.combo_style == "c" and move_key == "heavy":
@@ -728,11 +764,9 @@ class Player:
         return self.moves[move_key][sequence[chain_index]]
 
     def _light_move(self) -> dict[str, Any]:
-        self.combo_style = "x"
         return self._combo_move()
 
     def _alt_light_move(self) -> dict[str, Any]:
-        self.combo_style = "z"
         return self._combo_move()
 
     @staticmethod
@@ -767,7 +801,7 @@ class Player:
             return False
         damage_taken = min(self.health, max(0.0, float(amount)))
         self.health = max(0.0, self.health - amount)
-        self.hit_flash = 0.10
+        self.hit_flash = 1.0
         record_damage = getattr(game, "record_player_damage", None)
         if callable(record_damage):
             record_damage(damage_taken)
@@ -924,7 +958,7 @@ class Enemy:
         self.hitbox_sweep_y = self.y
         self.cooldown = max(0.0, self.cooldown - dt)
         self.wake_invulnerable = max(0.0, self.wake_invulnerable - dt)
-        self.hit_flash = max(0.0, self.hit_flash - dt)
+        self.hit_flash = max(0.0, self.hit_flash - dt / HIT_FLASH_SECONDS)
         self.recent_damage_timer = max(0.0, self.recent_damage_timer - dt)
         if self.state == "ko_dazed":
             self.state_clock += dt
@@ -1235,6 +1269,8 @@ class Enemy:
         knockback: float = 12.0,
         knockdown: bool = False,
         burn: bool = False,
+        feedback: bool = True,
+        recoil_pixels: float = 0.0,
     ) -> bool:
         if not self.targetable:
             return False
@@ -1259,7 +1295,7 @@ class Enemy:
         game.release_attack_token(self)
         self.token_held = 0
         self.health -= applied_amount
-        self.hit_flash = 0.10
+        self.hit_flash = 1.0
         quiet_seconds = float(
             game.data.get("ko_companion", {}).get("recent_damage_seconds", 0.9)
         )
@@ -1268,7 +1304,12 @@ class Enemy:
         if hitter is not None:
             game.award_hit(hitter, self, applied_amount)
         direction = 1 if hitter is None or self.x >= hitter.x else -1
-        self.knockback_vx = direction * knockback * 4.0
+        base_velocity = knockback * 4.0
+        if recoil_pixels > 0.0:
+            # Convert a requested visible recoil distance into the minimum
+            # velocity for the existing 180 px/s² hitstun deceleration.
+            base_velocity = max(base_velocity, math.sqrt(2.0 * 180.0 * recoil_pixels))
+        self.knockback_vx = direction * base_velocity
         self.knockback_vy = (
             0.0
             if hitter is None
@@ -1277,28 +1318,39 @@ class Enemy:
         if burn:
             self.burn_time = max(self.burn_time, 2.2)
             self.burn_tick = 0.35
-        impact_color = (255, 128, 48) if burn else ((255, 239, 142) if knockdown else (255, 231, 92))
-        game.add_effect(
-            "hit",
-            self.x,
-            self.y - 35,
-            color=impact_color,
-            radius=20 if knockdown else 15,
-            duration=0.18,
-            direction=direction,
-        )
-        game.add_effect(
-            "impact",
-            self.x,
-            self.y - 35,
-            color=impact_color,
-            radius=24 if knockdown else 18,
-            duration=0.20,
-            direction=direction,
-        )
-        game.add_effect("text", self.x, self.y - 57, text=f"-{int(round(applied_amount))}", color=impact_color, duration=0.48)
-        game.audio.play("heavy" if knockdown else "hit")
-        game.audio.play("enemy_downed" if self.health <= 0.0 else "enemy_grunt")
+        if feedback:
+            impact_color = (255, 128, 48) if burn else ((255, 239, 142) if knockdown else (255, 231, 92))
+            game.add_effect(
+                "hit",
+                self.x,
+                self.y - 35,
+                color=impact_color,
+                radius=20 if knockdown else 15,
+                duration=0.18,
+                direction=direction,
+                _start_paused=True,
+            )
+            game.add_effect(
+                "impact",
+                self.x,
+                self.y - 35,
+                color=impact_color,
+                radius=24 if knockdown else 18,
+                duration=0.20,
+                direction=direction,
+                _start_paused=True,
+            )
+            game.add_effect(
+                "text",
+                self.x,
+                self.y - 57,
+                text=f"-{int(round(applied_amount))}",
+                color=impact_color,
+                duration=0.48,
+                _start_paused=True,
+            )
+            game.audio.play("heavy_hit" if knockdown else "hit")
+            game.audio.play("enemy_downed" if self.health <= 0.0 else "enemy_grunt")
         if retreat_health is not None:
             start_retreat = getattr(game, "start_couch_retreat", None)
             if callable(start_retreat) and start_retreat(self):
@@ -1340,7 +1392,7 @@ class Enemy:
         self.recent_damage_timer = 0.0
         self.knockback_vx = 0.0
         self.knockback_vy = 0.0
-        self.hit_flash = 0.16
+        self.hit_flash = 1.0
         self.ko_fall_seconds = max(0.05, float(fall_seconds))
         self.ko_disappear_seconds = max(0.05, float(disappear_seconds))
         if hitter is not None:
@@ -2411,12 +2463,16 @@ class Effect:
     alpha_end: int = 0
     layer: int = 0
     direction: float = 1.0
+    start_paused: bool = False
 
     @property
     def alive(self) -> bool:
         return self.age < self.duration
 
     def update(self, dt: float) -> None:
+        if self.start_paused:
+            self.start_paused = False
+            return
         self.age += dt
         self.x += self.vx * dt
         self.y += self.vy * dt

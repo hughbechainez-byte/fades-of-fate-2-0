@@ -1224,6 +1224,32 @@ def validate_gameplay(
                     raise ConfigError(
                         f"{label}[{index}] must index moves.{move_key}"
                     )
+        animation_sequences = character_config.get("animation_clip_sequences")
+        if animation_sequences is not None:
+            if not isinstance(animation_sequences, dict):
+                raise ConfigError(
+                    f"players.{character}.animation_clip_sequences must be an object"
+                )
+            allowed_clips = {"attack_1", "attack_2", "attack_3", "attack_4", "heavy"}
+            expected_lengths = {
+                "x": len(character_config.get("light_combo_sequence", ())),
+                "z": len(character_config.get("alt_light_combo_sequence", ()))
+                or len(character_config.get("light_combo_sequence", ())),
+                "c": len(character_config.get("heavy_combo_sequence", ()))
+                or 1,
+            }
+            for style, clips in animation_sequences.items():
+                label = f"players.{character}.animation_clip_sequences.{style}"
+                if style not in expected_lengths:
+                    raise ConfigError(f"{label} uses an unsupported combo style")
+                if not isinstance(clips, list) or not clips:
+                    raise ConfigError(f"{label} must be a non-empty list")
+                if len(clips) != expected_lengths[style]:
+                    raise ConfigError(
+                        f"{label} must contain {expected_lengths[style]} clips"
+                    )
+                if any(str(clip) not in allowed_clips for clip in clips):
+                    raise ConfigError(f"{label} contains an unsupported animation clip")
 
     enemies = data["enemies"]
     if not isinstance(enemies, dict):

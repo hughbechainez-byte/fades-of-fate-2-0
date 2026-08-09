@@ -183,7 +183,10 @@ class GameplayEngineIntegrationTests(unittest.TestCase):
         self.game.options = self.game.options.with_overrides(particle_density=0.55)
         self.game.effects.clear()
         self.game.add_effect("hit", 260.0, 220.0, duration=0.18)
-        self.assertEqual([effect.kind for effect in self.game.effects], ["hit"])
+        low_density_kinds = [effect.kind for effect in self.game.effects]
+        self.assertEqual(low_density_kinds[0], "hit")
+        self.assertGreaterEqual(low_density_kinds.count("spark"), 1)
+        self.assertLess(low_density_kinds.count("spark"), 4)
 
 
 if __name__ == "__main__":

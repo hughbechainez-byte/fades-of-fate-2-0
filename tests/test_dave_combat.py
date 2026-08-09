@@ -114,6 +114,24 @@ class DaveCombatTests(unittest.TestCase):
         self.dave.combo_step = 6
         self.assertEqual(self.dave._alt_light_move(), self.game.data["moves"]["light_combo"][12])
 
+    def test_attack_clip_is_captured_per_route_without_mutating_style(self) -> None:
+        self.dave.combo_style = "z"
+        self.dave.combo_step = 2
+        self.dave.set_state("light", self.dave._move_total(self.dave._combo_move()))
+        self.assertEqual(self.dave.attack_animation_clip, "attack_4")
+        self.assertEqual(self.dave.combo_style, "z")
+        self.assertEqual(self.dave._light_move(), self.dave._combo_move())
+
+    def test_hit_flash_and_recoil_are_visible_for_a_short_confirmed_window(self) -> None:
+        target = self.enemy(206, self.dave.x + 28.0, self.dave.y)
+        self.game.enemies = [target]
+        move = self.game.data["moves"]["light_combo"][0]
+        self.game.player_attack(self.dave, move, "light")
+        self.assertEqual(target.hit_flash, 1.0)
+        self.assertGreaterEqual(abs(target.knockback_vx), 4.0 * 4.0)
+        target.update(self.game, 1.0 / 60.0)
+        self.assertLess(target.hit_flash, 1.0)
+
     def test_appended_c_kick_emits_a_gameplay_shockwave(self) -> None:
         self.dave.combo_style = "c"
         self.dave.combo_step = 4

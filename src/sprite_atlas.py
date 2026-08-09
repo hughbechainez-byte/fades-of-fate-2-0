@@ -317,7 +317,7 @@ def player_frame(character: object, state: object, tick: int) -> pygame.Surface 
         if not poses:
             return None
         clip_state = state_name if state_name in {"idle", "walk", "run", "move", "jog"} or state_name.startswith("attack_") or state_name in {"light", "heavy", "air_attack", "super"} else "idle"
-        clip = clip_for("black_dave", clip_state)
+        clip = clip_for(name, clip_state)
         return poses[_clip_phase_index(clip, max(0, int(tick)), len(poses))]
     name = "shelly" if name in {"shelly", "shellie"} else "black_dave"
     state_name = _state_name(state)

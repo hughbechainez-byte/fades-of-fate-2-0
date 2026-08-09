@@ -993,6 +993,45 @@
                 16,
                 17
             ],
+            "animation_clip_sequences": {
+                "x": [
+                    "attack_1",
+                    "attack_2",
+                    "attack_3",
+                    "attack_4",
+                    "attack_4",
+                    "attack_4",
+                    "attack_1",
+                    "attack_2",
+                    "attack_3",
+                    "attack_1",
+                    "attack_2",
+                    "attack_3"
+                ],
+                "z": [
+                    "attack_2",
+                    "attack_1",
+                    "attack_4",
+                    "attack_3",
+                    "attack_2",
+                    "attack_1",
+                    "attack_4",
+                    "attack_3",
+                    "attack_2",
+                    "attack_1",
+                    "attack_4",
+                    "attack_3"
+                ],
+                "c": [
+                    "heavy",
+                    "heavy",
+                    "heavy",
+                    "heavy",
+                    "attack_4",
+                    "attack_4",
+                    "attack_4"
+                ]
+            },
             "heavy_combo_sequence": [
                 0,
                 1,
@@ -1025,6 +1064,11 @@
                 3,
                 4
             ],
+            "animation_clip_sequences": {
+                "x": ["attack_1", "attack_2", "attack_3", "attack_4", "attack_1"],
+                "z": ["attack_2", "attack_1", "attack_4", "attack_3", "attack_2"],
+                "c": ["heavy"]
+            },
             "description": "Taller and skinnier than Black Dave; an angry, crooked-smiling stick fighter with long reach."
         },
         "white_dave": {
@@ -1047,6 +1091,11 @@
                 3,
                 4
             ],
+            "animation_clip_sequences": {
+                "x": ["attack_1", "attack_2", "attack_3", "attack_4", "attack_1"],
+                "z": ["attack_2", "attack_1", "attack_4", "attack_3", "attack_2"],
+                "c": ["heavy"]
+            },
             "description": "As tall as Jermaine but much wider; a slow, durable powerhouse who swings oversized bolt cutters."
         },
         "shelly": {

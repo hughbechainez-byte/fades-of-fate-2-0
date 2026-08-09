@@ -84,6 +84,50 @@ PLAYER_COLORS = (
     (139, 255, 116),
 )
 
+HIT_FEEDBACK_PROFILES: dict[str, dict[str, float | int]] = {
+    "light": {
+        "hitstop": 3.0 / 60.0,
+        "flash_seconds": 0.10,
+        "flash_strength": 0.70,
+        "screen_alpha": 32,
+        "camera": 2.0,
+        "camera_seconds": 0.07,
+        "recoil_pixels": 5.0,
+        "radius": 18.0,
+    },
+    "medium": {
+        "hitstop": 4.0 / 60.0,
+        "flash_seconds": 0.12,
+        "flash_strength": 0.82,
+        "screen_alpha": 44,
+        "camera": 3.0,
+        "camera_seconds": 0.09,
+        "recoil_pixels": 8.0,
+        "radius": 24.0,
+    },
+    "heavy": {
+        "hitstop": 5.0 / 60.0,
+        "flash_seconds": 0.15,
+        "flash_strength": 0.95,
+        "screen_alpha": 60,
+        "camera": 4.5,
+        "camera_seconds": 0.12,
+        "recoil_pixels": 12.0,
+        "radius": 32.0,
+    },
+    "finisher": {
+        "hitstop": 7.0 / 60.0,
+        "flash_seconds": 0.18,
+        "flash_strength": 1.0,
+        "screen_alpha": 84,
+        "camera": 6.0,
+        "camera_seconds": 0.16,
+        "recoil_pixels": 18.0,
+        "radius": 44.0,
+    },
+}
+IMPACT_FLASH_DURATION = 0.18
+
 
 def _extract_title_portrait_subject(
     portrait: pygame.Surface,
@@ -505,20 +549,20 @@ class FadesGame:
         portrait_assets = {
             "black_dave": "assets/portraits/dave_portrait_lean_young_v2.png",
             "shelly": "assets/portraits/shelly_portrait_curvy_v1.png",
-            "jermaine": "assets/portraits/jermaine_portrait_v1.png",
+            "jermaine": "assets/portraits/jermaine_portrait_pixel_v1.png",
             "white_dave": "assets/portraits/white_dave_portrait_pixel_v2.png",
             "ko": "assets/portraits/ko_portrait_v1.png",
         }
         portrait_sizes = {
             "black_dave": (90, 145),
             "shelly": (90, 145),
-            "jermaine": (98, 158),
-            "white_dave": (98, 158),
+            "jermaine": (90, 145),
+            "white_dave": (90, 145),
             "ko": (90, 145),
         }
         title_portrait_assets = {
-            "jermaine": "assets/portraits/jermaine_portrait_v1.png",
-            "white_dave": "assets/portraits/white_dave_portrait_v1.png",
+            "jermaine": "assets/portraits/jermaine_portrait_pixel_v1.png",
+            "white_dave": "assets/portraits/white_dave_portrait_pixel_v2.png",
             "ko": "assets/portraits/ko_portrait_v1.png",
         }
         title_portrait_crops = {
@@ -558,9 +602,20 @@ class FadesGame:
                 portrait = authored_portrait.subsurface(
                     pygame.Rect(crop_left, 0, crop_width, source_rect.height)
                 ).copy()
-            self.character_portraits[name] = pygame.transform.smoothscale(portrait, portrait_sizes[name])
+            scaler = (
+                pygame.transform.scale
+                if name in {"jermaine", "white_dave"}
+                else pygame.transform.smoothscale
+            )
+            self.character_portraits[name] = scaler(portrait, portrait_sizes[name])
         self.title_side_portraits: dict[str, pygame.Surface] = {}
         for name, relative in title_portrait_assets.items():
+            if name in {"jermaine", "white_dave"}:
+                self.title_side_portraits[name] = pygame.transform.scale(
+                    self.character_portraits[name].convert_alpha(),
+                    title_portrait_sizes[name],
+                )
+                continue
             portrait_path = Path(resource_path(relative))
             authored_portrait = pygame.image.load(str(portrait_path)).convert_alpha()
             crop = title_portrait_crops[name].clip(authored_portrait.get_rect())
@@ -624,6 +679,8 @@ class FadesGame:
         # frozen, making fast combo presses disappear.
         self._hitstop_pressed_by_slot: dict[int, set[str]] = {}
         self.impact_flash = 0.0
+        self.impact_flash_alpha = 0
+        self.impact_flash_duration = 0.0
         self._debug_last_attack: HitBox | None = None
         self._debug_last_contacts: tuple[Any, ...] = ()
         self._debug_last_evaluations: tuple[Any, ...] = ()
@@ -1842,6 +1899,8 @@ class FadesGame:
         self.hitstop_remaining = 0.0
         self._hitstop_pressed_by_slot.clear()
         self.impact_flash = 0.0
+        self.impact_flash_alpha = 0
+        self.impact_flash_duration = 0.0
         self._debug_last_attack = None
         self._debug_last_contacts = ()
         self._debug_last_evaluations = ()
@@ -2040,6 +2099,9 @@ class FadesGame:
                 self.fire_secondary(player, feedback=True)
 
         self.impact_flash = max(0.0, self.impact_flash - dt)
+        if self.impact_flash <= 0.0:
+            self.impact_flash_alpha = 0
+            self.impact_flash_duration = 0.0
         if self.hitstop_remaining > 0.0:
             # A short global freeze gives attacks weight while camera shake and
             # controller polling continue deterministically. Action edges are
@@ -3629,17 +3691,130 @@ class FadesGame:
             ),
         )
 
-    def _apply_combat_impact(self, result: Any) -> None:
-        self.hitstop_remaining = max(self.hitstop_remaining, float(result.hitstop.seconds))
-        self.impact_flash = max(
-            self.impact_flash,
-            min(0.08, float(result.hitstop.seconds)) * self.options.flash_intensity,
+    @staticmethod
+    def _hit_feedback_tier(move: Mapping[str, Any], attack_kind: str, combo_step: int) -> str:
+        if bool(move.get("chain_finisher", False)):
+            return "finisher"
+        if bool(move.get("knockdown", False)) or attack_kind == "heavy":
+            return "heavy"
+        if combo_step > 0:
+            return "medium"
+        return "light"
+
+    def _apply_combat_impact(
+        self,
+        result: Any,
+        profile: Mapping[str, float | int] | None = None,
+    ) -> None:
+        if profile is None:
+            hitstop = float(result.hitstop.seconds)
+            flash_seconds = min(IMPACT_FLASH_DURATION, hitstop * 2.0)
+            camera_strength = float(result.camera.strength)
+            camera_seconds = float(result.camera.seconds)
+        else:
+            hitstop = float(profile["hitstop"])
+            flash_seconds = float(profile["flash_seconds"])
+            camera_strength = float(profile["camera"])
+            camera_seconds = float(profile["camera_seconds"])
+        self.hitstop_remaining = max(self.hitstop_remaining, hitstop)
+        # Store unscaled time.  The accessibility option is applied once in
+        # the compositor, rather than once here and again during drawing.
+        if flash_seconds >= self.impact_flash:
+            self.impact_flash_duration = flash_seconds
+        self.impact_flash = max(self.impact_flash, flash_seconds)
+        self.impact_flash_alpha = max(
+            self.impact_flash_alpha,
+            int(profile["screen_alpha"]) if profile is not None else 32,
         )
         self.camera.trigger_shake(
-            float(result.camera.strength) * self.options.shake_intensity,
-            float(result.camera.seconds),
-            vertical_strength=float(result.camera.strength) * 0.3 * self.options.shake_intensity,
+            camera_strength * self.options.shake_intensity,
+            camera_seconds,
+            vertical_strength=camera_strength * 0.3 * self.options.shake_intensity,
         )
+
+    def _emit_confirmed_hit_feedback(
+        self,
+        player: Player,
+        enemy: Enemy,
+        contact: Any,
+        move: Mapping[str, Any],
+        profile: Mapping[str, float | int],
+        tier: str,
+    ) -> None:
+        if player.character == "black_dave":
+            color = (
+                (255, 232, 132)
+                if player.combo_style == "c"
+                else (176, 242, 255)
+                if player.combo_style == "z"
+                else (105, 225, 255)
+            )
+        elif player.character == "jermaine":
+            color = (255, 210, 86)
+        elif player.character == "white_dave":
+            color = (255, 128, 91)
+        else:
+            color = (255, 137, 191)
+        contact_x = float(contact.contact_x)
+        contact_depth = float(contact.contact_depth)
+        radius = float(profile["radius"])
+        self.add_effect(
+            "hit",
+            contact_x,
+            contact_depth,
+            color=color,
+            radius=max(14.0, radius * 0.78),
+            duration=float(profile["flash_seconds"]) * 1.15,
+            direction=player.facing,
+            projected=True,
+            elevation=30.0,
+            _start_paused=True,
+        )
+        self.add_effect(
+            "impact",
+            contact_x,
+            contact_depth,
+            color=(255, 243, 168) if tier == "finisher" else color,
+            radius=radius,
+            duration=float(profile["flash_seconds"]) * 1.35,
+            projected=True,
+            elevation=30.0,
+            _start_paused=True,
+        )
+        self.add_effect(
+            "text",
+            enemy.x,
+            enemy.y - 57,
+            text=f"-{int(round(contact.damage))}",
+            color=color,
+            duration=0.48,
+            _start_paused=True,
+        )
+        if tier == "finisher" or bool(move.get("shockwave", False)):
+            self.add_effect(
+                "shock",
+                contact_x,
+                contact_depth,
+                color=(255, 219, 92) if tier == "finisher" else color,
+                radius=max(radius * 1.15, float(move.get("combo_radius", 48.0))),
+                duration=0.32 if tier == "finisher" else 0.24,
+                projected=True,
+                elevation=4.0,
+                _start_paused=True,
+            )
+        if player.character == "black_dave":
+            fist_cfg = self.data["players"]["black_dave"].get("fist_effects", {})
+            self.add_effect(
+                "fist",
+                contact_x,
+                contact_depth,
+                color=tuple(fist_cfg.get("contact_color", (230, 253, 255))),
+                radius=max(float(fist_cfg.get("contact_radius", 26.0)), radius * 0.8),
+                duration=0.20,
+                projected=True,
+                elevation=34.0,
+                _start_paused=True,
+            )
 
     def _update_revives(self, dt: float) -> None:
         for downed in (player for player in self.players if player.state == "downed"):
@@ -3672,7 +3847,9 @@ class FadesGame:
         view = self.camera.update(dt, [WorldPoint(player.x, player.y, player.z) for player in active], velocity_x=velocity_x)
         self.camera_x = view.x
         self._render_camera_x = view.render_x
-        self._camera_shake_y = view.shake_y * self.options.shake_intensity
+        # Camera shake intensity is applied when the impulse is registered.
+        # Applying it again here made balanced feedback nearly disappear.
+        self._camera_shake_y = view.shake_y
         self._last_camera_view = view
         if self._pending_camera_lock is not None and not self.camera.panning:
             target = self._pending_camera_lock
@@ -4713,8 +4890,10 @@ class FadesGame:
 
         finisher = bool(move.get("chain_finisher", False))
         heavy_impact = attack_kind == "heavy" or bool(move.get("knockdown", False))
-        hitstop = float(physics["heavy_hitstop"] if heavy_impact else physics["light_hitstop"])
-        shake = 5.2 if finisher else 4.2 if heavy_impact else 2.4 + player.combo_step * 0.35
+        feedback_tier = self._hit_feedback_tier(move, attack_kind, player.combo_step)
+        feedback_profile = HIT_FEEDBACK_PROFILES[feedback_tier]
+        hitstop = float(feedback_profile["hitstop"])
+        shake = float(feedback_profile["camera"])
         move_elevation_forgiveness = float(move.get("elevation_forgiveness", 0.0))
         move_temporal_forgiveness = float(move.get("temporal_forgiveness", 0.0))
         global_elevation_forgiveness = float(
@@ -4773,7 +4952,7 @@ class FadesGame:
             ),
             hitstop_seconds=hitstop,
             camera_strength=shake,
-            camera_seconds=0.18 if finisher else 0.16 if heavy_impact else 0.10,
+            camera_seconds=float(feedback_profile["camera_seconds"]),
             max_targets=max(1, remaining_targets),
             max_hits_per_target=max_hits_per_target,
             rehit_delay=float(move.get("rehit_delay", 0.0)),
@@ -4822,10 +5001,6 @@ class FadesGame:
             and player.flaming_fists
         )
         combo_radius = float(move.get("combo_radius", 0.0))
-        follow_through = (
-            (attack_kind == "light" and player.combo_step > 0)
-            or bool(move.get("shockwave", False))
-        )
         if play_whiff:
             # Every hero gets a readable authored-motion accent at the actual
             # attack presentation frame.  Previously only Dave's fist path
@@ -4874,28 +5049,6 @@ class FadesGame:
                 projected=True,
                 elevation=trail_elevation,
             )
-            if follow_through:
-                self.add_effect(
-                    "shock",
-                    attack_x,
-                    attack_depth,
-                    color=combo_tint,
-                    radius=min(combo_radius, 30.0 + player.combo_step * 5.0),
-                    duration=0.16 + player.combo_step * 0.02,
-                    projected=True,
-                    elevation=8.0,
-                )
-            if finisher:
-                self.add_effect(
-                    "shock",
-                    attack_x,
-                    attack_depth,
-                    color=(255, 232, 132) if player.combo_style == "c" else (176, 242, 255) if player.combo_style == "z" else (255, 224, 148),
-                    radius=max(combo_radius, 84.0 if player.combo_style == "c" else 76.0),
-                    duration=0.30,
-                    projected=True,
-                    elevation=6.0,
-                )
             if flaming_fists:
                 self.add_effect(
                     f"flame_trail_{'right' if player.facing >= 0 else 'left'}",
@@ -4908,7 +5061,23 @@ class FadesGame:
                     elevation=player.z + 33.0,
                 )
 
+        # The authored C-chain kick owns a visible shockwave even when it
+        # misses; other attacks reserve impact/shock accents for confirmed
+        # contact so hit and whiff remain visually distinct.
+        if play_whiff and bool(move.get("shockwave", False)):
+            self.add_effect(
+                "shock",
+                attack_x,
+                attack_depth,
+                color=(255, 219, 92),
+                radius=max(32.0, combo_radius),
+                duration=0.24,
+                projected=True,
+                elevation=4.0,
+            )
+
         hits = 0
+        feedback_applied = False
         for contact in report.results:
             enemy = enemies_by_id.get(contact.target_id)
             if enemy is None:
@@ -4924,6 +5093,8 @@ class FadesGame:
                 knockback=float(move["knockback"]),
                 knockdown=bool(move.get("knockdown", False)),
                 burn=burn,
+                feedback=False,
+                recoil_pixels=float(feedback_profile["recoil_pixels"]),
             ):
                 continue
             hits += 1
@@ -4934,29 +5105,18 @@ class FadesGame:
             times[contact.target_id] = (
                 float(attack_time) if attack_time is not None else 0.0
             )
-            self._apply_combat_impact(contact)
-            player.gain_super(float(move["meter"]))
-            self.add_effect(
-                "impact",
-                contact.contact_x,
-                contact.contact_depth,
-                color=(255, 243, 168) if finisher else (255, 231, 92),
-                radius=34 if finisher else 22 if heavy_impact else 16,
-                duration=0.28 if finisher else 0.20,
-                projected=True,
-                elevation=30.0,
-            )
-            if finisher:
-                self.add_effect(
-                    "shock",
-                    contact.contact_x,
-                    contact.contact_depth,
-                    color=(255, 219, 92),
-                    radius=48,
-                    duration=0.32,
-                    projected=True,
-                    elevation=4.0,
+            if not feedback_applied:
+                self._apply_combat_impact(contact, feedback_profile)
+                self._emit_confirmed_hit_feedback(
+                    player,
+                    enemy,
+                    contact,
+                    move,
+                    feedback_profile,
+                    feedback_tier,
                 )
+                feedback_applied = True
+            player.gain_super(float(move["meter"]))
             if burn:
                 self.add_effect(
                     "flame",
@@ -4966,20 +5126,9 @@ class FadesGame:
                     duration=0.45,
                     projected=True,
                     elevation=38.0,
+                    _start_paused=True,
                 )
             if player.character == "black_dave":
-                fist_cfg = self.data["players"]["black_dave"].get("fist_effects", {})
-                self.add_effect(
-                    "fist",
-                    contact.contact_x,
-                    contact.contact_depth,
-                    color=tuple(fist_cfg.get("contact_color", (230, 253, 255))),
-                    radius=float(fist_cfg.get("contact_radius", 26.0))
-                    + player.combo_step * 3.0,
-                    duration=0.20,
-                    projected=True,
-                    elevation=34.0,
-                )
                 if flaming_fists:
                     self._dave_flame_visuals[enemy.enemy_id] = max(
                         self._dave_flame_visuals.get(enemy.enemy_id, 0.0),
@@ -4994,6 +5143,7 @@ class FadesGame:
                         duration=0.32,
                         projected=True,
                         elevation=36.0,
+                        _start_paused=True,
                     )
                     self.add_effect(
                         "scorch",
@@ -5004,6 +5154,7 @@ class FadesGame:
                         duration=0.82,
                         projected=True,
                         elevation=2.0,
+                        _start_paused=True,
                     )
                     self.add_effect(
                         "ember",
@@ -5014,10 +5165,11 @@ class FadesGame:
                         duration=0.38,
                         projected=True,
                         elevation=45.0,
+                        _start_paused=True,
                     )
         hits += self._damage_obstacles_from_attack(player, attack, move)
         if hits:
-            self.audio.play("heavy" if heavy_impact else "punch")
+            self.audio.play("heavy_hit" if feedback_tier in {"heavy", "finisher"} else "punch")
         elif play_whiff:
             self.audio.play("whoosh")
         return hits
@@ -5518,20 +5670,25 @@ class FadesGame:
             if current >= budget:
                 return
         expanded = bool(kwargs.pop("_expanded", False))
-        self.effects.append(Effect(kind, x, y, **kwargs))
+        start_paused = bool(kwargs.pop("_start_paused", False))
+        self.effects.append(Effect(kind, x, y, start_paused=start_paused, **kwargs))
         # One centralized response stack keeps combat call sites meaningful
         # while giving different hit categories distinct, restrained accents.
         if (
             kind == "hit"
             and not expanded
-            and self.options.particle_density >= 0.75
             and float(kwargs.get("duration", 0.35)) < 1.0
         ):
             color = kwargs.get("color", (255, 255, 255))
             direction = -1.0 if float(kwargs.get("direction", 1.0)) < 0.0 else 1.0
             radius = float(kwargs.get("radius", 14.0))
             strength = clamp(radius / 18.0, 0.7, 1.8)
-            for index, angle in enumerate((-0.75, -0.25, 0.25, 0.75)):
+            spark_count = max(1, min(8, round(4.0 * self.options.particle_density * strength)))
+            angles = tuple(
+                -0.85 + 1.7 * index / max(1, spark_count - 1)
+                for index in range(spark_count)
+            )
+            for index, angle in enumerate(angles):
                 speed = (42.0 + index * 7.0) * strength
                 self.add_effect(
                     "spark", x, y, color=color, radius=3.0 + strength,
@@ -5942,24 +6099,14 @@ class FadesGame:
             elif kind == "player":
                 action_states = {"light", "heavy", "air_attack", "jump", "hurt", "downed", "super", "dodge", "pet", "ranged", "propane"}
                 visual_state = (
-                    "attack_4"
-                    if obj.state == "heavy" and obj.combo_style == "c" and obj.combo_step >= 4
-                    else "attack_3"
-                    if obj.state == "heavy"
-                    else (
-                        f"attack_{obj.combo_step + 1}"
-                        if obj.combo_step <= 3
-                        else "attack_4"
-                        if obj.combo_step <= 5
-                        else f"attack_{1 + (obj.combo_step - 6) % 3}"
-                    )
-                    if obj.state == "light"
+                    obj.attack_animation_clip
+                    if obj.state in {"light", "heavy", "air_attack", "super"}
                     else "super" if obj.state == "propane" else obj.state
                 )
                 if obj.state == "light":
-                    timed_move = obj._light_move()
+                    timed_move = obj._combo_move()
                 elif obj.state == "heavy":
-                    timed_move = obj.moves["heavy"]
+                    timed_move = obj._combo_move() if obj.combo_style == "c" else obj.moves["heavy"]
                 elif obj.state == "air_attack":
                     timed_move = obj.moves["air"]
                 else:
@@ -6253,7 +6400,14 @@ class FadesGame:
                     255,
                     244,
                     201,
-                    min(56, int(self.impact_flash * 700 * self.options.flash_intensity)),
+                    min(
+                        96,
+                        int(
+                            self.impact_flash_alpha
+                            * (self.impact_flash / max(0.001, self.impact_flash_duration))
+                            * self.options.flash_intensity
+                        ),
+                    ),
                 )
             )
             surface.blit(flash, (0, 0))
@@ -7188,10 +7342,8 @@ class FadesGame:
         phase = "none"
         if player is not None and player.state in {"light", "heavy", "air_attack"}:
             move = (
-                player._light_move()
-                if player.state == "light"
-                else player.moves["heavy"]
-                if player.state == "heavy"
+                player._combo_move()
+                if player.state in {"light", "heavy"}
                 else player.moves["air"]
             )
             active_start = float(move["startup"])

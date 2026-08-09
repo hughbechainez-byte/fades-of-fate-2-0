@@ -712,6 +712,14 @@
         90,
         145
       ]
+    },
+    "jermaine_portrait": {
+      "path": "assets/portraits/jermaine_portrait_pixel_v1.png",
+      "sha256": "88d318c9b1b3a394cd0c1a315e5f5413d259efd0ce6ce2c93c49e082e5341f09",
+      "size": [
+        90,
+        145
+      ]
     }
   }
 }

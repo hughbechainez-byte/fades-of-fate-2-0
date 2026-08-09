@@ -46,6 +46,9 @@ JERMAINE_OUTPUT = (
 WHITE_DAVE_PORTRAIT = (
     PROJECT_ROOT / "assets" / "portraits" / "white_dave_portrait_pixel_v2.png"
 )
+JERMAINE_PORTRAIT = (
+    PROJECT_ROOT / "assets" / "portraits" / "jermaine_portrait_pixel_v1.png"
+)
 VALIDATION_OUTPUT = (
     PROJECT_ROOT / "assets" / "sprites" / "foundation_character_validation.json"
 )
@@ -417,12 +420,12 @@ def _frame_records(
     return records
 
 
-def _build_portrait(white_atlas: Image.Image) -> Image.Image:
-    idle = white_atlas.crop((0, 0, CELL_SIZE, CELL_SIZE)).convert("RGBA")
+def _build_portrait(atlas: Image.Image, crop_box: tuple[int, int, int, int]) -> Image.Image:
+    idle = atlas.crop((0, 0, CELL_SIZE, CELL_SIZE)).convert("RGBA")
     # A native-ratio head/torso crop fills the exact 90x145 menu slot.  Keeping
     # the final file at its display size prevents the menu loader from
     # resampling this deliberately chunky portrait.
-    crop = idle.crop((40, 10, 86, 84))
+    crop = idle.crop(crop_box)
     scaled = crop.resize((90, 145), Image.Resampling.NEAREST)
     portrait = Image.new("RGBA", (90, 145), (12, 13, 19, 255))
     draw = ImageDraw.Draw(portrait)
@@ -453,18 +456,21 @@ def build() -> dict[str, object]:
         lambda frame: frame.copy(),
         JERMAINE_ROW_FRAME_COUNTS,
     )
-    portrait = _build_portrait(white_output)
+    white_portrait = _build_portrait(white_output, (40, 10, 86, 84))
+    jermaine_portrait = _build_portrait(jermaine_output, (34, 10, 89, 86))
 
     for output in (
         WHITE_DAVE_OUTPUT,
         JERMAINE_OUTPUT,
         WHITE_DAVE_PORTRAIT,
+        JERMAINE_PORTRAIT,
         VALIDATION_OUTPUT,
     ):
         output.parent.mkdir(parents=True, exist_ok=True)
     white_output.save(WHITE_DAVE_OUTPUT, optimize=True)
     jermaine_output.save(JERMAINE_OUTPUT, optimize=True)
-    portrait.save(WHITE_DAVE_PORTRAIT, optimize=True)
+    white_portrait.save(WHITE_DAVE_PORTRAIT, optimize=True)
+    jermaine_portrait.save(JERMAINE_PORTRAIT, optimize=True)
 
     validation: dict[str, object] = {
         "schema_version": 1,
@@ -515,7 +521,12 @@ def build() -> dict[str, object]:
             "white_dave_portrait": {
                 "path": str(WHITE_DAVE_PORTRAIT.relative_to(PROJECT_ROOT)).replace("\\", "/"),
                 "sha256": _sha256(WHITE_DAVE_PORTRAIT),
-                "size": list(portrait.size),
+                "size": list(white_portrait.size),
+            },
+            "jermaine_portrait": {
+                "path": str(JERMAINE_PORTRAIT.relative_to(PROJECT_ROOT)).replace("\\", "/"),
+                "sha256": _sha256(JERMAINE_PORTRAIT),
+                "size": list(jermaine_portrait.size),
             },
         },
     }

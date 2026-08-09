@@ -104,7 +104,7 @@ class StateFlowIntegrationTests(unittest.TestCase):
         portrait_paths = {
             "black_dave": "assets/portraits/dave_portrait_lean_young_v2.png",
             "shelly": "assets/portraits/shelly_portrait_curvy_v1.png",
-            "jermaine": "assets/portraits/jermaine_portrait_v1.png",
+            "jermaine": "assets/portraits/jermaine_portrait_pixel_v1.png",
             "white_dave": "assets/portraits/white_dave_portrait_pixel_v2.png",
             "ko": "assets/portraits/ko_portrait_v1.png",
         }
@@ -117,8 +117,8 @@ class StateFlowIntegrationTests(unittest.TestCase):
                     portrait_sizes = {
                         "black_dave": (90, 145),
                         "shelly": (90, 145),
-                        "jermaine": (98, 158),
-                        "white_dave": (98, 158),
+            "jermaine": (90, 145),
+            "white_dave": (90, 145),
                         "ko": (90, 145),
                     }
                     target_width, target_height = portrait_sizes[character]

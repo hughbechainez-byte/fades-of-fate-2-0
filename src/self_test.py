@@ -414,7 +414,8 @@ def run_foundation_self_test(output_dir: Path | None = None) -> dict[str, Any]:
                 for (character, _state), frames in foundation_rows.items()
                 for frame in frames
             )
-            and resource_path("assets/portraits/white_dave_portrait_pixel_v2.png").is_file(),
+            and resource_path("assets/portraits/white_dave_portrait_pixel_v2.png").is_file()
+            and resource_path("assets/portraits/jermaine_portrait_pixel_v1.png").is_file(),
             "foundation_character_authored_runtime",
             report,
             "Jermaine and White Dave load hard-alpha authored idle/walk/attack rows on the uniformly scaled rooted ground line with White Dave's matching menu portrait",
