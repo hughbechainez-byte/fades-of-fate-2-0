@@ -182,8 +182,8 @@ class KOArtContractTests(unittest.TestCase):
         self.assertTrue(
             all(clip.atlas == "assets/sprites/ko_animation_atlas.png" for clip in clips)
         )
-        self.assertEqual(len(ANIMATION_CLIPS), 202)
-        self.assertEqual(total_authored_poses(), 1836)
+        self.assertEqual(len(ANIMATION_CLIPS), 216)
+        self.assertEqual(total_authored_poses(), 1952)
         with self.assertRaisesRegex(ValueError, "unknown KO animation state"):
             clip_for("ko", "recover")
 

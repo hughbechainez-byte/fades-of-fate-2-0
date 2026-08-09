@@ -607,7 +607,15 @@ def _loop_and_hold(actor: str, state: str) -> tuple[bool, int]:
     return False, 1
 
 
-FOUNDATION_PLAYER_STATES = PLAYER_STATES
+FOUNDATION_PLAYER_STATES = (
+    "idle",
+    "walk",
+    "attack_1",
+    "attack_2",
+    "attack_3",
+    "attack_4",
+    "heavy",
+)
 FOUNDATION_ATTACK_STATES = frozenset(
     {"attack_1", "attack_2", "attack_3", "attack_4", "heavy", "air_attack", "super"}
 )
@@ -627,6 +635,24 @@ def _foundation_loop_and_hold(state: str) -> tuple[bool, int]:
     if state == "walk":
         return True, 3
     return False, 2
+
+
+_FOUNDATION_FRAME_COUNTS = {
+    "jermaine": {"idle": 8, "walk": 8, "attack": 8},
+    "white_dave": {"idle": 8, "walk": 12, "attack": 8},
+}
+
+
+def _foundation_phases(actor: str, state: str) -> tuple[str, ...]:
+    phases = PHASES[_player_phase("black_dave", state)]
+    key = (
+        "attack"
+        if state in FOUNDATION_ATTACK_STATES
+        else state
+        if state in {"idle", "walk"}
+        else "idle"
+    )
+    return phases[: _FOUNDATION_FRAME_COUNTS[actor][key]]
 
 
 ANIMATION_CLIPS: tuple[AnimationClip, ...] = tuple(
@@ -775,7 +801,7 @@ ANIMATION_CLIPS: tuple[AnimationClip, ...] = tuple(
             128,
             128,
             *_foundation_loop_and_hold(state),
-            PHASES[_player_phase("black_dave", state)],
+            _foundation_phases(actor, state),
         )
         for actor in ("jermaine", "white_dave")
         for state in FOUNDATION_PLAYER_STATES

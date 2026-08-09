@@ -385,12 +385,12 @@ def run_foundation_self_test(output_dir: Path | None = None) -> dict[str, Any]:
             if len(poses) < 5 or len(set(clip.phases)) < 5 or len(meaningful) < 5:
                 animation_floor_failures.append(f"{clip.actor}:{clip.state}")
         _check(
-            len(ANIMATION_CLIPS) == 202
-            and total_authored_poses() == 1836
+            len(ANIMATION_CLIPS) == 216
+            and total_authored_poses() == 1952
             and not animation_floor_failures,
-            "animation_floor_202_clips_1836_poses",
+            "animation_floor_216_clips_1952_poses",
             report,
-            "all 202 active clips provide 8-16 rooted, translation-normalized authored keys (1836 total) on a 30 Hz presentation clock",
+            "all 216 active clips provide 8-16 rooted, translation-normalized authored keys (1952 total) on a 30 Hz presentation clock",
         )
         foundation_rows = {
             (character, state): sprite_atlas.foundation_character_frames(character, state)

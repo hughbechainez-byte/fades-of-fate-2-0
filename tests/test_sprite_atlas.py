@@ -130,8 +130,8 @@ class SpriteAtlasTests(unittest.TestCase):
                 self.assertEqual(pygame.image.load(str(path)).get_size(), expected_size)
 
     def test_every_active_animation_uses_meaningful_capture_safe_authored_keys(self) -> None:
-        self.assertEqual(len(ANIMATION_CLIPS), 202)
-        self.assertEqual(total_authored_poses(), 1836)
+        self.assertEqual(len(ANIMATION_CLIPS), 216)
+        self.assertEqual(total_authored_poses(), 1952)
         self.assertEqual(ANIMATION_TICKS_PER_SECOND, 30.0)
         for clip in ANIMATION_CLIPS:
             with self.subTest(actor=clip.actor, state=clip.state):
