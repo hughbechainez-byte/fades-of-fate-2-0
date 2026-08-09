@@ -146,6 +146,10 @@ class GameAtmosphereIntegrationTests(unittest.TestCase):
             "chapter_1_level_2": "i8_underpass_dimming",
             "chapter_1_level_3": "broadway_blue_hour",
             "chapter_1_level_4": "awaken_finale",
+            "chapter_2_level_1": "chapter_2_neon_dusk_bostonia",
+            "chapter_2_level_2": "chapter_2_neon_dusk_underpass",
+            "chapter_2_level_3": "chapter_2_neon_dusk_promenade",
+            "chapter_2_level_4": "chapter_2_neon_dusk_boss",
         }
 
         for level in campaign_levels(game.data):
