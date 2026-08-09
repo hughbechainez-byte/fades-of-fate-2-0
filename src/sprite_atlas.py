@@ -123,6 +123,12 @@ FOUNDATION_CHARACTER_FRAME_COUNTS = {
     "jermaine": (8, 8, 8),
     "white_dave": (8, 12, 8),
 }
+# Foundation atlases use a fixed 12-column grid even when a character's
+# authored row occupies fewer cells; deriving columns from clip lengths would
+# shift later rows into transparent padding.
+for _foundation_atlas in FOUNDATION_CHARACTER_ATLASES.values():
+    _ATLAS_COLUMNS[_foundation_atlas] = FOUNDATION_CHARACTER_COLUMNS
+    _ATLAS_ROWS[_foundation_atlas] = FOUNDATION_CHARACTER_ROWS
 
 
 @lru_cache(maxsize=128)
