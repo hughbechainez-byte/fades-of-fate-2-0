@@ -144,6 +144,7 @@ class Player:
     # it must never call a move resolver that mutates combo_style.
     attack_animation_clip: str = "idle"
     attack_move_key: str = ""
+    attack_timing_move: dict[str, Any] | None = None
     # Previous active-window fist centre.  The combat engine uses this only
     # while an attack is active, so an old idle location cannot extend a fresh
     # strike after a state change.
@@ -227,9 +228,18 @@ class Player:
                 if state == "heavy"
                 else state
             )
+            if state == "light" or (state == "heavy" and self.combo_style == "c"):
+                self.attack_timing_move = dict(self._combo_move())
+            elif state == "heavy":
+                self.attack_timing_move = dict(self.moves["heavy"])
+            elif state == "air_attack":
+                self.attack_timing_move = dict(self.moves["air"])
+            else:
+                self.attack_timing_move = None
         else:
             self.attack_animation_clip = state
             self.attack_move_key = ""
+            self.attack_timing_move = None
         if state in {"hurt", "downed", "dead", "eliminated"}:
             # Damage is a hard combo interruption.  Retaining a queued edge
             # here caused one later button press to launch an unrequested

@@ -183,7 +183,15 @@ class FoundationCharacterRuntimeTests(unittest.TestCase):
                     (255, 255, 255),
                 )
                 bottoms.append(rect.bottom)
-            self.assertEqual(set(bottoms), {166})
+            self.assertEqual(
+                set(bottoms),
+                {sprite_atlas.foundation_character_ground_y(character) + 1},
+            )
+        dave_walk = sprite_atlas.animation_frames("black_dave", "walk")[0]
+        self.assertGreaterEqual(
+            white_walk[0].get_bounding_rect(min_alpha=1).height,
+            round(dave_walk.get_bounding_rect(min_alpha=1).height * 1.03),
+        )
 
     def test_foundation_attacks_receive_no_runtime_motion_overlays(self) -> None:
         canvas = pygame.Surface((240, 180), pygame.SRCALPHA)

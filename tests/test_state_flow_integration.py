@@ -463,6 +463,17 @@ class StateFlowIntegrationTests(unittest.TestCase):
             self.assertEqual(game.select_slots[0].cpu_companion_index, 3)
             self.assertIn("CPU COMPANION: WHITE DAVE", game._selection_footer_lines()[0])
 
+            extra_rects = game._extra_cpu_companion_card_rects()
+            game.handle_events([
+                pygame.event.Event(pygame.MOUSEBUTTONDOWN, {"button": 1, "pos": extra_rects[0].center})
+            ])
+            game.handle_events([
+                pygame.event.Event(pygame.MOUSEBUTTONDOWN, {"button": 1, "pos": extra_rects[1].center})
+            ])
+            self.assertIsNotNone(game.select_slots[0].cpu_companion_index_2)
+            self.assertIsNotNone(game.select_slots[0].cpu_companion_index_3)
+            self.assertEqual(len(game._solo_cpu_companions(game.select_slots[0])), 3)
+
             game.select_slots.append(
                 SelectSlot(
                     {"type": "controller", "instance_id": 99},

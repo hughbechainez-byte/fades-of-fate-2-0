@@ -1047,6 +1047,27 @@ class FadesGame:
                 self._open_character_select_from_mouse(chapter_two_level_id)
             return
         if self.state == "character_select":
+            # Extra solo companion cards sit over the lower edge of the hero
+            # cards. Resolve them first so the hero-card hitboxes cannot
+            # swallow clicks intended for companion slots 2 and 3.
+            if len(self.select_slots) == 1:
+                for companion_slot, rect in enumerate(self._extra_cpu_companion_card_rects(), start=1):
+                    if rect.collidepoint(point):
+                        slot = self.select_slots[0]
+                        next_index = self._next_cpu_companion_index(slot, companion_slot)
+                        if companion_slot == 1:
+                            slot.cpu_companion_index_2 = next_index
+                        else:
+                            slot.cpu_companion_index_3 = next_index
+                        slot.confirmed = False
+                        self.audio.play("menu")
+                        self.log_breadcrumb(
+                            "cpu_companion_selected",
+                            character=self._solo_cpu_companion(slot, companion_slot),
+                            companion_slot=companion_slot,
+                            source="mouse",
+                        )
+                        return
             for index in range(len(PLAYABLE_CHARACTERS)):
                 if pygame.Rect(16 + index * 156, 39, 144, 177).collidepoint(point):
                     slot = self._keyboard_select_slot()
@@ -1066,23 +1087,6 @@ class FadesGame:
                         slot.confirmed = False
                         self.audio.play("menu")
                         self.log_breadcrumb("cpu_companion_selected", character=character, source="mouse", companion_slot=1)
-                        return
-                for companion_slot, rect in enumerate(self._extra_cpu_companion_card_rects(), start=2):
-                    if rect.collidepoint(point):
-                        slot = self.select_slots[0]
-                        next_index = self._next_cpu_companion_index(slot, companion_slot)
-                        if companion_slot == 2:
-                            slot.cpu_companion_index_2 = next_index
-                        else:
-                            slot.cpu_companion_index_3 = next_index
-                        slot.confirmed = False
-                        self.audio.play("menu")
-                        self.log_breadcrumb(
-                            "cpu_companion_selected",
-                            character=self._solo_cpu_companion(slot, companion_slot),
-                            companion_slot=companion_slot,
-                            source="mouse",
-                        )
                         return
             if lower_card_rects[0].collidepoint(point):
                 slot = self._keyboard_select_slot()
@@ -5934,8 +5938,8 @@ class FadesGame:
                     self._text(surface, self.font_tiny, "OR ENTER", (155, 166, 188), (rect.centerx, 294), center=True)
 
         if len(self.select_slots) == 1:
-            for companion_slot, rect in enumerate(self._extra_cpu_companion_card_rects(), start=2):
-                companion_index = companion_slot - 1
+            for companion_slot, rect in enumerate(self._extra_cpu_companion_card_rects(), start=1):
+                companion_index = companion_slot + 1
                 hovered = self.mouse_position is not None and rect.collidepoint(self.mouse_position)
                 companion_character = self._solo_cpu_companion(self.select_slots[0], companion_slot)
                 selected = companion_character in solo_cpu_characters
@@ -6103,14 +6107,7 @@ class FadesGame:
                     if obj.state in {"light", "heavy", "air_attack", "super"}
                     else "super" if obj.state == "propane" else obj.state
                 )
-                if obj.state == "light":
-                    timed_move = obj._combo_move()
-                elif obj.state == "heavy":
-                    timed_move = obj._combo_move() if obj.combo_style == "c" else obj.moves["heavy"]
-                elif obj.state == "air_attack":
-                    timed_move = obj.moves["air"]
-                else:
-                    timed_move = None
+                timed_move = obj.attack_timing_move if obj.state in {"light", "heavy", "air_attack"} else None
                 sprite_tick = (
                     999
                     if obj.state == "dead"

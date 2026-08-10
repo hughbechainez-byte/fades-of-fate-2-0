@@ -92,8 +92,11 @@ SHELLY_PANTS_WINDOW = (int(ANIMATION_PLAYBACK_HZ * 2), int(ANIMATION_PLAYBACK_HZ
 DAVE_UNIFORM_RENDER_SCALE = 1.12
 COUCH_UNIFORM_RENDER_SCALE = 1.08
 FOUNDATION_CHARACTER_RENDER_SCALE = {
-    "jermaine": 1.16,
-    "white_dave": 1.16,
+    # Foundation cels are authored on 128px cells while Dave's canonical
+    # atlas uses 256px cells.  This compensates the visible gameplay height
+    # without changing the nearest-neighbor pixel contract or the ground root.
+    "jermaine": 1.32,
+    "white_dave": 1.32,
 }
 DAVE_STABLE_WALK_POSES = 12
 DAVE_STABLE_WALK_TICK_MAP = (

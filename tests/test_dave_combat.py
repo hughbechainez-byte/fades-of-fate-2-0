@@ -122,6 +122,14 @@ class DaveCombatTests(unittest.TestCase):
         self.assertEqual(self.dave.combo_style, "z")
         self.assertEqual(self.dave._light_move(), self.dave._combo_move())
 
+    def test_attack_timing_is_locked_to_the_same_authored_move_as_the_clip(self) -> None:
+        self.dave.combo_style = "x"
+        self.dave.combo_step = 1
+        move = self.dave._combo_move()
+        self.dave.set_state("light", self.dave._move_total(move))
+        self.dave.combo_step = 2
+        self.assertEqual(self.dave.attack_timing_move, move)
+
     def test_hit_flash_and_recoil_are_visible_for_a_short_confirmed_window(self) -> None:
         target = self.enemy(206, self.dave.x + 28.0, self.dave.y)
         self.game.enemies = [target]
