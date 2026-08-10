@@ -7166,8 +7166,10 @@ class FadesGame:
     def _draw_effects(self, surface: pygame.Surface) -> None:
         # The logical gameplay canvas is normally an RGB surface.  Keep the
         # new fading particles on one RGBA overlay so alpha ramps remain real
-        # compositing instead of being silently discarded by pygame.draw.
-        particle_overlay = pygame.Surface(LOGICAL_SIZE, pygame.SRCALPHA)
+        # compositing instead of being silently discarded by pygame.draw.  Do
+        # not allocate that full-screen surface for ordinary impact effects;
+        # the crowded-scene and normal combat paths rarely need it.
+        particle_overlay: pygame.Surface | None = None
         for effect in self.effects:
             if effect.projected:
                 point = self.projection.project(
@@ -7249,6 +7251,8 @@ class FadesGame:
                     radius=max(12, int(effect.radius)),
                 )
             elif effect.kind in {"spark", "streak", "dust", "ring"}:
+                if particle_overlay is None:
+                    particle_overlay = pygame.Surface(LOGICAL_SIZE, pygame.SRCALPHA)
                 scale = effect.visual_scale
                 alpha = effect.visual_alpha
                 tint = (*effect.color, alpha)
@@ -7352,7 +7356,8 @@ class FadesGame:
                 pygame.draw.ellipse(surface, effect.color, (int(x - radius), int(y - radius * 0.5), radius * 2, max(2, radius)), 2)
             elif effect.kind == "text":
                 self._text(surface, self.font_small, effect.text, effect.color, (int(x), int(y)), center=True)
-        surface.blit(particle_overlay, (0, 0))
+        if particle_overlay is not None:
+            surface.blit(particle_overlay, (0, 0))
 
     @staticmethod
     def _compact_hud_rects(player_count: int, scale: float = 1.0) -> tuple[pygame.Rect, ...]:
