@@ -297,7 +297,7 @@ PROFILES["hero_combat_stable"] = _uniform_action_profile(
     (1.03, 1.05, 1.08, 1.11, 1.13, 1.10, 1.07, 1.04)
 )
 PROFILES["dave_combat_stable"] = _uniform_action_profile(
-    (1.14, 1.16, 1.18, 1.21, 1.23, 1.20, 1.17, 1.14)
+    (1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00)
 )
 
 
@@ -332,6 +332,9 @@ DAVE_ATTACK_SOURCES = {
     "attack_1": (0, 1, 2, 3, 4, 5, 6, 7),
     "attack_2": (4, 5, 6, 7, 8, 9, 10, 11),
     "attack_3": (8, 9, 10, 11, 5, 6, 7, 4),
+    # The reviewed kick strip has four complete cels.  Each is held for one
+    # additional timing beat so the shockwave can land without inventing a
+    # procedural in-between or changing Dave's authored pixel scale.
     "attack_4": (12, 13, 14, 15, 13, 14, 15, 12),
 }
 
@@ -1576,6 +1579,13 @@ def _make_atlases(
     }
     atlas_groups: dict[str, list] = {}
     for clip in ANIMATION_CLIPS:
+        # Jermaine and White Dave are built by the locked foundation runtime
+        # tool.  Their atlas is deliberately not regenerated from this
+        # detailed-hero source library; leaving those clips in this loop made
+        # a normal animation rebuild fail after all other atlases had already
+        # been written.
+        if clip.actor in {"jermaine", "white_dave"}:
+            continue
         if enemy_roster_only and clip.actor not in ENEMY_VARIANT_KINDS:
             continue
         atlas_groups.setdefault(clip.atlas, []).append(clip)
@@ -1740,6 +1750,34 @@ def _make_atlases(
                     raise ValueError(
                         f"{clip.actor}:{clip.state} uses translation-only or rounded duplicate filler"
                     )
+            elif clip.actor == "black_dave" and clip.state in DAVE_ATTACK_SOURCES:
+                # Combat source cels have deliberately different limb
+                # extensions, so fitting each cropped pose independently
+                # makes Dave pulse larger and smaller during one combo.  Fit
+                # the complete 16-cel source strip once, leave an eight-pixel
+                # safety margin, and register every phase against the same
+                # authored root.  The body can extend; its pixel density
+                # cannot change between phases.
+                combat_sources = source_sets["black_dave_attacks"]
+                combat_transform = _strip_fit_transform(
+                    combat_sources,
+                    tuple(range(len(combat_sources))),
+                    (clip.cell_width, clip.cell_height),
+                    (clip.cell_width - 8, clip.cell_height - 8),
+                )
+                for source_index in indices:
+                    sink: list[tuple[int, int]] = []
+                    key_poses.append(
+                        _render_pose(
+                            sources[source_index],
+                            combat_transform,
+                            (clip.cell_width, clip.cell_height),
+                            (clip.cell_width - 8, clip.cell_height - 8),
+                            landmarks=render_landmarks(source_index),
+                            landmark_sink=sink,
+                        )
+                    )
+                    record_landmarks(source_index, sink)
             elif clip.actor in {"black_dave", "shelly"} and clip.state == "idle":
                 for phase, source_index in enumerate(indices):
                     sink: list[tuple[int, int]] = []
@@ -1886,7 +1924,11 @@ def _make_atlases(
 
 
 def _contact_sheet(rendered: dict[tuple[str, str], list[Image.Image]], destination: Path) -> None:
-    clips = list(ANIMATION_CLIPS)
+    clips = [
+        clip
+        for clip in ANIMATION_CLIPS
+        if clip.actor not in {"jermaine", "white_dave"}
+    ]
     columns = 4
     rows = (len(clips) + columns - 1) // columns
     block_width, block_height = 680, 62

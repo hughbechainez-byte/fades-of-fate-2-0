@@ -105,6 +105,23 @@ class DaveFlameVisualTests(unittest.TestCase):
             signatures.add((crop.get_size(), pygame.image.tobytes(crop, "RGBA")))
         self.assertEqual(len(signatures), 4)
 
+    def test_rgb_gameplay_canvas_keeps_flame_overlay_compact_and_transparent(self) -> None:
+        canvas = pygame.Surface(LOGICAL_SIZE)
+        canvas.fill((7, 11, 19))
+        rect = pixel_art.draw_fist_flames(
+            canvas,
+            320,
+            240,
+            facing=1,
+            state="attack_1",
+            sprite_tick=0,
+            frame=0,
+        )
+        self.assertLess(rect.w, 90)
+        self.assertLess(rect.h, 70)
+        for point in ((0, 0), (639, 359), (320, 0), (0, 240)):
+            self.assertEqual(canvas.get_at(point)[:3], (7, 11, 19))
+
     def test_flames_have_layered_palette_animation_sparks_and_heat_contours(self) -> None:
         signatures: set[bytes] = set()
         for phase in range(4):

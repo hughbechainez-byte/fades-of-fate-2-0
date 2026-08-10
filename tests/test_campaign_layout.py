@@ -13,7 +13,11 @@ os.environ.setdefault("PYGAME_HIDE_SUPPORT_PROMPT", "1")
 
 import pygame
 
-from src.animation_manifest import ANIMATION_CLIPS, total_authored_poses
+from src.animation_manifest import (
+    ANIMATION_CLIPS,
+    APPROVED_MEANINGFUL_POSE_FLOORS,
+    total_authored_poses,
+)
 from src.config import active_campaign_level, load_gameplay
 from src.game import FadesGame, SelectSlot
 from src.input_manager import InputManager, InputSnapshot
@@ -541,12 +545,16 @@ class ChapterOneLayoutTests(unittest.TestCase):
         for clip in ANIMATION_CLIPS:
             with self.subTest(actor=clip.actor, state=clip.state):
                 poses = sprite_atlas.animation_frames(clip.actor, clip.state)
-                self.assertGreaterEqual(len(poses), 5)
-                self.assertGreaterEqual(len(set(clip.phases)), 5)
+                minimum_meaningful = APPROVED_MEANINGFUL_POSE_FLOORS.get(
+                    (clip.actor, clip.state),
+                    5,
+                )
+                self.assertGreaterEqual(len(poses), minimum_meaningful)
+                self.assertGreaterEqual(len(set(clip.phases)), minimum_meaningful)
                 meaningful = {_translation_normalized_signature(pose) for pose in poses}
                 self.assertGreaterEqual(
                     len(meaningful),
-                    5,
+                    minimum_meaningful,
                     "animation uses repeated or translation-only filler",
                 )
 

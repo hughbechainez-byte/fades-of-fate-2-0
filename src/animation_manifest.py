@@ -22,6 +22,13 @@ BASE_POSES_PER_CLIP = 8
 BASE_EXTENDED_HERO_POSES = 12
 BASE_EXPANDED_PARTY_IDLE_POSES = 16
 SHELLY_PERSONALITY_POSES = 16
+# The reviewed kick reference is a four-cel whole-body strip.  Its four
+# authored kick poses are intentionally held for the recovery beats rather
+# than padded with invented in-betweens or a second actor's art.  Keep this
+# exception explicit anywhere the animation-floor contract is checked.
+APPROVED_MEANINGFUL_POSE_FLOORS = {
+    ("black_dave", "attack_4"): 4,
+}
 # Combat simulation remains fixed at 60 Hz.  Sprite selection deliberately
 # quantizes time to 30 Hz so a 30 FPS recording and a 60 FPS display observe
 # the same ordered pose stream instead of two different halves of it.

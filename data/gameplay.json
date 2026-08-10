@@ -999,14 +999,14 @@
                     "attack_2",
                     "attack_3",
                     "attack_4",
-                    "attack_4",
+                    "attack_1",
+                    "attack_2",
+                    "attack_3",
                     "attack_4",
                     "attack_1",
                     "attack_2",
                     "attack_3",
-                    "attack_1",
-                    "attack_2",
-                    "attack_3"
+                    "attack_4"
                 ],
                 "z": [
                     "attack_2",
@@ -1024,11 +1024,11 @@
                 ],
                 "c": [
                     "heavy",
-                    "heavy",
-                    "heavy",
-                    "heavy",
+                    "attack_3",
                     "attack_4",
-                    "attack_4",
+                    "attack_1",
+                    "attack_2",
+                    "attack_3",
                     "attack_4"
                 ]
             },

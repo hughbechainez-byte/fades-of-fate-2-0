@@ -208,8 +208,24 @@ class GameplayConfigTests(unittest.TestCase):
     def test_character_light_combo_sequences_require_valid_integer_indices(self) -> None:
         valid = deepcopy(self.data)
         valid["players"]["shelly"]["light_combo_sequence"] = [0, 2, 3]
+        valid["players"]["shelly"]["animation_clip_sequences"] = {
+            "x": ["attack_1", "attack_2", "attack_3"],
+            "z": ["attack_2", "attack_1", "attack_4"],
+            "c": ["heavy"],
+        }
         valid["players"]["black_dave"]["alt_light_combo_sequence"] = [1, 0, 2]
+        valid["players"]["black_dave"]["animation_clip_sequences"]["z"] = [
+            "attack_2",
+            "attack_1",
+            "attack_4",
+        ]
         valid["players"]["black_dave"]["heavy_combo_sequence"] = [0, 1, 2, 3]
+        valid["players"]["black_dave"]["animation_clip_sequences"]["c"] = [
+            "heavy",
+            "attack_3",
+            "attack_4",
+            "attack_1",
+        ]
         valid["players"]["black_dave"]["combo_repeat_seconds"] = 5.0
         validate_gameplay(valid)
 

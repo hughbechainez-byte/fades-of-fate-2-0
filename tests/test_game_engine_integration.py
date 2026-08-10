@@ -138,6 +138,24 @@ class GameplayEngineIntegrationTests(unittest.TestCase):
         self.game._draw_effects(surface)
         self.assertGreater(pygame.mask.from_surface(surface).count(), 80)
 
+    def test_fist_feedback_is_a_compact_directional_slash_not_a_reticle(self) -> None:
+        self.game.effects = [
+            Effect(
+                "fist",
+                320.0,
+                240.0,
+                color=(66, 211, 255),
+                radius=28.0,
+                direction=1.0,
+            )
+        ]
+        surface = pygame.Surface((640, 360), pygame.SRCALPHA)
+        self.game._draw_effects(surface)
+        bounds = surface.get_bounding_rect(min_alpha=1)
+        self.assertLess(bounds.width, 48)
+        self.assertLess(bounds.height, 28)
+        self.assertLess(bounds.width * bounds.height, 1200)
+
     def test_effect_motion_scale_and_alpha_are_deterministic(self) -> None:
         effect = Effect(
             "spark",

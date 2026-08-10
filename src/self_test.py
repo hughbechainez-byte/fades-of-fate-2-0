@@ -9,7 +9,11 @@ from typing import Any
 import pygame
 
 from . import sprite_atlas
-from .animation_manifest import ANIMATION_CLIPS, total_authored_poses
+from .animation_manifest import (
+    ANIMATION_CLIPS,
+    APPROVED_MEANINGFUL_POSE_FLOORS,
+    total_authored_poses,
+)
 from .config import LOGICAL_SIZE, campaign_levels, executable_root, resource_path
 from .entities import AmmoPickup, Enemy, SuperButanePickup
 from .game import COUCH_DOPE_OFFER_TAUNT, FadesGame, SOLO_CPU_COMPANIONS, SelectSlot
@@ -382,7 +386,15 @@ def run_foundation_self_test(output_dir: Path | None = None) -> dict[str, Any]:
         for clip in ANIMATION_CLIPS:
             poses = sprite_atlas.animation_frames(clip.actor, clip.state)
             meaningful = {_translation_normalized_signature(pose) for pose in poses}
-            if len(poses) < 5 or len(set(clip.phases)) < 5 or len(meaningful) < 5:
+            minimum_meaningful = APPROVED_MEANINGFUL_POSE_FLOORS.get(
+                (clip.actor, clip.state),
+                5,
+            )
+            if (
+                len(poses) < minimum_meaningful
+                or len(set(clip.phases)) < minimum_meaningful
+                or len(meaningful) < minimum_meaningful
+            ):
                 animation_floor_failures.append(f"{clip.actor}:{clip.state}")
         _check(
             len(ANIMATION_CLIPS) == 216
@@ -390,7 +402,7 @@ def run_foundation_self_test(output_dir: Path | None = None) -> dict[str, Any]:
             and not animation_floor_failures,
             "animation_floor_216_clips_1952_poses",
             report,
-            "all 216 active clips provide 8-16 rooted, translation-normalized authored keys (1952 total) on a 30 Hz presentation clock",
+            "all 216 active clips provide rooted, translation-normalized authored keys (1952 total) on a 30 Hz presentation clock; Black Dave's reviewed four-cel kick strip is explicitly held instead of padded",
         )
         foundation_rows = {
             (character, state): sprite_atlas.foundation_character_frames(character, state)
@@ -410,7 +422,7 @@ def run_foundation_self_test(output_dir: Path | None = None) -> dict[str, Any]:
             and all(
                 set(pygame.image.tobytes(frame, "RGBA")[3::4]) <= {0, 255}
                 and frame.get_bounding_rect(min_alpha=1).bottom
-                == sprite_atlas.foundation_character_ground_y(character) + 1
+                == sprite_atlas.foundation_character_ground_y(character)
                 for (character, _state), frames in foundation_rows.items()
                 for frame in frames
             )

@@ -236,6 +236,51 @@ def _draw_title_enemy_walker(
     return rect
 
 
+def _draw_title_player_accent(
+    surface: pygame.Surface,
+    x: int,
+    y: int,
+    *,
+    character: str,
+    scale: float,
+    frame: int = 0,
+) -> pygame.Rect:
+    """Draw one native transparent runtime hero accent on the title.
+
+    Character-select portraits are deliberately card-shaped assets.  They are
+    not title sprites and contain their own matte/crop language.  The title
+    instead samples the same authored gameplay cel used in combat, crops only
+    transparent bounds, and nearest-scales it into a safe lane.
+    """
+
+    canvas = pygame.Surface((220, 220), pygame.SRCALPHA)
+    pixel_art.draw_player(
+        canvas,
+        110,
+        207,
+        0,
+        1,
+        "idle",
+        character,
+        frame,
+        (255, 255, 255),
+    )
+    bounds = canvas.get_bounding_rect(min_alpha=1)
+    if not bounds.w or not bounds.h:
+        return pygame.Rect(x, y, 0, 0)
+    sprite = canvas.subsurface(bounds).copy()
+    scaled = pygame.transform.scale(
+        sprite,
+        (
+            max(1, round(sprite.get_width() * float(scale))),
+            max(1, round(sprite.get_height() * float(scale))),
+        ),
+    )
+    rect = scaled.get_rect(midbottom=(int(x), int(y)))
+    surface.blit(scaled, rect)
+    return rect
+
+
 def _title_walker_horizontal_pose(
     elapsed: float,
     *,
@@ -603,12 +648,14 @@ class FadesGame:
                 portrait = authored_portrait.subsurface(
                     pygame.Rect(crop_left, 0, crop_width, source_rect.height)
                 ).copy()
-            scaler = (
-                pygame.transform.scale
-                if name in {"jermaine", "white_dave"}
-                else pygame.transform.smoothscale
+            # All four hero cards use one nearest-neighbour presentation rule.
+            # Mixing smooth concept portraits with hard pixel portraits made
+            # the roster look like unrelated games even when the card bounds
+            # were identical.
+            self.character_portraits[name] = pygame.transform.scale(
+                portrait,
+                portrait_sizes[name],
             )
-            self.character_portraits[name] = scaler(portrait, portrait_sizes[name])
         self.title_side_portraits: dict[str, pygame.Surface] = {}
         for name, relative in title_portrait_assets.items():
             if name in {"jermaine", "white_dave"}:
@@ -1055,27 +1102,6 @@ class FadesGame:
                 self._open_character_select_from_mouse(chapter_two_level_id)
             return
         if self.state == "character_select":
-            # Extra solo companion cards sit over the lower edge of the hero
-            # cards. Resolve them first so the hero-card hitboxes cannot
-            # swallow clicks intended for companion slots 2 and 3.
-            if len(self.select_slots) == 1:
-                for companion_slot, rect in enumerate(self._extra_cpu_companion_card_rects(), start=1):
-                    if rect.collidepoint(point):
-                        slot = self.select_slots[0]
-                        next_index = self._next_cpu_companion_index(slot, companion_slot)
-                        if companion_slot == 1:
-                            slot.cpu_companion_index_2 = next_index
-                        else:
-                            slot.cpu_companion_index_3 = next_index
-                        slot.confirmed = False
-                        self.audio.play("menu")
-                        self.log_breadcrumb(
-                            "cpu_companion_selected",
-                            character=self._solo_cpu_companion(slot, companion_slot),
-                            companion_slot=companion_slot,
-                            source="mouse",
-                        )
-                        return
             for index in range(len(PLAYABLE_CHARACTERS)):
                 if pygame.Rect(16 + index * 156, 39, 144, 177).collidepoint(point):
                     slot = self._keyboard_select_slot()
@@ -1086,33 +1112,33 @@ class FadesGame:
                     return
             lower_card_rects = self._character_select_lower_card_rects()
             if len(self.select_slots) == 1:
-                for cpu_index, (character, rect) in enumerate(
-                    zip(SOLO_CPU_COMPANIONS, lower_card_rects[1:])
-                ):
-                    if rect.collidepoint(point):
-                        slot = self.select_slots[0]
-                        slot.cpu_companion_index = cpu_index
-                        slot.confirmed = False
+                slot = self.select_slots[0]
+                for companion_slot, rect in enumerate(lower_card_rects[1:4]):
+                    if not rect.collidepoint(point):
+                        continue
+                    if companion_slot > 0 and self._solo_cpu_companion(slot, 0) == "ko":
+                        # KO is a dedicated companion object rather than a
+                        # Player slot.  Keep the three-slot cap truthful by
+                        # requiring CPU 1 to leave KO before optional slots
+                        # can be populated.
                         self.audio.play("menu")
-                        self.log_breadcrumb("cpu_companion_selected", character=character, source="mouse", companion_slot=1)
                         return
-                for companion_slot, rect in enumerate(self._extra_cpu_companion_card_rects(), start=1):
-                    if rect.collidepoint(point):
-                        slot = self.select_slots[0]
-                        next_index = self._next_cpu_companion_index(slot, companion_slot)
-                        if companion_slot == 1:
-                            slot.cpu_companion_index_2 = next_index
-                        elif companion_slot == 2:
-                            slot.cpu_companion_index_3 = next_index
-                        slot.confirmed = False
-                        self.audio.play("menu")
-                        self.log_breadcrumb(
-                            "cpu_companion_selected",
-                            character=self._solo_cpu_companion(slot, companion_slot),
-                            companion_slot=companion_slot,
-                            source="mouse",
-                        )
-                        return
+                    next_index = self._next_cpu_companion_index(slot, companion_slot)
+                    if companion_slot == 0:
+                        slot.cpu_companion_index = next_index
+                    elif companion_slot == 1:
+                        slot.cpu_companion_index_2 = next_index
+                    else:
+                        slot.cpu_companion_index_3 = next_index
+                    slot.confirmed = False
+                    self.audio.play("menu")
+                    self.log_breadcrumb(
+                        "cpu_companion_selected",
+                        character=self._solo_cpu_companion(slot, companion_slot),
+                        companion_slot=companion_slot + 1,
+                        source="mouse",
+                    )
+                    return
             if lower_card_rects[0].collidepoint(point):
                 slot = self._keyboard_select_slot()
                 if slot.confirmed:
@@ -1745,15 +1771,14 @@ class FadesGame:
         """Return the shared draw/click targets for the lower roster row."""
 
         if len(self.select_slots) == 1:
-            return tuple(pygame.Rect(8 + index * 126, 229, 120, 91) for index in range(5))
-        return tuple(pygame.Rect(16 + index * 156, 229, 144, 91) for index in range(4))
+            return tuple(pygame.Rect(8 + index * 126, 225, 120, 105) for index in range(5))
+        return tuple(pygame.Rect(16 + index * 156, 225, 144, 105) for index in range(4))
 
     @staticmethod
     def _extra_cpu_companion_card_rects() -> tuple[pygame.Rect, ...]:
-        return (
-            pygame.Rect(8, 133, 120, 91),
-            pygame.Rect(134, 133, 120, 91),
-        )
+        # Kept as a compatibility hook for older tooling.  Companion slots
+        # now live in the lower roster row and never overlap hero cards.
+        return ()
 
     def _solo_cpu_companion_pool(self, slot: SelectSlot, companion_slot: int) -> tuple[str | None, ...]:
         if companion_slot == 0:
@@ -5898,11 +5923,14 @@ class FadesGame:
         surface.blit(self.key_art, (0, 0))
         accent_layer = pygame.Surface(LOGICAL_SIZE, pygame.SRCALPHA)
         background_walkers = (
-            (258, 0.52, 8, 632, 18.0, 0.05, "homeless:encampment_crawler"),
-            (244, 0.44, 42, 540, 23.0, 0.42, "homeless:encampment_drifter"),
-            (232, 0.36, 64, 494, 28.0, 0.82, "homeless:underpass_camp_runner"),
-            (222, 0.29, 158, 465, 34.0, 1.18, "homeless:encampment_crawler"),
-            (214, 0.22, 262, 415, 40.0, 1.54, "homeless:encampment_drifter"),
+            # Keep background pedestrians in authored side lanes.  The key art
+            # already contains the central hero trio, so crossing their baked
+            # silhouettes and repainting polygon masks created hard clipping.
+            (258, 0.52, 8, 188, 18.0, 0.05, "homeless:encampment_crawler"),
+            (244, 0.44, 452, 632, 23.0, 0.42, "homeless:encampment_drifter"),
+            (232, 0.36, 22, 204, 28.0, 0.82, "homeless:underpass_camp_runner"),
+            (222, 0.29, 486, 628, 34.0, 1.18, "homeless:encampment_crawler"),
+            (214, 0.22, 44, 188, 40.0, 1.54, "homeless:encampment_drifter"),
         )
         for walker_y, walker_scale, left, right, period, phase, walker_kind in background_walkers:
             walker_x, walker_facing = _title_walker_horizontal_pose(
@@ -5942,17 +5970,33 @@ class FadesGame:
             kind="homeless:cart_tent_lurker",
             frame=0,
         )
-        jermaine = self.title_side_portraits["jermaine"]
-        white_dave = self.title_side_portraits["white_dave"]
-        ko = self.title_side_portraits["ko"]
-        accent_layer.blit(ko, (436, 128))
-        accent_layer.blit(jermaine, (475, 102))
-        accent_layer.blit(white_dave, (522, 88))
+        _draw_title_player_accent(
+            accent_layer,
+            518,
+            286,
+            character="jermaine",
+            scale=0.52,
+            frame=int(self.elapsed * 4.0),
+        )
+        _draw_title_player_accent(
+            accent_layer,
+            602,
+            286,
+            character="white_dave",
+            scale=0.48,
+            frame=int(self.elapsed * 4.0 + 2.0),
+        )
+        ko_accent = pygame.Surface((160, 120), pygame.SRCALPHA)
+        pixel_art.draw_ko(ko_accent, 80, 113, z=0, facing=1, state="idle", frame=int(self.elapsed * 4.0))
+        ko_bounds = ko_accent.get_bounding_rect(min_alpha=1)
+        if ko_bounds.w and ko_bounds.h:
+            ko_sprite = ko_accent.subsurface(ko_bounds).copy()
+            ko_sprite = pygame.transform.scale(ko_sprite, (round(ko_sprite.width * 0.62), round(ko_sprite.height * 0.62)))
+            accent_layer.blit(ko_sprite, ko_sprite.get_rect(midbottom=(432, 286)))
         surface.blit(
             _apply_top_down_visibility_fade(accent_layer, top_alpha=255, bottom_alpha=132),
             (0, 0),
         )
-        surface.blit(self.title_foreground_cast, (0, 0))
         if self.state == "loading":
             self._panel(surface, pygame.Rect(178, 319, 284, 27), (9, 8, 20), (255, 208, 76))
             dots = "." * (1 + int(self.elapsed * 3) % 3)
@@ -6035,8 +6079,6 @@ class FadesGame:
                 pygame.draw.rect(surface, (255, 151, 112), (x + 25, 57, 94, 149), 2)
                 self._text(surface, self.font_tiny, "CUTTERS • BOLT BREAKER", (255, 188, 155), (x + 72, 205), center=True)
 
-        solo_cpu_character = self._solo_cpu_character(self.select_slots[0]) if len(self.select_slots) == 1 else None
-        solo_cpu_characters = self._solo_cpu_companions(self.select_slots[0]) if len(self.select_slots) == 1 else ()
         cpu_card_colors = {
             "black_dave": (24, 91, 119),
             "shelly": (112, 50, 86),
@@ -6045,82 +6087,63 @@ class FadesGame:
             "white_dave": (105, 54, 42),
         }
         lower_card_rects = self._character_select_lower_card_rects()
-        for index, rect in enumerate(lower_card_rects):
-            x = rect.x
-            hovered = self.mouse_position is not None and rect.collidepoint(self.mouse_position)
-            if len(self.select_slots) == 1 and index > 0:
-                cpu_character = SOLO_CPU_COMPANIONS[index - 1]
-                selected = cpu_character == solo_cpu_character
-                border = (255, 222, 99) if selected or hovered else (104, 229, 255)
-                background = cpu_card_colors[cpu_character]
-                self._panel(surface, rect, background, border)
-                surface.blit(self.cpu_companion_portraits[cpu_character], (x + 5, 239))
-                text_x = x + 82
-                self._text(surface, self.font_tiny, "CPU SUPPORT", (255, 240, 174), (text_x, 239), center=True)
-                self._text(surface, self.font_tiny, CHARACTER_LABELS[cpu_character], (255, 246, 210), (text_x, 254), center=True)
-                status = "SELECTED" if selected else "CLICK"
-                self._text(surface, self.font_tiny, status, border, (text_x, 275), center=True)
-                if cpu_character == "ko":
-                    self._text(surface, self.font_tiny, "LIGHTNING • 1-HIT", (183, 226, 255), (text_x, 292), center=True)
-                else:
-                    self._text(surface, self.font_tiny, "FULL COMBAT AI", (190, 200, 220), (text_x, 292), center=True)
-                continue
-            color = PLAYER_COLORS[index]
-            self._panel(surface, rect, (29, 35, 54) if hovered else (13, 16, 29), (255, 222, 99) if hovered else color)
-            if index < len(self.select_slots):
-                slot = self.select_slots[index]
-                character = CHARACTER_LABELS[PLAYABLE_CHARACTERS[slot.character_index]]
-                status = "YOU CONTROL • READY" if slot.confirmed else "YOU CONTROL • SELECTING"
-                center_x = rect.centerx
-                name_font = self.font_small if len(self.select_slots) == 1 else self.font
-                self._text(surface, name_font, f"P{index + 1}  {character}", color, (center_x, 244), center=True)
-                self._text(surface, self.font_tiny, status, (255, 240, 174), (center_x, 267), center=True)
-                choose_line = "< > HERO • UP/DOWN CPU" if len(self.select_slots) == 1 else "< > CHOOSE  •  A/ENTER CONFIRM"
-                self._text(surface, self.font_tiny, choose_line, (190, 200, 220), (center_x, 288), center=True)
-                begin_line = "CONFIRM / START TO BEGIN" if len(self.select_slots) == 1 else "PRESS AGAIN / START TO BEGIN"
-                self._text(surface, self.font_tiny, begin_line, (150, 236, 255), (center_x, 304), center=True)
-            elif len(self.select_slots) == 1:
-                self._text(surface, self.font, f"P{index + 1}", color, (rect.centerx, 247), center=True)
-                self._text(surface, self.font_small, "PRESS A / START", (212, 217, 230), (rect.centerx, 275), center=True)
-                if index == 0:
-                    self._text(surface, self.font_tiny, "OR ENTER", (155, 166, 188), (rect.centerx, 294), center=True)
-
         if len(self.select_slots) == 1:
-            for companion_slot, rect in enumerate(self._extra_cpu_companion_card_rects(), start=1):
-                companion_index = companion_slot
+            slot = self.select_slots[0]
+            p1_rect = lower_card_rects[0]
+            p1_hovered = self.mouse_position is not None and p1_rect.collidepoint(self.mouse_position)
+            p1_color = PLAYER_COLORS[0]
+            self._panel(surface, p1_rect, (29, 35, 54) if p1_hovered else (13, 16, 29), (255, 222, 99) if p1_hovered else p1_color)
+            character = CHARACTER_LABELS[PLAYABLE_CHARACTERS[slot.character_index]]
+            status = "READY" if slot.confirmed else "SELECTING"
+            self._text(surface, self.font_small, f"P1  {character}", p1_color, (p1_rect.centerx, 244), center=True)
+            self._text(surface, self.font_tiny, f"YOU CONTROL • {status}", (255, 240, 174), (p1_rect.centerx, 263), center=True)
+            self._text(surface, self.font_tiny, "LEFT / RIGHT HERO", (190, 200, 220), (p1_rect.centerx, 282), center=True)
+            self._text(surface, self.font_tiny, "CLICK TO CONFIRM", (150, 236, 255), (p1_rect.centerx, 301), center=True)
+
+            ko_primary = self._solo_cpu_companion(slot, 0) == "ko"
+            for companion_slot, rect in enumerate(lower_card_rects[1:4]):
+                cpu_character = self._solo_cpu_companion(slot, companion_slot)
+                selected = cpu_character is not None
                 hovered = self.mouse_position is not None and rect.collidepoint(self.mouse_position)
-                companion_character = self._solo_cpu_companion(self.select_slots[0], companion_slot)
-                selected = companion_character in solo_cpu_characters
+                if ko_primary:
+                    selected = False
+                    cpu_character = None
                 border = (255, 222, 99) if selected or hovered else (104, 229, 255)
-                text_x = rect.centerx
-                icon_y = rect.y + 53
-                title_y = rect.y + 68
-                label_y = rect.y + 83
-                status_y = rect.y + 106
-                detail_y = rect.y + 123
-                if companion_character is None:
-                    self._panel(surface, rect, (22, 28, 50), border)
-                    self._text(surface, self.font_tiny, f"SLOT {companion_index}", (255, 240, 174), (text_x, title_y), center=True)
-                    self._text(surface, self.font_tiny, "OFF", (255, 246, 210), (text_x, label_y), center=True)
+                background = (24, 26, 42) if ko_primary else cpu_card_colors.get(cpu_character, (22, 28, 50))
+                self._panel(surface, rect, background, border)
+                title = f"CPU {companion_slot + 1}"
+                self._text(surface, self.font_tiny, title, (255, 240, 174), (rect.centerx, 239), center=True)
+                if ko_primary:
+                    self._text(surface, self.font_tiny, "KO ACTIVE", (255, 246, 210), (rect.centerx, 260), center=True)
+                elif cpu_character is None:
+                    self._text(surface, self.font_small, "OFF", (255, 246, 210), (rect.centerx, 260), center=True)
                 else:
-                    background = cpu_card_colors[companion_character]
-                    self._panel(surface, rect, background, border)
-                    self._text(surface, self.font_tiny, f"SLOT {companion_index}", (255, 240, 174), (text_x, title_y), center=True)
-                    surface.blit(self.cpu_companion_portraits[companion_character], (rect.x + 39, icon_y))
-                    self._text(
-                        surface,
-                        self.font_tiny,
-                        CHARACTER_LABELS[companion_character],
-                        (255, 246, 210),
-                        (text_x, label_y),
-                        center=True,
-                    )
-                status = "SELECTED" if selected else "CLICK"
-                self._text(surface, self.font_tiny, status, border, (text_x, status_y), center=True)
-                if companion_character == "ko":
-                    self._text(surface, self.font_tiny, "LIGHTNING • 1-HIT", (183, 226, 255), (text_x, detail_y), center=True)
-                elif companion_character is not None:
-                    self._text(surface, self.font_tiny, "FULL COMBAT AI", (190, 200, 220), (text_x, detail_y), center=True)
+                    surface.blit(self.cpu_companion_portraits[cpu_character], (rect.x + 5, 248))
+                    self._text(surface, self.font_tiny, CHARACTER_LABELS[cpu_character], (255, 246, 210), (rect.x + 82, 255), center=True)
+                self._text(surface, self.font_tiny, "CHOOSE CPU 1" if ko_primary else "CLICK TO CYCLE", border, (rect.x + 82, 277), center=True)
+                detail = "KO USES SUPPORT" if ko_primary else "KO SUPPORT" if cpu_character == "ko" else "FULL COMBAT AI" if cpu_character else "OPTIONAL"
+                self._text(surface, self.font_tiny, detail, (190, 200, 220), (rect.x + 82, 296), center=True)
+
+            guide_rect = lower_card_rects[4]
+            guide_hovered = self.mouse_position is not None and guide_rect.collidepoint(self.mouse_position)
+            self._panel(surface, guide_rect, (18, 25, 43) if guide_hovered else (10, 15, 28), (255, 222, 99) if guide_hovered else (104, 229, 255))
+            self._text(surface, self.font_tiny, "TEAM BUILD", (255, 240, 174), (guide_rect.centerx, 244), center=True)
+            self._text(surface, self.font_tiny, "UP TO 3 CPU", (255, 246, 210), (guide_rect.centerx, 264), center=True)
+            self._text(surface, self.font_tiny, "CLICK SLOTS 1–3", (190, 200, 220), (guide_rect.centerx, 283), center=True)
+            self._text(surface, self.font_tiny, "CONFIRM P1 TWICE", (150, 236, 255), (guide_rect.centerx, 302), center=True)
+        else:
+            for index, rect in enumerate(lower_card_rects):
+                hovered = self.mouse_position is not None and rect.collidepoint(self.mouse_position)
+                color = PLAYER_COLORS[index]
+                self._panel(surface, rect, (29, 35, 54) if hovered else (13, 16, 29), (255, 222, 99) if hovered else color)
+                if index < len(self.select_slots):
+                    slot = self.select_slots[index]
+                    character = CHARACTER_LABELS[PLAYABLE_CHARACTERS[slot.character_index]]
+                    status = "READY" if slot.confirmed else "SELECTING"
+                    self._text(surface, self.font_small, f"P{index + 1}  {character}", color, (rect.centerx, 246), center=True)
+                    self._text(surface, self.font_tiny, f"YOU CONTROL • {status}", (255, 240, 174), (rect.centerx, 266), center=True)
+                    self._text(surface, self.font_tiny, "< > CHOOSE • A CONFIRM", (190, 200, 220), (rect.centerx, 287), center=True)
+                    self._text(surface, self.font_tiny, "PRESS AGAIN TO BEGIN", (150, 236, 255), (rect.centerx, 306), center=True)
         footer_top, footer_bottom = self._selection_footer_lines()
         self._text(surface, self.font_tiny, footer_top, (177, 229, 255), (320, 336), center=True)
         self._text(surface, self.font_tiny, footer_bottom, (145, 196, 224), (320, 348), center=True)
@@ -7165,19 +7188,23 @@ class FadesGame:
                 radius = max(2, int(effect.radius * progress))
                 pygame.draw.ellipse(surface, effect.color, (int(x - radius), int(y - radius * 0.35), radius * 2, int(radius * 0.7)), max(1, 4 - int(progress * 3)))
             elif effect.kind == "fist":
-                radius = max(4, int(effect.radius * (0.55 + progress * 0.95)))
-                core = max(2, radius // 4)
-                # A compact, readable cyan/white punch aura keeps Dave's fists
-                # legible without adding a separate non-pixel particle system.
-                pygame.draw.circle(surface, (13, 29, 45), (int(x), int(y)), radius + 2)
-                pygame.draw.circle(surface, effect.color, (int(x), int(y)), radius, max(1, 3 - int(progress * 2)))
-                pygame.draw.circle(surface, (248, 255, 255), (int(x), int(y)), core)
-                for angle in (0.0, math.tau * 0.25, math.tau * 0.5, math.tau * 0.75):
-                    inner = radius * 0.52
-                    outer = radius * (0.84 + progress * 0.28)
-                    start = (int(x + math.cos(angle) * inner), int(y + math.sin(angle) * inner))
-                    end = (int(x + math.cos(angle) * outer), int(y + math.sin(angle) * outer))
-                    pygame.draw.line(surface, effect.color, start, end, 2)
+                span = max(5, min(18, int(effect.radius * (0.34 + progress * 0.42))))
+                direction = -1 if effect.direction < 0.0 else 1
+                # Do not draw a circle with four cardinal rays: at gameplay
+                # scale that is indistinguishable from a targeting reticle.
+                # This is a short, hand-anchored impact slash with one bright
+                # contact pixel and two offset sparks.
+                points = [
+                    (int(x - direction * span), int(y + 2)),
+                    (int(x - direction * 4), int(y - 4)),
+                    (int(x + direction * (span // 2)), int(y - 1)),
+                    (int(x + direction * 4), int(y + 4)),
+                ]
+                pygame.draw.lines(surface, (11, 25, 39), False, points, 4)
+                pygame.draw.lines(surface, effect.color, False, points, 2)
+                pygame.draw.rect(surface, (248, 255, 255), (int(x) - 2, int(y) - 1, 4, 3))
+                pygame.draw.rect(surface, effect.color, (int(x - direction * (span + 3)), int(y - 7), 3, 2))
+                pygame.draw.rect(surface, effect.color, (int(x - direction * (span // 2)), int(y + 7), 2, 2))
             elif effect.kind == "bass_drop":
                 radius = max(8, int(effect.radius * (0.14 + progress * 0.86)))
                 # Screen-space pulses make the full-map wipe feel immediate

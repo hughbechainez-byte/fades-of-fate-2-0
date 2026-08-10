@@ -92,11 +92,16 @@ SHELLY_PANTS_WINDOW = (int(ANIMATION_PLAYBACK_HZ * 2), int(ANIMATION_PLAYBACK_HZ
 DAVE_UNIFORM_RENDER_SCALE = 1.12
 COUCH_UNIFORM_RENDER_SCALE = 1.08
 FOUNDATION_CHARACTER_RENDER_SCALE = {
-    # Foundation cels are authored on 128px cells while Dave's canonical
-    # atlas uses 256px cells.  This compensates the visible gameplay height
-    # without changing the nearest-neighbor pixel contract or the ground root.
-    "jermaine": 1.32,
-    "white_dave": 1.32,
+    # Foundation cels are authored on the same 128px logical cell as the
+    # runtime atlas.  This small uniform scale compensates the reviewed
+    # silhouette height without changing the nearest-neighbor pixel contract
+    # or the ground root.
+    # The reviewed 128px foundation cels are 115px tall at rest.  1.16x
+    # brings their authored body height to the same 133-135px gameplay band
+    # as Dave's 1.12x atlas without making either foundation hero tower over
+    # the rest of the roster.
+    "jermaine": 1.16,
+    "white_dave": 1.16,
 }
 DAVE_STABLE_WALK_POSES = 12
 DAVE_STABLE_WALK_TICK_MAP = (
@@ -125,6 +130,15 @@ FOUNDATION_CHARACTER_ATLASES = {
 FOUNDATION_CHARACTER_FRAME_COUNTS = {
     "jermaine": (8, 8, 8),
     "white_dave": (8, 12, 8),
+}
+FOUNDATION_ATTACK_PHASE_OFFSETS = {
+    "attack_1": 0,
+    "attack_2": 1,
+    "attack_3": 2,
+    "attack_4": 3,
+    "heavy": 4,
+    "air_attack": 5,
+    "super": 6,
 }
 # Foundation atlases use a fixed 12-column grid even when a character's
 # authored row occupies fewer cells; deriving columns from clip lengths would
@@ -329,7 +343,14 @@ def player_frame(character: object, state: object, tick: int) -> pygame.Surface 
             return None
         clip_state = state_name if state_name in {"idle", "walk", "run", "move", "jog"} or state_name.startswith("attack_") or state_name in {"light", "heavy", "air_attack", "super"} else "idle"
         clip = clip_for(name, clip_state)
-        return poses[_clip_phase_index(clip, max(0, int(tick)), len(poses))]
+        phase = _clip_phase_index(clip, max(0, int(tick)), len(poses))
+        # Jermaine and White Dave currently have one reviewed attack strip,
+        # not seven interchangeable idle fallbacks.  Route each attack state
+        # through a different authored phase offset so the move contract is
+        # deterministic and visibly state-specific until additional complete
+        # source cels are approved.
+        phase += FOUNDATION_ATTACK_PHASE_OFFSETS.get(state_name, 0)
+        return poses[phase % len(poses)]
     name = "shelly" if name in {"shelly", "shellie"} else "black_dave"
     state_name = _state_name(state)
     tick = max(0, int(tick))

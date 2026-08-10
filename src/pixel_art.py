@@ -6101,6 +6101,14 @@ def draw_fist_flames(
     fire floating at a fixed world offset.
     """
 
+    # Gameplay is usually an RGB logical canvas.  Drawing semi-transparent
+    # fire directly onto it silently promotes every alpha value to an opaque
+    # dark rectangle, which is why the old flame trail could cover Dave and
+    # nearby actors.  Composite the authored accent on a real RGBA layer.
+    destination = surface
+    if not (surface.get_flags() & pygame.SRCALPHA):
+        surface = pygame.Surface(destination.get_size(), pygame.SRCALPHA)
+
     direction = _face_sign(facing)
     phase = max(0, int(frame))
     pose_tick = phase if sprite_tick is None else max(0, int(sprite_tick))
@@ -6145,7 +6153,7 @@ def draw_fist_flames(
         if striking:
             # Three nested, asymmetric ribbons keep the strike readable while
             # letting the glow stay a little softer and less torch-like.
-            trail = (18 if dimmer else 20 if smokier else 22 if energetic else 20) + index * (2 if dimmer else 3) + (phase % (2 if dimmer else 3))
+            trail = (11 if dimmer else 13 if smokier else 15 if energetic else 13) + index * (1 if dimmer else 2) + (phase % (2 if dimmer else 3))
             trail_outer = [
                 (cx + direction * 7, cy - 6),
                 (cx + direction * 11, cy - 1),
@@ -6212,7 +6220,7 @@ def draw_fist_flames(
                 pygame.draw.rect(surface, spark_color, spark)
                 rects.append(spark)
 
-        flame_height = (17 if dimmer else 20 if smokier else 22 if energetic else 20) + ((phase + index * 2) % (2 if dimmer else 3 if smokier else 4)) + max(0, -flicker)
+        flame_height = (12 if dimmer else 14 if smokier else 16 if energetic else 14) + ((phase + index * 2) % (2 if dimmer else 3 if smokier else 4)) + max(0, -flicker)
         hand_window = pygame.Rect(cx - 12, cy - 6, 24, 14)
         pygame.draw.ellipse(surface, (66, 32, 30, 88 if dimmer else 72), hand_window)
         pygame.draw.ellipse(surface, (221, 183, 148, 92 if dimmer else 78), hand_window.inflate(-6, -4))
@@ -6281,13 +6289,15 @@ def draw_fist_flames(
                     1,
                 )
             )
-        ember_offsets = ((-11, -8, 3), (9, -14, 2), (-4, -20, 2)) if dimmer else ((-13, -10, 3), (10, -17, 2), (-5, -24, 2)) if smokier else ((-15, -12, 3), (12, -20, 2), (-6, -28, 2))
+        ember_offsets = ((-8, -6, 2), (7, -10, 2), (-3, -14, 2)) if dimmer else ((-9, -7, 2), (8, -12, 2), (-4, -16, 2)) if smokier else ((-10, -8, 2), (9, -14, 2), (-4, -18, 2))
         for ember_index, (dx, dy, size) in enumerate(ember_offsets):
             drift = sway * (1 + ember_index)
             ember = pygame.Rect(cx + dx + drift, cy + dy + (phase + ember_index) % 4, size, size)
             pygame.draw.rect(surface, (255, 224, 129) if ember_index != 1 else (240, 100, 40) if dimmer else (255, 229, 121) if smokier else (255, 146, 58), ember)
             rects.append(ember)
-    return rects[0].unionall(rects[1:]).inflate(6, 6)
+    if surface is not destination:
+        destination.blit(surface, (0, 0))
+    return rects[0].unionall(rects[1:]).inflate(4, 4)
 
 
 def draw_comic_speech_bubble(
@@ -7318,7 +7328,10 @@ def draw_effect(
 
     if effect in {"flame_trail", "flame_trail_right", "flame_trail_left"}:
         direction = -1 if effect.endswith("_left") else 1
-        reach = max(28, min(72, int(radius) + 18 + phase * 3))
+        # A strike accent should point from the hand to the contact, not span
+        # half the screen.  The previous 72px cap became a solid orange bar
+        # once it was composited on the RGB gameplay canvas.
+        reach = max(18, min(40, int(radius) + 8 + phase))
         outer = [
             (cx + direction * 16, cy - 10),
             (cx + direction * 23, cy - 2),
@@ -7357,8 +7370,8 @@ def draw_effect(
         )
         # Broken hot-air contours sit above the opaque ribbons instead of
         # blurring them, preserving the pixel silhouette at gameplay scale.
-        for heat_index, y_offset in enumerate((-18, 16)):
-            heat_rect = pygame.Rect(cx - reach - 8, cy + y_offset - 4, reach + 24, 10)
+        for heat_index, y_offset in enumerate((-10, 9)):
+            heat_rect = pygame.Rect(cx - reach - 5, cy + y_offset - 3, reach + 14, 7)
             rects.append(
                 pygame.draw.arc(
                     surface,
@@ -7369,7 +7382,7 @@ def draw_effect(
                     1,
                 )
             )
-        for index, (dx, dy) in enumerate(((-reach - 11, -13), (-reach - 2, 11), (-reach + 10, -18), (-reach // 2, 16), (-reach // 3, -14))):
+        for index, (dx, dy) in enumerate(((-reach - 6, -8), (-reach - 1, 7), (-reach + 7, -11), (-reach // 2, 10), (-reach // 3, -9))):
             ember_x = cx + direction * dx
             size = 4 if index == 0 else 3 if index < 3 else 2
             ember = pygame.Rect(ember_x - size // 2, cy + dy + (phase + index) % 5, size, max(2, size - 1))

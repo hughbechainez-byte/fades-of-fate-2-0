@@ -18,6 +18,7 @@ from src.game import (
     FadesGame,
     SOLO_CPU_COMPANIONS,
     SelectSlot,
+    _draw_title_player_accent,
     _build_title_foreground_cast,
     _title_walker_horizontal_pose,
 )
@@ -98,6 +99,25 @@ class StateFlowIntegrationTests(unittest.TestCase):
         self.assertEqual(foreground.get_at((490, 205)).a, 0)
         self.assertEqual(foreground.get_at((100, 180)).a, 0)
 
+    def test_title_hero_accents_use_native_cels_inside_safe_lanes(self) -> None:
+        canvas = pygame.Surface((640, 360), pygame.SRCALPHA)
+        for character, x, scale in (("jermaine", 518, 0.52), ("white_dave", 602, 0.48)):
+            with self.subTest(character=character):
+                rect = _draw_title_player_accent(
+                    canvas,
+                    x,
+                    286,
+                    character=character,
+                    scale=scale,
+                    frame=0,
+                )
+                self.assertGreater(rect.width, 0)
+                self.assertGreater(rect.height, 0)
+                self.assertLess(rect.width, 86)
+                self.assertLessEqual(rect.right, 640)
+                self.assertEqual(rect.bottom, 286)
+        self.assertEqual(canvas.get_at((0, 0)).a, 0)
+
     def test_character_select_uses_dedicated_hero_portraits(self) -> None:
         manager = InputManager(max_players=4, discover_controllers=False)
         game = FadesGame(manager, mute=True)
@@ -124,7 +144,7 @@ class StateFlowIntegrationTests(unittest.TestCase):
                     target_width, target_height = portrait_sizes[character]
                     crop_width = min(authored.get_width(), round(authored.get_height() * target_width / target_height))
                     crop_left = max(0, (authored.get_width() - crop_width) // 2)
-                    expected = pygame.transform.smoothscale(
+                    expected = pygame.transform.scale(
                         authored.subsurface(pygame.Rect(crop_left, 0, crop_width, authored.get_height())).copy(),
                         portrait_sizes[character],
                     )
@@ -405,9 +425,8 @@ class StateFlowIntegrationTests(unittest.TestCase):
             self.assertIn("SHELLY + CHIEF", rendered_labels)
             self.assertIn("JERMAINE", rendered_labels)
             self.assertIn("WHITE DAVE", rendered_labels)
-            self.assertGreaterEqual(rendered_labels.count("WHITE DAVE"), 2)
-            self.assertIn("KO", rendered_labels)
-            self.assertIn("CPU SUPPORT", rendered_labels)
+            self.assertGreaterEqual(rendered_labels.count("WHITE DAVE"), 1)
+            self.assertIn("CPU 1", rendered_labels)
             self.assertIn("YOU CONTROL: WHITE DAVE  •  CPU COMPANION: SHELLY", rendered_labels)
             self.assertNotIn("LOCKED", rendered_labels)
             click((86, 275))   # ready
@@ -451,28 +470,29 @@ class StateFlowIntegrationTests(unittest.TestCase):
             self.assertEqual(len(solo_rects), 5)
             self.assertTrue(all(pygame.Rect(0, 0, 640, 360).contains(rect) for rect in solo_rects))
             self.assertTrue(all(left.right < right.left for left, right in zip(solo_rects, solo_rects[1:])))
-            game.handle_events([
-                pygame.event.Event(pygame.MOUSEBUTTONDOWN, {"button": 1, "pos": solo_rects[3].center})
-            ])
-            self.assertEqual(game.select_slots[0].cpu_companion_index, 2)
-            self.assertIn("CPU COMPANION: KO", game._selection_footer_lines()[0])
-
-            game.handle_events([
-                pygame.event.Event(pygame.MOUSEBUTTONDOWN, {"button": 1, "pos": solo_rects[4].center})
-            ])
-            self.assertEqual(game.select_slots[0].cpu_companion_index, 3)
-            self.assertIn("CPU COMPANION: WHITE DAVE", game._selection_footer_lines()[0])
-
-            extra_rects = game._extra_cpu_companion_card_rects()
-            game.handle_events([
-                pygame.event.Event(pygame.MOUSEBUTTONDOWN, {"button": 1, "pos": extra_rects[0].center})
-            ])
-            game.handle_events([
-                pygame.event.Event(pygame.MOUSEBUTTONDOWN, {"button": 1, "pos": extra_rects[1].center})
-            ])
-            self.assertIsNotNone(game.select_slots[0].cpu_companion_index_2)
-            self.assertIsNotNone(game.select_slots[0].cpu_companion_index_3)
+            # Move the primary slot past the dedicated KO choice so the
+            # optional two standard-hero slots can be populated as well.
+            for _ in range(2):
+                game.handle_events([
+                    pygame.event.Event(
+                        pygame.MOUSEBUTTONDOWN,
+                        {"button": 1, "pos": solo_rects[1].center},
+                    )
+                ])
+            self.assertEqual(game._solo_cpu_companion(game.select_slots[0], 0), "white_dave")
+            for companion_slot, expected_attribute in (
+                (2, "cpu_companion_index_2"),
+                (3, "cpu_companion_index_3"),
+            ):
+                game.handle_events([
+                    pygame.event.Event(
+                        pygame.MOUSEBUTTONDOWN,
+                        {"button": 1, "pos": solo_rects[companion_slot].center},
+                    )
+                ])
+                self.assertIsNotNone(getattr(game.select_slots[0], expected_attribute))
             self.assertEqual(len(game._solo_cpu_companions(game.select_slots[0])), 3)
+            self.assertIn("CPU COMPANIONS:", game._selection_footer_lines()[0])
 
             game.select_slots.append(
                 SelectSlot(
@@ -484,13 +504,40 @@ class StateFlowIntegrationTests(unittest.TestCase):
             multiplayer_rects = game._character_select_lower_card_rects()
             self.assertEqual(
                 tuple((rect.x, rect.y, rect.w, rect.h) for rect in multiplayer_rects),
-                tuple((16 + index * 156, 229, 144, 91) for index in range(4)),
+                tuple((16 + index * 156, 225, 144, 105) for index in range(4)),
             )
             game.select_slots[0].confirmed = True
             game._start_stage()
             self.assertEqual(len(game.players), 2)
             self.assertTrue(all(not player.is_cpu for player in game.players))
             self.assertIsNone(game.ko_companion)
+        finally:
+            game.close()
+            manager.close()
+
+    def test_solo_character_select_spawns_three_distinct_cpu_companions(self) -> None:
+        manager = InputManager(max_players=4, discover_controllers=False)
+        game = FadesGame(manager, mute=True)
+        try:
+            game.state = "title"
+            click = lambda point: game.handle_events([
+                pygame.event.Event(pygame.MOUSEBUTTONDOWN, {"button": 1, "pos": point})
+            ])
+            click((230, 313))
+            lower = game._character_select_lower_card_rects()
+            # CPU 1 starts on the automatic Shelly support; advance past KO
+            # to the standard White Dave slot so optional companions remain
+            # within the three-player AI cap.
+            click(lower[1].center)
+            click(lower[1].center)
+            click(lower[2].center)
+            click(lower[3].center)
+            click(lower[0].center)
+            click(lower[0].center)
+            self.assertEqual(game.state, "gameplay")
+            cpu_characters = [player.character for player in game.players if player.is_cpu]
+            self.assertEqual(len(cpu_characters), 3)
+            self.assertEqual(len(set(cpu_characters)), 3)
         finally:
             game.close()
             manager.close()

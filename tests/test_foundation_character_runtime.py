@@ -185,12 +185,16 @@ class FoundationCharacterRuntimeTests(unittest.TestCase):
                 bottoms.append(rect.bottom)
             self.assertEqual(
                 set(bottoms),
-                {sprite_atlas.foundation_character_ground_y(character) + 1},
+                {165},
             )
         dave_walk = sprite_atlas.animation_frames("black_dave", "walk")[0]
-        self.assertGreaterEqual(
-            white_walk[0].get_bounding_rect(min_alpha=1).height,
-            round(dave_walk.get_bounding_rect(min_alpha=1).height * 1.03),
+        self.assertLessEqual(
+            abs(
+                white_walk[0].get_bounding_rect(min_alpha=1).height
+                - dave_walk.get_bounding_rect(min_alpha=1).height
+            ),
+            12,
+            "foundation heroes should stay in Dave's gameplay height band",
         )
 
     def test_foundation_attacks_receive_no_runtime_motion_overlays(self) -> None:

@@ -1250,6 +1250,13 @@ def validate_gameplay(
                     )
                 if any(str(clip) not in allowed_clips for clip in clips):
                     raise ConfigError(f"{label} contains an unsupported animation clip")
+                # A combo route must visibly progress.  A repeated clip is
+                # acceptable for a short legacy chain, but Black Dave's
+                # seven-step heavy route must expose at least four authored
+                # combat families or newly added moves become indistinguish-
+                # able in production.
+                if character == "black_dave" and style == "c" and len(set(map(str, clips))) < 4:
+                    raise ConfigError(f"{label} must expose at least four distinct authored clips")
 
     enemies = data["enemies"]
     if not isinstance(enemies, dict):

@@ -558,7 +558,10 @@ class Player:
             return
 
         if self.state == "light":
-            move = self._combo_move()
+            # Resolve the attack definition once at the state edge.  Reading
+            # combo_step again on every frame could swap timing and hitboxes
+            # underneath a pose that was already rendered.
+            move = self.attack_timing_move or self._combo_move()
             if snapshot.pressed & {"light", "alt_light"}:
                 self.queued_light = True
                 self.light_buffer_remaining = float(move.get("buffer_window", 0.22))
@@ -566,12 +569,16 @@ class Player:
                 self.queued_heavy = True
                 self.heavy_buffer_remaining = float(move.get("buffer_window", 0.22))
         elif self.state == "heavy":
-            move = self._combo_move() if self.combo_style == "c" and "heavy_combo" in self.moves else self.moves["heavy"]
+            move = self.attack_timing_move or (
+                self._combo_move()
+                if self.combo_style == "c" and "heavy_combo" in self.moves
+                else self.moves["heavy"]
+            )
             if "heavy" in snapshot.pressed and self.combo_style == "c" and "heavy_combo" in self.moves:
                 self.queued_heavy = True
                 self.heavy_buffer_remaining = float(move.get("buffer_window", 0.22))
         else:
-            move = self.moves["air"]
+            move = self.attack_timing_move or self.moves["air"]
 
         active_start = float(move["startup"])
         active_end = active_start + float(move["active"])
