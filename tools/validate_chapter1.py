@@ -3109,6 +3109,22 @@ def run_crowded_benchmark(
 ) -> dict[str, Any]:
     """Measure a fixed 4-player, Couch, eight-enemy headless game workload."""
 
+    # The Windows release gate can opt into a high-priority process class so
+    # unrelated desktop renderers cannot turn an otherwise valid CPU sample
+    # into a scheduler measurement. This never affects normal gameplay and the
+    # benchmark still times the real update/draw calls without synthetic waits.
+    if os.name == "nt" and os.environ.get("FADES_QA_HIGH_PRIORITY") == "1":
+        try:
+            import ctypes
+
+            kernel32 = ctypes.windll.kernel32
+            handle = kernel32.OpenProcess(0x0200 | 0x0400, False, os.getpid())
+            if handle:
+                kernel32.SetPriorityClass(handle, 0x80)  # HIGH_PRIORITY_CLASS
+                kernel32.CloseHandle(handle)
+        except (AttributeError, OSError, TypeError):
+            pass
+
     frames = _non_negative_integer(frames, "frames")
     warmup_frames = _non_negative_integer(warmup_frames, "warmup_frames")
     if not 1 <= frames <= MAX_BENCHMARK_FRAMES:
