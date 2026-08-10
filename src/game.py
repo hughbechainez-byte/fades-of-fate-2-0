@@ -301,6 +301,7 @@ CHARACTER_LABELS = {
 PAUSE_MENU_ITEMS = (
     ("resume", "RESUME"),
     ("controls", "CONTROLS"),
+    ("super_settings", "SUPER ATTACKS"),
     ("main_menu", "EXIT TO MAIN MENU"),
     ("exit_game", "EXIT GAME"),
 )
@@ -1021,6 +1022,13 @@ class FadesGame:
             self.pause_release_guard = False
             self.audio.play("menu")
             self.log_breadcrumb("pause_controls_opened")
+        elif action == "super_settings":
+            self.pause_page = "super_settings"
+            self.pause_selection = 0
+            self.pause_nav_cooldown = 0.0
+            self.pause_release_guard = False
+            self.audio.play("menu")
+            self.log_breadcrumb("pause_super_settings_opened")
         elif action in {"main_menu", "exit_game"}:
             self.pause_page = f"confirm_{action}"
             self.pause_confirm_selection = 0
@@ -1088,6 +1096,23 @@ class FadesGame:
                         self.audio.play("menu")
                         self.log_breadcrumb("cpu_companion_selected", character=character, source="mouse", companion_slot=1)
                         return
+                for companion_slot, rect in enumerate(self._extra_cpu_companion_card_rects(), start=1):
+                    if rect.collidepoint(point):
+                        slot = self.select_slots[0]
+                        next_index = self._next_cpu_companion_index(slot, companion_slot)
+                        if companion_slot == 1:
+                            slot.cpu_companion_index_2 = next_index
+                        elif companion_slot == 2:
+                            slot.cpu_companion_index_3 = next_index
+                        slot.confirmed = False
+                        self.audio.play("menu")
+                        self.log_breadcrumb(
+                            "cpu_companion_selected",
+                            character=self._solo_cpu_companion(slot, companion_slot),
+                            companion_slot=companion_slot,
+                            source="mouse",
+                        )
+                        return
             if lower_card_rects[0].collidepoint(point):
                 slot = self._keyboard_select_slot()
                 if slot.confirmed:
@@ -1102,11 +1127,29 @@ class FadesGame:
                 self._open_epilogue()
             return
         if self.state == "epilogue":
-            for index in range(4):
-                if pygame.Rect(382, 128 + index * 35, 214, 28).collidepoint(point):
+            if self.epilogue_page == "options":
+                option_rows = len(PLAYABLE_CHARACTERS) + 1
+                super_characters = PLAYABLE_CHARACTERS
+                for index in range(option_rows):
+                    row_rect = pygame.Rect(106, 174 + index * 32, 234, 24)
+                    if not row_rect.collidepoint(point):
+                        continue
                     self.epilogue_selection = index
-                    self._activate_epilogue_selection()
+                    if index >= len(super_characters):
+                        self.epilogue_page = "menu"
+                        self.epilogue_selection = 0
+                        self.audio.play("menu")
+                        return
+                    character = super_characters[index]
+                    self._toggle_super_attack_character(character)
+                    self.audio.play("menu")
                     return
+            else:
+                for index in range(4):
+                    if pygame.Rect(382, 128 + index * 35, 214, 28).collidepoint(point):
+                        self.epilogue_selection = index
+                        self._activate_epilogue_selection()
+                        return
             return
         if self.state == "interlevel":
             self._start_pending_level(source="mouse")
@@ -1121,6 +1164,19 @@ class FadesGame:
                 if pygame.Rect(183, 88 + index * 47, 274, 38).collidepoint(point):
                     self.pause_selection = index
                     self._activate_pause_selection(source="mouse")
+                    return
+        elif self.pause_page == "super_settings":
+            for index in range(self._super_attack_option_count()):
+                row_rect = pygame.Rect(106, 174 + index * 32, 234, 24)
+                if row_rect.collidepoint(point):
+                    self.pause_selection = index
+                    if index >= len(PLAYABLE_CHARACTERS):
+                        self.pause_page = "menu"
+                        self.pause_selection = 0
+                        self.audio.play("menu")
+                    else:
+                        self._toggle_super_attack_character(PLAYABLE_CHARACTERS[index])
+                        self.audio.play("menu")
                     return
         elif self.pause_page == "controls":
             self._pause_back()
@@ -1154,6 +1210,11 @@ class FadesGame:
         if self.pause_page == "menu":
             for index, _ in enumerate(PAUSE_MENU_ITEMS):
                 if pygame.Rect(183, 88 + index * 47, 274, 38).collidepoint(self.mouse_position):
+                    self.pause_selection = index
+                    return
+        elif self.pause_page == "super_settings":
+            for index in range(self._super_attack_option_count()):
+                if pygame.Rect(106, 174 + index * 32, 234, 24).collidepoint(self.mouse_position):
                     self.pause_selection = index
                     return
         elif self.pause_page.startswith("confirm_"):
@@ -1379,6 +1440,7 @@ class FadesGame:
             return
         else:
             self.epilogue_page = "options"
+            self.epilogue_selection = 0
         self.audio.play("menu")
         self.log_breadcrumb("epilogue_action", action=action)
 
@@ -1389,12 +1451,27 @@ class FadesGame:
         if any(snapshot.pressed & {"back", "dodge", "pause"} for snapshot in snapshots):
             if self.epilogue_page == "options":
                 self.epilogue_page = "menu"
+                self.epilogue_selection = 0
             else:
                 self._go_title()
             return
         if self.epilogue_page == "options":
+            super_characters = PLAYABLE_CHARACTERS
+            option_count = self._super_attack_option_count()
+            navigation = next((1 if snapshot.move_y > 0.55 else -1 if snapshot.move_y < -0.55 else 0 for snapshot in snapshots if abs(snapshot.move_y) > 0.55), 0)
+            if navigation:
+                self.epilogue_selection = (self.epilogue_selection + navigation) % option_count
+                self.audio.play("menu")
+                return
             if any(snapshot.pressed & {"confirm", "jump", "light"} for snapshot in snapshots):
-                self.epilogue_page = "menu"
+                if self.epilogue_selection >= len(super_characters):
+                    self.epilogue_page = "menu"
+                    self.epilogue_selection = 0
+                    self.audio.play("menu")
+                    return
+                character = super_characters[self.epilogue_selection]
+                self._toggle_super_attack_character(character)
+                self.audio.play("menu")
             return
         navigation = next((1 if snapshot.move_y > 0.55 else -1 if snapshot.move_y < -0.55 else 0 for snapshot in snapshots if abs(snapshot.move_y) > 0.55), 0)
         if navigation:
@@ -1515,6 +1592,8 @@ class FadesGame:
         if navigation:
             if self.pause_page == "menu":
                 self.pause_selection = (self.pause_selection + navigation) % len(PAUSE_MENU_ITEMS)
+            elif self.pause_page == "super_settings":
+                self.pause_selection = (self.pause_selection + navigation) % self._super_attack_option_count()
             elif self.pause_page.startswith("confirm_"):
                 self.pause_confirm_selection = (self.pause_confirm_selection + navigation) % 2
             self.pause_nav_cooldown = 0.18
@@ -1526,6 +1605,16 @@ class FadesGame:
 
         if self.pause_page == "controls":
             self._pause_back()
+            self.pause_release_guard = True
+            return
+        if self.pause_page == "super_settings":
+            if self.pause_selection >= len(PLAYABLE_CHARACTERS):
+                self.pause_page = "menu"
+                self.pause_selection = 0
+                self.audio.play("menu")
+            else:
+                self._toggle_super_attack_character(PLAYABLE_CHARACTERS[self.pause_selection])
+                self.audio.play("menu")
             self.pause_release_guard = True
             return
 
@@ -1661,7 +1750,10 @@ class FadesGame:
 
     @staticmethod
     def _extra_cpu_companion_card_rects() -> tuple[pygame.Rect, ...]:
-        return (pygame.Rect(8, 133, 120, 91), pygame.Rect(134, 133, 120, 91))
+        return (
+            pygame.Rect(8, 133, 120, 91),
+            pygame.Rect(134, 133, 120, 91),
+        )
 
     def _solo_cpu_companion_pool(self, slot: SelectSlot, companion_slot: int) -> tuple[str | None, ...]:
         if companion_slot == 0:
@@ -1678,6 +1770,50 @@ class FadesGame:
             excluded.add(primary)
         excluded.update(previous_companions)
         return (None, *tuple(character for character in PLAYABLE_CHARACTERS if character not in excluded))
+
+    def _super_attack_characters(self) -> tuple[str, ...]:
+        return tuple(character for character in PLAYABLE_CHARACTERS if character in self.options.super_attack_characters)
+
+    def _super_attack_option_count(self) -> int:
+        return len(PLAYABLE_CHARACTERS) + 1
+
+    def _toggle_super_attack_character(self, character: str) -> None:
+        if character in self.options.super_attack_characters:
+            self.options = self.options.with_overrides(
+                super_attack_characters=tuple(
+                    name for name in self.options.super_attack_characters if name != character
+                )
+            )
+        else:
+            enabled = set(self.options.super_attack_characters)
+            enabled.add(character)
+            self.options = self.options.with_overrides(
+                super_attack_characters=tuple(name for name in PLAYABLE_CHARACTERS if name in enabled)
+            )
+        self._persist_options()
+
+    def _is_super_attack_enabled(self, character: str) -> bool:
+        return character in self.options.super_attack_characters
+
+    def _snapshot_without_super(self, snapshot: InputSnapshot) -> InputSnapshot:
+        if "super" not in snapshot.held and "super" not in snapshot.pressed:
+            return snapshot
+        return InputSnapshot(
+            move_x=snapshot.move_x,
+            move_y=snapshot.move_y,
+            held=snapshot.held - {"super"},
+            pressed=snapshot.pressed - {"super"},
+        )
+
+    def _persist_options(self) -> None:
+        if not self.persistence_enabled:
+            return
+        try:
+            self.save_data = replace(self.save_data, options=self.options)
+            self.save_repository.save(self.save_data)
+            self.log_breadcrumb("game_options_saved", settings="super_attack_characters")
+        except (OSError, ValueError, TypeError):
+            self.log_breadcrumb("game_options_save_failed")
 
     def _solo_cpu_companion(self, slot: SelectSlot, companion_slot: int) -> str | None:
         pool = self._solo_cpu_companion_pool(slot, companion_slot)
@@ -2056,6 +2192,10 @@ class FadesGame:
             player.slot: self.input.snapshot(player.binding)
             for player in human_players
         }
+        for player in human_players:
+            human_snapshot_by_slot[player.slot] = self._snapshot_without_super(
+                human_snapshot_by_slot[player.slot]
+            ) if not self._is_super_attack_enabled(player.character) else human_snapshot_by_slot[player.slot]
         human_snapshots = list(human_snapshot_by_slot.values())
         # Dialogue owns normal action buttons so Enter/Start's menu alias
         # cannot pre-empt a requested continuation. Escape still opens pause
@@ -2110,10 +2250,10 @@ class FadesGame:
             # A short global freeze gives attacks weight while camera shake and
             # controller polling continue deterministically. Action edges are
             # retained for the first unfrozen simulation step.
-            buffered_actions = frozenset(
-                {"light", "heavy", "jump", "dodge", "super", "interact"}
-            )
             for player in human_players:
+                buffered_actions = frozenset({"light", "heavy", "jump", "dodge", "interact"})
+                if self._is_super_attack_enabled(player.character):
+                    buffered_actions = buffered_actions | frozenset({"super"})
                 pressed = human_snapshot_by_slot[player.slot].pressed & buffered_actions
                 if pressed:
                     self._hitstop_pressed_by_slot.setdefault(player.slot, set()).update(pressed)
@@ -2125,6 +2265,8 @@ class FadesGame:
             buffered = self._hitstop_pressed_by_slot.pop(player.slot, set())
             if not buffered:
                 continue
+            if not self._is_super_attack_enabled(player.character):
+                buffered.discard("super")
             snapshot = human_snapshot_by_slot[player.slot]
             human_snapshot_by_slot[player.slot] = InputSnapshot(
                 move_x=snapshot.move_x,
@@ -2134,7 +2276,11 @@ class FadesGame:
             )
 
         self._frame_snapshots = {
-            player.slot: (self._cpu_snapshot(player, dt) if player.is_cpu else human_snapshot_by_slot[player.slot])
+            player.slot: (
+                self._snapshot_without_super(self._cpu_snapshot(player, dt))
+                if not self._is_super_attack_enabled(player.character)
+                else (self._cpu_snapshot(player, dt) if player.is_cpu else human_snapshot_by_slot[player.slot])
+            )
             for player in self.players
         }
         for player in (candidate for candidate in self.players if candidate.is_cpu):
@@ -5179,6 +5325,8 @@ class FadesGame:
         return hits
 
     def activate_super(self, player: Player) -> None:
+        if not self._is_super_attack_enabled(player.character):
+            return
         self.audio.play("super")
         if player.character == "black_dave":
             cfg = self.data["players"]["black_dave"]
@@ -5939,7 +6087,7 @@ class FadesGame:
 
         if len(self.select_slots) == 1:
             for companion_slot, rect in enumerate(self._extra_cpu_companion_card_rects(), start=1):
-                companion_index = companion_slot + 1
+                companion_index = companion_slot
                 hovered = self.mouse_position is not None and rect.collidepoint(self.mouse_position)
                 companion_character = self._solo_cpu_companion(self.select_slots[0], companion_slot)
                 selected = companion_character in solo_cpu_characters
@@ -6894,10 +7042,32 @@ class FadesGame:
 
         if self.pause_page == "controls":
             self._draw_pause_controls(surface)
+        elif self.pause_page == "super_settings":
+            self._draw_pause_super_attack_settings(surface)
         elif self.pause_page.startswith("confirm_"):
             self._draw_pause_confirmation(surface)
         else:
             self._draw_pause_root(surface)
+
+    def _draw_pause_super_attack_settings(self, surface: pygame.Surface) -> None:
+        panel = pygame.Rect(72, 82, 496, 156)
+        self._panel(surface, panel, (12, 17, 31), (104, 222, 255))
+        self._text(surface, self.font_big, "PAUSE MENU", (255, 225, 117), (320, 104), center=True)
+        self._text(surface, self.font_small, "SUPER ATTACKS", (225, 234, 241), (320, 129), center=True)
+        for index, character in enumerate(PLAYABLE_CHARACTERS):
+            row_rect = pygame.Rect(106, 155 + index * 32, 234, 24)
+            enabled = character in self.options.super_attack_characters
+            selected = index == self.pause_selection
+            border = (255, 232, 120) if selected else (104, 229, 255)
+            fill = (55, 73, 97) if selected else (29, 35, 54)
+            self._panel(surface, row_rect, fill, border)
+            text = f"{CHARACTER_LABELS[character]} • {'ON' if enabled else 'OFF'}"
+            self._text(surface, self.font_tiny, text, (255, 246, 210), row_rect.center, center=True)
+        back_rect = pygame.Rect(106, 280, 234, 24)
+        back_selected = self.pause_selection == self._super_attack_option_count() - 1
+        self._panel(surface, back_rect, (55, 73, 97) if back_selected else (29, 35, 54), (255, 232, 120) if back_selected else (104, 229, 255))
+        self._text(surface, self.font_tiny, "BACK", (255, 246, 210), back_rect.center, center=True)
+        self._text(surface, self.font_tiny, "ENTER / A / CLICK TO TOGGLE • BACK TO LEAVE", (255, 220, 117), (320, 318), center=True)
 
     def _draw_pause_root(self, surface: pygame.Surface) -> None:
         panel = pygame.Rect(137, 28, 366, 304)
@@ -7902,12 +8072,25 @@ class FadesGame:
             self._text(surface, self.font_big, "↓", (255, 210, 104), (198, 188), center=True)
             self._text(surface, self.font, end.upper(), (202, 246, 224), (198, 225), center=True)
         if self.epilogue_page == "options":
+            super_characters = self._super_attack_characters()
             panel = pygame.Rect(72, 115, 496, 130)
             self._panel(surface, panel, (12, 17, 31), (104, 222, 255))
             self._text(surface, self.font_big, "OPTIONS", (255, 225, 117), (320, 137), center=True)
-            self._text(surface, self.font_small, "MUSIC / SFX SETTINGS ARE DATA-DRIVEN IN THIS DEMO", (225, 234, 241), (320, 172), center=True)
-            self._text(surface, self.font_small, "PAUSE MENU CONTROLS REMAIN AVAILABLE IN GAME", (173, 219, 240), (320, 199), center=True)
-            self._text(surface, self.font_tiny, "ENTER / A / ESC / B  BACK", (255, 220, 117), (320, 228), center=True)
+            self._text(surface, self.font_small, "SUPER ATTACKS", (225, 234, 241), (320, 170), center=True)
+            for index, character in enumerate(PLAYABLE_CHARACTERS):
+                row_rect = pygame.Rect(106, 174 + index * 32, 234, 24)
+                enabled = character in self.options.super_attack_characters
+                selected = index == self.epilogue_selection
+                border = (255, 232, 120) if selected else (104, 229, 255)
+                fill = (55, 73, 97) if selected else (29, 35, 54)
+                self._panel(surface, row_rect, fill, border)
+                text = f"{CHARACTER_LABELS[character]} • {'ON' if enabled else 'OFF'}"
+                self._text(surface, self.font_tiny, text, (255, 246, 210), row_rect.center, center=True)
+            back_rect = pygame.Rect(106, 298, 234, 24)
+            back_selected = self.epilogue_selection == len(PLAYABLE_CHARACTERS)
+            self._panel(surface, back_rect, (55, 73, 97) if back_selected else (29, 35, 54), (255, 232, 120) if back_selected else (104, 229, 255))
+            self._text(surface, self.font_tiny, "BACK", (255, 246, 210), back_rect.center, center=True)
+            self._text(surface, self.font_tiny, "ENTER / A / CLICK TO TOGGLE • BACK TO LEAVE", (255, 220, 117), (320, 330), center=True)
             return
         next_level = self._next_campaign_level()
         next_label = (

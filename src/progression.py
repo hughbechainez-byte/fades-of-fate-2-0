@@ -25,6 +25,7 @@ SAVE_SCHEMA_VERSION = 2
 SUPPORTED_SAVE_VERSIONS = (1, SAVE_SCHEMA_VERSION)
 DEFAULT_FIRST_LEVEL_ID = "chapter_1_level_1"
 DIFFICULTIES = ("story", "normal", "hard")
+KNOWN_SUPER_ATTACK_CHARACTERS = ("black_dave", "shelly", "jermaine", "white_dave")
 QUALITY_PRESET_NAMES = ("performance", "balanced", "cinematic", "accessible")
 LOAD_STATUSES = ("loaded", "missing", "invalid", "unsupported_version")
 
@@ -155,6 +156,7 @@ class GameOptions:
     pickup_outline: bool = True
     dialogue_speed: float = 1.0
     difficulty: str = "normal"
+    super_attack_characters: tuple[str, ...] = field(default_factory=lambda: KNOWN_SUPER_ATTACK_CHARACTERS)
 
     def __post_init__(self) -> None:
         preset = str(self.quality_preset).strip().lower()
@@ -165,6 +167,17 @@ class GameOptions:
             raise ValueError(f"unknown difficulty: {difficulty or '<empty>'}")
         object.__setattr__(self, "quality_preset", preset)
         object.__setattr__(self, "difficulty", difficulty)
+        super_characters = tuple(
+            _identifier(name, "super_attack_characters")
+            for name in self.super_attack_characters
+        )
+        super_set = []
+        for name in super_characters:
+            if name not in KNOWN_SUPER_ATTACK_CHARACTERS:
+                raise ValueError(f"unknown character in super_attack_characters: {name}")
+            if name not in super_set:
+                super_set.append(name)
+        object.__setattr__(self, "super_attack_characters", tuple(super_set))
         object.__setattr__(self, "hud_scale", _bounded_float(self.hud_scale, "hud_scale", 0.80, 1.50))
         object.__setattr__(self, "hud_opacity", _bounded_float(self.hud_opacity, "hud_opacity", 0.40, 1.0))
         object.__setattr__(
