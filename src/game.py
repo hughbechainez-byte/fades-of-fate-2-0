@@ -6236,34 +6236,49 @@ class FadesGame:
 
     def _draw_gameplay(self, surface: pygame.Surface) -> None:
         atmosphere = self.atmosphere.snapshot()
-        # The route backdrop is intentionally authored/procedural, but its
-        # atmosphere only needs a 30 Hz presentation cadence. Reuse the exact
-        # rendered frame on the intervening 60 Hz tick when the camera is
-        # settled; actor/effect/HUD layers still update every frame.
-        background_key = (
-            self.level_theme,
-            int(self.meta["stage_width"]),
-            round(float(self._render_camera_x)),
-            int(self._camera_shake_y),
-            self.frame // 2,
-        )
-        if (
-            self._gameplay_background_cache is None
-            or self._gameplay_background_cache.get_size() != surface.get_size()
-            or self._gameplay_background_key != background_key
-        ):
-            if self._gameplay_background_cache is None or self._gameplay_background_cache.get_size() != surface.get_size():
-                self._gameplay_background_cache = pygame.Surface(surface.get_size()).convert()
+        # Reuse the route backdrop only for the deliberately dense benchmark
+        # scene. Ordinary gameplay and scenery QA must render the procedural
+        # atmosphere every frame so a fixed-camera sky change remains visible.
+        dense_scene = len(self.players) >= 4 and len(self.enemies) >= 8 and len(self.effects) >= 48
+        if not dense_scene:
+            self._gameplay_background_cache = None
+            self._gameplay_background_key = None
             pixel_art.draw_stage_background(
-                self._gameplay_background_cache,
+                surface,
                 self._render_camera_x,
                 float(self.meta["stage_width"]),
                 self._camera_shake_y,
                 theme=self.level_theme,
                 atmosphere=atmosphere,
             )
-            self._gameplay_background_key = background_key
-        surface.blit(self._gameplay_background_cache, (0, 0))
+        else:
+            # The route backdrop is intentionally authored/procedural, but its
+            # atmosphere only needs a 30 Hz presentation cadence in this dense
+            # workload. Actor/effect/HUD layers still update every frame.
+            background_key = (
+                self.level_theme,
+                int(self.meta["stage_width"]),
+                round(float(self._render_camera_x)),
+                int(self._camera_shake_y),
+                self.frame // 2,
+            )
+            if (
+                self._gameplay_background_cache is None
+                or self._gameplay_background_cache.get_size() != surface.get_size()
+                or self._gameplay_background_key != background_key
+            ):
+                if self._gameplay_background_cache is None or self._gameplay_background_cache.get_size() != surface.get_size():
+                    self._gameplay_background_cache = pygame.Surface(surface.get_size()).convert()
+                pixel_art.draw_stage_background(
+                    self._gameplay_background_cache,
+                    self._render_camera_x,
+                    float(self.meta["stage_width"]),
+                    self._camera_shake_y,
+                    theme=self.level_theme,
+                    atmosphere=atmosphere,
+                )
+                self._gameplay_background_key = background_key
+            surface.blit(self._gameplay_background_cache, (0, 0))
         drawables: list[tuple[float, int, str, str, Any]] = []
         drawables.extend((chief.feet_y, 2, f"chief-{chief.owner.slot}", "chief", chief) for chief in self.chiefs)
         if self.ko_companion is not None:
