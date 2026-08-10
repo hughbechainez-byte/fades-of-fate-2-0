@@ -253,7 +253,9 @@ def _foundation_character_row(
 def foundation_character_ground_y(character: object) -> int:
     name = str(character or "").strip().lower().replace("-", "_").replace(" ", "_")
     scale = FOUNDATION_CHARACTER_RENDER_SCALE.get(name, 1.0)
-    return round(FOUNDATION_CHARACTER_GROUND_Y * scale)
+    # pygame's nearest-neighbor enlargement rounds the authored alpha bottom
+    # one pixel past the scaled source root; keep the world foot at that root.
+    return round(FOUNDATION_CHARACTER_GROUND_Y * scale) + (1 if name in FOUNDATION_CHARACTER_RENDER_SCALE else 0)
 
 
 def foundation_character_frames(
