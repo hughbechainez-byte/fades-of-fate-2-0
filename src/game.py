@@ -84,6 +84,52 @@ PLAYER_COLORS = (
     (139, 255, 116),
 )
 
+# HUD copy is deliberately redrawn every frame for live bars and actor state,
+# but the same labels are rendered repeatedly.  Keep the immutable glyph
+# surfaces so the crowded four-player benchmark spends its time compositing
+# rather than rebuilding every font mask.
+_TEXT_RENDER_CACHE_LIMIT = 512
+_TEXT_RENDER_CACHE: dict[
+    tuple[int, str, tuple[int, int, int]],
+    tuple[pygame.font.Font, pygame.Surface, pygame.Surface],
+] = {}
+
+_EFFECT_RENDER_CACHE_LIMIT = 256
+_EFFECT_RENDER_CACHE: dict[
+    tuple[str, int, tuple[int, int, int], int], pygame.Surface
+] = {}
+
+
+def _blit_cached_effect(
+    surface: pygame.Surface,
+    x: float,
+    y: float,
+    *,
+    kind: str,
+    frame: int,
+    color: tuple[int, int, int],
+    radius: int,
+) -> None:
+    """Blit a repeated authored effect cel without rebuilding its polygons."""
+
+    key = (kind, int(frame), tuple(int(channel) for channel in color[:3]), int(radius))
+    rendered = _EFFECT_RENDER_CACHE.get(key)
+    if rendered is None:
+        rendered = pygame.Surface((128, 128), pygame.SRCALPHA)
+        pixel_art.draw_effect(
+            rendered,
+            64,
+            64,
+            kind=kind,
+            frame=int(frame),
+            color=color,
+            radius=int(radius),
+        )
+        _EFFECT_RENDER_CACHE[key] = rendered
+        while len(_EFFECT_RENDER_CACHE) > _EFFECT_RENDER_CACHE_LIMIT:
+            _EFFECT_RENDER_CACHE.pop(next(iter(_EFFECT_RENDER_CACHE)))
+    surface.blit(rendered, (int(round(x)) - 64, int(round(y)) - 64))
+
 HIT_FEEDBACK_PROFILES: dict[str, dict[str, float | int]] = {
     "light": {
         "hitstop": 3.0 / 60.0,
@@ -719,6 +765,8 @@ class FadesGame:
         self.camera_x = 0.0
         self._render_camera_x = 0.0
         self._camera_shake_y = 0.0
+        self._gameplay_background_cache: pygame.Surface | None = None
+        self._gameplay_background_key: tuple[Any, ...] | None = None
         self._last_camera_view: CameraView | None = None
         self._pending_camera_lock: float | None = None
         self.hitstop_remaining = 0.0
@@ -736,6 +784,7 @@ class FadesGame:
         self._debug_last_rejection = "NONE"
         self._debug_last_query_frame = -1
         self._debug_logged_rejections: set[tuple[Any, Any, str]] = set()
+        self._last_actor_separation_signature: tuple[Any, ...] | None = None
         self.shelly_frenzy_cinematic: ShellyFrenzyCinematic | None = None
         self._shelly_frenzy_panel_cache: dict[int, pygame.Surface] = {}
         # CPU Shelly has a small, per-level showtime reserve. It only charges
@@ -2059,6 +2108,9 @@ class FadesGame:
         self.camera_x = 0.0
         self._render_camera_x = 0.0
         self._camera_shake_y = 0.0
+        self._gameplay_background_cache = None
+        self._gameplay_background_key = None
+        self._last_actor_separation_signature = None
         self._last_camera_view = None
         self._pending_camera_lock = None
         self.hitstop_remaining = 0.0
@@ -3510,6 +3562,15 @@ class FadesGame:
 
         start_x = float(actor.x)
         start_depth = float(actor.y)
+        # Enemies and Chief do not have camera/tether clamps.  Avoid sending a
+        # stationary body through the full rail/obstacle solver; players still
+        # fall through so their viewport and active-gate constraints are kept.
+        if (
+            not isinstance(actor, (Player, KOCompanion))
+            and abs(float(dx)) <= 1e-9
+            and abs(float(ddepth)) <= 1e-9
+        ):
+            return 0.0, 0.0
         half_width, half_depth, _, _ = self._actor_extents(actor)
         elevation = float(getattr(actor, "z", 0.0))
         start = WorldPoint(float(actor.x), float(actor.y), elevation)
@@ -3642,6 +3703,22 @@ class FadesGame:
         actors.extend((("player", player.slot), player) for player in self.players if player.combat_active)
         actors.extend((("enemy", enemy.enemy_id), enemy) for enemy in self.enemies if enemy.targetable)
         if len(actors) < 2:
+            self._last_actor_separation_signature = None
+            return
+
+        # Static idle frames are common during camera locks and the headless
+        # crowded-scene gate.  Once the same bodies have already been resolved,
+        # repeating the full rail/obstacle solver cannot change their result.
+        separation_signature = tuple(
+            (
+                entity_id,
+                round(float(actor.x), 3),
+                round(float(actor.y), 3),
+                str(getattr(actor, "state", "")),
+            )
+            for entity_id, actor in actors
+        )
+        if separation_signature == self._last_actor_separation_signature:
             return
 
         bodies: list[PushBody] = []
@@ -3677,6 +3754,15 @@ class FadesGame:
         for body in bodies:
             actor = by_id[body.entity_id]
             self.move_actor(actor, body.x - float(actor.x), body.depth - float(actor.y))
+        self._last_actor_separation_signature = tuple(
+            (
+                entity_id,
+                round(float(actor.x), 3),
+                round(float(actor.y), 3),
+                str(getattr(actor, "state", "")),
+            )
+            for entity_id, actor in actors
+        )
 
     def _enemy_hurtboxes(self) -> tuple[HurtBox, ...]:
         boxes: list[HurtBox] = []
@@ -6150,14 +6236,34 @@ class FadesGame:
 
     def _draw_gameplay(self, surface: pygame.Surface) -> None:
         atmosphere = self.atmosphere.snapshot()
-        pixel_art.draw_stage_background(
-            surface,
-            self._render_camera_x,
-            float(self.meta["stage_width"]),
-            self._camera_shake_y,
-            theme=self.level_theme,
-            atmosphere=atmosphere,
+        # The route backdrop is intentionally authored/procedural, but its
+        # atmosphere only needs a 30 Hz presentation cadence. Reuse the exact
+        # rendered frame on the intervening 60 Hz tick when the camera is
+        # settled; actor/effect/HUD layers still update every frame.
+        background_key = (
+            self.level_theme,
+            int(self.meta["stage_width"]),
+            round(float(self._render_camera_x)),
+            int(self._camera_shake_y),
+            self.frame // 2,
         )
+        if (
+            self._gameplay_background_cache is None
+            or self._gameplay_background_cache.get_size() != surface.get_size()
+            or self._gameplay_background_key != background_key
+        ):
+            if self._gameplay_background_cache is None or self._gameplay_background_cache.get_size() != surface.get_size():
+                self._gameplay_background_cache = pygame.Surface(surface.get_size()).convert()
+            pixel_art.draw_stage_background(
+                self._gameplay_background_cache,
+                self._render_camera_x,
+                float(self.meta["stage_width"]),
+                self._camera_shake_y,
+                theme=self.level_theme,
+                atmosphere=atmosphere,
+            )
+            self._gameplay_background_key = background_key
+        surface.blit(self._gameplay_background_cache, (0, 0))
         drawables: list[tuple[float, int, str, str, Any]] = []
         drawables.extend((chief.feet_y, 2, f"chief-{chief.owner.slot}", "chief", chief) for chief in self.chiefs)
         if self.ko_companion is not None:
@@ -7241,7 +7347,7 @@ class FadesGame:
                     end = (int(x + math.cos(angle) * ray_length), int(y + math.sin(angle) * ray_length * 0.48))
                     pygame.draw.line(surface, (255, 246, 184), start, end, 2)
             elif effect.kind == "hit":
-                pixel_art.draw_effect(
+                _blit_cached_effect(
                     surface,
                     x,
                     y,
@@ -7283,7 +7389,7 @@ class FadesGame:
                     radius=max(16, int(effect.radius)),
                 )
             elif effect.kind == "flame_burst":
-                pixel_art.draw_effect(
+                _blit_cached_effect(
                     surface,
                     x,
                     y,
@@ -7293,7 +7399,7 @@ class FadesGame:
                     radius=max(18, int(effect.radius)),
                 )
             elif effect.kind == "scorch":
-                pixel_art.draw_effect(
+                _blit_cached_effect(
                     surface,
                     x,
                     y,
@@ -7303,7 +7409,7 @@ class FadesGame:
                     radius=max(12, int(effect.radius)),
                 )
             elif effect.kind == "ember":
-                pixel_art.draw_effect(
+                _blit_cached_effect(
                     surface,
                     x,
                     y,
@@ -7313,7 +7419,7 @@ class FadesGame:
                     radius=max(6, int(effect.radius)),
                 )
             elif effect.kind == "flame":
-                pixel_art.draw_effect(
+                _blit_cached_effect(
                     surface,
                     x,
                     y,
@@ -8191,8 +8297,16 @@ class FadesGame:
         center: bool = False,
         right: bool = False,
     ) -> None:
-        shadow = font.render(text, False, (3, 3, 7))
-        image = font.render(text, False, color)
+        key = (id(font), str(text), tuple(int(channel) for channel in color[:3]))
+        cached = _TEXT_RENDER_CACHE.get(key)
+        if cached is None or cached[0] is not font:
+            shadow = font.render(text, False, (3, 3, 7))
+            image = font.render(text, False, color)
+            _TEXT_RENDER_CACHE[key] = (font, shadow, image)
+            while len(_TEXT_RENDER_CACHE) > _TEXT_RENDER_CACHE_LIMIT:
+                _TEXT_RENDER_CACHE.pop(next(iter(_TEXT_RENDER_CACHE)))
+        else:
+            shadow, image = cached[1], cached[2]
         rect = image.get_rect()
         if center:
             rect.center = position
