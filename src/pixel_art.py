@@ -501,6 +501,7 @@ _GROUNDED_SPRITE_CACHE: OrderedDict[
     int,
     tuple[pygame.Surface, pygame.Rect, pygame.Surface | None, pygame.Rect | None],
 ] = OrderedDict()
+_GROUND_SHADOW_CACHE: dict[tuple[int, int], tuple[pygame.Surface, pygame.Rect]] = {}
 
 
 def _i(value: float | int) -> int:
@@ -4725,19 +4726,35 @@ def _shadow(
         surface.blit(layer, bounds.topleft)
         return bounds
 
-    rect = pygame.Rect(_i(x) - width // 2 + 2, _i(y) - height // 2 + 1, width, height)
-    pygame.draw.ellipse(surface, (14, 17, 25), rect)
-    ambient = rect.inflate(-max(6, width // 7), -2)
-    pygame.draw.ellipse(surface, (26, 29, 37), ambient)
-    contact = pygame.Rect(
-        _i(x) - max(3, width // 5),
-        _i(y) - 2,
-        max(6, width * 2 // 5),
-        max(3, height // 2),
-    )
-    pygame.draw.ellipse(surface, (8, 12, 19), contact)
-    pygame.draw.rect(surface, (55, 49, 48), (contact.x + 2, contact.y, max(2, contact.w // 3), 1))
-    return rect.union(contact)
+    width = int(width)
+    height = int(height)
+    key = (width, height)
+    cached = _GROUND_SHADOW_CACHE.get(key)
+    if cached is None:
+        rect = pygame.Rect(-width // 2 + 2, -height // 2 + 1, width, height)
+        ambient = rect.inflate(-max(6, width // 7), -2)
+        contact = pygame.Rect(
+            -max(3, width // 5),
+            -2,
+            max(6, width * 2 // 5),
+            max(3, height // 2),
+        )
+        bounds = rect.union(contact)
+        layer = pygame.Surface(bounds.size, pygame.SRCALPHA)
+        pygame.draw.ellipse(layer, (14, 17, 25), rect.move(-bounds.x, -bounds.y))
+        pygame.draw.ellipse(layer, (26, 29, 37), ambient.move(-bounds.x, -bounds.y))
+        pygame.draw.ellipse(layer, (8, 12, 19), contact.move(-bounds.x, -bounds.y))
+        pygame.draw.rect(
+            layer,
+            (55, 49, 48),
+            (contact.x + 2 - bounds.x, contact.y - bounds.y, max(2, contact.w // 3), 1),
+        )
+        cached = (layer, bounds)
+        _GROUND_SHADOW_CACHE[key] = cached
+    layer, relative_bounds = cached
+    absolute_bounds = relative_bounds.move(_i(x), _i(y))
+    surface.blit(layer, absolute_bounds.topleft)
+    return absolute_bounds
 
 
 def _grounded_sprite_variant(
