@@ -421,6 +421,9 @@ class ChapterOneWindowsBuildGateTests(unittest.TestCase):
             script.index("Desktop self-test failed"),
         )
         self.assertIn("chapter1_validation_build.json", script)
+        self.assertIn("$validationAttemptCount = 5", script)
+        self.assertIn("$nonPerformanceValidationPass", script)
+        self.assertIn("strict attempts", script)
         self.assertIn("--location-only", script)
         self.assertIn("--project-root $packageDir", script)
         self.assertIn("--project-root $target", script)
