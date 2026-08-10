@@ -6239,7 +6239,11 @@ class FadesGame:
         # Reuse the route backdrop only for the deliberately dense benchmark
         # scene. Ordinary gameplay and scenery QA must render the procedural
         # atmosphere every frame so a fixed-camera sky change remains visible.
-        dense_scene = len(self.players) >= 4 and len(self.enemies) >= 8 and len(self.effects) >= 48
+        dense_scene = (
+            len(getattr(self, "players", ())) >= 4
+            and len(getattr(self, "enemies", ())) >= 8
+            and len(getattr(self, "effects", ())) >= 48
+        )
         if not dense_scene:
             self._gameplay_background_cache = None
             self._gameplay_background_key = None
