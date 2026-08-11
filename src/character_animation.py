@@ -104,6 +104,9 @@ class VfxSocket:
     visibility: str
     contact_anchor: str | None = None
     release_anchor: str | None = None
+    # Independent authored phase offsets keep paired hand effects alive rather
+    # than mirrored copies of the same flicker frame.
+    phase_offset: float = 0.0
 
 
 @dataclass(frozen=True, slots=True)

@@ -2,9 +2,10 @@
 """Lead-owned source compiler for rooted playable-character Animation V2.
 
 This deliberately assembles only complete pre-authored body cels on fixed,
-generous canvases.  It never scales, morphs, recolors, or fits a character at
-runtime; all output is hard-alpha, nearest-neighbor pixel art with explicit
-roots and pose/socket metadata.
+generous canvases.  Any documented legacy-size correction is baked once here
+with nearest-neighbour pixels; the runtime never scales, morphs, recolors, or
+fits a character.  All output is hard-alpha with explicit roots and
+pose/socket metadata.
 """
 
 from __future__ import annotations
@@ -22,6 +23,13 @@ SOURCE_CELL = (128, 128)
 DAVE_CELL = (192, 160)
 VFX_CELL = (64, 64)
 POSES_PER_CLIP = 5
+DAVE_SOURCE_ROOT = (64, 126)
+# Black Dave's approved neutral renderer bakes the 128px source cell at 1.12x
+# (134--137px alpha height depending on the breathing key).  V2 must retain
+# that full build during combat rather than normalising an undersized legacy
+# strike to a smaller 120px silhouette.
+DAVE_UNIFORM_BAKE_SCALE = 1.12
+DAVE_NORMAL_BODY_HEIGHT = 134
 
 PLAYER_STATES = (
     "idle", "walk", "attack_1", "attack_2", "attack_3", "attack_4", "heavy",
@@ -57,27 +65,41 @@ DAVE_CORE_CLIPS: dict[str, tuple[int, tuple[int, ...]]] = {
 
 DAVE_ROUTE_CLIPS: dict[str, tuple[int, tuple[int, ...]]] = {
     "black_dave_v2_regular_01": (2, (0, 1, 3, 4, 7)),
-    "black_dave_v2_regular_02": (2, (0, 1, 3, 4, 5)),
+    "black_dave_v2_regular_02": (2, (1, 3, 5, 7, 4)),
     "black_dave_v2_regular_03": (3, (0, 1, 3, 4, 7)),
-    "black_dave_v2_regular_04": (3, (0, 1, 3, 4, 6)),
-    "black_dave_v2_regular_05": (4, (0, 2, 3, 4, 6)),
-    "black_dave_v2_regular_06": (4, (0, 2, 3, 4, 6)),
-    "black_dave_v2_regular_07": (4, (0, 2, 4, 6, 7)),
+    "black_dave_v2_regular_04": (3, (0, 3, 4, 6, 7)),
+    "black_dave_v2_regular_05": (4, (0, 2, 4, 6, 7)),
+    "black_dave_v2_regular_06": (4, (2, 3, 4, 7, 0)),
+    "black_dave_v2_regular_07": (4, (3, 4, 6, 7, 0)),
     "black_dave_v2_kick_01": (6, (0, 1, 2, 4, 7)),
     "black_dave_v2_kick_02": (6, (0, 1, 2, 4, 6)),
     "black_dave_v2_kick_03": (6, (0, 2, 4, 6, 7)),
-    "black_dave_v2_kick_04": (6, (0, 1, 2, 4, 7)),
-    "black_dave_v2_kick_05": (6, (0, 1, 2, 4, 6)),
-    "black_dave_v2_kick_06": (6, (0, 2, 4, 6, 7)),
-    "black_dave_v2_kick_07": (6, (0, 1, 2, 4, 6)),
+    "black_dave_v2_kick_04": (6, (1, 2, 4, 6, 7)),
+    "black_dave_v2_kick_05": (6, (2, 4, 6, 7, 0)),
+    "black_dave_v2_kick_06": (6, (4, 6, 7, 0, 1)),
+    "black_dave_v2_kick_07": (6, (6, 7, 0, 1, 2)),
     "black_dave_v2_power_01": (2, (0, 1, 3, 4, 5)),
-    "black_dave_v2_power_02": (6, (0, 1, 2, 4, 6)),
+    "black_dave_v2_power_02": (6, (7, 6, 4, 2, 1)),
     "black_dave_v2_power_03": (3, (0, 1, 3, 4, 6)),
-    "black_dave_v2_power_04": (6, (0, 1, 2, 4, 6)),
-    "black_dave_v2_power_05": (6, (0, 2, 4, 6, 7)),
+    "black_dave_v2_power_04": (6, (6, 4, 2, 1, 0)),
+    "black_dave_v2_power_05": (6, (0, 2, 4, 7, 6)),
     "black_dave_v2_power_06": (4, (0, 2, 3, 4, 6)),
-    "black_dave_v2_power_07": (6, (0, 1, 2, 4, 6)),
+    "black_dave_v2_power_07": (6, (1, 4, 6, 7, 2)),
 }
+
+# The legacy attack strips contain several visibly undersized whole-body cels
+# (82--96px tall alongside Dave's normal 118--126px build).  These exact Dave
+# cels are normalized once in the authoring compiler, at their declared root,
+# with nearest-neighbour pixels; runtime never rescales them.  Non-combat
+# states keep their intentional prone/utility silhouettes.
+DAVE_NORMALIZED_CLIPS = frozenset((*DAVE_ROUTE_CLIPS, "air_punch", "air_kick"))
+
+# These states have a planted combat/walk silhouette. Prone/recovery and
+# ballistic jump keys intentionally do not use a sole-to-root calibration.
+DAVE_GROUNDED_CORE_CLIPS = frozenset({
+    "idle", "guard", "walk_start", "walk", "walk_stop", "walk_reverse",
+    "dodge", "hurt", "ranged", "super", "pet",
+})
 
 # These legacy source cels visibly contain an old spark, energy disk, or
 # ground-impact effect.  A V2 body atlas is intentionally forbidden from
@@ -164,6 +186,77 @@ def _place_rooted(
     return canvas
 
 
+def _nearest_scale(image: Image.Image, scale: float) -> Image.Image:
+    """Bake one uniform nearest-neighbour scale without a runtime resize.
+
+    Pygame is used here because it is the established authored-atlas renderer
+    for the foundation heroes.  Using its exact nearest-neighbour sampling in
+    the compiler preserves their approved presentation while V2 keeps the
+    resulting whole cel native at runtime.
+    """
+
+    source = _hard_alpha(image)
+    if scale == 1.0:
+        return source
+    width = max(1, round(source.width * scale))
+    height = max(1, round(source.height * scale))
+    try:
+        import pygame
+    except ImportError as exc:  # pragma: no cover - a build-time dependency failure
+        raise RuntimeError("pygame is required to bake approved nearest-neighbour cels") from exc
+    surface = pygame.image.frombuffer(source.tobytes(), source.size, "RGBA")
+    scaled = pygame.transform.scale(surface, (width, height))
+    return _hard_alpha(Image.frombytes("RGBA", (width, height), pygame.image.tobytes(scaled, "RGBA")))
+
+
+def _scaled_point(
+    point: tuple[int, int],
+    scale: float,
+    offset: tuple[int, int] = (0, 0),
+) -> tuple[int, int]:
+    return (
+        round(point[0] * scale) + offset[0],
+        round(point[1] * scale) + offset[1],
+    )
+
+
+def _normalize_dave_body(source: Image.Image) -> tuple[Image.Image, float, list[int], int]:
+    """Bake an exact Dave source cel to the common V2 combat body height.
+
+    This is an asset-authoring correction for inconsistent historical cels,
+    not a runtime sizing path.  Alpha bounds are cropped and resized only with
+    nearest-neighbour, then the original source root is mapped to the stable
+    V2 root so feet and hand sockets remain coherent.
+    """
+
+    source = _hard_alpha(source)
+    bounds = source.getbbox()
+    if bounds is None:
+        raise ValueError("cannot normalize an empty Black Dave source cel")
+    source_width = bounds[2] - bounds[0]
+    source_height = bounds[3] - bounds[1]
+    if source_width <= 0 or source_height <= 0:
+        raise ValueError(f"invalid Black Dave source bounds: {bounds}")
+    scale = DAVE_NORMAL_BODY_HEIGHT / source_height
+    scaled_size = (max(1, round(source_width * scale)), DAVE_NORMAL_BODY_HEIGHT)
+    cropped = source.crop(bounds).resize(scaled_size, Image.Resampling.NEAREST)
+    canvas = Image.new("RGBA", DAVE_CELL)
+    source_root_x = (DAVE_SOURCE_ROOT[0] - bounds[0]) * scale
+    source_root_y = (DAVE_SOURCE_ROOT[1] - bounds[1]) * scale
+    destination = (round(96 - source_root_x), round(156 - source_root_y))
+    canvas.alpha_composite(cropped, destination)
+    # Several historical kick/power cels declared the same source root while
+    # leaving a one- or two-pixel air gap below their planted sole.  Preserve
+    # every body pixel and use only an integer translation so the opaque
+    # ground line agrees with the immutable V2 root.  Hand anchors receive
+    # this exact offset below; this is root correction, never fitting.
+    canvas, root_alignment_offset = _align_opaque_sole_to_root(canvas, 156)
+    baked_bounds = canvas.getbbox()
+    if baked_bounds is None or baked_bounds[0] == 0 or baked_bounds[1] == 0 or baked_bounds[2] == DAVE_CELL[0] or baked_bounds[3] == DAVE_CELL[1]:
+        raise ValueError(f"normalized Black Dave cel clips its V2 canvas: {baked_bounds}")
+    return canvas, scale, [int(value) for value in bounds], root_alignment_offset
+
+
 def _bounds(image: Image.Image) -> list[int]:
     bbox = image.getbbox()
     if bbox is None:
@@ -171,14 +264,41 @@ def _bounds(image: Image.Image) -> list[int]:
     return [int(value) for value in bbox]
 
 
+def _align_opaque_sole_to_root(
+    cel: Image.Image,
+    root_y: int,
+) -> tuple[Image.Image, int]:
+    """Integer-translate a planted whole cel so its opaque sole meets its root."""
+
+    bounds = cel.getbbox()
+    if bounds is None:
+        raise ValueError("cannot align an empty rooted cel")
+    offset = int(root_y - bounds[3])
+    if not offset:
+        return cel, 0
+    aligned = Image.new("RGBA", cel.size)
+    aligned.alpha_composite(cel, (0, offset))
+    aligned_bounds = aligned.getbbox()
+    if aligned_bounds is None:
+        raise ValueError("root alignment discarded a body cel")
+    if (
+        aligned_bounds[0] == 0
+        or aligned_bounds[1] == 0
+        or aligned_bounds[2] == cel.width
+        or aligned_bounds[3] == cel.height
+    ):
+        raise ValueError(f"root alignment clips a body cel: {aligned_bounds} in {cel.size}")
+    return aligned, offset
+
+
 def _event_names(clip_id: str, phase: int) -> list[str]:
-    if clip_id.startswith("dave_"):
+    if clip_id.startswith("black_dave_v2_"):
         return (
             ["anticipation"] if phase == 1 else
             ["contact", "flame_contact"] if phase == 3 else
             ["recovery"] if phase == 4 else []
         )
-    return ["contact"] if phase == 3 and clip_id in {"air_punch", "air_kick", "ranged", "super"} else []
+    return ["flame_contact"] if phase == 3 and clip_id in {"air_punch", "air_kick"} else []
 
 
 def _socket(name: str, point: tuple[int, int], phase: int, *, rear: bool) -> dict[str, object]:
@@ -191,6 +311,7 @@ def _socket(name: str, point: tuple[int, int], phase: int, *, rear: bool) -> dic
         "visibility": "behind_body" if rear else "front_body",
         "contact_anchor": "lead_hand" if phase == 3 else None,
         "release_anchor": "lead_hand" if phase == 3 else None,
+        "phase_offset": 0.0 if rear else 0.125,
     }
 
 
@@ -199,12 +320,20 @@ def _dave_pose_metadata(
     source_state: str,
     source_column: int,
     phase: int,
+    source_scale: float = 1.0,
+    root_alignment_offset: int = 0,
 ) -> dict[str, object]:
     anchors = source_anchors[source_state][source_column]
-    rear = tuple(int(value) for value in anchors["rear"])
-    lead = tuple(int(value) for value in anchors["lead"])
-    rear = (rear[0] + 32, rear[1] + 30)
-    lead = (lead[0] + 32, lead[1] + 30)
+
+    def rooted(point: object) -> tuple[int, int]:
+        x, y = (int(value) for value in point)
+        return (
+            96 + round((x - DAVE_SOURCE_ROOT[0]) * source_scale),
+            156 + round((y - DAVE_SOURCE_ROOT[1]) * source_scale) + root_alignment_offset,
+        )
+
+    rear = rooted(anchors["rear"])
+    lead = rooted(anchors["lead"])
     return {
         "root": [96, 156],
         "anchors": {
@@ -252,12 +381,49 @@ def _build_dave() -> tuple[Path, Path, Path]:
         poses: list[dict[str, object]] = []
         for phase, source_column in enumerate(source_columns):
             source = frames[source_row * 12 + source_column]
-            cel = _place_rooted(source, DAVE_CELL, (96, 156))
+            normalized = clip_id in DAVE_NORMALIZED_CLIPS
+            if normalized:
+                cel, source_scale, source_bounds, root_alignment_offset = _normalize_dave_body(source)
+                normalization_method = "alpha_bounds_nearest_neighbor"
+            else:
+                source_scale = DAVE_UNIFORM_BAKE_SCALE
+                root_alignment_offset = 0
+                baked_source = _nearest_scale(source, source_scale)
+                cel = _place_rooted(
+                    baked_source,
+                    DAVE_CELL,
+                    (96, 156),
+                    _scaled_point(DAVE_SOURCE_ROOT, source_scale),
+                )
+                if clip_id in DAVE_GROUNDED_CORE_CLIPS:
+                    cel, root_alignment_offset = _align_opaque_sole_to_root(cel, 156)
+                normalization_method = "uniform_nearest_neighbor"
+                raw_bounds = _hard_alpha(source).getbbox()
+                if raw_bounds is None:
+                    raise ValueError(f"empty Black Dave source cel: {clip_id}/{phase}")
+                source_bounds = [int(value) for value in raw_bounds]
             destination.alpha_composite(cel, (phase * DAVE_CELL[0], row * DAVE_CELL[1]))
-            record = _dave_pose_metadata(source_anchors, state, source_column, phase)
+            record = _dave_pose_metadata(
+                source_anchors,
+                state,
+                source_column,
+                phase,
+                source_scale,
+                root_alignment_offset,
+            )
             record["body_bounds"] = _bounds(cel)
             record["events"] = _event_names(clip_id, phase)
-            record["source"] = {"state": state, "column": source_column}
+            record["source"] = {
+                "state": state,
+                "column": source_column,
+                "alpha_bounds": source_bounds,
+                "normalization": {
+                    "method": normalization_method,
+                    "body_height": DAVE_NORMAL_BODY_HEIGHT if normalized else _bounds(cel)[3] - _bounds(cel)[1],
+                    "scale": round(source_scale, 6),
+                    "root_alignment_offset": root_alignment_offset,
+                },
+            }
             poses.append(record)
         metadata["clips"][clip_id] = {
             "row": row,
@@ -298,23 +464,43 @@ def _generic_metadata(cell: Image.Image, root: tuple[int, int], phase: int) -> d
 def _build_migration(
     actor: str,
     source_relative: str,
-    columns: int,
-    rows: int,
+    source_columns: int,
+    source_rows: int,
     cell_size: tuple[int, int],
     root: tuple[int, int],
     state_rows: dict[str, int],
     source_root: tuple[int, int],
+    *,
+    source_scale: float = 1.0,
+    source_root_post_scale_offset: tuple[int, int] = (0, 0),
+    incomplete_source_cels: frozenset[tuple[int, int]] = frozenset(),
 ) -> tuple[Path, Path, Path]:
     source_path = PROJECT_ROOT / source_relative
-    frames = _grid(Image.open(source_path).convert("RGBA"), columns, rows)
+    source_image = Image.open(source_path).convert("RGBA")
+    if source_image.width % source_columns or source_image.height % source_rows:
+        raise ValueError(
+            f"{actor} source atlas {source_image.size} is not divisible by "
+            f"the declared {source_columns}x{source_rows} grid"
+        )
+    frames = _grid(source_image, source_columns, source_rows)
+    baked_source_root = _scaled_point(
+        source_root,
+        source_scale,
+        source_root_post_scale_offset,
+    )
     destination = Image.new("RGBA", (cell_size[0] * POSES_PER_CLIP, cell_size[1] * len(PLAYER_STATES)))
     clips: dict[str, object] = {}
     for row, state in enumerate(PLAYER_STATES):
         source_row = state_rows[state]
+        if source_row not in range(source_rows):
+            raise ValueError(f"{actor}:{state} references source row {source_row}, outside the declared grid")
         available_columns = tuple(
             column
-            for column in range(columns)
-            if frames[source_row * columns + column].getbbox() is not None
+            for column in range(source_columns)
+            if (
+                (source_row, column) not in incomplete_source_cels
+                and frames[source_row * source_columns + column].getbbox() is not None
+            )
         )
         if len(available_columns) < POSES_PER_CLIP:
             raise ValueError(
@@ -323,20 +509,35 @@ def _build_migration(
             )
         # Preserve authored progressive phases.  Each destination phase is a
         # distinct complete source cel rather than a duplicate timing hold.
-        source_columns = tuple(
+        selected_columns = tuple(
             available_columns[(row + phase) % len(available_columns)]
             for phase in range(POSES_PER_CLIP)
         )
         poses: list[dict[str, object]] = []
-        for phase, source_column in enumerate(source_columns):
+        for phase, source_column in enumerate(selected_columns):
+            raw_source = _hard_alpha(frames[source_row * source_columns + source_column])
+            raw_bounds = raw_source.getbbox()
+            if raw_bounds is None:  # Protected above, kept local for provenance safety.
+                raise ValueError(f"{actor}:{state}/{source_column} unexpectedly has no body pixels")
+            opaque_pixels = sum(value == 255 for value in raw_source.getchannel("A").get_flattened_data())
+            baked_source = _nearest_scale(raw_source, source_scale)
             cel = _place_rooted(
-                frames[source_row * columns + source_column],
+                baked_source,
                 cell_size,
                 root,
-                source_root,
+                baked_source_root,
             )
             destination.alpha_composite(cel, (phase * cell_size[0], row * cell_size[1]))
-            poses.append(_generic_metadata(cel, root, phase))
+            record = _generic_metadata(cel, root, phase)
+            record["source"] = {
+                "state": state,
+                "row": source_row,
+                "column": source_column,
+                "alpha_bounds": [int(value) for value in raw_bounds],
+                "opaque_pixels": opaque_pixels,
+                "uniform_bake_scale": source_scale,
+            }
+            poses.append(record)
         clips[state] = {
             "row": row,
             "loop": state in {"idle", "walk"},
@@ -357,6 +558,16 @@ def _build_migration(
         "cell_size": list(cell_size),
         "columns": POSES_PER_CLIP,
         "root": list(root),
+        "source_grid": {
+            "asset": source_relative,
+            "columns": source_columns,
+            "rows": source_rows,
+            "cell_size": [source_image.width // source_columns, source_image.height // source_rows],
+            "source_root": list(source_root),
+            "baked_source_root": list(baked_source_root),
+            "uniform_bake_scale": source_scale,
+            "incomplete_cels_rejected": [list(cel) for cel in sorted(incomplete_source_cels)],
+        },
         "source_hashes": {
             source_relative: _hash(source_path),
             _relative(source_output): _hash(source_output),
@@ -379,11 +590,14 @@ def _flame_cell(kind: str, phase: int) -> Image.Image:
     core = (255, 244, 194, 255)
     sway = (-2, -1, 1, 2)[phase % 4]
     if kind == "scorch_fade":
-        radius = 20 - phase * 3
-        # The fade is expressed by authored size and palette changes, not
-        # semi-transparent antialiasing, to retain the hard-alpha contract.
-        draw.ellipse((32 - radius, 41 - radius // 3, 32 + radius, 41 + radius // 3), fill=(77, 43, 37, 255))
-        draw.arc((32 - radius, 39 - radius // 3, 32 + radius, 43 + radius // 3), 190, 346, fill=(207, 77, 38, 255), width=2)
+        width = 19 - phase * 3
+        # Broken, grounded charcoal/ember strokes read as a scorch mark;
+        # deliberately avoid concentric rings that could read as a reticle.
+        draw.line((32 - width, 43, 24 - phase, 45), fill=(77, 43, 37, 255), width=3)
+        draw.line((29 - phase, 45, 32 + width, 46), fill=(77, 43, 37, 255), width=3)
+        draw.rectangle((29 - phase, 41, 34 + phase, 43), fill=(132, 54, 35, 255))
+        draw.rectangle((20 + phase * 2, 45, 24 + phase * 2, 46), fill=(207, 77, 38, 255))
+        draw.rectangle((38 - phase, 44, 42 - phase, 45), fill=(207, 77, 38, 255))
         return image
     if kind == "enemy_feedback":
         for index, offset in enumerate((-14, -6, 3, 12)):
@@ -399,11 +613,23 @@ def _flame_cell(kind: str, phase: int) -> Image.Image:
         draw.line((max(4, 62 - reach), 33, 59, 32), fill=core, width=2)
         return image
     if kind == "contact_burst":
-        for index, (dx, dy) in enumerate(((-21, -5), (-11, -20), (5, -23), (20, -8), (21, 9), (4, 20), (-15, 15))):
-            radius = 4 + ((phase + index) % 2)
-            draw.polygon([(32, 32), (32 + dx - radius, 32 + dy), (32 + dx, 32 + dy - radius), (32 + dx + radius, 32 + dy)], fill=outer)
-            draw.line((32, 32, 32 + dx, 32 + dy), fill=gold, width=2)
-        draw.rectangle((29, 29, 34, 34), fill=core)
+        # A forward, uneven flame plume gives contact weight without a radial
+        # targeting-disc silhouette.  The runtime mirrors this complete cel.
+        lift = (phase % 3) - 1
+        draw.polygon(
+            [(11, 43), (18, 36), (24, 37), (27, 26 + lift), (34, 34),
+             (41, 17 - lift), (44, 32), (57, 25 + lift), (52, 38),
+             (61, 42), (47, 48), (35, 45), (27, 52), (21, 45)],
+            fill=outer,
+        )
+        draw.polygon(
+            [(16, 42), (23, 37), (27, 32), (31, 38), (40, 23),
+             (42, 37), (53, 30), (48, 40), (56, 42), (43, 45),
+             (34, 42), (26, 48)],
+            fill=orange,
+        )
+        draw.polygon([(24, 41), (31, 37), (39, 30), (40, 40), (48, 37), (42, 43), (33, 41)], fill=gold)
+        draw.rectangle((35, 37, 39, 41), fill=core)
         return image
     if kind == "ember_release":
         for index, (dx, dy) in enumerate(((-14, 5), (-4, -8), (7, -19), (16, -4), (2, 12))):
@@ -411,13 +637,28 @@ def _flame_cell(kind: str, phase: int) -> Image.Image:
             size = 4 if index == 2 else 3
             draw.rectangle((32 + dx + drift, 34 + dy - phase * 2, 32 + dx + drift + size, 34 + dy - phase * 2 + size), fill=gold if index % 2 else orange)
         return image
-    # ignition, idle_loop and anticipation_swell are intentionally compact,
-    # preserving a readable hand window in front of the actor's complete cel.
-    height = {"ignition": 20 + phase * 4, "idle_loop": 24 + (phase % 2) * 3, "anticipation_swell": 27 + phase * 5}[kind]
-    draw.polygon([(18, 49), (18, 34), (26, 25 + sway), (31, 9 + sway), (37, 24), (46, 17 - sway), (48, 35), (54, 49)], fill=outer)
-    draw.polygon([(21, 48), (22, 35), (28, 30 + sway), (33, 49 - height), (39, 29), (45, 34), (50, 48)], fill=ember)
-    draw.polygon([(25, 47), (27, 36), (33, 49 - height + 9), (39, 34), (45, 47)], fill=orange)
-    draw.polygon([(30, 46), (32, 38), (34, 49 - height + 16), (38, 46)], fill=core)
+    # ignition, idle_loop and anticipation_swell stay hand-sized.  Their
+    # footprint is intentionally smaller than Dave's fist so paired sockets
+    # read as two live flames, never a cape-like screen effect.
+    height = {"ignition": 14 + phase * 2, "idle_loop": 18 + (phase % 2) * 2, "anticipation_swell": 20 + phase * 3}[kind]
+    tip = 51 - height
+    # An asymmetric three-tongue silhouette reads as fire at gameplay scale,
+    # rather than as a symmetric warning triangle or reticle over the hand.
+    draw.polygon(
+        [(23, 51), (22, 47), (27, 42 + sway), (25, 36), (31, 40),
+         (32, tip + 7), (36, tip), (38, 37 - sway), (43, 30 + sway),
+         (42, 43), (47, 47), (46, 51)],
+        fill=outer,
+    )
+    draw.polygon(
+        [(27, 50), (26, 46), (30, 41 + sway), (30, 35), (34, 40),
+         (35, tip + 6), (39, 38), (42, 44), (44, 48), (42, 50)],
+        fill=ember,
+    )
+    draw.polygon([(31, 50), (30, 46), (34, tip + 10), (37, 42), (41, 49), (38, 50)], fill=orange)
+    draw.rectangle((35 + sway, 45, 37 + sway, 48), fill=gold)
+    draw.point((38 + sway, 43), fill=core)
+    draw.polygon([(32, 48), (33, 43), (35, 51 - height + 12), (37, 48)], fill=core)
     return image
 
 
@@ -450,17 +691,25 @@ def main() -> None:
     outputs.extend(_build_vfx())
     outputs.extend(
         _build_migration(
-            "shelly", "assets/sprites/shelly_animation_atlas.png", 12, len(PLAYER_STATES), (208, 160), (104, 156), GENERIC_STATE_ROW, (85, 126),
+            "shelly", "assets/sprites/shelly_animation_atlas.png", 16, len(PLAYER_STATES), (208, 160), (104, 156), GENERIC_STATE_ROW, (85, 126),
         )
     )
     outputs.extend(
         _build_migration(
-            "jermaine", "art_source/jermaine/jermaine_foundation_locked_v1.png", 12, 3, (160, 160), (80, 156), FOUNDATION_STATE_ROW, (42, 126),
+            "jermaine", "assets/sprites/jermaine_foundation_atlas.png", 12, 3, (224, 160), (112, 156), FOUNDATION_STATE_ROW, (42, 126),
+            source_scale=1.16,
+            source_root_post_scale_offset=(0, 1),
+            # The foundation source's seventh attack slot contains only a
+            # trailing lower-body fragment; it is valid legacy source data but
+            # not a complete rooted body cel and must never enter V2.
+            incomplete_source_cels=frozenset({(2, 6)}),
         )
     )
     outputs.extend(
         _build_migration(
-            "white_dave", "art_source/white_dave/white_dave_foundation_motion_locked_v1.png", 12, 3, (176, 160), (88, 156), FOUNDATION_STATE_ROW, (64, 126),
+            "white_dave", "assets/sprites/white_dave_foundation_atlas.png", 12, 3, (176, 160), (88, 156), FOUNDATION_STATE_ROW, (64, 126),
+            source_scale=1.16,
+            source_root_post_scale_offset=(0, 1),
         )
     )
     for output in outputs:

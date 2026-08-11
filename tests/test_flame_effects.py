@@ -69,6 +69,22 @@ class FlameEffectsTests(unittest.TestCase):
             self.assertEqual({command.asset_id for command in plan if command.event_name == "flame_contact"}, {"flame_burst", "ember", "scorch"})
             self.assertEqual(by_event["enemy_fire"], "enemy_fire")
 
+    def test_contact_event_uses_the_declared_lead_socket(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "flames.png"
+            pygame.image.save(pygame.Surface((8, 4), pygame.SRCALPHA), path)
+            rear = VfxSocket("rear_hand", (8, 8), (1, 0), 4, 1, "rear")
+            lead = VfxSocket("lead_hand", (20, 8), (1, 0), 4, 1, "front", contact_anchor="lead_hand")
+            sample = AnimationSample(
+                "black_dave", "attack_z", 2, object(), (10, 20), (0, 0, 20, 30), (),
+                (AnimationEvent("flame_contact", 2),),
+                (VfxPlacement("rear_shell", rear, "rear"),),
+                (VfxPlacement("front_shell", lead, "front"),),
+            )
+            plan = FlameCompositor(self._definition(path), v2_active=True).plan(sample, (100, 200), 1, 0.1)
+            burst = next(command for command in plan if command.asset_id == "flame_burst")
+            self.assertEqual(burst.position, (108, 186))
+
     def test_compositor_is_presentation_only(self) -> None:
         source = (Path(__file__).parents[1] / "src" / "flame_effects.py").read_text(encoding="utf-8")
         self.assertFalse(any(name in source for name in ("health =", "burn_time", "damage =")))

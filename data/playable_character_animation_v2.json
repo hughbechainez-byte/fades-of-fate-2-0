@@ -45,9 +45,12 @@
     },
     "jermaine": {
       "native_logical_pixel_density": 1,
-      "actor_canvas": [160, 160],
-      "world_root": [80, 156],
-      "source_inputs": {"art_source/jermaine/jermaine_foundation_locked_v1.png": "4b477d3aab512337c6ab7e32d1b80b6997a4c534f5d78410a42bfc4bb9532d1f"},
+      "actor_canvas": [224, 160],
+      "world_root": [112, 156],
+      "source_inputs": {
+        "art_source/jermaine/jermaine_foundation_locked_v1.png": "4b477d3aab512337c6ab7e32d1b80b6997a4c534f5d78410a42bfc4bb9532d1f",
+        "assets/sprites/jermaine_foundation_atlas.png": "e3db82e09dcdf59ae248f1a24e6c294e0a26c4fadf1b83bfe010b515754429c1"
+      },
       "source_path": "art_source/jermaine/jermaine_rooted_migration_v2.png",
       "atlas_path": "assets/sprites/jermaine_rooted_animation_atlas.png",
       "pose_metadata_path": "assets/sprites/jermaine_rooted_pose_metadata.json"
@@ -56,7 +59,10 @@
       "native_logical_pixel_density": 1,
       "actor_canvas": [176, 160],
       "world_root": [88, 156],
-      "source_inputs": {"art_source/white_dave/white_dave_foundation_motion_locked_v1.png": "94b0a92e0ea8fdf4862ced488deae3d8545517777fa1157dbbd136c09a17faf5"},
+      "source_inputs": {
+        "art_source/white_dave/white_dave_foundation_motion_locked_v1.png": "94b0a92e0ea8fdf4862ced488deae3d8545517777fa1157dbbd136c09a17faf5",
+        "assets/sprites/white_dave_foundation_atlas.png": "cc276a561ab9f14f96c10e19028aaff9cd799099618c2eb43bcf5a95d84985e0"
+      },
       "source_path": "art_source/white_dave/white_dave_rooted_migration_v2.png",
       "atlas_path": "assets/sprites/white_dave_rooted_animation_atlas.png",
       "pose_metadata_path": "assets/sprites/white_dave_rooted_pose_metadata.json"

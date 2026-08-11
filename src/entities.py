@@ -195,6 +195,12 @@ class Player:
     attack_move_key: str = ""
     attack_timing_move: dict[str, Any] | None = None
     attack_execution: AttackExecution | None = None
+    # Injected by the game after it validates the V2 route data against the
+    # assembled V2 atlas.  It is intentionally optional for legacy save/test
+    # construction, but Black Dave's live semantic controls require it.
+    route_library: Any | None = None
+    queued_route_action: str = ""
+    route_buffer_remaining: float = 0.0
     # Air attacks alternate through a deterministic two-entry shuffle bag.
     # The bag is reset only on landing, so a jump can contain one attack.
     air_attack_bag: list[str] = field(default_factory=list)
@@ -327,6 +333,132 @@ class Player:
         self.attack_move_key = execution.step_id
         self.attack_timing_move = dict(execution.move_profile)
 
+    @staticmethod
+    def _semantic_route_action(snapshot: InputSnapshot) -> str:
+        """Resolve one physical V2 action edge without consulting legacy names."""
+
+        for action in ("power", "kick", "regular"):
+            if action in snapshot.pressed:
+                return action
+        return ""
+
+    def _uses_v2_route_execution(self) -> bool:
+        return self.attack_execution is not None and self.attack_execution.route_id in {"regular", "kick", "power"}
+
+    def _begin_black_dave_v2_route(self, action: str, index: int, game: Any) -> None:
+        """Capture the exact route step and its combat profile at button time."""
+
+        if self.route_library is None:
+            raise RuntimeError("Black Dave V2 route library was not installed")
+        route_execution = self.route_library.capture_execution(action, index, metadata={"slot": self.slot})
+        step = route_execution.step
+        try:
+            base_move = self.moves[step.move_table][step.move_index]
+        except (KeyError, IndexError) as exc:
+            raise RuntimeError(f"Black Dave V2 route references unavailable move {step.move_profile_id}") from exc
+        move = dict(base_move)
+        move.update({
+            "startup": step.startup,
+            "active": step.active,
+            "recovery": step.recovery,
+            "buffer_window": step.buffer_window,
+            "cancel_start": step.cancel_start,
+            "max_targets": step.target_cap,
+            "v2_cancel_actions": tuple(step.cancel_actions),
+            "v2_push_profile": step.push_profile,
+            "v2_route_action": action,
+            "v2_step_index": index,
+        })
+        timing = {
+            name: move[name]
+            for name in ("startup", "active", "recovery", "buffer_window", "cancel_start")
+        }
+        execution = AttackExecution(
+            route_id=action,
+            step_index=index,
+            step_id=step.step_id,
+            move_profile=_freeze_mapping(move),
+            clip_id=step.clip_id,
+            timing=_freeze_mapping(timing),
+            events=tuple(step.animation_events) + tuple(step.vfx_events),
+        )
+        self.combo_style = {"regular": "z", "kick": "x", "power": "c"}[action]
+        self.combo_step = index
+        self.queued_route_action = ""
+        self.route_buffer_remaining = 0.0
+        self.begin_attack_execution("heavy" if action == "power" else "light", execution)
+        game.audio.play_character(self.character, "grunt")
+
+    def _try_begin_black_dave_v2_route(self, snapshot: InputSnapshot, game: Any) -> bool:
+        """Bind Z/X/C semantic actions to the immutable three-by-seven plan."""
+
+        action = self._semantic_route_action(snapshot)
+        if self.character != "black_dave" or not action or self.route_library is None:
+            return False
+        if self.airborne:
+            if action in {"regular", "kick", "power"}:
+                self._start_air_attack()
+                return True
+            return False
+        style = {"regular": "z", "kick": "x", "power": "c"}[action]
+        if self.combo_repeat_lock > 0.0 and self.combo_style == style:
+            return True
+        self._begin_black_dave_v2_route(action, 0, game)
+        return True
+
+    def _update_black_dave_v2_route(self, snapshot: InputSnapshot, game: Any, dt: float) -> None:
+        """Run a captured V2 step without rereading mutable combo configuration."""
+
+        execution = self.attack_execution
+        if execution is None:
+            raise RuntimeError("V2 route state lost its immutable execution")
+        move = self.attack_timing_move or dict(execution.move_profile)
+        self.state_clock += dt
+        self.route_buffer_remaining = max(0.0, self.route_buffer_remaining - dt)
+        requested = self._semantic_route_action(snapshot)
+        allowed = frozenset(map(str, move.get("v2_cancel_actions", ())))
+        if requested and requested in allowed:
+            self.queued_route_action = requested
+            self.route_buffer_remaining = float(move.get("buffer_window", 0.0))
+
+        active_start = float(move["startup"])
+        active_end = active_start + float(move["active"])
+        if active_start <= self.state_clock < active_end:
+            first_active_sample = not self.attack_fired
+            self.attack_fired = True
+            hits = game.player_attack(
+                self,
+                move,
+                self.state,
+                already_hit=self.attack_hit_ids,
+                hit_counts=self.attack_hit_counts,
+                last_hit_times=self.attack_last_hit_times,
+                attack_time=self.state_clock,
+                play_whiff=first_active_sample,
+            )
+            self.attack_connected = self.attack_connected or hits > 0
+            if first_active_sample and hits > 0 and execution.route_id == "power" and execution.step_index in {2, 4, 6}:
+                game.apply_black_dave_v2_crowd_push(self, execution)
+
+        cancel_start = float(move.get("cancel_start", self.state_duration))
+        if self.state_clock >= max(active_end, cancel_start) and self.queued_route_action and self.route_buffer_remaining > 0.0:
+            action = self.queued_route_action
+            next_index = execution.step_index + 1 if action == execution.route_id else 0
+            if next_index < 7:
+                self._begin_black_dave_v2_route(action, next_index, game)
+                return
+
+        if self.state_clock < self.state_duration:
+            return
+        if execution.step_index == 6:
+            self.combo_repeat_lock = max(
+                self.combo_repeat_lock,
+                float(self.config[self.character].get("combo_repeat_seconds", 5.0)),
+            )
+        self.queued_route_action = ""
+        self.route_buffer_remaining = 0.0
+        self.set_state("jump" if self.z > 0.0 else "idle")
+
     def gain_super(self, amount: float) -> float:
         """Award the character-tuned amount of Chief/Dave super meter.
 
@@ -348,7 +480,7 @@ class Player:
                 "walk",
                 _hero_stride_distance(self.character),
             )
-        if self.state in {"jump", "air_attack"}:
+        if self.state in {"jump", "air_attack", "jump_land"}:
             return _animation_tick(self.state_clock)
         return _animation_tick(self.animation_clock)
 
@@ -451,7 +583,7 @@ class Player:
             self._update_jump(game, dt)
             return
 
-        if self.character == "black_dave" and snapshot.pressed & {"light", "alt_light"}:
+        if self.character == "black_dave" and snapshot.pressed & {"light", "alt_light", "heavy", "regular", "kick", "power"}:
             self._record_dave_flame_press(game)
 
         if self.state == "pet":
@@ -461,6 +593,12 @@ class Player:
             return
 
         if self.state == "ranged":
+            self.state_clock += dt
+            if self.state_clock >= self.state_duration:
+                self.set_state("idle")
+            return
+
+        if self.state == "jump_land":
             self.state_clock += dt
             if self.state_clock >= self.state_duration:
                 self.set_state("idle")
@@ -481,7 +619,10 @@ class Player:
             return
 
         if self.state in {"light", "heavy", "air_attack", "super"}:
-            self._update_attack(snapshot, game, dt)
+            if self._uses_v2_route_execution():
+                self._update_black_dave_v2_route(snapshot, game, dt)
+            else:
+                self._update_attack(snapshot, game, dt)
             self._update_jump(game, dt)
             return
 
@@ -508,6 +649,9 @@ class Player:
             self.set_state("super", 0.82)
             game.audio.play_character(self.character, "grunt")
             game.log_breadcrumb("player_super", slot=self.slot + 1, character=self.character)
+            return
+
+        if self._try_begin_black_dave_v2_route(snapshot, game):
             return
 
         if "heavy" in snapshot.pressed and self.z <= 1.0:
@@ -913,7 +1057,7 @@ class Player:
             self.air_attack_kind = ""
             self.air_attack_bag.clear()
             if self.state in {"jump", "air_attack"}:
-                self.set_state("idle")
+                self.set_state("jump_land", 4.0 / ANIMATION_TICKS_PER_SECOND)
             game.audio.play("land")
 
     def _move_world(self, game: Any, dx: float, dy: float) -> tuple[float, float]:

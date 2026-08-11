@@ -143,15 +143,15 @@ class RuntimeAnimationClockTests(unittest.TestCase):
         for global_frame in (7, 113):
             self.game.frame = global_frame
             with (
-                mock.patch("src.game.pixel_art.draw_player") as draw_player,
+                mock.patch.object(self.game.playable_animation_v2, "draw_actor") as draw_player,
                 mock.patch("src.game.pixel_art.draw_chief") as draw_chief,
                 mock.patch("src.game.pixel_art.draw_enemy") as draw_enemy,
             ):
                 self.game._draw_gameplay(canvas)
-            dave_call = next(call for call in draw_player.call_args_list if call.args[6] == "black_dave")
+            dave_call = next(call for call in draw_player.call_args_list if call.kwargs["actor"] == "black_dave")
             observed.append(
                 (
-                    dave_call.args[7],
+                    dave_call.kwargs["authored_tick"],
                     draw_chief.call_args.kwargs["frame"],
                     draw_enemy.call_args.kwargs["frame"],
                 )
@@ -315,12 +315,12 @@ class RuntimeAnimationClockTests(unittest.TestCase):
         self.assertAlmostEqual(player.state_clock, 0.125)
         self.game.frame = 9_999
         canvas = pygame.Surface((640, 360), pygame.SRCALPHA)
-        with mock.patch("src.game.pixel_art.draw_player") as draw_player:
+        with mock.patch.object(self.game.playable_animation_v2, "draw_actor") as draw_player:
             self.game._draw_gameplay(canvas)
 
-        dave_call = next(call for call in draw_player.call_args_list if call.args[6] == "black_dave")
-        self.assertEqual(dave_call.args[5], "hurt")
-        self.assertEqual(dave_call.args[7], int(player.state_clock * ANIMATION_TICKS_PER_SECOND))
+        dave_call = next(call for call in draw_player.call_args_list if call.kwargs["actor"] == "black_dave")
+        self.assertEqual(dave_call.kwargs["state"], "hurt")
+        self.assertEqual(dave_call.kwargs["authored_tick"], int(player.state_clock * ANIMATION_TICKS_PER_SECOND))
 
 
 if __name__ == "__main__":

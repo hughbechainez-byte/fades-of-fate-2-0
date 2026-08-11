@@ -105,6 +105,26 @@ class GameAtmosphereIntegrationTests(unittest.TestCase):
             game.close()
             manager.close()
 
+    def test_mute_game_uses_default_options_not_host_saved_options(self) -> None:
+        loaded_save = SaveData(
+            options=GameOptions(super_attack_characters=("black_dave",)),
+        )
+        manager = InputManager(max_players=4, discover_controllers=False)
+
+        with mock.patch(
+            "src.game.SaveRepository.load",
+            return_value=LoadResult(data=loaded_save, status="loaded"),
+        ):
+            game = FadesGame(manager, mute=True)
+
+        try:
+            self.assertEqual(game.save_data.options.super_attack_characters, ("black_dave",))
+            self.assertEqual(game.options, GameOptions())
+            self.assertTrue(game._is_super_attack_enabled("shelly"))
+        finally:
+            game.close()
+            manager.close()
+
     def test_update_advances_only_presentation_states_and_freezes_pause(self) -> None:
         for state in ("gameplay", "complete", "interlevel", "epilogue"):
             with self.subTest(state=state):

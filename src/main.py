@@ -385,7 +385,7 @@ def _run() -> int:
     logical = pygame.Surface(LOGICAL_SIZE)
     clock = pygame.time.Clock()
     manager = InputManager(max_players=4, deadzone=0.22, discover_controllers=True)
-    game = FadesGame(manager, mute=args.mute)
+    game = FadesGame(manager, mute=args.mute, use_saved_options=True)
     fixed_hz = float(game.meta.get("fixed_hz", 60))
     if fixed_hz <= 0.0:
         raise ValueError("meta.fixed_hz must be positive")

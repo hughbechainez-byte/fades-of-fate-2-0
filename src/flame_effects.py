@@ -196,11 +196,12 @@ class FlameCompositor:
         commands: list[FlameCommand] = []
         placements: Sequence[object] = tuple(getattr(sample, "rear_vfx", ())) + tuple(getattr(sample, "front_vfx", ()))
         for placement in placements:
+            socket = getattr(placement, "socket")
             command = self._command(
                 str(getattr(placement, "asset_id")),
                 _layer(getattr(placement, "layer")),
-                self.socket_position(sample, getattr(placement, "socket"), actor_root, sign),
-                local_time,
+                self.socket_position(sample, socket, actor_root, sign),
+                local_time + float(getattr(socket, "phase_offset", 0.0)),
                 sign,
                 getattr(placement, "event_name", None),
             )
@@ -208,11 +209,12 @@ class FlameCompositor:
                 commands.append(command)
         commands.append(FlameCommand(FlameLayer.BODY, "body", None, actor_root, sign))
         for placement in placements:
+            socket = getattr(placement, "socket")
             command = self._command(
                 str(getattr(placement, "asset_id")),
                 _layer(getattr(placement, "layer")),
-                self.socket_position(sample, getattr(placement, "socket"), actor_root, sign),
-                local_time,
+                self.socket_position(sample, socket, actor_root, sign),
+                local_time + float(getattr(socket, "phase_offset", 0.0)),
                 sign,
                 getattr(placement, "event_name", None),
             )
@@ -220,11 +222,33 @@ class FlameCompositor:
                 commands.append(command)
 
         sockets = tuple(getattr(placement, "socket") for placement in placements)
-        event_socket = sockets[0] if sockets else None
+        # Event VFX belongs to its declared contact/release hand, not merely
+        # the first (often rear-hand) socket in layer order.  That keeps a
+        # flaming punch/kick visually attached as the body turns or mirrors.
+        event_socket = next(
+            (
+                socket
+                for socket in sockets
+                if str(getattr(socket, "name", ""))
+                in {
+                    str(getattr(socket, "contact_anchor", "") or ""),
+                    str(getattr(socket, "release_anchor", "") or ""),
+                }
+                and (getattr(socket, "contact_anchor", None) or getattr(socket, "release_anchor", None))
+            ),
+            sockets[-1] if sockets else None,
+        )
         if event_socket is not None:
             position = self.socket_position(sample, event_socket, actor_root, sign)
             for asset_id, layer, event_name in _event_asset_ids(getattr(sample, "events", ())):
-                command = self._command(asset_id, layer, position, local_time, sign, event_name)
+                command = self._command(
+                    asset_id,
+                    layer,
+                    position,
+                    local_time + float(getattr(event_socket, "phase_offset", 0.0)),
+                    sign,
+                    event_name,
+                )
                 if command is not None:
                     commands.append(command)
         return tuple(sorted(commands, key=lambda command: int(command.layer)))

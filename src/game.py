@@ -18,6 +18,7 @@ from .animation_manifest import (
     timed_action_tick,
 )
 from .atmosphere import AtmosphereState
+from .attack_routes import load_black_dave_v2_routes
 from .audio import AudioManager
 from .chapter_content import compile_level_content, enemy_variants, load_chapter_content
 from .enemy_variants import apply_enemy_variant_profile
@@ -42,6 +43,7 @@ from .config import (
     load_gameplay,
     resource_path,
 )
+from .crowd_control import CrowdTarget, apply_crowd_push
 from .entities import (
     COUCH_RETREAT_STATES,
     AmmoPickup,
@@ -62,6 +64,7 @@ from .level_complete import CompletionStats, LevelCompleteTimeline, LevelStatTra
 from .level_outro import ChapterTwoLevelOneIntro, JerryLevelOneOutro, LevelOutroFrame, WheelchairChrisLevelTwoOutro
 from .progression import GameOptions, RunStats, SaveData, SaveRepository
 from .provenance import build_runtime_provenance
+from .playable_animation_v2 import PlayableAnimationV2Runtime
 from .stage_transition import BossLoadingTransition, TransitionFrame
 from .version import VERSION
 from .world_engine import (
@@ -287,6 +290,7 @@ def _draw_title_player_accent(
     x: int,
     y: int,
     *,
+    renderer: PlayableAnimationV2Runtime | None = None,
     character: str,
     scale: float,
     frame: int = 0,
@@ -299,17 +303,21 @@ def _draw_title_player_accent(
     transparent bounds, and nearest-scales it into a safe lane.
     """
 
+    # Keep the helper directly usable by title-render tests and tools without
+    # offering a legacy body-render fallback.  Production supplies the game
+    # owned renderer, while standalone callers load the same V2 atlas.
+    renderer = renderer or PlayableAnimationV2Runtime.from_active_resources()
     canvas = pygame.Surface((220, 220), pygame.SRCALPHA)
-    pixel_art.draw_player(
+    renderer.draw_actor(
         canvas,
-        110,
-        207,
-        0,
-        1,
-        "idle",
-        character,
-        frame,
-        (255, 255, 255),
+        actor=character,
+        state="idle",
+        authored_tick=frame,
+        x=110,
+        y=207,
+        z=0,
+        facing=1,
+        local_time=frame / ANIMATION_PLAYBACK_HZ,
     )
     bounds = canvas.get_bounding_rect(min_alpha=1)
     if not bounds.w or not bounds.h:
@@ -542,11 +550,26 @@ class AudioAdapter:
 class FadesGame:
     VERSION = VERSION
 
-    def __init__(self, input_manager: InputManager, *, mute: bool = False) -> None:
+    def __init__(
+        self,
+        input_manager: InputManager,
+        *,
+        mute: bool = False,
+        use_saved_options: bool | None = None,
+    ) -> None:
         # Builds and dedicated location QA decode every authored panorama.
         # Ordinary play keeps the same manifest/schema checks but avoids
         # re-decoding all route art before the first interactive frame.
         self.data = load_gameplay(validate_location_assets=False)
+        # The V2 loader owns every playable body frame.  Route validation is
+        # deliberately performed against its assembled clip IDs before a game
+        # can spawn a Black Dave player, so missing art fails closed instead of
+        # silently reverting to a legacy idle cel.
+        self.playable_animation_v2 = PlayableAnimationV2Runtime.from_active_resources()
+        self.black_dave_v2_routes = load_black_dave_v2_routes(
+            self.data["moves"],
+            self.playable_animation_v2.clip_ids("black_dave"),
+        )
         location_manifest_path = resource_path("data/chapter1_location_lock.json")
         self.location_manifest_path = location_manifest_path
         self.location_manifest = location_lock.load_location_lock(
@@ -579,7 +602,16 @@ class FadesGame:
         self.save_repository = SaveRepository(_default_save_path())
         self.save_load_result = self.save_repository.load()
         self.save_data: SaveData = self.save_load_result.data
-        self.options: GameOptions = self.save_data.options
+        # Mute/headless callers are our deterministic gameplay-test surface.
+        # They must not inherit a developer's or player's local menu choices
+        # (for example a disabled Shelly super) and silently change source
+        # test/self-test behavior.  Interactive launch passes True explicitly
+        # so ``--mute`` still honors the player's saved preferences.
+        if use_saved_options is None:
+            use_saved_options = not mute
+        self.options: GameOptions = (
+            self.save_data.options if use_saved_options else GameOptions()
+        )
         # Keep the live atmosphere mutable without mutating the immutable save
         # snapshot held by SaveData.  A fresh detached copy is written back at
         # explicit save points.
@@ -775,6 +807,9 @@ class FadesGame:
         # latch the main loop consumed the edge while combat simulation was
         # frozen, making fast combo presses disappear.
         self._hitstop_pressed_by_slot: dict[int, set[str]] = {}
+        # V2 aliases are retained separately so the legacy latch remains a
+        # stable compatibility surface for callers that inspect it directly.
+        self._hitstop_v2_pressed_by_slot: dict[int, set[str]] = {}
         self.impact_flash = 0.0
         self.impact_flash_alpha = 0
         self.impact_flash_duration = 0.0
@@ -2117,6 +2152,7 @@ class FadesGame:
         self._pending_camera_lock = None
         self.hitstop_remaining = 0.0
         self._hitstop_pressed_by_slot.clear()
+        self._hitstop_v2_pressed_by_slot.clear()
         self.impact_flash = 0.0
         self.impact_flash_alpha = 0
         self.impact_flash_duration = 0.0
@@ -2183,6 +2219,11 @@ class FadesGame:
                 moves=self.data["moves"],
                 color_index=index,
                 is_cpu=False,
+                route_library=(
+                    self.black_dave_v2_routes
+                    if character == "black_dave"
+                    else None
+                ),
             )
             self.players.append(player)
 
@@ -2202,6 +2243,11 @@ class FadesGame:
                     moves=self.data["moves"],
                     color_index=companion_slot,
                     is_cpu=True,
+                    route_library=(
+                        self.black_dave_v2_routes
+                        if character == "black_dave"
+                        else None
+                    ),
                 )
                 self.players.append(companion)
 
@@ -2330,19 +2376,27 @@ class FadesGame:
             # controller polling continue deterministically. Action edges are
             # retained for the first unfrozen simulation step.
             for player in human_players:
-                buffered_actions = frozenset({"light", "heavy", "jump", "dodge", "interact"})
+                buffered_actions = frozenset({
+                    "light", "heavy", "jump", "dodge", "interact",
+                })
                 if self._is_super_attack_enabled(player.character):
                     buffered_actions = buffered_actions | frozenset({"super"})
                 pressed = human_snapshot_by_slot[player.slot].pressed & buffered_actions
                 if pressed:
                     self._hitstop_pressed_by_slot.setdefault(player.slot, set()).update(pressed)
+                v2_pressed = human_snapshot_by_slot[player.slot].pressed & frozenset(
+                    {"regular", "kick", "power"}
+                )
+                if v2_pressed:
+                    self._hitstop_v2_pressed_by_slot.setdefault(player.slot, set()).update(v2_pressed)
             self.hitstop_remaining = max(0.0, self.hitstop_remaining - dt)
             self._update_camera(dt)
             return
 
         for player in human_players:
             buffered = self._hitstop_pressed_by_slot.pop(player.slot, set())
-            if not buffered:
+            v2_buffered = self._hitstop_v2_pressed_by_slot.pop(player.slot, set())
+            if not buffered and not v2_buffered:
                 continue
             if not self._is_super_attack_enabled(player.character):
                 buffered.discard("super")
@@ -2351,7 +2405,7 @@ class FadesGame:
                 move_x=snapshot.move_x,
                 move_y=snapshot.move_y,
                 held=snapshot.held,
-                pressed=snapshot.pressed | frozenset(buffered),
+                pressed=snapshot.pressed | frozenset(buffered | v2_buffered),
             )
 
         self._frame_snapshots = {
@@ -5272,8 +5326,17 @@ class FadesGame:
             and attack_kind in {"light", "heavy", "air_attack"}
             and player.flaming_fists
         )
+        execution_route = getattr(player.attack_execution, "route_id", "")
+        execution_step = getattr(player.attack_execution, "step_id", "")
+        v2_black_dave = (
+            player.character == "black_dave"
+            and (
+                execution_route in {"regular", "kick", "power"}
+                or execution_step in {"air_punch", "air_kick"}
+            )
+        )
         combo_radius = float(move.get("combo_radius", 0.0))
-        if play_whiff:
+        if play_whiff and not v2_black_dave:
             # Every hero gets a readable authored-motion accent at the actual
             # attack presentation frame.  Previously only Dave's fist path
             # emitted a trail, so successful visual work was easy to miss when
@@ -5306,7 +5369,7 @@ class FadesGame:
                 projected=True,
                 elevation=player.z + 28.0,
             )
-        if player.character == "black_dave" and play_whiff:
+        if player.character == "black_dave" and play_whiff and not v2_black_dave:
             fist_cfg = self.data["players"]["black_dave"].get("fist_effects", {})
             trail_x = player.x + player.facing * (range_x * 0.72)
             trail_elevation = player.z + 33.0
@@ -5336,7 +5399,7 @@ class FadesGame:
         # The authored C-chain kick owns a visible shockwave even when it
         # misses; other attacks reserve impact/shock accents for confirmed
         # contact so hit and whiff remain visually distinct.
-        if play_whiff and bool(move.get("shockwave", False)):
+        if play_whiff and bool(move.get("shockwave", False)) and not v2_black_dave:
             self.add_effect(
                 "shock",
                 attack_x,
@@ -5379,14 +5442,19 @@ class FadesGame:
             )
             if not feedback_applied:
                 self._apply_combat_impact(contact, feedback_profile)
-                self._emit_confirmed_hit_feedback(
-                    player,
-                    enemy,
-                    contact,
-                    move,
-                    feedback_profile,
-                    feedback_tier,
-                )
+                # Animation V2 owns Black Dave's hit presentation through
+                # authored body/VFX cels.  Replaying legacy radial hit,
+                # shock, and fist primitives here would double-render and
+                # introduce a reticle-like effect over the authored fire.
+                if not v2_black_dave:
+                    self._emit_confirmed_hit_feedback(
+                        player,
+                        enemy,
+                        contact,
+                        move,
+                        feedback_profile,
+                        feedback_tier,
+                    )
                 feedback_applied = True
             player.gain_super(float(move["meter"]))
             if burn:
@@ -5406,45 +5474,100 @@ class FadesGame:
                         self._dave_flame_visuals.get(enemy.enemy_id, 0.0),
                         0.78,
                     )
-                    self.add_effect(
-                        "flame_burst",
-                        contact.contact_x,
-                        contact.contact_depth,
-                        color=(255, 105, 31),
-                        radius=34,
-                        duration=0.32,
-                        projected=True,
-                        elevation=36.0,
-                        _start_paused=True,
-                    )
-                    self.add_effect(
-                        "scorch",
-                        contact.contact_x,
-                        contact.contact_depth,
-                        color=(188, 71, 36),
-                        radius=27,
-                        duration=0.82,
-                        projected=True,
-                        elevation=2.0,
-                        _start_paused=True,
-                    )
-                    self.add_effect(
-                        "ember",
-                        contact.contact_x - player.facing * 8.0,
-                        contact.contact_depth,
-                        color=(255, 202, 65),
-                        radius=10,
-                        duration=0.38,
-                        projected=True,
-                        elevation=45.0,
-                        _start_paused=True,
-                    )
+                    if not v2_black_dave:
+                        self.add_effect(
+                            "flame_burst",
+                            contact.contact_x,
+                            contact.contact_depth,
+                            color=(255, 105, 31),
+                            radius=34,
+                            duration=0.32,
+                            projected=True,
+                            elevation=36.0,
+                            _start_paused=True,
+                        )
+                        self.add_effect(
+                            "scorch",
+                            contact.contact_x,
+                            contact.contact_depth,
+                            color=(188, 71, 36),
+                            radius=27,
+                            duration=0.82,
+                            projected=True,
+                            elevation=2.0,
+                            _start_paused=True,
+                        )
+                        self.add_effect(
+                            "ember",
+                            contact.contact_x - player.facing * 8.0,
+                            contact.contact_depth,
+                            color=(255, 202, 65),
+                            radius=10,
+                            duration=0.38,
+                            projected=True,
+                            elevation=45.0,
+                            _start_paused=True,
+                        )
         hits += self._damage_obstacles_from_attack(player, attack, move)
         if hits:
             self.audio.play("heavy_hit" if feedback_tier in {"heavy", "finisher"} else "punch")
         elif play_whiff:
             self.audio.play("whoosh")
         return hits
+
+    def apply_black_dave_v2_crowd_push(self, player: Player, execution: Any) -> tuple[str, ...]:
+        """Apply the C-route crowd displacement with no damage or VFX side effects."""
+
+        if getattr(execution, "route_id", "") != "power" or int(getattr(execution, "step_index", -1)) not in {2, 4, 6}:
+            return ()
+        profile = dict(getattr(execution, "move_profile", {}))
+        distances = {"rise": 14.0, "shockwave": 28.0, "finish": 34.0, "heavy": 22.0}
+        distance = distances.get(str(profile.get("v2_push_profile", "")), 18.0)
+        cap = max(1, int(profile.get("max_targets", 1)))
+        eligible = sorted(
+            (
+                enemy
+                for enemy in self.enemies
+                if enemy.targetable
+                and enemy.kind not in {"couch", "debo"}
+                and (enemy.x - player.x) * player.facing >= -4.0
+                and abs(enemy.x - player.x) <= 118.0
+                and abs(enemy.y - player.y) <= 44.0
+            ),
+            key=lambda enemy: (abs(enemy.x - player.x), abs(enemy.y - player.y), enemy.enemy_id),
+        )
+        pushes = apply_crowd_push(
+            (
+                CrowdTarget(
+                    str(enemy.enemy_id),
+                    normal_enemy=True,
+                    boss=False,
+                    armor=1.0 if bool(enemy.stats.get("armor", False)) else 0.0,
+                    push_resistance=float(enemy.stats.get("push_resistance", 0.0)),
+                )
+                for enemy in eligible
+            ),
+            distance=distance,
+            cap=cap,
+            armor_limit=0.0,
+        )
+        by_id = {str(enemy.enemy_id): enemy for enemy in eligible}
+        moved: list[str] = []
+        for push in pushes:
+            enemy = by_id.get(push.entity_id)
+            if enemy is None:
+                continue
+            enemy.knockback_vx = player.facing * max(abs(enemy.knockback_vx), push.distance * 5.5)
+            enemy.knockback_vy = 0.0
+            enemy._set_state("hitstun", 0.14)
+            moved.append(push.entity_id)
+        if moved:
+            self.log_breadcrumb(
+                "black_dave_v2_crowd_push",
+                step=getattr(execution, "step_id", ""),
+                targets=tuple(moved),
+            )
+        return tuple(moved)
 
     def activate_super(self, player: Player) -> None:
         if not self._is_super_attack_enabled(player.character):
@@ -6071,6 +6194,7 @@ class FadesGame:
             accent_layer,
             518,
             286,
+            renderer=self.playable_animation_v2,
             character="jermaine",
             scale=0.52,
             frame=int(self.elapsed * 4.0),
@@ -6079,6 +6203,7 @@ class FadesGame:
             accent_layer,
             602,
             286,
+            renderer=self.playable_animation_v2,
             character="white_dave",
             scale=0.48,
             frame=int(self.elapsed * 4.0 + 2.0),
@@ -6434,7 +6559,7 @@ class FadesGame:
                 if obj.state == "prepare" and obj.state_clock <= bubble_seconds:
                     ko_prepare_bubbles.append((x, y, obj.facing))
             elif kind == "player":
-                action_states = {"light", "heavy", "air_attack", "jump", "hurt", "downed", "super", "dodge", "pet", "ranged", "propane"}
+                action_states = {"light", "heavy", "air_attack", "jump", "jump_land", "hurt", "downed", "super", "dodge", "pet", "ranged", "propane"}
                 visual_state = (
                     obj.attack_animation_clip
                     if obj.state in {"light", "heavy", "air_attack", "super"}
@@ -6457,29 +6582,37 @@ class FadesGame:
                     if obj.state in action_states
                     else obj.animation_tick
                 )
-                pixel_art.draw_player(
+                if obj.character == "black_dave" and obj.state == "jump":
+                    if obj.state_clock < 0.13:
+                        visual_state = "jump_takeoff"
+                        sprite_tick = int(obj.state_clock * ANIMATION_PLAYBACK_HZ)
+                    elif obj.vz > 52.0:
+                        visual_state = "jump_rise"
+                        sprite_tick = int((obj.state_clock - 0.13) * ANIMATION_PLAYBACK_HZ)
+                    elif obj.vz > -52.0:
+                        visual_state = "jump_apex"
+                        sprite_tick = 0
+                    else:
+                        visual_state = "jump_fall"
+                        sprite_tick = int(max(0.0, -obj.vz - 52.0) / 52.0)
+                self.playable_animation_v2.draw_actor(
                     surface,
-                    x,
-                    y,
-                    obj.z,
-                    obj.facing,
-                    visual_state,
-                    obj.character,
-                    sprite_tick,
-                    PLAYER_COLORS[obj.color_index],
-                    hit_flash=obj.hit_flash,
+                    actor=obj.character,
+                    state=visual_state,
+                    authored_tick=sprite_tick,
+                    x=x,
+                    y=y,
+                    z=obj.z,
+                    facing=obj.facing,
+                    local_time=(
+                        obj.state_clock
+                        if obj.state in action_states
+                        else obj.animation_clock
+                    ),
+                    attack_execution=obj.attack_execution,
+                    flaming=obj.flaming_fists,
+                    confirmed_hit=obj.attack_connected,
                 )
-                if obj.flaming_fists:
-                    pixel_art.draw_fist_flames(
-                        surface,
-                        x,
-                        y,
-                        facing=obj.facing,
-                        frame=self.frame,
-                        z=obj.z,
-                        state=visual_state,
-                        sprite_tick=sprite_tick,
-                    )
             elif kind == "chief":
                 chief_state = obj.visual_animation_state
                 chief_tick = (
@@ -6632,14 +6765,12 @@ class FadesGame:
                     if obj.kind == "security" and obj.enemy_id in self._security_speech_by_enemy:
                         security_bubbles.append((x, y, obj.facing, obj.enemy_id))
                 if self._dave_flame_visuals.get(obj.enemy_id, 0.0) > 0.0:
-                    pixel_art.draw_effect(
+                    self.playable_animation_v2.draw_enemy_feedback(
                         surface,
-                        x,
-                        y - 8.0,
-                        kind="enemy_fire",
-                        frame=self.frame,
-                        color=(255, 101, 28),
-                        radius=24,
+                        x=x,
+                        y=y - 32.0,
+                        facing=obj.facing,
+                        local_time=self.elapsed,
                     )
                 if (
                     obj.state == "windup"
@@ -7124,8 +7255,28 @@ class FadesGame:
         self._text(surface, self.font_tiny, "AFTER A FEW BLOCKS, SOMEONE STARTS WATCHING THEM.", (203, 220, 236), (42, 87))
         if getattr(frame, "beat", "") == "walking":
             pixel_art.draw_bmx_bike(surface, 305, 300, frame=int(frame.beat_elapsed * 8.0))
-            pixel_art.draw_player(surface, 152, 302, 0, 1, "walk", "black_dave", int(frame.beat_elapsed * 10.0), (217, 72, 64))
-            pixel_art.draw_player(surface, 244, 305, 0, 1, "walk", "shelly", int(frame.beat_elapsed * 10.0), (195, 74, 124))
+            self.playable_animation_v2.draw_actor(
+                surface,
+                actor="black_dave",
+                state="walk",
+                authored_tick=int(frame.beat_elapsed * 10.0),
+                x=152,
+                y=302,
+                z=0,
+                facing=1,
+                local_time=frame.beat_elapsed,
+            )
+            self.playable_animation_v2.draw_actor(
+                surface,
+                actor="shelly",
+                state="walk",
+                authored_tick=int(frame.beat_elapsed * 10.0),
+                x=244,
+                y=305,
+                z=0,
+                facing=1,
+                local_time=frame.beat_elapsed,
+            )
             pixel_art.draw_chief(surface, 346, 309, 0, 1, "idle", int(frame.beat_elapsed * 10.0))
         elif getattr(frame, "beat", "") == "binoculars":
             self._panel(surface, pygame.Rect(386, 68, 214, 64), (10, 14, 26), (255, 146, 201))

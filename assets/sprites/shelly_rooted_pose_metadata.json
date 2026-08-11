@@ -10,9 +10,28 @@
     104,
     156
   ],
+  "source_grid": {
+    "asset": "assets/sprites/shelly_animation_atlas.png",
+    "columns": 16,
+    "rows": 17,
+    "cell_size": [
+      128,
+      128
+    ],
+    "source_root": [
+      85,
+      126
+    ],
+    "baked_source_root": [
+      85,
+      126
+    ],
+    "uniform_bake_scale": 1.0,
+    "incomplete_cels_rejected": []
+  },
   "source_hashes": {
     "assets/sprites/shelly_animation_atlas.png": "fe6af8c716dc23c1c390d044ea38fe9f66099ae92736c05e890efb67d1643d41",
-    "art_source/shelly/shelly_rooted_migration_v2.png": "9b4a8b1bed408c76cb7b57caf55be5878ec1869a77767eb04e4712ca5701ebb2"
+    "art_source/shelly/shelly_rooted_migration_v2.png": "6a5ffe5171300d7118dd66a8ab7c86924eb084985b29a4fee190b0dc8be35e75"
   },
   "clips": {
     "idle": {
@@ -35,7 +54,7 @@
           "body_bounds": [
             52,
             39,
-            189,
+            116,
             156
           ],
           "anchors": {
@@ -65,7 +84,20 @@
             ]
           },
           "sockets": [],
-          "events": []
+          "events": [],
+          "source": {
+            "state": "idle",
+            "row": 0,
+            "column": 0,
+            "alpha_bounds": [
+              33,
+              9,
+              97,
+              126
+            ],
+            "opaque_pixels": 3821,
+            "uniform_bake_scale": 1.0
+          }
         },
         {
           "root": [
@@ -73,9 +105,62 @@
             156
           ],
           "body_bounds": [
-            19,
+            52,
+            38,
+            116,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": [],
+          "source": {
+            "state": "idle",
+            "row": 0,
+            "column": 1,
+            "alpha_bounds": [
+              33,
+              8,
+              97,
+              126
+            ],
+            "opaque_pixels": 3867,
+            "uniform_bake_scale": 1.0
+          }
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            52,
             37,
-            189,
+            116,
             156
           ],
           "anchors": {
@@ -105,7 +190,20 @@
             ]
           },
           "sockets": [],
-          "events": []
+          "events": [],
+          "source": {
+            "state": "idle",
+            "row": 0,
+            "column": 2,
+            "alpha_bounds": [
+              33,
+              7,
+              97,
+              126
+            ],
+            "opaque_pixels": 3876,
+            "uniform_bake_scale": 1.0
+          }
         },
         {
           "root": [
@@ -113,49 +211,9 @@
             156
           ],
           "body_bounds": [
-            19,
+            52,
             37,
-            161,
-            156
-          ],
-          "anchors": {
-            "rear_foot": [
-              96,
-              156
-            ],
-            "lead_foot": [
-              112,
-              156
-            ],
-            "pelvis": [
-              104,
-              110
-            ],
-            "head": [
-              104,
-              56
-            ],
-            "rear_hand": [
-              87,
-              88
-            ],
-            "lead_hand": [
-              121,
-              88
-            ]
-          },
-          "sockets": [],
-          "events": []
-        },
-        {
-          "root": [
-            104,
-            156
-          ],
-          "body_bounds": [
-            54,
-            36,
-            189,
+            117,
             156
           ],
           "anchors": {
@@ -187,7 +245,20 @@
           "sockets": [],
           "events": [
             "contact"
-          ]
+          ],
+          "source": {
+            "state": "idle",
+            "row": 0,
+            "column": 3,
+            "alpha_bounds": [
+              33,
+              7,
+              98,
+              126
+            ],
+            "opaque_pixels": 3930,
+            "uniform_bake_scale": 1.0
+          }
         },
         {
           "root": [
@@ -195,9 +266,9 @@
             156
           ],
           "body_bounds": [
-            19,
-            37,
-            189,
+            52,
+            36,
+            117,
             156
           ],
           "anchors": {
@@ -227,7 +298,20 @@
             ]
           },
           "sockets": [],
-          "events": []
+          "events": [],
+          "source": {
+            "state": "idle",
+            "row": 0,
+            "column": 4,
+            "alpha_bounds": [
+              33,
+              6,
+              98,
+              126
+            ],
+            "opaque_pixels": 3978,
+            "uniform_bake_scale": 1.0
+          }
         }
       ]
     },
@@ -249,9 +333,62 @@
             156
           ],
           "body_bounds": [
-            19,
+            45,
+            36,
+            118,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": [],
+          "source": {
+            "state": "walk",
+            "row": 1,
+            "column": 1,
+            "alpha_bounds": [
+              26,
+              6,
+              99,
+              126
+            ],
+            "opaque_pixels": 4161,
+            "uniform_bake_scale": 1.0
+          }
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            53,
             32,
-            189,
+            119,
             156
           ],
           "anchors": {
@@ -281,7 +418,20 @@
             ]
           },
           "sockets": [],
-          "events": []
+          "events": [],
+          "source": {
+            "state": "walk",
+            "row": 1,
+            "column": 2,
+            "alpha_bounds": [
+              34,
+              2,
+              100,
+              126
+            ],
+            "opaque_pixels": 3957,
+            "uniform_bake_scale": 1.0
+          }
         },
         {
           "root": [
@@ -289,9 +439,9 @@
             156
           ],
           "body_bounds": [
-            19,
+            54,
             33,
-            161,
+            117,
             156
           ],
           "anchors": {
@@ -321,7 +471,20 @@
             ]
           },
           "sockets": [],
-          "events": []
+          "events": [],
+          "source": {
+            "state": "walk",
+            "row": 1,
+            "column": 3,
+            "alpha_bounds": [
+              35,
+              3,
+              98,
+              126
+            ],
+            "opaque_pixels": 4004,
+            "uniform_bake_scale": 1.0
+          }
         },
         {
           "root": [
@@ -329,49 +492,9 @@
             156
           ],
           "body_bounds": [
-            51,
+            49,
             34,
-            189,
-            156
-          ],
-          "anchors": {
-            "rear_foot": [
-              96,
-              156
-            ],
-            "lead_foot": [
-              112,
-              156
-            ],
-            "pelvis": [
-              104,
-              110
-            ],
-            "head": [
-              104,
-              56
-            ],
-            "rear_hand": [
-              87,
-              88
-            ],
-            "lead_hand": [
-              121,
-              88
-            ]
-          },
-          "sockets": [],
-          "events": []
-        },
-        {
-          "root": [
-            104,
-            156
-          ],
-          "body_bounds": [
-            19,
-            33,
-            189,
+            126,
             156
           ],
           "anchors": {
@@ -403,7 +526,20 @@
           "sockets": [],
           "events": [
             "contact"
-          ]
+          ],
+          "source": {
+            "state": "walk",
+            "row": 1,
+            "column": 4,
+            "alpha_bounds": [
+              30,
+              4,
+              107,
+              126
+            ],
+            "opaque_pixels": 4265,
+            "uniform_bake_scale": 1.0
+          }
         },
         {
           "root": [
@@ -411,9 +547,9 @@
             156
           ],
           "body_bounds": [
-            19,
+            52,
             33,
-            166,
+            118,
             156
           ],
           "anchors": {
@@ -443,7 +579,20 @@
             ]
           },
           "sockets": [],
-          "events": []
+          "events": [],
+          "source": {
+            "state": "walk",
+            "row": 1,
+            "column": 5,
+            "alpha_bounds": [
+              33,
+              3,
+              99,
+              126
+            ],
+            "opaque_pixels": 4305,
+            "uniform_bake_scale": 1.0
+          }
         }
       ]
     },
@@ -467,7 +616,7 @@
           "body_bounds": [
             19,
             49,
-            189,
+            145,
             155
           ],
           "anchors": {
@@ -497,7 +646,20 @@
             ]
           },
           "sockets": [],
-          "events": []
+          "events": [],
+          "source": {
+            "state": "attack_1",
+            "row": 2,
+            "column": 2,
+            "alpha_bounds": [
+              0,
+              19,
+              126,
+              125
+            ],
+            "opaque_pixels": 3627,
+            "uniform_bake_scale": 1.0
+          }
         },
         {
           "root": [
@@ -505,10 +667,10 @@
             156
           ],
           "body_bounds": [
-            23,
+            19,
             53,
-            189,
-            156
+            145,
+            155
           ],
           "anchors": {
             "rear_foot": [
@@ -537,7 +699,20 @@
             ]
           },
           "sockets": [],
-          "events": []
+          "events": [],
+          "source": {
+            "state": "attack_1",
+            "row": 2,
+            "column": 3,
+            "alpha_bounds": [
+              0,
+              23,
+              126,
+              125
+            ],
+            "opaque_pixels": 4155,
+            "uniform_bake_scale": 1.0
+          }
         },
         {
           "root": [
@@ -545,49 +720,62 @@
             156
           ],
           "body_bounds": [
-            19,
+            21,
+            53,
+            147,
+            155
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": [],
+          "source": {
+            "state": "attack_1",
+            "row": 2,
+            "column": 4,
+            "alpha_bounds": [
+              2,
+              23,
+              128,
+              125
+            ],
+            "opaque_pixels": 4129,
+            "uniform_bake_scale": 1.0
+          }
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            21,
             50,
-            189,
-            156
-          ],
-          "anchors": {
-            "rear_foot": [
-              96,
-              156
-            ],
-            "lead_foot": [
-              112,
-              156
-            ],
-            "pelvis": [
-              104,
-              110
-            ],
-            "head": [
-              104,
-              56
-            ],
-            "rear_hand": [
-              87,
-              88
-            ],
-            "lead_hand": [
-              121,
-              88
-            ]
-          },
-          "sockets": [],
-          "events": []
-        },
-        {
-          "root": [
-            104,
-            156
-          ],
-          "body_bounds": [
-            19,
-            34,
-            164,
+            147,
             156
           ],
           "anchors": {
@@ -619,7 +807,20 @@
           "sockets": [],
           "events": [
             "contact"
-          ]
+          ],
+          "source": {
+            "state": "attack_1",
+            "row": 2,
+            "column": 5,
+            "alpha_bounds": [
+              2,
+              20,
+              128,
+              126
+            ],
+            "opaque_pixels": 3666,
+            "uniform_bake_scale": 1.0
+          }
         },
         {
           "root": [
@@ -628,8 +829,8 @@
           ],
           "body_bounds": [
             46,
-            52,
-            189,
+            48,
+            125,
             156
           ],
           "anchors": {
@@ -659,7 +860,20 @@
             ]
           },
           "sockets": [],
-          "events": []
+          "events": [],
+          "source": {
+            "state": "attack_1",
+            "row": 2,
+            "column": 6,
+            "alpha_bounds": [
+              27,
+              18,
+              106,
+              126
+            ],
+            "opaque_pixels": 3810,
+            "uniform_bake_scale": 1.0
+          }
         }
       ]
     },
@@ -682,8 +896,61 @@
           ],
           "body_bounds": [
             34,
+            30,
+            132,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": [],
+          "source": {
+            "state": "attack_2",
+            "row": 3,
+            "column": 3,
+            "alpha_bounds": [
+              15,
+              0,
+              113,
+              126
+            ],
+            "opaque_pixels": 3745,
+            "uniform_bake_scale": 1.0
+          }
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            32,
             41,
-            168,
+            143,
             155
           ],
           "anchors": {
@@ -713,7 +980,20 @@
             ]
           },
           "sockets": [],
-          "events": []
+          "events": [],
+          "source": {
+            "state": "attack_2",
+            "row": 3,
+            "column": 4,
+            "alpha_bounds": [
+              13,
+              11,
+              124,
+              125
+            ],
+            "opaque_pixels": 4345,
+            "uniform_bake_scale": 1.0
+          }
         },
         {
           "root": [
@@ -721,9 +1001,9 @@
             156
           ],
           "body_bounds": [
-            27,
+            36,
             30,
-            189,
+            134,
             156
           ],
           "anchors": {
@@ -753,7 +1033,20 @@
             ]
           },
           "sockets": [],
-          "events": []
+          "events": [],
+          "source": {
+            "state": "attack_2",
+            "row": 3,
+            "column": 5,
+            "alpha_bounds": [
+              17,
+              0,
+              115,
+              126
+            ],
+            "opaque_pixels": 3698,
+            "uniform_bake_scale": 1.0
+          }
         },
         {
           "root": [
@@ -761,49 +1054,9 @@
             156
           ],
           "body_bounds": [
-            19,
+            21,
             50,
-            169,
-            156
-          ],
-          "anchors": {
-            "rear_foot": [
-              96,
-              156
-            ],
-            "lead_foot": [
-              112,
-              156
-            ],
-            "pelvis": [
-              104,
-              110
-            ],
-            "head": [
-              104,
-              56
-            ],
-            "rear_hand": [
-              87,
-              88
-            ],
-            "lead_hand": [
-              121,
-              88
-            ]
-          },
-          "sockets": [],
-          "events": []
-        },
-        {
-          "root": [
-            104,
-            156
-          ],
-          "body_bounds": [
-            46,
-            52,
-            189,
+            147,
             156
           ],
           "anchors": {
@@ -835,7 +1088,20 @@
           "sockets": [],
           "events": [
             "contact"
-          ]
+          ],
+          "source": {
+            "state": "attack_2",
+            "row": 3,
+            "column": 6,
+            "alpha_bounds": [
+              2,
+              20,
+              128,
+              126
+            ],
+            "opaque_pixels": 3626,
+            "uniform_bake_scale": 1.0
+          }
         },
         {
           "root": [
@@ -843,9 +1109,9 @@
             156
           ],
           "body_bounds": [
-            19,
-            50,
-            189,
+            46,
+            51,
+            123,
             156
           ],
           "anchors": {
@@ -875,7 +1141,20 @@
             ]
           },
           "sockets": [],
-          "events": []
+          "events": [],
+          "source": {
+            "state": "attack_2",
+            "row": 3,
+            "column": 7,
+            "alpha_bounds": [
+              27,
+              21,
+              104,
+              126
+            ],
+            "opaque_pixels": 3627,
+            "uniform_bake_scale": 1.0
+          }
         }
       ]
     },
@@ -897,9 +1176,62 @@
             156
           ],
           "body_bounds": [
-            19,
-            46,
-            189,
+            40,
+            49,
+            129,
+            155
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": [],
+          "source": {
+            "state": "attack_3",
+            "row": 4,
+            "column": 4,
+            "alpha_bounds": [
+              21,
+              19,
+              110,
+              125
+            ],
+            "opaque_pixels": 3437,
+            "uniform_bake_scale": 1.0
+          }
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            21,
+            49,
+            144,
             156
           ],
           "anchors": {
@@ -929,7 +1261,20 @@
             ]
           },
           "sockets": [],
-          "events": []
+          "events": [],
+          "source": {
+            "state": "attack_3",
+            "row": 4,
+            "column": 5,
+            "alpha_bounds": [
+              2,
+              19,
+              125,
+              126
+            ],
+            "opaque_pixels": 5200,
+            "uniform_bake_scale": 1.0
+          }
         },
         {
           "root": [
@@ -937,9 +1282,9 @@
             156
           ],
           "body_bounds": [
-            19,
+            36,
             33,
-            169,
+            132,
             156
           ],
           "anchors": {
@@ -969,7 +1314,20 @@
             ]
           },
           "sockets": [],
-          "events": []
+          "events": [],
+          "source": {
+            "state": "attack_3",
+            "row": 4,
+            "column": 6,
+            "alpha_bounds": [
+              17,
+              3,
+              113,
+              126
+            ],
+            "opaque_pixels": 3531,
+            "uniform_bake_scale": 1.0
+          }
         },
         {
           "root": [
@@ -978,48 +1336,8 @@
           ],
           "body_bounds": [
             46,
-            52,
-            165,
-            156
-          ],
-          "anchors": {
-            "rear_foot": [
-              96,
-              156
-            ],
-            "lead_foot": [
-              112,
-              156
-            ],
-            "pelvis": [
-              104,
-              110
-            ],
-            "head": [
-              104,
-              56
-            ],
-            "rear_hand": [
-              87,
-              88
-            ],
-            "lead_hand": [
-              121,
-              88
-            ]
-          },
-          "sockets": [],
-          "events": []
-        },
-        {
-          "root": [
-            104,
-            156
-          ],
-          "body_bounds": [
-            22,
-            32,
-            189,
+            51,
+            123,
             156
           ],
           "anchors": {
@@ -1051,7 +1369,20 @@
           "sockets": [],
           "events": [
             "contact"
-          ]
+          ],
+          "source": {
+            "state": "attack_3",
+            "row": 4,
+            "column": 7,
+            "alpha_bounds": [
+              27,
+              21,
+              104,
+              126
+            ],
+            "opaque_pixels": 3627,
+            "uniform_bake_scale": 1.0
+          }
         },
         {
           "root": [
@@ -1059,10 +1390,10 @@
             156
           ],
           "body_bounds": [
-            19,
-            47,
-            187,
-            155
+            46,
+            52,
+            122,
+            156
           ],
           "anchors": {
             "rear_foot": [
@@ -1091,7 +1422,20 @@
             ]
           },
           "sockets": [],
-          "events": []
+          "events": [],
+          "source": {
+            "state": "attack_3",
+            "row": 4,
+            "column": 0,
+            "alpha_bounds": [
+              27,
+              22,
+              103,
+              126
+            ],
+            "opaque_pixels": 3503,
+            "uniform_bake_scale": 1.0
+          }
         }
       ]
     },
@@ -1113,9 +1457,9 @@
             156
           ],
           "body_bounds": [
-            19,
-            50,
-            169,
+            33,
+            45,
+            141,
             156
           ],
           "anchors": {
@@ -1145,7 +1489,126 @@
             ]
           },
           "sockets": [],
-          "events": []
+          "events": [],
+          "source": {
+            "state": "attack_4",
+            "row": 5,
+            "column": 5,
+            "alpha_bounds": [
+              14,
+              15,
+              122,
+              126
+            ],
+            "opaque_pixels": 4112,
+            "uniform_bake_scale": 1.0
+          }
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            21,
+            50,
+            147,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": [],
+          "source": {
+            "state": "attack_4",
+            "row": 5,
+            "column": 6,
+            "alpha_bounds": [
+              2,
+              20,
+              128,
+              126
+            ],
+            "opaque_pixels": 3626,
+            "uniform_bake_scale": 1.0
+          }
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            46,
+            51,
+            123,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": [],
+          "source": {
+            "state": "attack_4",
+            "row": 5,
+            "column": 7,
+            "alpha_bounds": [
+              27,
+              21,
+              104,
+              126
+            ],
+            "opaque_pixels": 3627,
+            "uniform_bake_scale": 1.0
+          }
         },
         {
           "root": [
@@ -1155,88 +1618,8 @@
           "body_bounds": [
             46,
             52,
-            189,
+            122,
             156
-          ],
-          "anchors": {
-            "rear_foot": [
-              96,
-              156
-            ],
-            "lead_foot": [
-              112,
-              156
-            ],
-            "pelvis": [
-              104,
-              110
-            ],
-            "head": [
-              104,
-              56
-            ],
-            "rear_hand": [
-              87,
-              88
-            ],
-            "lead_hand": [
-              121,
-              88
-            ]
-          },
-          "sockets": [],
-          "events": []
-        },
-        {
-          "root": [
-            104,
-            156
-          ],
-          "body_bounds": [
-            19,
-            44,
-            189,
-            156
-          ],
-          "anchors": {
-            "rear_foot": [
-              96,
-              156
-            ],
-            "lead_foot": [
-              112,
-              156
-            ],
-            "pelvis": [
-              104,
-              110
-            ],
-            "head": [
-              104,
-              56
-            ],
-            "rear_hand": [
-              87,
-              88
-            ],
-            "lead_hand": [
-              121,
-              88
-            ]
-          },
-          "sockets": [],
-          "events": []
-        },
-        {
-          "root": [
-            104,
-            156
-          ],
-          "body_bounds": [
-            19,
-            31,
-            184,
-            155
           ],
           "anchors": {
             "rear_foot": [
@@ -1267,7 +1650,20 @@
           "sockets": [],
           "events": [
             "contact"
-          ]
+          ],
+          "source": {
+            "state": "attack_4",
+            "row": 5,
+            "column": 0,
+            "alpha_bounds": [
+              27,
+              22,
+              103,
+              126
+            ],
+            "opaque_pixels": 3503,
+            "uniform_bake_scale": 1.0
+          }
         },
         {
           "root": [
@@ -1275,9 +1671,9 @@
             156
           ],
           "body_bounds": [
-            22,
-            46,
-            189,
+            19,
+            50,
+            145,
             156
           ],
           "anchors": {
@@ -1307,7 +1703,20 @@
             ]
           },
           "sockets": [],
-          "events": []
+          "events": [],
+          "source": {
+            "state": "attack_4",
+            "row": 5,
+            "column": 1,
+            "alpha_bounds": [
+              0,
+              20,
+              126,
+              126
+            ],
+            "opaque_pixels": 3588,
+            "uniform_bake_scale": 1.0
+          }
         }
       ]
     },
@@ -1329,9 +1738,115 @@
             156
           ],
           "body_bounds": [
+            36,
+            33,
+            132,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": [],
+          "source": {
+            "state": "heavy",
+            "row": 6,
+            "column": 6,
+            "alpha_bounds": [
+              17,
+              3,
+              113,
+              126
+            ],
+            "opaque_pixels": 3531,
+            "uniform_bake_scale": 1.0
+          }
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            46,
+            51,
+            123,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": [],
+          "source": {
+            "state": "heavy",
+            "row": 6,
+            "column": 7,
+            "alpha_bounds": [
+              27,
+              21,
+              104,
+              126
+            ],
+            "opaque_pixels": 3627,
+            "uniform_bake_scale": 1.0
+          }
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
             46,
             52,
-            189,
+            122,
             156
           ],
           "anchors": {
@@ -1361,7 +1876,20 @@
             ]
           },
           "sockets": [],
-          "events": []
+          "events": [],
+          "source": {
+            "state": "heavy",
+            "row": 6,
+            "column": 0,
+            "alpha_bounds": [
+              27,
+              22,
+              103,
+              126
+            ],
+            "opaque_pixels": 3503,
+            "uniform_bake_scale": 1.0
+          }
         },
         {
           "root": [
@@ -1370,88 +1898,8 @@
           ],
           "body_bounds": [
             19,
-            32,
-            189,
-            156
-          ],
-          "anchors": {
-            "rear_foot": [
-              96,
-              156
-            ],
-            "lead_foot": [
-              112,
-              156
-            ],
-            "pelvis": [
-              104,
-              110
-            ],
-            "head": [
-              104,
-              56
-            ],
-            "rear_hand": [
-              87,
-              88
-            ],
-            "lead_hand": [
-              121,
-              88
-            ]
-          },
-          "sockets": [],
-          "events": []
-        },
-        {
-          "root": [
-            104,
-            156
-          ],
-          "body_bounds": [
-            19,
-            47,
-            187,
-            155
-          ],
-          "anchors": {
-            "rear_foot": [
-              96,
-              156
-            ],
-            "lead_foot": [
-              112,
-              156
-            ],
-            "pelvis": [
-              104,
-              110
-            ],
-            "head": [
-              104,
-              56
-            ],
-            "rear_hand": [
-              87,
-              88
-            ],
-            "lead_hand": [
-              121,
-              88
-            ]
-          },
-          "sockets": [],
-          "events": []
-        },
-        {
-          "root": [
-            104,
-            156
-          ],
-          "body_bounds": [
-            42,
-            49,
-            189,
+            50,
+            145,
             156
           ],
           "anchors": {
@@ -1483,7 +1931,20 @@
           "sockets": [],
           "events": [
             "contact"
-          ]
+          ],
+          "source": {
+            "state": "heavy",
+            "row": 6,
+            "column": 1,
+            "alpha_bounds": [
+              0,
+              20,
+              126,
+              126
+            ],
+            "opaque_pixels": 3588,
+            "uniform_bake_scale": 1.0
+          }
         },
         {
           "root": [
@@ -1491,10 +1952,10 @@
             156
           ],
           "body_bounds": [
-            19,
             46,
-            189,
-            156
+            32,
+            114,
+            155
           ],
           "anchors": {
             "rear_foot": [
@@ -1523,7 +1984,20 @@
             ]
           },
           "sockets": [],
-          "events": []
+          "events": [],
+          "source": {
+            "state": "heavy",
+            "row": 6,
+            "column": 2,
+            "alpha_bounds": [
+              27,
+              2,
+              95,
+              125
+            ],
+            "opaque_pixels": 3866,
+            "uniform_bake_scale": 1.0
+          }
         }
       ]
     },
@@ -1545,49 +2019,9 @@
             156
           ],
           "body_bounds": [
-            19,
+            51,
             34,
-            189,
-            155
-          ],
-          "anchors": {
-            "rear_foot": [
-              96,
-              156
-            ],
-            "lead_foot": [
-              112,
-              156
-            ],
-            "pelvis": [
-              104,
-              110
-            ],
-            "head": [
-              104,
-              56
-            ],
-            "rear_hand": [
-              87,
-              88
-            ],
-            "lead_hand": [
-              121,
-              88
-            ]
-          },
-          "sockets": [],
-          "events": []
-        },
-        {
-          "root": [
-            104,
-            156
-          ],
-          "body_bounds": [
-            19,
-            30,
-            161,
+            118,
             156
           ],
           "anchors": {
@@ -1617,7 +2051,20 @@
             ]
           },
           "sockets": [],
-          "events": []
+          "events": [],
+          "source": {
+            "state": "ranged",
+            "row": 7,
+            "column": 7,
+            "alpha_bounds": [
+              32,
+              4,
+              99,
+              126
+            ],
+            "opaque_pixels": 4185,
+            "uniform_bake_scale": 1.0
+          }
         },
         {
           "root": [
@@ -1625,50 +2072,116 @@
             156
           ],
           "body_bounds": [
-            22,
+            51,
+            35,
+            117,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": [],
+          "source": {
+            "state": "ranged",
+            "row": 7,
+            "column": 0,
+            "alpha_bounds": [
+              32,
+              5,
+              98,
+              126
+            ],
+            "opaque_pixels": 4127,
+            "uniform_bake_scale": 1.0
+          }
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            45,
+            34,
+            123,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": [],
+          "source": {
+            "state": "ranged",
+            "row": 7,
+            "column": 1,
+            "alpha_bounds": [
+              26,
+              4,
+              104,
+              126
+            ],
+            "opaque_pixels": 4526,
+            "uniform_bake_scale": 1.0
+          }
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            42,
             46,
-            189,
-            156
-          ],
-          "anchors": {
-            "rear_foot": [
-              96,
-              156
-            ],
-            "lead_foot": [
-              112,
-              156
-            ],
-            "pelvis": [
-              104,
-              110
-            ],
-            "head": [
-              104,
-              56
-            ],
-            "rear_hand": [
-              87,
-              88
-            ],
-            "lead_hand": [
-              121,
-              88
-            ]
-          },
-          "sockets": [],
-          "events": []
-        },
-        {
-          "root": [
-            104,
-            156
-          ],
-          "body_bounds": [
-            19,
-            31,
-            189,
-            156
+            122,
+            155
           ],
           "anchors": {
             "rear_foot": [
@@ -1699,7 +2212,20 @@
           "sockets": [],
           "events": [
             "contact"
-          ]
+          ],
+          "source": {
+            "state": "ranged",
+            "row": 7,
+            "column": 2,
+            "alpha_bounds": [
+              23,
+              16,
+              103,
+              125
+            ],
+            "opaque_pixels": 3863,
+            "uniform_bake_scale": 1.0
+          }
         },
         {
           "root": [
@@ -1707,9 +2233,9 @@
             156
           ],
           "body_bounds": [
-            19,
-            34,
-            164,
+            48,
+            30,
+            117,
             156
           ],
           "anchors": {
@@ -1739,7 +2265,20 @@
             ]
           },
           "sockets": [],
-          "events": []
+          "events": [],
+          "source": {
+            "state": "ranged",
+            "row": 7,
+            "column": 3,
+            "alpha_bounds": [
+              29,
+              0,
+              98,
+              126
+            ],
+            "opaque_pixels": 4007,
+            "uniform_bake_scale": 1.0
+          }
         }
       ]
     },
@@ -1761,9 +2300,115 @@
             156
           ],
           "body_bounds": [
-            19,
-            34,
-            168,
+            51,
+            35,
+            117,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": [],
+          "source": {
+            "state": "dodge",
+            "row": 8,
+            "column": 0,
+            "alpha_bounds": [
+              32,
+              5,
+              98,
+              126
+            ],
+            "opaque_pixels": 4127,
+            "uniform_bake_scale": 1.0
+          }
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            43,
+            42,
+            121,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": [],
+          "source": {
+            "state": "dodge",
+            "row": 8,
+            "column": 1,
+            "alpha_bounds": [
+              24,
+              12,
+              102,
+              126
+            ],
+            "opaque_pixels": 3592,
+            "uniform_bake_scale": 1.0
+          }
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            41,
+            37,
+            121,
             155
           ],
           "anchors": {
@@ -1793,7 +2438,20 @@
             ]
           },
           "sockets": [],
-          "events": []
+          "events": [],
+          "source": {
+            "state": "dodge",
+            "row": 8,
+            "column": 2,
+            "alpha_bounds": [
+              22,
+              7,
+              102,
+              125
+            ],
+            "opaque_pixels": 3809,
+            "uniform_bake_scale": 1.0
+          }
         },
         {
           "root": [
@@ -1801,90 +2459,10 @@
             156
           ],
           "body_bounds": [
-            47,
-            33,
-            189,
-            156
-          ],
-          "anchors": {
-            "rear_foot": [
-              96,
-              156
-            ],
-            "lead_foot": [
-              112,
-              156
-            ],
-            "pelvis": [
-              104,
-              110
-            ],
-            "head": [
-              104,
-              56
-            ],
-            "rear_hand": [
-              87,
-              88
-            ],
-            "lead_hand": [
-              121,
-              88
-            ]
-          },
-          "sockets": [],
-          "events": []
-        },
-        {
-          "root": [
-            104,
-            156
-          ],
-          "body_bounds": [
-            19,
-            36,
-            189,
-            156
-          ],
-          "anchors": {
-            "rear_foot": [
-              96,
-              156
-            ],
-            "lead_foot": [
-              112,
-              156
-            ],
-            "pelvis": [
-              104,
-              110
-            ],
-            "head": [
-              104,
-              56
-            ],
-            "rear_hand": [
-              87,
-              88
-            ],
-            "lead_hand": [
-              121,
-              88
-            ]
-          },
-          "sockets": [],
-          "events": []
-        },
-        {
-          "root": [
-            104,
-            156
-          ],
-          "body_bounds": [
-            19,
+            42,
             34,
-            164,
-            156
+            124,
+            155
           ],
           "anchors": {
             "rear_foot": [
@@ -1915,7 +2493,20 @@
           "sockets": [],
           "events": [
             "contact"
-          ]
+          ],
+          "source": {
+            "state": "dodge",
+            "row": 8,
+            "column": 3,
+            "alpha_bounds": [
+              23,
+              4,
+              105,
+              125
+            ],
+            "opaque_pixels": 4103,
+            "uniform_bake_scale": 1.0
+          }
         },
         {
           "root": [
@@ -1923,10 +2514,10 @@
             156
           ],
           "body_bounds": [
-            51,
-            35,
-            189,
-            156
+            45,
+            33,
+            127,
+            155
           ],
           "anchors": {
             "rear_foot": [
@@ -1955,7 +2546,20 @@
             ]
           },
           "sockets": [],
-          "events": []
+          "events": [],
+          "source": {
+            "state": "dodge",
+            "row": 8,
+            "column": 4,
+            "alpha_bounds": [
+              26,
+              3,
+              108,
+              125
+            ],
+            "opaque_pixels": 4061,
+            "uniform_bake_scale": 1.0
+          }
         }
       ]
     },
@@ -1977,9 +2581,62 @@
             156
           ],
           "body_bounds": [
-            42,
-            49,
-            168,
+            35,
+            35,
+            129,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": [],
+          "source": {
+            "state": "hurt",
+            "row": 9,
+            "column": 1,
+            "alpha_bounds": [
+              16,
+              5,
+              110,
+              126
+            ],
+            "opaque_pixels": 3442,
+            "uniform_bake_scale": 1.0
+          }
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            41,
+            38,
+            121,
             155
           ],
           "anchors": {
@@ -2009,7 +2666,20 @@
             ]
           },
           "sockets": [],
-          "events": []
+          "events": [],
+          "source": {
+            "state": "hurt",
+            "row": 9,
+            "column": 2,
+            "alpha_bounds": [
+              22,
+              8,
+              102,
+              125
+            ],
+            "opaque_pixels": 3950,
+            "uniform_bake_scale": 1.0
+          }
         },
         {
           "root": [
@@ -2017,10 +2687,10 @@
             156
           ],
           "body_bounds": [
-            27,
-            30,
-            189,
-            156
+            42,
+            35,
+            124,
+            155
           ],
           "anchors": {
             "rear_foot": [
@@ -2049,7 +2719,20 @@
             ]
           },
           "sockets": [],
-          "events": []
+          "events": [],
+          "source": {
+            "state": "hurt",
+            "row": 9,
+            "column": 3,
+            "alpha_bounds": [
+              23,
+              5,
+              105,
+              125
+            ],
+            "opaque_pixels": 4100,
+            "uniform_bake_scale": 1.0
+          }
         },
         {
           "root": [
@@ -2057,50 +2740,10 @@
             156
           ],
           "body_bounds": [
-            19,
-            34,
-            164,
-            156
-          ],
-          "anchors": {
-            "rear_foot": [
-              96,
-              156
-            ],
-            "lead_foot": [
-              112,
-              156
-            ],
-            "pelvis": [
-              104,
-              110
-            ],
-            "head": [
-              104,
-              56
-            ],
-            "rear_hand": [
-              87,
-              88
-            ],
-            "lead_hand": [
-              121,
-              88
-            ]
-          },
-          "sockets": [],
-          "events": []
-        },
-        {
-          "root": [
-            104,
-            156
-          ],
-          "body_bounds": [
-            46,
-            52,
-            165,
-            156
+            40,
+            49,
+            129,
+            155
           ],
           "anchors": {
             "rear_foot": [
@@ -2131,7 +2774,20 @@
           "sockets": [],
           "events": [
             "contact"
-          ]
+          ],
+          "source": {
+            "state": "hurt",
+            "row": 9,
+            "column": 4,
+            "alpha_bounds": [
+              21,
+              19,
+              110,
+              125
+            ],
+            "opaque_pixels": 3437,
+            "uniform_bake_scale": 1.0
+          }
         },
         {
           "root": [
@@ -2139,9 +2795,9 @@
             156
           ],
           "body_bounds": [
-            22,
-            35,
-            189,
+            36,
+            30,
+            134,
             156
           ],
           "anchors": {
@@ -2171,7 +2827,20 @@
             ]
           },
           "sockets": [],
-          "events": []
+          "events": [],
+          "source": {
+            "state": "hurt",
+            "row": 9,
+            "column": 5,
+            "alpha_bounds": [
+              17,
+              0,
+              115,
+              126
+            ],
+            "opaque_pixels": 3698,
+            "uniform_bake_scale": 1.0
+          }
         }
       ]
     },
@@ -2193,9 +2862,115 @@
             156
           ],
           "body_bounds": [
-            19,
+            72,
+            46,
+            144,
+            158
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": [],
+          "source": {
+            "state": "down",
+            "row": 10,
+            "column": 2,
+            "alpha_bounds": [
+              53,
+              16,
+              125,
+              128
+            ],
+            "opaque_pixels": 3469,
+            "uniform_bake_scale": 1.0
+          }
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            56,
+            40,
+            147,
+            158
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": [],
+          "source": {
+            "state": "down",
+            "row": 10,
+            "column": 3,
+            "alpha_bounds": [
+              37,
+              10,
+              128,
+              128
+            ],
+            "opaque_pixels": 3354,
+            "uniform_bake_scale": 1.0
+          }
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            36,
             51,
-            189,
+            147,
             158
           ],
           "anchors": {
@@ -2225,7 +3000,20 @@
             ]
           },
           "sockets": [],
-          "events": []
+          "events": [],
+          "source": {
+            "state": "down",
+            "row": 10,
+            "column": 4,
+            "alpha_bounds": [
+              17,
+              21,
+              128,
+              128
+            ],
+            "opaque_pixels": 3230,
+            "uniform_bake_scale": 1.0
+          }
         },
         {
           "root": [
@@ -2233,90 +3021,10 @@
             156
           ],
           "body_bounds": [
-            19,
+            25,
             76,
-            189,
+            147,
             158
-          ],
-          "anchors": {
-            "rear_foot": [
-              96,
-              156
-            ],
-            "lead_foot": [
-              112,
-              156
-            ],
-            "pelvis": [
-              104,
-              110
-            ],
-            "head": [
-              104,
-              56
-            ],
-            "rear_hand": [
-              87,
-              88
-            ],
-            "lead_hand": [
-              121,
-              88
-            ]
-          },
-          "sockets": [],
-          "events": []
-        },
-        {
-          "root": [
-            104,
-            156
-          ],
-          "body_bounds": [
-            19,
-            102,
-            189,
-            158
-          ],
-          "anchors": {
-            "rear_foot": [
-              96,
-              156
-            ],
-            "lead_foot": [
-              112,
-              156
-            ],
-            "pelvis": [
-              104,
-              110
-            ],
-            "head": [
-              104,
-              56
-            ],
-            "rear_hand": [
-              87,
-              88
-            ],
-            "lead_hand": [
-              121,
-              88
-            ]
-          },
-          "sockets": [],
-          "events": []
-        },
-        {
-          "root": [
-            104,
-            156
-          ],
-          "body_bounds": [
-            19,
-            143,
-            23,
-            149
           ],
           "anchors": {
             "rear_foot": [
@@ -2347,7 +3055,20 @@
           "sockets": [],
           "events": [
             "contact"
-          ]
+          ],
+          "source": {
+            "state": "down",
+            "row": 10,
+            "column": 5,
+            "alpha_bounds": [
+              6,
+              46,
+              128,
+              128
+            ],
+            "opaque_pixels": 2986,
+            "uniform_bake_scale": 1.0
+          }
         },
         {
           "root": [
@@ -2355,10 +3076,10 @@
             156
           ],
           "body_bounds": [
-            47,
-            55,
-            175,
-            156
+            21,
+            102,
+            147,
+            158
           ],
           "anchors": {
             "rear_foot": [
@@ -2387,7 +3108,20 @@
             ]
           },
           "sockets": [],
-          "events": []
+          "events": [],
+          "source": {
+            "state": "down",
+            "row": 10,
+            "column": 6,
+            "alpha_bounds": [
+              2,
+              72,
+              128,
+              128
+            ],
+            "opaque_pixels": 2753,
+            "uniform_bake_scale": 1.0
+          }
         }
       ]
     },
@@ -2409,9 +3143,9 @@
             156
           ],
           "body_bounds": [
-            19,
-            34,
-            164,
+            48,
+            30,
+            117,
             156
           ],
           "anchors": {
@@ -2441,7 +3175,20 @@
             ]
           },
           "sockets": [],
-          "events": []
+          "events": [],
+          "source": {
+            "state": "super",
+            "row": 11,
+            "column": 3,
+            "alpha_bounds": [
+              29,
+              0,
+              98,
+              126
+            ],
+            "opaque_pixels": 4007,
+            "uniform_bake_scale": 1.0
+          }
         },
         {
           "root": [
@@ -2449,49 +3196,9 @@
             156
           ],
           "body_bounds": [
-            51,
-            35,
-            189,
-            156
-          ],
-          "anchors": {
-            "rear_foot": [
-              96,
-              156
-            ],
-            "lead_foot": [
-              112,
-              156
-            ],
-            "pelvis": [
-              104,
-              110
-            ],
-            "head": [
-              104,
-              56
-            ],
-            "rear_hand": [
-              87,
-              88
-            ],
-            "lead_hand": [
-              121,
-              88
-            ]
-          },
-          "sockets": [],
-          "events": []
-        },
-        {
-          "root": [
-            104,
-            156
-          ],
-          "body_bounds": [
-            19,
-            34,
-            189,
+            37,
+            36,
+            131,
             155
           ],
           "anchors": {
@@ -2521,7 +3228,20 @@
             ]
           },
           "sockets": [],
-          "events": []
+          "events": [],
+          "source": {
+            "state": "super",
+            "row": 11,
+            "column": 4,
+            "alpha_bounds": [
+              18,
+              6,
+              112,
+              125
+            ],
+            "opaque_pixels": 4028,
+            "uniform_bake_scale": 1.0
+          }
         },
         {
           "root": [
@@ -2529,9 +3249,62 @@
             156
           ],
           "body_bounds": [
-            19,
-            30,
-            161,
+            39,
+            40,
+            130,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": [],
+          "source": {
+            "state": "super",
+            "row": 11,
+            "column": 5,
+            "alpha_bounds": [
+              20,
+              10,
+              111,
+              126
+            ],
+            "opaque_pixels": 3812,
+            "uniform_bake_scale": 1.0
+          }
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            50,
+            34,
+            117,
             156
           ],
           "anchors": {
@@ -2563,7 +3336,20 @@
           "sockets": [],
           "events": [
             "contact"
-          ]
+          ],
+          "source": {
+            "state": "super",
+            "row": 11,
+            "column": 6,
+            "alpha_bounds": [
+              31,
+              4,
+              98,
+              126
+            ],
+            "opaque_pixels": 3773,
+            "uniform_bake_scale": 1.0
+          }
         },
         {
           "root": [
@@ -2571,9 +3357,9 @@
             156
           ],
           "body_bounds": [
-            39,
-            36,
-            189,
+            51,
+            34,
+            118,
             156
           ],
           "anchors": {
@@ -2603,7 +3389,20 @@
             ]
           },
           "sockets": [],
-          "events": []
+          "events": [],
+          "source": {
+            "state": "super",
+            "row": 11,
+            "column": 7,
+            "alpha_bounds": [
+              32,
+              4,
+              99,
+              126
+            ],
+            "opaque_pixels": 4185,
+            "uniform_bake_scale": 1.0
+          }
         }
       ]
     },
@@ -2625,130 +3424,169 @@
             156
           ],
           "body_bounds": [
-            46,
             43,
-            189,
-            156
-          ],
-          "anchors": {
-            "rear_foot": [
-              96,
-              156
-            ],
-            "lead_foot": [
-              112,
-              156
-            ],
-            "pelvis": [
-              104,
-              110
-            ],
-            "head": [
-              104,
-              56
-            ],
-            "rear_hand": [
-              87,
-              88
-            ],
-            "lead_hand": [
-              121,
-              88
-            ]
-          },
-          "sockets": [],
-          "events": []
-        },
-        {
-          "root": [
-            104,
-            156
-          ],
-          "body_bounds": [
-            19,
-            36,
-            189,
-            156
-          ],
-          "anchors": {
-            "rear_foot": [
-              96,
-              156
-            ],
-            "lead_foot": [
-              112,
-              156
-            ],
-            "pelvis": [
-              104,
-              110
-            ],
-            "head": [
-              104,
-              56
-            ],
-            "rear_hand": [
-              87,
-              88
-            ],
-            "lead_hand": [
-              121,
-              88
-            ]
-          },
-          "sockets": [],
-          "events": []
-        },
-        {
-          "root": [
-            104,
-            156
-          ],
-          "body_bounds": [
-            19,
-            50,
-            170,
-            155
-          ],
-          "anchors": {
-            "rear_foot": [
-              96,
-              156
-            ],
-            "lead_foot": [
-              112,
-              156
-            ],
-            "pelvis": [
-              104,
-              110
-            ],
-            "head": [
-              104,
-              56
-            ],
-            "rear_hand": [
-              87,
-              88
-            ],
-            "lead_hand": [
-              121,
-              88
-            ]
-          },
-          "sockets": [],
-          "events": []
-        },
-        {
-          "root": [
-            104,
-            156
-          ],
-          "body_bounds": [
-            45,
             33,
-            189,
+            127,
             155
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": [],
+          "source": {
+            "state": "air_attack",
+            "row": 12,
+            "column": 4,
+            "alpha_bounds": [
+              24,
+              3,
+              108,
+              125
+            ],
+            "opaque_pixels": 4303,
+            "uniform_bake_scale": 1.0
+          }
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            41,
+            53,
+            128,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": [],
+          "source": {
+            "state": "air_attack",
+            "row": 12,
+            "column": 5,
+            "alpha_bounds": [
+              22,
+              23,
+              109,
+              126
+            ],
+            "opaque_pixels": 3272,
+            "uniform_bake_scale": 1.0
+          }
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            50,
+            34,
+            117,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": [],
+          "source": {
+            "state": "air_attack",
+            "row": 12,
+            "column": 6,
+            "alpha_bounds": [
+              31,
+              4,
+              98,
+              126
+            ],
+            "opaque_pixels": 3773,
+            "uniform_bake_scale": 1.0
+          }
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            46,
+            51,
+            123,
+            156
           ],
           "anchors": {
             "rear_foot": [
@@ -2779,7 +3617,20 @@
           "sockets": [],
           "events": [
             "contact"
-          ]
+          ],
+          "source": {
+            "state": "air_attack",
+            "row": 12,
+            "column": 7,
+            "alpha_bounds": [
+              27,
+              21,
+              104,
+              126
+            ],
+            "opaque_pixels": 3627,
+            "uniform_bake_scale": 1.0
+          }
         },
         {
           "root": [
@@ -2787,9 +3638,9 @@
             156
           ],
           "body_bounds": [
-            19,
-            34,
-            189,
+            46,
+            52,
+            122,
             156
           ],
           "anchors": {
@@ -2819,7 +3670,20 @@
             ]
           },
           "sockets": [],
-          "events": []
+          "events": [],
+          "source": {
+            "state": "air_attack",
+            "row": 12,
+            "column": 0,
+            "alpha_bounds": [
+              27,
+              22,
+              103,
+              126
+            ],
+            "opaque_pixels": 3503,
+            "uniform_bake_scale": 1.0
+          }
         }
       ]
     },
@@ -2841,129 +3705,168 @@
             156
           ],
           "body_bounds": [
-            19,
-            42,
-            189,
-            156
-          ],
-          "anchors": {
-            "rear_foot": [
-              96,
-              156
-            ],
-            "lead_foot": [
-              112,
-              156
-            ],
-            "pelvis": [
-              104,
-              110
-            ],
-            "head": [
-              104,
-              56
-            ],
-            "rear_hand": [
-              87,
-              88
-            ],
-            "lead_hand": [
-              121,
-              88
-            ]
-          },
-          "sockets": [],
-          "events": []
-        },
-        {
-          "root": [
-            104,
-            156
-          ],
-          "body_bounds": [
-            19,
-            30,
-            161,
-            156
-          ],
-          "anchors": {
-            "rear_foot": [
-              96,
-              156
-            ],
-            "lead_foot": [
-              112,
-              156
-            ],
-            "pelvis": [
-              104,
-              110
-            ],
-            "head": [
-              104,
-              56
-            ],
-            "rear_hand": [
-              87,
-              88
-            ],
-            "lead_hand": [
-              121,
-              88
-            ]
-          },
-          "sockets": [],
-          "events": []
-        },
-        {
-          "root": [
-            104,
-            156
-          ],
-          "body_bounds": [
-            42,
-            49,
-            189,
-            156
-          ],
-          "anchors": {
-            "rear_foot": [
-              96,
-              156
-            ],
-            "lead_foot": [
-              112,
-              156
-            ],
-            "pelvis": [
-              104,
-              110
-            ],
-            "head": [
-              104,
-              56
-            ],
-            "rear_hand": [
-              87,
-              88
-            ],
-            "lead_hand": [
-              121,
-              88
-            ]
-          },
-          "sockets": [],
-          "events": []
-        },
-        {
-          "root": [
-            104,
-            156
-          ],
-          "body_bounds": [
-            19,
+            50,
             31,
-            189,
+            119,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": [],
+          "source": {
+            "state": "jump",
+            "row": 13,
+            "column": 5,
+            "alpha_bounds": [
+              31,
+              1,
+              100,
+              126
+            ],
+            "opaque_pixels": 3971,
+            "uniform_bake_scale": 1.0
+          }
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            44,
+            39,
+            123,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": [],
+          "source": {
+            "state": "jump",
+            "row": 13,
+            "column": 6,
+            "alpha_bounds": [
+              25,
+              9,
+              104,
+              126
+            ],
+            "opaque_pixels": 3752,
+            "uniform_bake_scale": 1.0
+          }
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            51,
+            34,
+            118,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": [],
+          "source": {
+            "state": "jump",
+            "row": 13,
+            "column": 7,
+            "alpha_bounds": [
+              32,
+              4,
+              99,
+              126
+            ],
+            "opaque_pixels": 4185,
+            "uniform_bake_scale": 1.0
+          }
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            51,
+            35,
+            117,
             156
           ],
           "anchors": {
@@ -2995,7 +3898,20 @@
           "sockets": [],
           "events": [
             "contact"
-          ]
+          ],
+          "source": {
+            "state": "jump",
+            "row": 13,
+            "column": 0,
+            "alpha_bounds": [
+              32,
+              5,
+              98,
+              126
+            ],
+            "opaque_pixels": 4127,
+            "uniform_bake_scale": 1.0
+          }
         },
         {
           "root": [
@@ -3003,9 +3919,9 @@
             156
           ],
           "body_bounds": [
-            19,
-            34,
-            164,
+            43,
+            42,
+            121,
             156
           ],
           "anchors": {
@@ -3035,7 +3951,20 @@
             ]
           },
           "sockets": [],
-          "events": []
+          "events": [],
+          "source": {
+            "state": "jump",
+            "row": 13,
+            "column": 1,
+            "alpha_bounds": [
+              24,
+              12,
+              102,
+              126
+            ],
+            "opaque_pixels": 3592,
+            "uniform_bake_scale": 1.0
+          }
         }
       ]
     },
@@ -3057,49 +3986,9 @@
             156
           ],
           "body_bounds": [
-            19,
-            30,
-            169,
-            156
-          ],
-          "anchors": {
-            "rear_foot": [
-              96,
-              156
-            ],
-            "lead_foot": [
-              112,
-              156
-            ],
-            "pelvis": [
-              104,
-              110
-            ],
-            "head": [
-              104,
-              56
-            ],
-            "rear_hand": [
-              87,
-              88
-            ],
-            "lead_hand": [
-              121,
-              88
-            ]
-          },
-          "sockets": [],
-          "events": []
-        },
-        {
-          "root": [
-            104,
-            156
-          ],
-          "body_bounds": [
             54,
-            30,
-            189,
+            31,
+            113,
             156
           ],
           "anchors": {
@@ -3129,7 +4018,20 @@
             ]
           },
           "sockets": [],
-          "events": []
+          "events": [],
+          "source": {
+            "state": "pet",
+            "row": 14,
+            "column": 6,
+            "alpha_bounds": [
+              35,
+              1,
+              94,
+              126
+            ],
+            "opaque_pixels": 4289,
+            "uniform_bake_scale": 1.0
+          }
         },
         {
           "root": [
@@ -3137,49 +4039,115 @@
             156
           ],
           "body_bounds": [
-            19,
-            30,
-            189,
-            156
-          ],
-          "anchors": {
-            "rear_foot": [
-              96,
-              156
-            ],
-            "lead_foot": [
-              112,
-              156
-            ],
-            "pelvis": [
-              104,
-              110
-            ],
-            "head": [
-              104,
-              56
-            ],
-            "rear_hand": [
-              87,
-              88
-            ],
-            "lead_hand": [
-              121,
-              88
-            ]
-          },
-          "sockets": [],
-          "events": []
-        },
-        {
-          "root": [
-            104,
-            156
-          ],
-          "body_bounds": [
-            19,
+            51,
             34,
-            164,
+            118,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": [],
+          "source": {
+            "state": "pet",
+            "row": 14,
+            "column": 7,
+            "alpha_bounds": [
+              32,
+              4,
+              99,
+              126
+            ],
+            "opaque_pixels": 4185,
+            "uniform_bake_scale": 1.0
+          }
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            51,
+            35,
+            117,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": [],
+          "source": {
+            "state": "pet",
+            "row": 14,
+            "column": 0,
+            "alpha_bounds": [
+              32,
+              5,
+              98,
+              126
+            ],
+            "opaque_pixels": 4127,
+            "uniform_bake_scale": 1.0
+          }
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            50,
+            33,
+            117,
             156
           ],
           "anchors": {
@@ -3211,7 +4179,20 @@
           "sockets": [],
           "events": [
             "contact"
-          ]
+          ],
+          "source": {
+            "state": "pet",
+            "row": 14,
+            "column": 1,
+            "alpha_bounds": [
+              31,
+              3,
+              98,
+              126
+            ],
+            "opaque_pixels": 4240,
+            "uniform_bake_scale": 1.0
+          }
         },
         {
           "root": [
@@ -3220,8 +4201,8 @@
           ],
           "body_bounds": [
             51,
-            35,
-            189,
+            30,
+            110,
             156
           ],
           "anchors": {
@@ -3251,7 +4232,20 @@
             ]
           },
           "sockets": [],
-          "events": []
+          "events": [],
+          "source": {
+            "state": "pet",
+            "row": 14,
+            "column": 2,
+            "alpha_bounds": [
+              32,
+              0,
+              91,
+              126
+            ],
+            "opaque_pixels": 4355,
+            "uniform_bake_scale": 1.0
+          }
         }
       ]
     },
@@ -3273,10 +4267,10 @@
             156
           ],
           "body_bounds": [
-            58,
+            54,
             38,
-            189,
-            157
+            124,
+            156
           ],
           "anchors": {
             "rear_foot": [
@@ -3305,7 +4299,20 @@
             ]
           },
           "sockets": [],
-          "events": []
+          "events": [],
+          "source": {
+            "state": "refill",
+            "row": 15,
+            "column": 15,
+            "alpha_bounds": [
+              35,
+              8,
+              105,
+              126
+            ],
+            "opaque_pixels": 4393,
+            "uniform_bake_scale": 1.0
+          }
         },
         {
           "root": [
@@ -3313,90 +4320,116 @@
             156
           ],
           "body_bounds": [
-            19,
+            47,
+            38,
+            120,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": [],
+          "source": {
+            "state": "refill",
+            "row": 15,
+            "column": 0,
+            "alpha_bounds": [
+              28,
+              8,
+              101,
+              126
+            ],
+            "opaque_pixels": 4204,
+            "uniform_bake_scale": 1.0
+          }
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            44,
+            38,
+            117,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": [],
+          "source": {
+            "state": "refill",
+            "row": 15,
+            "column": 1,
+            "alpha_bounds": [
+              25,
+              8,
+              98,
+              126
+            ],
+            "opaque_pixels": 4204,
+            "uniform_bake_scale": 1.0
+          }
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            45,
             39,
-            189,
-            157
-          ],
-          "anchors": {
-            "rear_foot": [
-              96,
-              156
-            ],
-            "lead_foot": [
-              112,
-              156
-            ],
-            "pelvis": [
-              104,
-              110
-            ],
-            "head": [
-              104,
-              56
-            ],
-            "rear_hand": [
-              87,
-              88
-            ],
-            "lead_hand": [
-              121,
-              88
-            ]
-          },
-          "sockets": [],
-          "events": []
-        },
-        {
-          "root": [
-            104,
+            117,
             156
-          ],
-          "body_bounds": [
-            19,
-            41,
-            165,
-            158
-          ],
-          "anchors": {
-            "rear_foot": [
-              96,
-              156
-            ],
-            "lead_foot": [
-              112,
-              156
-            ],
-            "pelvis": [
-              104,
-              110
-            ],
-            "head": [
-              104,
-              56
-            ],
-            "rear_hand": [
-              87,
-              88
-            ],
-            "lead_hand": [
-              121,
-              88
-            ]
-          },
-          "sockets": [],
-          "events": []
-        },
-        {
-          "root": [
-            104,
-            156
-          ],
-          "body_bounds": [
-            57,
-            41,
-            189,
-            158
           ],
           "anchors": {
             "rear_foot": [
@@ -3427,7 +4460,20 @@
           "sockets": [],
           "events": [
             "contact"
-          ]
+          ],
+          "source": {
+            "state": "refill",
+            "row": 15,
+            "column": 2,
+            "alpha_bounds": [
+              26,
+              9,
+              98,
+              126
+            ],
+            "opaque_pixels": 4247,
+            "uniform_bake_scale": 1.0
+          }
         },
         {
           "root": [
@@ -3435,10 +4481,10 @@
             156
           ],
           "body_bounds": [
-            19,
-            40,
-            189,
-            158
+            46,
+            38,
+            119,
+            156
           ],
           "anchors": {
             "rear_foot": [
@@ -3467,7 +4513,20 @@
             ]
           },
           "sockets": [],
-          "events": []
+          "events": [],
+          "source": {
+            "state": "refill",
+            "row": 15,
+            "column": 3,
+            "alpha_bounds": [
+              27,
+              8,
+              100,
+              126
+            ],
+            "opaque_pixels": 4246,
+            "uniform_bake_scale": 1.0
+          }
         }
       ]
     },
@@ -3489,9 +4548,115 @@
             156
           ],
           "body_bounds": [
-            21,
-            41,
-            189,
+            55,
+            38,
+            108,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": [],
+          "source": {
+            "state": "pants",
+            "row": 16,
+            "column": 0,
+            "alpha_bounds": [
+              36,
+              8,
+              89,
+              126
+            ],
+            "opaque_pixels": 3633,
+            "uniform_bake_scale": 1.0
+          }
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            56,
+            38,
+            108,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": [],
+          "source": {
+            "state": "pants",
+            "row": 16,
+            "column": 1,
+            "alpha_bounds": [
+              37,
+              8,
+              89,
+              126
+            ],
+            "opaque_pixels": 3633,
+            "uniform_bake_scale": 1.0
+          }
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            58,
+            40,
+            111,
             157
           ],
           "anchors": {
@@ -3521,7 +4686,20 @@
             ]
           },
           "sockets": [],
-          "events": []
+          "events": [],
+          "source": {
+            "state": "pants",
+            "row": 16,
+            "column": 2,
+            "alpha_bounds": [
+              39,
+              10,
+              92,
+              127
+            ],
+            "opaque_pixels": 3688,
+            "uniform_bake_scale": 1.0
+          }
         },
         {
           "root": [
@@ -3529,89 +4707,9 @@
             156
           ],
           "body_bounds": [
-            19,
+            58,
             41,
-            157,
-            158
-          ],
-          "anchors": {
-            "rear_foot": [
-              96,
-              156
-            ],
-            "lead_foot": [
-              112,
-              156
-            ],
-            "pelvis": [
-              104,
-              110
-            ],
-            "head": [
-              104,
-              56
-            ],
-            "rear_hand": [
-              87,
-              88
-            ],
-            "lead_hand": [
-              121,
-              88
-            ]
-          },
-          "sockets": [],
-          "events": []
-        },
-        {
-          "root": [
-            104,
-            156
-          ],
-          "body_bounds": [
-            59,
-            43,
-            189,
-            158
-          ],
-          "anchors": {
-            "rear_foot": [
-              96,
-              156
-            ],
-            "lead_foot": [
-              112,
-              156
-            ],
-            "pelvis": [
-              104,
-              110
-            ],
-            "head": [
-              104,
-              56
-            ],
-            "rear_hand": [
-              87,
-              88
-            ],
-            "lead_hand": [
-              121,
-              88
-            ]
-          },
-          "sockets": [],
-          "events": []
-        },
-        {
-          "root": [
-            104,
-            156
-          ],
-          "body_bounds": [
-            19,
-            42,
-            189,
+            110,
             158
           ],
           "anchors": {
@@ -3643,7 +4741,20 @@
           "sockets": [],
           "events": [
             "contact"
-          ]
+          ],
+          "source": {
+            "state": "pants",
+            "row": 16,
+            "column": 3,
+            "alpha_bounds": [
+              39,
+              11,
+              91,
+              128
+            ],
+            "opaque_pixels": 3601,
+            "uniform_bake_scale": 1.0
+          }
         },
         {
           "root": [
@@ -3651,9 +4762,9 @@
             156
           ],
           "body_bounds": [
-            19,
-            42,
-            161,
+            60,
+            41,
+            111,
             158
           ],
           "anchors": {
@@ -3683,7 +4794,20 @@
             ]
           },
           "sockets": [],
-          "events": []
+          "events": [],
+          "source": {
+            "state": "pants",
+            "row": 16,
+            "column": 4,
+            "alpha_bounds": [
+              41,
+              11,
+              92,
+              128
+            ],
+            "opaque_pixels": 3583,
+            "uniform_bake_scale": 1.0
+          }
         }
       ]
     }
