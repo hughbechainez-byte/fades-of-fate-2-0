@@ -80,6 +80,72 @@ class CharacterAnimationSkin:
     identity_validation: Mapping[str, Any]
 
 
+# Animation V2 uses these value objects as the one boundary shared by the
+# compiler, atlas loader, combat runtime and renderer.  They intentionally
+# carry complete authored cels and explicit roots instead of pixel-fitting a
+# body or inferring a ground line at draw time.
+@dataclass(frozen=True, slots=True)
+class PoseAnchor:
+    """A named integer-space landmark inside one complete authored cel."""
+
+    name: str
+    position: tuple[int, int]
+
+
+@dataclass(frozen=True, slots=True)
+class VfxSocket:
+    """Author-owned VFX placement metadata for one pose."""
+
+    name: str
+    position: tuple[int, int]
+    tangent: tuple[int, int]
+    size: int
+    intensity: int
+    visibility: str
+    contact_anchor: str | None = None
+    release_anchor: str | None = None
+
+
+@dataclass(frozen=True, slots=True)
+class AnimationEvent:
+    """A non-damaging authored event emitted by an animation phase."""
+
+    name: str
+    phase: int
+    payload: tuple[tuple[str, object], ...] = ()
+
+
+@dataclass(frozen=True, slots=True)
+class VfxPlacement:
+    """A resolved rear/body/front placement supplied with an animation sample."""
+
+    asset_id: str
+    socket: VfxSocket
+    layer: str
+    event_name: str | None = None
+
+
+@dataclass(frozen=True, slots=True)
+class AnimationSample:
+    """Immutable root-aware presentation result for one playable actor pose.
+
+    ``body_surface`` is an already authored, cached pygame surface.  Consumers
+    may blit it but must not mutate it; the frozen structure prevents combat and
+    VFX systems from changing the chosen clip, root, anchors or body bounds.
+    """
+
+    actor_id: str
+    clip_id: str
+    pose_index: int
+    body_surface: object
+    root: tuple[int, int]
+    body_bounds: tuple[int, int, int, int]
+    anchors: tuple[PoseAnchor, ...]
+    events: tuple[AnimationEvent, ...]
+    rear_vfx: tuple[VfxPlacement, ...]
+    front_vfx: tuple[VfxPlacement, ...]
+
+
 def _mapping(value: object, label: str) -> Mapping[str, Any]:
     if not isinstance(value, dict):
         raise ValueError(f"{label} must be an object")

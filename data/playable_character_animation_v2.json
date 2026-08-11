@@ -1,0 +1,66 @@
+{
+  "schema_version": 2,
+  "authored_pose_hz": 30,
+  "logical_canvas": [640, 360],
+  "forbidden_operations": [
+    "smoothscale",
+    "interpolation",
+    "optical_flow",
+    "ai_morphing",
+    "synthetic_inbetween",
+    "runtime_fractional_character_scaling",
+    "runtime_procedural_anatomy",
+    "effect_inclusive_body_fitting"
+  ],
+  "required_playable_characters": ["black_dave", "shelly", "jermaine", "white_dave"],
+  "characters": {
+    "black_dave": {
+      "native_logical_pixel_density": 1,
+      "actor_canvas": [192, 160],
+      "world_root": [96, 156],
+      "source_inputs": {
+        "art_source/black_dave/black_dave_combat_moves_v1.png": "a57ddd8a0c84e2238040631e07c7f317fa057b70238e9cf1b5bedbae4562c262",
+        "assets/sprites/black_dave_animation_atlas.png": "d41d620df303b13e3aab4f99e79bd58b421a08fc4eb9ab4fa977b50d5bb4f4ac"
+      },
+      "source_path": "art_source/black_dave/v2/black_dave_v2_cels.png",
+      "vfx_source_path": "art_source/black_dave/v2/black_dave_v2_flame_vfx_cels.png",
+      "atlas_path": "assets/sprites/black_dave_v2_animation_atlas.png",
+      "vfx_atlas_path": "assets/sprites/black_dave_v2_flame_vfx_atlas.png",
+      "pose_metadata_path": "assets/sprites/black_dave_v2_pose_metadata.json",
+      "route_clips": {
+        "regular": ["dave_z_01", "dave_z_02", "dave_z_03", "dave_z_04", "dave_z_05", "dave_z_06", "dave_z_07"],
+        "kick": ["dave_x_01", "dave_x_02", "dave_x_03", "dave_x_04", "dave_x_05", "dave_x_06", "dave_x_07"],
+        "power": ["dave_c_01", "dave_c_02", "dave_c_03", "dave_c_04", "dave_c_05", "dave_c_06", "dave_c_07"]
+      },
+      "required_clips": ["idle", "walk_start", "walk", "walk_stop", "walk_reverse", "jump_takeoff", "jump_rise", "jump_apex", "jump_fall", "jump_land", "dodge", "hurt", "down", "recovery", "ranged", "super", "pet", "air_punch", "air_kick"]
+    },
+    "shelly": {
+      "native_logical_pixel_density": 1,
+      "actor_canvas": [160, 160],
+      "world_root": [80, 156],
+      "source_inputs": {"assets/sprites/shelly_animation_atlas.png": "fe6af8c716dc23c1c390d044ea38fe9f66099ae92736c05e890efb67d1643d41"},
+      "source_path": "art_source/shelly/shelly_rooted_migration_v2.png",
+      "atlas_path": "assets/sprites/shelly_rooted_animation_atlas.png",
+      "pose_metadata_path": "assets/sprites/shelly_rooted_pose_metadata.json"
+    },
+    "jermaine": {
+      "native_logical_pixel_density": 1,
+      "actor_canvas": [160, 160],
+      "world_root": [80, 156],
+      "source_inputs": {"art_source/jermaine/jermaine_foundation_locked_v1.png": "4b477d3aab512337c6ab7e32d1b80b6997a4c534f5d78410a42bfc4bb9532d1f"},
+      "source_path": "art_source/jermaine/jermaine_rooted_migration_v2.png",
+      "atlas_path": "assets/sprites/jermaine_rooted_animation_atlas.png",
+      "pose_metadata_path": "assets/sprites/jermaine_rooted_pose_metadata.json"
+    },
+    "white_dave": {
+      "native_logical_pixel_density": 1,
+      "actor_canvas": [176, 160],
+      "world_root": [88, 156],
+      "source_inputs": {"art_source/white_dave/white_dave_foundation_motion_locked_v1.png": "94b0a92e0ea8fdf4862ced488deae3d8545517777fa1157dbbd136c09a17faf5"},
+      "source_path": "art_source/white_dave/white_dave_rooted_migration_v2.png",
+      "atlas_path": "assets/sprites/white_dave_rooted_animation_atlas.png",
+      "pose_metadata_path": "assets/sprites/white_dave_rooted_pose_metadata.json"
+    }
+  },
+  "vfx_layer_order": ["shadow", "rear_vfx", "complete_body", "front_vfx", "contact_vfx"]
+}
