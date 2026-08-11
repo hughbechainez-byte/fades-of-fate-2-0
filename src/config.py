@@ -17,6 +17,7 @@ from .location_lock import (
     validate_gameplay_locations,
 )
 from .chapter_two import chapter_two_gameplay_levels
+from .attack_routes import AttackRouteError, validate_route_data
 
 
 GAME_NAME = "The Fades of Fate"
@@ -1147,6 +1148,13 @@ def validate_gameplay(
     moves = data["moves"]
     if not isinstance(moves, dict):
         raise ConfigError("moves must be an object")
+    # V2 routes are a separate authoritative source.  The animation compiler
+    # supplies clip IDs for the stronger orphan-clip check during integration;
+    # gameplay config always verifies route shape and move references.
+    try:
+        validate_route_data(load_json("data/black_dave_v2_routes.json"), moves)
+    except AttackRouteError as exc:
+        raise ConfigError(f"data.black_dave_v2_routes: {exc}") from exc
     light_combo = moves.get("light_combo", ())
     if not isinstance(light_combo, list) or len(light_combo) < 2:
         raise ConfigError("moves.light_combo must contain at least two attacks")

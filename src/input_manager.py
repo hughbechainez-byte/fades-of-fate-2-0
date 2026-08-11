@@ -46,6 +46,11 @@ KEYBOARD_BINDING: dict[str, str] = {"type": "keyboard"}
 ACTION_LIGHT = "light"
 ACTION_ALT_LIGHT = "alt_light"
 ACTION_HEAVY = "heavy"
+# V2 combat names.  Legacy action names remain emitted alongside these until
+# the entity adapter consumes routes directly.
+ACTION_REGULAR = "regular"
+ACTION_KICK = "kick"
+ACTION_POWER = "power"
 ACTION_JUMP = "jump"
 ACTION_DODGE = "dodge"
 ACTION_SUPER = "super"
@@ -63,6 +68,9 @@ ACTION_BACK = "back"
 
 
 KEYBOARD_ACTION_KEYS: dict[str, frozenset[int]] = {
+    ACTION_REGULAR: frozenset((pygame.K_z,)),
+    ACTION_KICK: frozenset((pygame.K_x, pygame.K_j)),
+    ACTION_POWER: frozenset((pygame.K_c, pygame.K_k)),
     ACTION_LIGHT: frozenset((pygame.K_x, pygame.K_j)),
     ACTION_ALT_LIGHT: frozenset((pygame.K_z,)),
     ACTION_HEAVY: frozenset((pygame.K_c, pygame.K_k)),
@@ -80,6 +88,9 @@ KEYBOARD_ACTION_KEYS: dict[str, frozenset[int]] = {
 }
 
 CONTROLLER_ACTION_BUTTONS: dict[str, frozenset[int]] = {
+    ACTION_REGULAR: frozenset((pygame.CONTROLLER_BUTTON_X,)),
+    ACTION_KICK: frozenset((pygame.CONTROLLER_BUTTON_Y,)),
+    ACTION_POWER: frozenset((pygame.CONTROLLER_BUTTON_BACK,)),
     ACTION_LIGHT: frozenset((pygame.CONTROLLER_BUTTON_X,)),
     ACTION_HEAVY: frozenset((pygame.CONTROLLER_BUTTON_Y,)),
     ACTION_JUMP: frozenset((pygame.CONTROLLER_BUTTON_A,)),
@@ -100,11 +111,34 @@ CONTROLLER_ACTION_BUTTONS: dict[str, frozenset[int]] = {
     ACTION_PAUSE: frozenset((pygame.CONTROLLER_BUTTON_START,)),
 }
 
+
+def controller_action_buttons(*, power_button: int | None = None) -> dict[str, frozenset[int]]:
+    """Return controller bindings with a collision-checked third attack.
+
+    BACK is the default power button because X/Y already identify regular and
+    kick.  A remap may not silently replace another action's physical button.
+    """
+    mapping = dict(CONTROLLER_ACTION_BUTTONS)
+    selected = pygame.CONTROLLER_BUTTON_BACK if power_button is None else int(power_button)
+    occupied = {
+        button
+        for action, buttons in mapping.items()
+        if action != ACTION_POWER
+        for button in buttons
+    }
+    if selected in occupied:
+        raise ValueError("controller power button collides with an existing action")
+    mapping[ACTION_POWER] = frozenset((selected,))
+    return mapping
+
 # Human-readable data is kept beside the executable bindings so a future
 # controls/remapping page never needs to duplicate or reverse-engineer labels.
 ACTION_LABELS: dict[str, str] = {
     "move": "Move",
     ACTION_LIGHT: "Light Attack",
+    ACTION_REGULAR: "Regular Attack",
+    ACTION_KICK: "Kick Attack",
+    ACTION_POWER: "Power Attack",
     ACTION_HEAVY: "Heavy Attack",
     ACTION_JUMP: "Jump / Confirm",
     ACTION_DODGE: "Dodge / Back",
@@ -120,6 +154,9 @@ _CONTROL_MAPPING_METADATA: dict[str, tuple[dict[str, object], ...]] = {
         {"action": "move", "label": ACTION_LABELS["move"], "primary": "WASD / Arrow Keys", "aliases": ()},
         {"action": ACTION_LIGHT, "label": ACTION_LABELS[ACTION_LIGHT], "primary": "X", "aliases": ("J",)},
         {"action": ACTION_ALT_LIGHT, "label": "Alt Light Attack", "primary": "Z", "aliases": ()},
+        {"action": ACTION_REGULAR, "label": ACTION_LABELS[ACTION_REGULAR], "primary": "Z", "aliases": ()},
+        {"action": ACTION_KICK, "label": ACTION_LABELS[ACTION_KICK], "primary": "X", "aliases": ("J",)},
+        {"action": ACTION_POWER, "label": ACTION_LABELS[ACTION_POWER], "primary": "C", "aliases": ("K",)},
         {"action": ACTION_HEAVY, "label": ACTION_LABELS[ACTION_HEAVY], "primary": "C", "aliases": ("K",)},
         {"action": ACTION_JUMP, "label": ACTION_LABELS[ACTION_JUMP], "primary": "Space", "aliases": ("Enter",)},
         {"action": ACTION_DODGE, "label": ACTION_LABELS[ACTION_DODGE], "primary": "Left Shift", "aliases": ("L", "V")},
@@ -137,6 +174,9 @@ _CONTROL_MAPPING_METADATA: dict[str, tuple[dict[str, object], ...]] = {
     ),
     "controller": (
         {"action": "move", "label": ACTION_LABELS["move"], "primary": "Left Stick / D-Pad", "aliases": ()},
+        {"action": ACTION_REGULAR, "label": ACTION_LABELS[ACTION_REGULAR], "primary": "X", "aliases": ()},
+        {"action": ACTION_KICK, "label": ACTION_LABELS[ACTION_KICK], "primary": "Y", "aliases": ()},
+        {"action": ACTION_POWER, "label": ACTION_LABELS[ACTION_POWER], "primary": "Back", "aliases": ()},
         {"action": ACTION_LIGHT, "label": ACTION_LABELS[ACTION_LIGHT], "primary": "X", "aliases": ()},
         {"action": ACTION_HEAVY, "label": ACTION_LABELS[ACTION_HEAVY], "primary": "Y", "aliases": ()},
         {"action": ACTION_JUMP, "label": ACTION_LABELS[ACTION_JUMP], "primary": "A", "aliases": ()},
@@ -261,6 +301,7 @@ class InputManager:
         max_players: int = 4,
         deadzone: float = 0.22,
         discover_controllers: bool = True,
+        controller_power_button: int | None = None,
     ) -> None:
         """Create an input manager.
 
@@ -278,6 +319,9 @@ class InputManager:
 
         self.max_players = max_players
         self.deadzone = float(deadzone)
+        self._controller_action_buttons = controller_action_buttons(
+            power_button=controller_power_button
+        )
 
         self._keys_down: set[int] = set()
         self._keys_pressed: set[int] = set()
@@ -582,8 +626,8 @@ class InputManager:
 
         buttons = self._buttons_down.get(instance_id, set())
         pressed_buttons = self._buttons_pressed.get(instance_id, set())
-        held = _actions_for_inputs(buttons, CONTROLLER_ACTION_BUTTONS)
-        pressed = _actions_for_inputs(pressed_buttons, CONTROLLER_ACTION_BUTTONS)
+        held = _actions_for_inputs(buttons, self._controller_action_buttons)
+        pressed = _actions_for_inputs(pressed_buttons, self._controller_action_buttons)
         held = held | frozenset(self._axis_actions_down.get(instance_id, set()))
         pressed = pressed | frozenset(self._axis_actions_pressed.get(instance_id, set()))
 

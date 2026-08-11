@@ -15,6 +15,9 @@ from src.input_manager import (
     ACTION_BB_GUN,
     ACTION_CHIEF,
     ACTION_ALT_LIGHT,
+    ACTION_KICK,
+    ACTION_POWER,
+    ACTION_REGULAR,
     ACTION_CONFIRM,
     ACTION_DODGE,
     ACTION_HEAVY,
@@ -27,6 +30,7 @@ from src.input_manager import (
     ACTION_LABELS,
     InputManager,
     InputSnapshot,
+    controller_action_buttons,
     control_mapping_metadata,
 )
 
@@ -142,6 +146,31 @@ class InputManagerTests(unittest.TestCase):
                 self.assertTrue(expected <= snapshot.held)
                 self.assertTrue(expected <= snapshot.pressed)
                 self.assertTrue(forbidden.isdisjoint(snapshot.held))
+
+    def test_v2_semantic_attack_actions_preserve_legacy_compatibility(self) -> None:
+        cases = (
+            (pygame.K_z, ACTION_REGULAR, ACTION_ALT_LIGHT),
+            (pygame.K_x, ACTION_KICK, ACTION_LIGHT),
+            (pygame.K_c, ACTION_POWER, ACTION_HEAVY),
+            (pygame.K_j, ACTION_KICK, ACTION_LIGHT),
+            (pygame.K_k, ACTION_POWER, ACTION_HEAVY),
+        )
+        for key, semantic, legacy in cases:
+            with self.subTest(key=pygame.key.name(key)):
+                self.manager.clear_held_state()
+                self.manager.process_events((event(pygame.KEYDOWN, key=key),))
+                snapshot = self.manager.snapshot({"type": "keyboard"})
+                self.assertTrue(snapshot.was_pressed(semantic))
+                self.assertTrue(snapshot.was_pressed(legacy))
+
+    def test_controller_power_remap_rejects_collisions(self) -> None:
+        with self.assertRaisesRegex(ValueError, "collides"):
+            controller_action_buttons(power_button=pygame.CONTROLLER_BUTTON_X)
+        with self.assertRaisesRegex(ValueError, "collides"):
+            InputManager(
+                discover_controllers=False,
+                controller_power_button=pygame.CONTROLLER_BUTTON_RIGHTSHOULDER,
+            )
 
         self.manager.clear_held_state()
         self.manager.process_events((event(pygame.KEYDOWN, key=pygame.K_ESCAPE),))
