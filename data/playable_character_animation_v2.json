@@ -18,6 +18,16 @@
       "native_logical_pixel_density": 1,
       "actor_canvas": [192, 160],
       "world_root": [96, 156],
+      "approved_anatomy_reference": {
+        "reference": "black_dave_upright_neutral_v2",
+        "head_to_pelvis": 55,
+        "head_width": 22,
+        "shoulder_span": 47,
+        "chest_span": 41,
+        "pelvis_span": 37,
+        "limb_thickness": 14,
+        "shoe_width": 27
+      },
       "source_inputs": {
         "art_source/black_dave/black_dave_combat_moves_v1.png": "a57ddd8a0c84e2238040631e07c7f317fa057b70238e9cf1b5bedbae4562c262",
         "assets/sprites/black_dave_animation_atlas.png": "d41d620df303b13e3aab4f99e79bd58b421a08fc4eb9ab4fa977b50d5bb4f4ac"

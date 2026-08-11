@@ -29,7 +29,13 @@ DAVE_SOURCE_ROOT = (64, 126)
 # that full build during combat rather than normalising an undersized legacy
 # strike to a smaller 120px silhouette.
 DAVE_UNIFORM_BAKE_SCALE = 1.12
-DAVE_NORMAL_BODY_HEIGHT = 134
+SourceCel = tuple[int, int]
+
+
+def _source_sequence(row: int, columns: tuple[int, ...]) -> tuple[SourceCel, ...]:
+    """Declare full authored source cels without hiding their row provenance."""
+
+    return tuple((row, column) for column in columns)
 
 PLAYER_STATES = (
     "idle", "walk", "attack_1", "attack_2", "attack_3", "attack_4", "heavy",
@@ -40,59 +46,75 @@ PLAYER_STATES = (
 # Each value is an existing full-body authored source row and five deliberate
 # phase cels.  The route contacts and finishers draw from distinct existing
 # complete source cels; shared guards only bridge motions.
-DAVE_CORE_CLIPS: dict[str, tuple[int, tuple[int, ...]]] = {
-    "idle": (0, (0, 2, 4, 6, 8)),
-    "guard": (0, (1, 3, 5, 7, 9)),
-    "walk_start": (1, (0, 1, 2, 3, 4)),
-    "walk": (1, (2, 4, 6, 8, 10)),
-    "walk_stop": (1, (10, 9, 8, 7, 6)),
-    "walk_reverse": (1, (8, 6, 4, 2, 0)),
-    "jump_takeoff": (13, (0, 1, 2, 3, 4)),
-    "jump_rise": (13, (1, 2, 3, 4, 5)),
-    "jump_apex": (13, (2, 3, 4, 5, 6)),
-    "jump_fall": (13, (3, 4, 5, 6, 7)),
-    "jump_land": (13, (4, 5, 6, 7, 0)),
-    "dodge": (8, (0, 2, 4, 6, 7)),
-    "hurt": (9, (0, 2, 4, 5, 7)),
-    "down": (10, (0, 2, 4, 6, 7)),
-    "recovery": (10, (6, 5, 4, 2, 0)),
-    "ranged": (7, (0, 1, 2, 3, 5)),
-    "super": (11, (0, 1, 2, 3, 6)),
-    "pet": (14, (0, 2, 4, 5, 7)),
-    "air_punch": (12, (0, 1, 3, 4, 5)),
-    "air_kick": (12, (1, 3, 5, 6, 7)),
+DAVE_CORE_CLIPS: dict[str, tuple[SourceCel, ...]] = {
+    "idle": _source_sequence(0, (0, 2, 4, 6, 8)),
+    "guard": _source_sequence(0, (1, 3, 5, 7, 9)),
+    "walk_start": _source_sequence(1, (0, 1, 2, 3, 4)),
+    "walk": _source_sequence(1, (2, 4, 6, 8, 10)),
+    "walk_stop": _source_sequence(1, (10, 9, 8, 7, 6)),
+    "walk_reverse": _source_sequence(1, (8, 6, 4, 2, 0)),
+    "jump_takeoff": _source_sequence(13, (0, 1, 2, 3, 4)),
+    "jump_rise": _source_sequence(13, (1, 2, 3, 4, 5)),
+    "jump_apex": _source_sequence(13, (2, 3, 4, 5, 6)),
+    "jump_fall": _source_sequence(13, (3, 4, 5, 6, 7)),
+    "jump_land": _source_sequence(13, (4, 5, 6, 7, 0)),
+    "dodge": _source_sequence(8, (0, 2, 4, 6, 7)),
+    "hurt": _source_sequence(9, (0, 2, 4, 5, 7)),
+    "down": _source_sequence(10, (0, 2, 4, 6, 7)),
+    "recovery": _source_sequence(10, (6, 5, 4, 2, 0)),
+    "ranged": _source_sequence(7, (0, 1, 2, 3, 5)),
+    "super": _source_sequence(11, (0, 1, 2, 3, 6)),
+    "pet": _source_sequence(14, (0, 2, 4, 5, 7)),
+    "air_punch": _source_sequence(12, (0, 1, 3, 4, 5)),
+    "air_kick": _source_sequence(12, (1, 3, 5, 6, 7)),
 }
 
-DAVE_ROUTE_CLIPS: dict[str, tuple[int, tuple[int, ...]]] = {
-    "black_dave_v2_regular_01": (2, (0, 1, 3, 4, 7)),
-    "black_dave_v2_regular_02": (2, (1, 3, 5, 7, 4)),
-    "black_dave_v2_regular_03": (3, (0, 1, 3, 4, 7)),
-    "black_dave_v2_regular_04": (3, (0, 3, 4, 6, 7)),
-    "black_dave_v2_regular_05": (4, (0, 2, 4, 6, 7)),
-    "black_dave_v2_regular_06": (4, (2, 3, 4, 7, 0)),
-    "black_dave_v2_regular_07": (4, (3, 4, 6, 7, 0)),
-    "black_dave_v2_kick_01": (6, (0, 1, 2, 4, 7)),
-    "black_dave_v2_kick_02": (6, (0, 1, 2, 4, 6)),
-    "black_dave_v2_kick_03": (6, (0, 2, 4, 6, 7)),
-    "black_dave_v2_kick_04": (6, (1, 2, 4, 6, 7)),
-    "black_dave_v2_kick_05": (6, (2, 4, 6, 7, 0)),
-    "black_dave_v2_kick_06": (6, (4, 6, 7, 0, 1)),
-    "black_dave_v2_kick_07": (6, (6, 7, 0, 1, 2)),
-    "black_dave_v2_power_01": (2, (0, 1, 3, 4, 5)),
-    "black_dave_v2_power_02": (6, (7, 6, 4, 2, 1)),
-    "black_dave_v2_power_03": (3, (0, 1, 3, 4, 6)),
-    "black_dave_v2_power_04": (6, (6, 4, 2, 1, 0)),
-    "black_dave_v2_power_05": (6, (0, 2, 4, 7, 6)),
-    "black_dave_v2_power_06": (4, (0, 2, 3, 4, 6)),
-    "black_dave_v2_power_07": (6, (1, 4, 6, 7, 2)),
+DAVE_ROUTE_GUARD_OPEN: SourceCel = (6, 0)
+DAVE_ROUTE_GUARD_RECOVERY: SourceCel = (6, 7)
+
+DAVE_ROUTE_CLIPS: dict[str, tuple[SourceCel, ...]] = {
+    # The first and final phases intentionally use the same right-facing
+    # fighting direction.  They bridge every strike without a post-contact
+    # turn toward the camera or another attack fragment posing as recovery.
+    "black_dave_v2_regular_01": (DAVE_ROUTE_GUARD_OPEN, (2, 4), (2, 0), (2, 1), DAVE_ROUTE_GUARD_RECOVERY),
+    "black_dave_v2_regular_02": (DAVE_ROUTE_GUARD_OPEN, (2, 5), (2, 3), (2, 0), DAVE_ROUTE_GUARD_RECOVERY),
+    "black_dave_v2_regular_03": (DAVE_ROUTE_GUARD_OPEN, (3, 0), (3, 1), (3, 4), DAVE_ROUTE_GUARD_RECOVERY),
+    "black_dave_v2_regular_04": (DAVE_ROUTE_GUARD_OPEN, (3, 6), (3, 0), (3, 1), DAVE_ROUTE_GUARD_RECOVERY),
+    "black_dave_v2_regular_05": (DAVE_ROUTE_GUARD_OPEN, (4, 7), (4, 0), (4, 4), DAVE_ROUTE_GUARD_RECOVERY),
+    "black_dave_v2_regular_06": (DAVE_ROUTE_GUARD_OPEN, (4, 4), (4, 7), (4, 0), DAVE_ROUTE_GUARD_RECOVERY),
+    "black_dave_v2_regular_07": (DAVE_ROUTE_GUARD_OPEN, (4, 7), (4, 4), (4, 0), DAVE_ROUTE_GUARD_RECOVERY),
+    "black_dave_v2_kick_01": (DAVE_ROUTE_GUARD_OPEN, (6, 6), (6, 2), (6, 4), DAVE_ROUTE_GUARD_RECOVERY),
+    "black_dave_v2_kick_02": (DAVE_ROUTE_GUARD_OPEN, (5, 0), (6, 2), (6, 4), DAVE_ROUTE_GUARD_RECOVERY),
+    "black_dave_v2_kick_03": (DAVE_ROUTE_GUARD_OPEN, (5, 3), (6, 6), (6, 4), DAVE_ROUTE_GUARD_RECOVERY),
+    "black_dave_v2_kick_04": (DAVE_ROUTE_GUARD_OPEN, (5, 6), (6, 2), (6, 4), DAVE_ROUTE_GUARD_RECOVERY),
+    "black_dave_v2_kick_05": (DAVE_ROUTE_GUARD_OPEN, (5, 7), (6, 1), (6, 4), DAVE_ROUTE_GUARD_RECOVERY),
+    "black_dave_v2_kick_06": (DAVE_ROUTE_GUARD_OPEN, (6, 1), (6, 2), (6, 4), DAVE_ROUTE_GUARD_RECOVERY),
+    "black_dave_v2_kick_07": (DAVE_ROUTE_GUARD_OPEN, (6, 6), (6, 1), (6, 4), DAVE_ROUTE_GUARD_RECOVERY),
+    "black_dave_v2_power_01": (DAVE_ROUTE_GUARD_OPEN, (2, 4), (2, 3), (2, 1), DAVE_ROUTE_GUARD_RECOVERY),
+    "black_dave_v2_power_02": (DAVE_ROUTE_GUARD_OPEN, (5, 0), (6, 6), (6, 4), DAVE_ROUTE_GUARD_RECOVERY),
+    "black_dave_v2_power_03": (DAVE_ROUTE_GUARD_OPEN, (3, 0), (3, 6), (3, 1), DAVE_ROUTE_GUARD_RECOVERY),
+    "black_dave_v2_power_04": (DAVE_ROUTE_GUARD_OPEN, (5, 3), (6, 2), (6, 4), DAVE_ROUTE_GUARD_RECOVERY),
+    "black_dave_v2_power_05": (DAVE_ROUTE_GUARD_OPEN, (6, 2), (6, 1), (6, 4), DAVE_ROUTE_GUARD_RECOVERY),
+    "black_dave_v2_power_06": (DAVE_ROUTE_GUARD_OPEN, (4, 0), (4, 7), (4, 4), DAVE_ROUTE_GUARD_RECOVERY),
+    "black_dave_v2_power_07": (DAVE_ROUTE_GUARD_OPEN, (6, 1), (6, 6), (6, 4), DAVE_ROUTE_GUARD_RECOVERY),
 }
 
-# The legacy attack strips contain several visibly undersized whole-body cels
-# (82--96px tall alongside Dave's normal 118--126px build).  These exact Dave
-# cels are normalized once in the authoring compiler, at their declared root,
-# with nearest-neighbour pixels; runtime never rescales them.  Non-combat
-# states keep their intentional prone/utility silhouettes.
-DAVE_NORMALIZED_CLIPS = frozenset((*DAVE_ROUTE_CLIPS, "air_punch", "air_kick"))
+# Combat and air cels share the upright neutral's one authored scale.  Their
+# alpha bounds deliberately vary with a crouch, high kick, or extended arm;
+# using those bounds as a fit target is what made Dave's torso pulse in the
+# previous review.  Runtime never rescales any character body.
+DAVE_ANATOMY_CALIBRATED_CLIPS = frozenset((*DAVE_ROUTE_CLIPS, "air_punch", "air_kick"))
+
+DAVE_ANATOMY_REFERENCE = {
+    "reference": "black_dave_upright_neutral_v2",
+    "head_to_pelvis": 55,
+    "head_width": 22,
+    "shoulder_span": 47,
+    "chest_span": 41,
+    "pelvis_span": 37,
+    "limb_thickness": 14,
+    "shoe_width": 27,
+}
 
 # These states have a planted combat/walk silhouette. Prone/recovery and
 # ballistic jump keys intentionally do not use a sole-to-root calibration.
@@ -100,6 +122,7 @@ DAVE_GROUNDED_CORE_CLIPS = frozenset({
     "idle", "guard", "walk_start", "walk", "walk_stop", "walk_reverse",
     "dodge", "hurt", "ranged", "super", "pet",
 })
+DAVE_GROUNDED_CLIPS = frozenset((*DAVE_GROUNDED_CORE_CLIPS, *DAVE_ROUTE_CLIPS))
 
 # These legacy source cels visibly contain an old spark, energy disk, or
 # ground-impact effect.  A V2 body atlas is intentionally forbidden from
@@ -220,43 +243,6 @@ def _scaled_point(
     )
 
 
-def _normalize_dave_body(source: Image.Image) -> tuple[Image.Image, float, list[int], int]:
-    """Bake an exact Dave source cel to the common V2 combat body height.
-
-    This is an asset-authoring correction for inconsistent historical cels,
-    not a runtime sizing path.  Alpha bounds are cropped and resized only with
-    nearest-neighbour, then the original source root is mapped to the stable
-    V2 root so feet and hand sockets remain coherent.
-    """
-
-    source = _hard_alpha(source)
-    bounds = source.getbbox()
-    if bounds is None:
-        raise ValueError("cannot normalize an empty Black Dave source cel")
-    source_width = bounds[2] - bounds[0]
-    source_height = bounds[3] - bounds[1]
-    if source_width <= 0 or source_height <= 0:
-        raise ValueError(f"invalid Black Dave source bounds: {bounds}")
-    scale = DAVE_NORMAL_BODY_HEIGHT / source_height
-    scaled_size = (max(1, round(source_width * scale)), DAVE_NORMAL_BODY_HEIGHT)
-    cropped = source.crop(bounds).resize(scaled_size, Image.Resampling.NEAREST)
-    canvas = Image.new("RGBA", DAVE_CELL)
-    source_root_x = (DAVE_SOURCE_ROOT[0] - bounds[0]) * scale
-    source_root_y = (DAVE_SOURCE_ROOT[1] - bounds[1]) * scale
-    destination = (round(96 - source_root_x), round(156 - source_root_y))
-    canvas.alpha_composite(cropped, destination)
-    # Several historical kick/power cels declared the same source root while
-    # leaving a one- or two-pixel air gap below their planted sole.  Preserve
-    # every body pixel and use only an integer translation so the opaque
-    # ground line agrees with the immutable V2 root.  Hand anchors receive
-    # this exact offset below; this is root correction, never fitting.
-    canvas, root_alignment_offset = _align_opaque_sole_to_root(canvas, 156)
-    baked_bounds = canvas.getbbox()
-    if baked_bounds is None or baked_bounds[0] == 0 or baked_bounds[1] == 0 or baked_bounds[2] == DAVE_CELL[0] or baked_bounds[3] == DAVE_CELL[1]:
-        raise ValueError(f"normalized Black Dave cel clips its V2 canvas: {baked_bounds}")
-    return canvas, scale, [int(value) for value in bounds], root_alignment_offset
-
-
 def _bounds(image: Image.Image) -> list[int]:
     bbox = image.getbbox()
     if bbox is None:
@@ -344,6 +330,7 @@ def _dave_pose_metadata(
             "rear_hand": list(rear),
             "lead_hand": list(lead),
         },
+        "anatomy": dict(DAVE_ANATOMY_REFERENCE),
         "sockets": [
             _socket("rear_hand", rear, phase, rear=True),
             _socket("lead_hand", lead, phase, rear=False),
@@ -360,15 +347,15 @@ def _build_dave() -> tuple[Path, Path, Path]:
     clips = {**DAVE_CORE_CLIPS, **DAVE_ROUTE_CLIPS}
     invalid = {
         (clip_id, source_row, source_column)
-        for clip_id, (source_row, source_columns) in clips.items()
-        for source_column in source_columns
+        for clip_id, source_cels in clips.items()
+        for source_row, source_column in source_cels
         if (source_row, source_column) in FORBIDDEN_BODY_EFFECT_CELS
     }
     if invalid:
         raise ValueError(f"V2 body atlas selected an effect-bearing source cel: {sorted(invalid)}")
     destination = Image.new("RGBA", (DAVE_CELL[0] * POSES_PER_CLIP, DAVE_CELL[1] * len(clips)))
     metadata: dict[str, object] = {
-        "version": 2,
+        "version": 3,
         "actor": "black_dave",
         "cell_size": list(DAVE_CELL),
         "columns": POSES_PER_CLIP,
@@ -376,32 +363,31 @@ def _build_dave() -> tuple[Path, Path, Path]:
         "source_hashes": {_relative(atlas_path): _hash(atlas_path)},
         "clips": {},
     }
-    for row, (clip_id, (source_row, source_columns)) in enumerate(clips.items()):
-        state = PLAYER_STATES[source_row]
+    for row, (clip_id, source_cels) in enumerate(clips.items()):
         poses: list[dict[str, object]] = []
-        for phase, source_column in enumerate(source_columns):
+        for phase, (source_row, source_column) in enumerate(source_cels):
+            state = PLAYER_STATES[source_row]
             source = frames[source_row * 12 + source_column]
-            normalized = clip_id in DAVE_NORMALIZED_CLIPS
-            if normalized:
-                cel, source_scale, source_bounds, root_alignment_offset = _normalize_dave_body(source)
-                normalization_method = "alpha_bounds_nearest_neighbor"
-            else:
-                source_scale = DAVE_UNIFORM_BAKE_SCALE
-                root_alignment_offset = 0
-                baked_source = _nearest_scale(source, source_scale)
-                cel = _place_rooted(
-                    baked_source,
-                    DAVE_CELL,
-                    (96, 156),
-                    _scaled_point(DAVE_SOURCE_ROOT, source_scale),
-                )
-                if clip_id in DAVE_GROUNDED_CORE_CLIPS:
-                    cel, root_alignment_offset = _align_opaque_sole_to_root(cel, 156)
-                normalization_method = "uniform_nearest_neighbor"
-                raw_bounds = _hard_alpha(source).getbbox()
-                if raw_bounds is None:
-                    raise ValueError(f"empty Black Dave source cel: {clip_id}/{phase}")
-                source_bounds = [int(value) for value in raw_bounds]
+            source_scale = DAVE_UNIFORM_BAKE_SCALE
+            root_alignment_offset = 0
+            baked_source = _nearest_scale(source, source_scale)
+            cel = _place_rooted(
+                baked_source,
+                DAVE_CELL,
+                (96, 156),
+                _scaled_point(DAVE_SOURCE_ROOT, source_scale),
+            )
+            if clip_id in DAVE_GROUNDED_CLIPS:
+                cel, root_alignment_offset = _align_opaque_sole_to_root(cel, 156)
+            normalization_method = (
+                "reference_anatomy_uniform_nearest_neighbor"
+                if clip_id in DAVE_ANATOMY_CALIBRATED_CLIPS
+                else "uniform_nearest_neighbor"
+            )
+            raw_bounds = _hard_alpha(source).getbbox()
+            if raw_bounds is None:
+                raise ValueError(f"empty Black Dave source cel: {clip_id}/{phase}")
+            source_bounds = [int(value) for value in raw_bounds]
             destination.alpha_composite(cel, (phase * DAVE_CELL[0], row * DAVE_CELL[1]))
             record = _dave_pose_metadata(
                 source_anchors,
@@ -415,11 +401,12 @@ def _build_dave() -> tuple[Path, Path, Path]:
             record["events"] = _event_names(clip_id, phase)
             record["source"] = {
                 "state": state,
+                "row": source_row,
                 "column": source_column,
                 "alpha_bounds": source_bounds,
                 "normalization": {
                     "method": normalization_method,
-                    "body_height": DAVE_NORMAL_BODY_HEIGHT if normalized else _bounds(cel)[3] - _bounds(cel)[1],
+                    "anatomy_reference": DAVE_ANATOMY_REFERENCE["reference"],
                     "scale": round(source_scale, 6),
                     "root_alignment_offset": root_alignment_offset,
                 },
@@ -440,7 +427,11 @@ def _build_dave() -> tuple[Path, Path, Path]:
     destination.save(source_path)
     destination.save(output_path)
     metadata["source_hashes"][_relative(source_path)] = _hash(source_path)
-    metadata_path.write_text(json.dumps(metadata, indent=2) + "\n", encoding="utf-8")
+    metadata_path.write_text(
+        json.dumps(metadata, indent=2) + "\n",
+        encoding="utf-8",
+        newline="\n",
+    )
     return source_path, output_path, metadata_path
 
 
@@ -574,7 +565,11 @@ def _build_migration(
         },
         "clips": clips,
     }
-    metadata_output.write_text(json.dumps(metadata, indent=2) + "\n", encoding="utf-8")
+    metadata_output.write_text(
+        json.dumps(metadata, indent=2) + "\n",
+        encoding="utf-8",
+        newline="\n",
+    )
     return source_output, atlas_output, metadata_output
 
 
@@ -681,7 +676,11 @@ def _build_vfx() -> tuple[Path, Path, Path]:
         _relative(source): _hash(source),
         _relative(atlas): _hash(atlas),
     }
-    manifest.write_text(json.dumps(metadata, indent=2) + "\n", encoding="utf-8")
+    manifest.write_text(
+        json.dumps(metadata, indent=2) + "\n",
+        encoding="utf-8",
+        newline="\n",
+    )
     return source, atlas, manifest
 
 

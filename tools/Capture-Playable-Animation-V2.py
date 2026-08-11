@@ -482,6 +482,10 @@ def capture(output_dir: Path) -> dict[str, Any]:
             "captures": captures,
             "qa_captures": qa_captures,
             "asset_sha256": assets,
+            "output_sha256": {
+                filename: _sha256(output_dir / filename)
+                for filename in captures
+            },
         }
     finally:
         pygame.quit()

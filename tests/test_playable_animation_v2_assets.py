@@ -30,6 +30,16 @@ DAVE_STATE_ROWS = {
         "refill", "pants",
     ))
 }
+DAVE_UPRIGHT_ANATOMY_REFERENCE = {
+    "reference": "black_dave_upright_neutral_v2",
+    "head_to_pelvis": 55,
+    "head_width": 22,
+    "shoulder_span": 47,
+    "chest_span": 41,
+    "pelvis_span": 37,
+    "limb_thickness": 14,
+    "shoe_width": 27,
+}
 
 # These are the actual authoritative grid layouts, not merely a count of
 # nonempty cells.  Regressing either of the first two layouts to a 12-column
@@ -225,9 +235,13 @@ class PlayableAnimationV2AssetTests(unittest.TestCase):
         )
 
     def test_black_dave_combat_cels_keep_his_normal_build_in_every_phase(self) -> None:
-        """A combo may stretch or crouch, but never swap in a smaller Dave."""
+        """Crouches and extended limbs may move, but never refit Dave's anatomy."""
         definition = self.spec["characters"]["black_dave"]
         metadata = json.loads((ROOT / definition["pose_metadata_path"]).read_text(encoding="utf-8"))
+        self.assertEqual(
+            definition["approved_anatomy_reference"],
+            DAVE_UPRIGHT_ANATOMY_REFERENCE,
+        )
         combat_clips = {
             *definition["route_clips"]["regular"],
             *definition["route_clips"]["kick"],
@@ -239,11 +253,35 @@ class PlayableAnimationV2AssetTests(unittest.TestCase):
             with self.subTest(clip_id=clip_id):
                 clip = metadata["clips"][clip_id]
                 for pose in clip["poses"]:
-                    bounds = pose["body_bounds"]
-                    self.assertEqual(bounds[3] - bounds[1], 134)
                     normalization = pose["source"]["normalization"]
-                    self.assertEqual(normalization["method"], "alpha_bounds_nearest_neighbor")
-                    self.assertEqual(normalization["body_height"], 134)
+                    self.assertEqual(
+                        normalization["method"],
+                        "reference_anatomy_uniform_nearest_neighbor",
+                    )
+                    self.assertEqual(
+                        normalization["anatomy_reference"],
+                        DAVE_UPRIGHT_ANATOMY_REFERENCE["reference"],
+                    )
+                    self.assertAlmostEqual(normalization["scale"], 1.12)
+                    self.assertEqual(
+                        pose["anatomy"],
+                        definition["approved_anatomy_reference"],
+                    )
+
+    def test_black_dave_route_recovery_keeps_the_striking_direction(self) -> None:
+        """A completed strike cannot turn toward camera or another attack fragment."""
+
+        definition = self.spec["characters"]["black_dave"]
+        metadata = json.loads((ROOT / definition["pose_metadata_path"]).read_text(encoding="utf-8"))
+        for route in ("regular", "kick", "power"):
+            for clip_id in definition["route_clips"][route]:
+                with self.subTest(route=route, clip_id=clip_id):
+                    recovery = metadata["clips"][clip_id]["poses"][-1]
+                    self.assertEqual(recovery["source"]["state"], "heavy")
+                    self.assertEqual(recovery["source"]["row"], 6)
+                    self.assertEqual(recovery["source"]["column"], 7)
+                    recovery_height = recovery["body_bounds"][3] - recovery["body_bounds"][1]
+                    self.assertGreaterEqual(recovery_height, 100)
 
     def test_grounded_route_cels_keep_the_opaque_sole_at_the_declared_root(self) -> None:
         """Roots are useful only when the rendered planted body honors them."""
