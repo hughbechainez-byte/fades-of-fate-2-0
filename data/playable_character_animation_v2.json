@@ -36,8 +36,8 @@
     },
     "shelly": {
       "native_logical_pixel_density": 1,
-      "actor_canvas": [160, 160],
-      "world_root": [80, 156],
+      "actor_canvas": [208, 160],
+      "world_root": [104, 156],
       "source_inputs": {"assets/sprites/shelly_animation_atlas.png": "fe6af8c716dc23c1c390d044ea38fe9f66099ae92736c05e890efb67d1643d41"},
       "source_path": "art_source/shelly/shelly_rooted_migration_v2.png",
       "atlas_path": "assets/sprites/shelly_rooted_animation_atlas.png",

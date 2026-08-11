@@ -1,0 +1,59 @@
+{
+  "version": 2,
+  "cell_size": [
+    64,
+    64
+  ],
+  "columns": 4,
+  "clips": {
+    "ignition": {
+      "row": 0,
+      "frame_count": 4,
+      "loop": false
+    },
+    "idle_loop": {
+      "row": 1,
+      "frame_count": 4,
+      "loop": true
+    },
+    "anticipation_swell": {
+      "row": 2,
+      "frame_count": 4,
+      "loop": true
+    },
+    "punch_trail": {
+      "row": 3,
+      "frame_count": 4,
+      "loop": false
+    },
+    "power_kick_trail": {
+      "row": 4,
+      "frame_count": 4,
+      "loop": false
+    },
+    "contact_burst": {
+      "row": 5,
+      "frame_count": 4,
+      "loop": false
+    },
+    "ember_release": {
+      "row": 6,
+      "frame_count": 4,
+      "loop": false
+    },
+    "scorch_fade": {
+      "row": 7,
+      "frame_count": 4,
+      "loop": false
+    },
+    "enemy_feedback": {
+      "row": 8,
+      "frame_count": 4,
+      "loop": false
+    }
+  },
+  "source_hashes": {
+    "art_source/black_dave/v2/black_dave_v2_flame_vfx_cels.png": "08666204a5403886a2461d1c9559ed7a04029a5eee911b8a0cb481039435f9ab",
+    "assets/sprites/black_dave_v2_flame_vfx_atlas.png": "08666204a5403886a2461d1c9559ed7a04029a5eee911b8a0cb481039435f9ab"
+  }
+}

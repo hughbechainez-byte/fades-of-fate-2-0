@@ -1,0 +1,3691 @@
+{
+  "version": 2,
+  "actor": "shelly",
+  "cell_size": [
+    208,
+    160
+  ],
+  "columns": 5,
+  "root": [
+    104,
+    156
+  ],
+  "source_hashes": {
+    "assets/sprites/shelly_animation_atlas.png": "fe6af8c716dc23c1c390d044ea38fe9f66099ae92736c05e890efb67d1643d41",
+    "art_source/shelly/shelly_rooted_migration_v2.png": "9b4a8b1bed408c76cb7b57caf55be5878ec1869a77767eb04e4712ca5701ebb2"
+  },
+  "clips": {
+    "idle": {
+      "row": 0,
+      "loop": true,
+      "hold": 1,
+      "phases": [
+        "anticipation",
+        "launch",
+        "contact",
+        "follow_through",
+        "recovery"
+      ],
+      "poses": [
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            52,
+            39,
+            189,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            19,
+            37,
+            189,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            19,
+            37,
+            161,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            54,
+            36,
+            189,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": [
+            "contact"
+          ]
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            19,
+            37,
+            189,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        }
+      ]
+    },
+    "walk": {
+      "row": 1,
+      "loop": true,
+      "hold": 1,
+      "phases": [
+        "anticipation",
+        "launch",
+        "contact",
+        "follow_through",
+        "recovery"
+      ],
+      "poses": [
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            19,
+            32,
+            189,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            19,
+            33,
+            161,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            51,
+            34,
+            189,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            19,
+            33,
+            189,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": [
+            "contact"
+          ]
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            19,
+            33,
+            166,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        }
+      ]
+    },
+    "attack_1": {
+      "row": 2,
+      "loop": false,
+      "hold": 1,
+      "phases": [
+        "anticipation",
+        "launch",
+        "contact",
+        "follow_through",
+        "recovery"
+      ],
+      "poses": [
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            19,
+            49,
+            189,
+            155
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            23,
+            53,
+            189,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            19,
+            50,
+            189,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            19,
+            34,
+            164,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": [
+            "contact"
+          ]
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            46,
+            52,
+            189,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        }
+      ]
+    },
+    "attack_2": {
+      "row": 3,
+      "loop": false,
+      "hold": 1,
+      "phases": [
+        "anticipation",
+        "launch",
+        "contact",
+        "follow_through",
+        "recovery"
+      ],
+      "poses": [
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            34,
+            41,
+            168,
+            155
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            27,
+            30,
+            189,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            19,
+            50,
+            169,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            46,
+            52,
+            189,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": [
+            "contact"
+          ]
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            19,
+            50,
+            189,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        }
+      ]
+    },
+    "attack_3": {
+      "row": 4,
+      "loop": false,
+      "hold": 1,
+      "phases": [
+        "anticipation",
+        "launch",
+        "contact",
+        "follow_through",
+        "recovery"
+      ],
+      "poses": [
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            19,
+            46,
+            189,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            19,
+            33,
+            169,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            46,
+            52,
+            165,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            22,
+            32,
+            189,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": [
+            "contact"
+          ]
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            19,
+            47,
+            187,
+            155
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        }
+      ]
+    },
+    "attack_4": {
+      "row": 5,
+      "loop": false,
+      "hold": 1,
+      "phases": [
+        "anticipation",
+        "launch",
+        "contact",
+        "follow_through",
+        "recovery"
+      ],
+      "poses": [
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            19,
+            50,
+            169,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            46,
+            52,
+            189,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            19,
+            44,
+            189,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            19,
+            31,
+            184,
+            155
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": [
+            "contact"
+          ]
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            22,
+            46,
+            189,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        }
+      ]
+    },
+    "heavy": {
+      "row": 6,
+      "loop": false,
+      "hold": 1,
+      "phases": [
+        "anticipation",
+        "launch",
+        "contact",
+        "follow_through",
+        "recovery"
+      ],
+      "poses": [
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            46,
+            52,
+            189,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            19,
+            32,
+            189,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            19,
+            47,
+            187,
+            155
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            42,
+            49,
+            189,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": [
+            "contact"
+          ]
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            19,
+            46,
+            189,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        }
+      ]
+    },
+    "ranged": {
+      "row": 7,
+      "loop": false,
+      "hold": 1,
+      "phases": [
+        "anticipation",
+        "launch",
+        "contact",
+        "follow_through",
+        "recovery"
+      ],
+      "poses": [
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            19,
+            34,
+            189,
+            155
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            19,
+            30,
+            161,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            22,
+            46,
+            189,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            19,
+            31,
+            189,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": [
+            "contact"
+          ]
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            19,
+            34,
+            164,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        }
+      ]
+    },
+    "dodge": {
+      "row": 8,
+      "loop": false,
+      "hold": 1,
+      "phases": [
+        "anticipation",
+        "launch",
+        "contact",
+        "follow_through",
+        "recovery"
+      ],
+      "poses": [
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            19,
+            34,
+            168,
+            155
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            47,
+            33,
+            189,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            19,
+            36,
+            189,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            19,
+            34,
+            164,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": [
+            "contact"
+          ]
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            51,
+            35,
+            189,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        }
+      ]
+    },
+    "hurt": {
+      "row": 9,
+      "loop": false,
+      "hold": 1,
+      "phases": [
+        "anticipation",
+        "launch",
+        "contact",
+        "follow_through",
+        "recovery"
+      ],
+      "poses": [
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            42,
+            49,
+            168,
+            155
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            27,
+            30,
+            189,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            19,
+            34,
+            164,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            46,
+            52,
+            165,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": [
+            "contact"
+          ]
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            22,
+            35,
+            189,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        }
+      ]
+    },
+    "down": {
+      "row": 10,
+      "loop": false,
+      "hold": 1,
+      "phases": [
+        "anticipation",
+        "launch",
+        "contact",
+        "follow_through",
+        "recovery"
+      ],
+      "poses": [
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            19,
+            51,
+            189,
+            158
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            19,
+            76,
+            189,
+            158
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            19,
+            102,
+            189,
+            158
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            19,
+            143,
+            23,
+            149
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": [
+            "contact"
+          ]
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            47,
+            55,
+            175,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        }
+      ]
+    },
+    "super": {
+      "row": 11,
+      "loop": false,
+      "hold": 1,
+      "phases": [
+        "anticipation",
+        "launch",
+        "contact",
+        "follow_through",
+        "recovery"
+      ],
+      "poses": [
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            19,
+            34,
+            164,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            51,
+            35,
+            189,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            19,
+            34,
+            189,
+            155
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            19,
+            30,
+            161,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": [
+            "contact"
+          ]
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            39,
+            36,
+            189,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        }
+      ]
+    },
+    "air_attack": {
+      "row": 12,
+      "loop": false,
+      "hold": 1,
+      "phases": [
+        "anticipation",
+        "launch",
+        "contact",
+        "follow_through",
+        "recovery"
+      ],
+      "poses": [
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            46,
+            43,
+            189,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            19,
+            36,
+            189,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            19,
+            50,
+            170,
+            155
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            45,
+            33,
+            189,
+            155
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": [
+            "contact"
+          ]
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            19,
+            34,
+            189,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        }
+      ]
+    },
+    "jump": {
+      "row": 13,
+      "loop": false,
+      "hold": 1,
+      "phases": [
+        "anticipation",
+        "launch",
+        "contact",
+        "follow_through",
+        "recovery"
+      ],
+      "poses": [
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            19,
+            42,
+            189,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            19,
+            30,
+            161,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            42,
+            49,
+            189,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            19,
+            31,
+            189,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": [
+            "contact"
+          ]
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            19,
+            34,
+            164,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        }
+      ]
+    },
+    "pet": {
+      "row": 14,
+      "loop": false,
+      "hold": 1,
+      "phases": [
+        "anticipation",
+        "launch",
+        "contact",
+        "follow_through",
+        "recovery"
+      ],
+      "poses": [
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            19,
+            30,
+            169,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            54,
+            30,
+            189,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            19,
+            30,
+            189,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            19,
+            34,
+            164,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": [
+            "contact"
+          ]
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            51,
+            35,
+            189,
+            156
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        }
+      ]
+    },
+    "refill": {
+      "row": 15,
+      "loop": false,
+      "hold": 1,
+      "phases": [
+        "anticipation",
+        "launch",
+        "contact",
+        "follow_through",
+        "recovery"
+      ],
+      "poses": [
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            58,
+            38,
+            189,
+            157
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            19,
+            39,
+            189,
+            157
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            19,
+            41,
+            165,
+            158
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            57,
+            41,
+            189,
+            158
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": [
+            "contact"
+          ]
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            19,
+            40,
+            189,
+            158
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        }
+      ]
+    },
+    "pants": {
+      "row": 16,
+      "loop": false,
+      "hold": 1,
+      "phases": [
+        "anticipation",
+        "launch",
+        "contact",
+        "follow_through",
+        "recovery"
+      ],
+      "poses": [
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            21,
+            41,
+            189,
+            157
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            19,
+            41,
+            157,
+            158
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            59,
+            43,
+            189,
+            158
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            19,
+            42,
+            189,
+            158
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": [
+            "contact"
+          ]
+        },
+        {
+          "root": [
+            104,
+            156
+          ],
+          "body_bounds": [
+            19,
+            42,
+            161,
+            158
+          ],
+          "anchors": {
+            "rear_foot": [
+              96,
+              156
+            ],
+            "lead_foot": [
+              112,
+              156
+            ],
+            "pelvis": [
+              104,
+              110
+            ],
+            "head": [
+              104,
+              56
+            ],
+            "rear_hand": [
+              87,
+              88
+            ],
+            "lead_hand": [
+              121,
+              88
+            ]
+          },
+          "sockets": [],
+          "events": []
+        }
+      ]
+    }
+  }
+}
