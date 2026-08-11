@@ -8003,7 +8003,7 @@
         }
       ]
     },
-    "dave_z_01": {
+    "black_dave_v2_regular_01": {
       "row": 20,
       "loop": false,
       "hold": 1,
@@ -8163,9 +8163,7 @@
             143,
             156
           ],
-          "events": [
-            "anticipation"
-          ],
+          "events": [],
           "source": {
             "state": "attack_1",
             "column": 1
@@ -8319,10 +8317,7 @@
             132,
             156
           ],
-          "events": [
-            "contact",
-            "flame_contact"
-          ],
+          "events": [],
           "source": {
             "state": "attack_1",
             "column": 4
@@ -8399,9 +8394,7 @@
             116,
             156
           ],
-          "events": [
-            "recovery"
-          ],
+          "events": [],
           "source": {
             "state": "attack_1",
             "column": 7
@@ -8409,7 +8402,7 @@
         }
       ]
     },
-    "dave_z_02": {
+    "black_dave_v2_regular_02": {
       "row": 21,
       "loop": false,
       "hold": 1,
@@ -8569,9 +8562,7 @@
             143,
             156
           ],
-          "events": [
-            "anticipation"
-          ],
+          "events": [],
           "source": {
             "state": "attack_1",
             "column": 1
@@ -8725,10 +8716,7 @@
             132,
             156
           ],
-          "events": [
-            "contact",
-            "flame_contact"
-          ],
+          "events": [],
           "source": {
             "state": "attack_1",
             "column": 4
@@ -8805,9 +8793,7 @@
             128,
             156
           ],
-          "events": [
-            "recovery"
-          ],
+          "events": [],
           "source": {
             "state": "attack_1",
             "column": 5
@@ -8815,7 +8801,7 @@
         }
       ]
     },
-    "dave_z_03": {
+    "black_dave_v2_regular_03": {
       "row": 22,
       "loop": false,
       "hold": 1,
@@ -8975,9 +8961,7 @@
             128,
             156
           ],
-          "events": [
-            "anticipation"
-          ],
+          "events": [],
           "source": {
             "state": "attack_2",
             "column": 1
@@ -9131,10 +9115,7 @@
             126,
             156
           ],
-          "events": [
-            "contact",
-            "flame_contact"
-          ],
+          "events": [],
           "source": {
             "state": "attack_2",
             "column": 4
@@ -9211,9 +9192,7 @@
             120,
             156
           ],
-          "events": [
-            "recovery"
-          ],
+          "events": [],
           "source": {
             "state": "attack_2",
             "column": 7
@@ -9221,7 +9200,7 @@
         }
       ]
     },
-    "dave_z_04": {
+    "black_dave_v2_regular_04": {
       "row": 23,
       "loop": false,
       "hold": 1,
@@ -9381,9 +9360,7 @@
             128,
             156
           ],
-          "events": [
-            "anticipation"
-          ],
+          "events": [],
           "source": {
             "state": "attack_2",
             "column": 1
@@ -9537,10 +9514,7 @@
             126,
             156
           ],
-          "events": [
-            "contact",
-            "flame_contact"
-          ],
+          "events": [],
           "source": {
             "state": "attack_2",
             "column": 4
@@ -9617,9 +9591,7 @@
             126,
             156
           ],
-          "events": [
-            "recovery"
-          ],
+          "events": [],
           "source": {
             "state": "attack_2",
             "column": 6
@@ -9627,7 +9599,7 @@
         }
       ]
     },
-    "dave_z_05": {
+    "black_dave_v2_regular_05": {
       "row": 24,
       "loop": false,
       "hold": 1,
@@ -9787,9 +9759,7 @@
             126,
             156
           ],
-          "events": [
-            "anticipation"
-          ],
+          "events": [],
           "source": {
             "state": "attack_3",
             "column": 2
@@ -9943,10 +9913,7 @@
             128,
             156
           ],
-          "events": [
-            "contact",
-            "flame_contact"
-          ],
+          "events": [],
           "source": {
             "state": "attack_3",
             "column": 4
@@ -10023,9 +9990,7 @@
             116,
             156
           ],
-          "events": [
-            "recovery"
-          ],
+          "events": [],
           "source": {
             "state": "attack_3",
             "column": 6
@@ -10033,7 +9998,7 @@
         }
       ]
     },
-    "dave_z_06": {
+    "black_dave_v2_regular_06": {
       "row": 25,
       "loop": false,
       "hold": 1,
@@ -10193,9 +10158,7 @@
             126,
             156
           ],
-          "events": [
-            "anticipation"
-          ],
+          "events": [],
           "source": {
             "state": "attack_3",
             "column": 2
@@ -10349,10 +10312,7 @@
             128,
             156
           ],
-          "events": [
-            "contact",
-            "flame_contact"
-          ],
+          "events": [],
           "source": {
             "state": "attack_3",
             "column": 4
@@ -10429,9 +10389,7 @@
             116,
             156
           ],
-          "events": [
-            "recovery"
-          ],
+          "events": [],
           "source": {
             "state": "attack_3",
             "column": 6
@@ -10439,7 +10397,7 @@
         }
       ]
     },
-    "dave_z_07": {
+    "black_dave_v2_regular_07": {
       "row": 26,
       "loop": false,
       "hold": 1,
@@ -10599,9 +10557,7 @@
             126,
             156
           ],
-          "events": [
-            "anticipation"
-          ],
+          "events": [],
           "source": {
             "state": "attack_3",
             "column": 2
@@ -10755,10 +10711,7 @@
             116,
             156
           ],
-          "events": [
-            "contact",
-            "flame_contact"
-          ],
+          "events": [],
           "source": {
             "state": "attack_3",
             "column": 6
@@ -10835,9 +10788,7 @@
             132,
             156
           ],
-          "events": [
-            "recovery"
-          ],
+          "events": [],
           "source": {
             "state": "attack_3",
             "column": 7
@@ -10845,7 +10796,7 @@
         }
       ]
     },
-    "dave_x_01": {
+    "black_dave_v2_kick_01": {
       "row": 27,
       "loop": false,
       "hold": 1,
@@ -11005,9 +10956,7 @@
             153,
             155
           ],
-          "events": [
-            "anticipation"
-          ],
+          "events": [],
           "source": {
             "state": "heavy",
             "column": 1
@@ -11161,10 +11110,7 @@
             160,
             155
           ],
-          "events": [
-            "contact",
-            "flame_contact"
-          ],
+          "events": [],
           "source": {
             "state": "heavy",
             "column": 4
@@ -11241,9 +11187,7 @@
             134,
             155
           ],
-          "events": [
-            "recovery"
-          ],
+          "events": [],
           "source": {
             "state": "heavy",
             "column": 7
@@ -11251,7 +11195,7 @@
         }
       ]
     },
-    "dave_x_02": {
+    "black_dave_v2_kick_02": {
       "row": 28,
       "loop": false,
       "hold": 1,
@@ -11411,9 +11355,7 @@
             153,
             155
           ],
-          "events": [
-            "anticipation"
-          ],
+          "events": [],
           "source": {
             "state": "heavy",
             "column": 1
@@ -11567,10 +11509,7 @@
             160,
             155
           ],
-          "events": [
-            "contact",
-            "flame_contact"
-          ],
+          "events": [],
           "source": {
             "state": "heavy",
             "column": 4
@@ -11647,9 +11586,7 @@
             144,
             155
           ],
-          "events": [
-            "recovery"
-          ],
+          "events": [],
           "source": {
             "state": "heavy",
             "column": 6
@@ -11657,7 +11594,7 @@
         }
       ]
     },
-    "dave_x_03": {
+    "black_dave_v2_kick_03": {
       "row": 29,
       "loop": false,
       "hold": 1,
@@ -11817,9 +11754,7 @@
             142,
             154
           ],
-          "events": [
-            "anticipation"
-          ],
+          "events": [],
           "source": {
             "state": "heavy",
             "column": 2
@@ -11973,10 +11908,7 @@
             144,
             155
           ],
-          "events": [
-            "contact",
-            "flame_contact"
-          ],
+          "events": [],
           "source": {
             "state": "heavy",
             "column": 6
@@ -12053,9 +11985,7 @@
             134,
             155
           ],
-          "events": [
-            "recovery"
-          ],
+          "events": [],
           "source": {
             "state": "heavy",
             "column": 7
@@ -12063,7 +11993,7 @@
         }
       ]
     },
-    "dave_x_04": {
+    "black_dave_v2_kick_04": {
       "row": 30,
       "loop": false,
       "hold": 1,
@@ -12223,9 +12153,7 @@
             153,
             155
           ],
-          "events": [
-            "anticipation"
-          ],
+          "events": [],
           "source": {
             "state": "heavy",
             "column": 1
@@ -12379,10 +12307,7 @@
             160,
             155
           ],
-          "events": [
-            "contact",
-            "flame_contact"
-          ],
+          "events": [],
           "source": {
             "state": "heavy",
             "column": 4
@@ -12459,9 +12384,7 @@
             134,
             155
           ],
-          "events": [
-            "recovery"
-          ],
+          "events": [],
           "source": {
             "state": "heavy",
             "column": 7
@@ -12469,7 +12392,7 @@
         }
       ]
     },
-    "dave_x_05": {
+    "black_dave_v2_kick_05": {
       "row": 31,
       "loop": false,
       "hold": 1,
@@ -12629,9 +12552,7 @@
             153,
             155
           ],
-          "events": [
-            "anticipation"
-          ],
+          "events": [],
           "source": {
             "state": "heavy",
             "column": 1
@@ -12785,10 +12706,7 @@
             160,
             155
           ],
-          "events": [
-            "contact",
-            "flame_contact"
-          ],
+          "events": [],
           "source": {
             "state": "heavy",
             "column": 4
@@ -12865,9 +12783,7 @@
             144,
             155
           ],
-          "events": [
-            "recovery"
-          ],
+          "events": [],
           "source": {
             "state": "heavy",
             "column": 6
@@ -12875,7 +12791,7 @@
         }
       ]
     },
-    "dave_x_06": {
+    "black_dave_v2_kick_06": {
       "row": 32,
       "loop": false,
       "hold": 1,
@@ -13035,9 +12951,7 @@
             142,
             154
           ],
-          "events": [
-            "anticipation"
-          ],
+          "events": [],
           "source": {
             "state": "heavy",
             "column": 2
@@ -13191,10 +13105,7 @@
             144,
             155
           ],
-          "events": [
-            "contact",
-            "flame_contact"
-          ],
+          "events": [],
           "source": {
             "state": "heavy",
             "column": 6
@@ -13271,9 +13182,7 @@
             134,
             155
           ],
-          "events": [
-            "recovery"
-          ],
+          "events": [],
           "source": {
             "state": "heavy",
             "column": 7
@@ -13281,7 +13190,7 @@
         }
       ]
     },
-    "dave_x_07": {
+    "black_dave_v2_kick_07": {
       "row": 33,
       "loop": false,
       "hold": 1,
@@ -13441,9 +13350,7 @@
             153,
             155
           ],
-          "events": [
-            "anticipation"
-          ],
+          "events": [],
           "source": {
             "state": "heavy",
             "column": 1
@@ -13597,10 +13504,7 @@
             160,
             155
           ],
-          "events": [
-            "contact",
-            "flame_contact"
-          ],
+          "events": [],
           "source": {
             "state": "heavy",
             "column": 4
@@ -13677,9 +13581,7 @@
             144,
             155
           ],
-          "events": [
-            "recovery"
-          ],
+          "events": [],
           "source": {
             "state": "heavy",
             "column": 6
@@ -13687,7 +13589,7 @@
         }
       ]
     },
-    "dave_c_01": {
+    "black_dave_v2_power_01": {
       "row": 34,
       "loop": false,
       "hold": 1,
@@ -13847,9 +13749,7 @@
             143,
             156
           ],
-          "events": [
-            "anticipation"
-          ],
+          "events": [],
           "source": {
             "state": "attack_1",
             "column": 1
@@ -14003,10 +13903,7 @@
             132,
             156
           ],
-          "events": [
-            "contact",
-            "flame_contact"
-          ],
+          "events": [],
           "source": {
             "state": "attack_1",
             "column": 4
@@ -14083,9 +13980,7 @@
             128,
             156
           ],
-          "events": [
-            "recovery"
-          ],
+          "events": [],
           "source": {
             "state": "attack_1",
             "column": 5
@@ -14093,7 +13988,7 @@
         }
       ]
     },
-    "dave_c_02": {
+    "black_dave_v2_power_02": {
       "row": 35,
       "loop": false,
       "hold": 1,
@@ -14253,9 +14148,7 @@
             153,
             155
           ],
-          "events": [
-            "anticipation"
-          ],
+          "events": [],
           "source": {
             "state": "heavy",
             "column": 1
@@ -14409,10 +14302,7 @@
             160,
             155
           ],
-          "events": [
-            "contact",
-            "flame_contact"
-          ],
+          "events": [],
           "source": {
             "state": "heavy",
             "column": 4
@@ -14489,9 +14379,7 @@
             144,
             155
           ],
-          "events": [
-            "recovery"
-          ],
+          "events": [],
           "source": {
             "state": "heavy",
             "column": 6
@@ -14499,7 +14387,7 @@
         }
       ]
     },
-    "dave_c_03": {
+    "black_dave_v2_power_03": {
       "row": 36,
       "loop": false,
       "hold": 1,
@@ -14659,9 +14547,7 @@
             128,
             156
           ],
-          "events": [
-            "anticipation"
-          ],
+          "events": [],
           "source": {
             "state": "attack_2",
             "column": 1
@@ -14815,10 +14701,7 @@
             126,
             156
           ],
-          "events": [
-            "contact",
-            "flame_contact"
-          ],
+          "events": [],
           "source": {
             "state": "attack_2",
             "column": 4
@@ -14895,9 +14778,7 @@
             126,
             156
           ],
-          "events": [
-            "recovery"
-          ],
+          "events": [],
           "source": {
             "state": "attack_2",
             "column": 6
@@ -14905,7 +14786,7 @@
         }
       ]
     },
-    "dave_c_04": {
+    "black_dave_v2_power_04": {
       "row": 37,
       "loop": false,
       "hold": 1,
@@ -15065,9 +14946,7 @@
             153,
             155
           ],
-          "events": [
-            "anticipation"
-          ],
+          "events": [],
           "source": {
             "state": "heavy",
             "column": 1
@@ -15221,10 +15100,7 @@
             160,
             155
           ],
-          "events": [
-            "contact",
-            "flame_contact"
-          ],
+          "events": [],
           "source": {
             "state": "heavy",
             "column": 4
@@ -15301,9 +15177,7 @@
             144,
             155
           ],
-          "events": [
-            "recovery"
-          ],
+          "events": [],
           "source": {
             "state": "heavy",
             "column": 6
@@ -15311,7 +15185,7 @@
         }
       ]
     },
-    "dave_c_05": {
+    "black_dave_v2_power_05": {
       "row": 38,
       "loop": false,
       "hold": 1,
@@ -15471,9 +15345,7 @@
             142,
             154
           ],
-          "events": [
-            "anticipation"
-          ],
+          "events": [],
           "source": {
             "state": "heavy",
             "column": 2
@@ -15627,10 +15499,7 @@
             144,
             155
           ],
-          "events": [
-            "contact",
-            "flame_contact"
-          ],
+          "events": [],
           "source": {
             "state": "heavy",
             "column": 6
@@ -15707,9 +15576,7 @@
             134,
             155
           ],
-          "events": [
-            "recovery"
-          ],
+          "events": [],
           "source": {
             "state": "heavy",
             "column": 7
@@ -15717,7 +15584,7 @@
         }
       ]
     },
-    "dave_c_06": {
+    "black_dave_v2_power_06": {
       "row": 39,
       "loop": false,
       "hold": 1,
@@ -15877,9 +15744,7 @@
             126,
             156
           ],
-          "events": [
-            "anticipation"
-          ],
+          "events": [],
           "source": {
             "state": "attack_3",
             "column": 2
@@ -16033,10 +15898,7 @@
             128,
             156
           ],
-          "events": [
-            "contact",
-            "flame_contact"
-          ],
+          "events": [],
           "source": {
             "state": "attack_3",
             "column": 4
@@ -16113,9 +15975,7 @@
             116,
             156
           ],
-          "events": [
-            "recovery"
-          ],
+          "events": [],
           "source": {
             "state": "attack_3",
             "column": 6
@@ -16123,7 +15983,7 @@
         }
       ]
     },
-    "dave_c_07": {
+    "black_dave_v2_power_07": {
       "row": 40,
       "loop": false,
       "hold": 1,
@@ -16283,9 +16143,7 @@
             153,
             155
           ],
-          "events": [
-            "anticipation"
-          ],
+          "events": [],
           "source": {
             "state": "heavy",
             "column": 1
@@ -16439,10 +16297,7 @@
             160,
             155
           ],
-          "events": [
-            "contact",
-            "flame_contact"
-          ],
+          "events": [],
           "source": {
             "state": "heavy",
             "column": 4
@@ -16519,9 +16374,7 @@
             144,
             155
           ],
-          "events": [
-            "recovery"
-          ],
+          "events": [],
           "source": {
             "state": "heavy",
             "column": 6
