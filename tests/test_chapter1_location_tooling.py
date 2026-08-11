@@ -407,14 +407,9 @@ class ChapterOneWindowsBuildGateTests(unittest.TestCase):
         self.assertIn("asset_inventory_sha256", script)
         self.assertIn("Packaged location asset inventory mismatch", script)
         self.assertIn("Installed location asset inventory mismatch", script)
-        self.assertIn(
-            "Get-FileHash -Algorithm SHA256 -LiteralPath $exe",
-            script,
-        )
-        self.assertIn(
-            "Get-FileHash -Algorithm SHA256 -LiteralPath $desktopExe",
-            script,
-        )
+        self.assertIn("function Get-Sha256", script)
+        self.assertIn("Get-Sha256 -LiteralPath $exe", script)
+        self.assertIn("Get-Sha256 -LiteralPath $desktopExe", script)
         self.assertIn("Installed executable hash mismatch", script)
         self.assertLess(
             script.index("Installed executable hash mismatch"),

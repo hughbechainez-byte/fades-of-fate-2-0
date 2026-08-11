@@ -7,6 +7,34 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+
+# Do not depend on the optional Microsoft.PowerShell.Utility module for a
+# release-integrity gate.  Some non-interactive Windows PowerShell hosts do
+# not auto-load Get-FileHash even though it is available in an interactive
+# shell.  The BCL implementation is present in every supported host.
+function Get-Sha256 {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string] $LiteralPath
+    )
+
+    $stream = [System.IO.File]::OpenRead($LiteralPath)
+    try {
+        $algorithm = [System.Security.Cryptography.SHA256]::Create()
+        try {
+            return ([System.BitConverter]::ToString($algorithm.ComputeHash($stream))).Replace('-', '').ToLowerInvariant()
+        }
+        finally {
+            $algorithm.Dispose()
+        }
+    }
+    finally {
+        $stream.Dispose()
+    }
+}
+
 $projectRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $python = Join-Path $projectRoot '.venv\Scripts\python.exe'
 if (-not (Test-Path -LiteralPath $python -PathType Leaf)) {
@@ -152,10 +180,10 @@ try {
             throw "Canonical content artifact is missing: $requiredContentArtifact"
         }
     }
-    $rootManifestHash = (Get-FileHash -Algorithm SHA256 -LiteralPath $contentManifest).Hash
+    $rootManifestHash = Get-Sha256 -LiteralPath $contentManifest
     if (
-        (Get-FileHash -Algorithm SHA256 -LiteralPath $pcContentManifest).Hash -ne $rootManifestHash -or
-        (Get-FileHash -Algorithm SHA256 -LiteralPath $androidContentManifest).Hash -ne $rootManifestHash
+        (Get-Sha256 -LiteralPath $pcContentManifest) -ne $rootManifestHash -or
+        (Get-Sha256 -LiteralPath $androidContentManifest) -ne $rootManifestHash
     ) {
         throw 'PC and Android content manifests are not byte-identical.'
     }
@@ -186,7 +214,7 @@ try {
     if (-not (Test-Path -LiteralPath $exe -PathType Leaf)) {
         throw "Packaged executable was not created: $exe"
     }
-    $packageExeHash = (Get-FileHash -Algorithm SHA256 -LiteralPath $exe).Hash
+    $packageExeHash = Get-Sha256 -LiteralPath $exe
 
     $buildSourceCommitPath = Join-Path $packageDir 'BUILD_SOURCE_COMMIT.txt'
     @(
@@ -307,7 +335,7 @@ try {
         if (-not (Test-Path -LiteralPath $desktopExe -PathType Leaf)) {
             throw "Desktop copy did not contain the executable: $desktopExe"
         }
-        $desktopExeHash = (Get-FileHash -Algorithm SHA256 -LiteralPath $desktopExe).Hash
+        $desktopExeHash = Get-Sha256 -LiteralPath $desktopExe
         if ($desktopExeHash -ne $packageExeHash) {
             throw "Installed executable hash mismatch. Package=$packageExeHash Installed=$desktopExeHash"
         }
