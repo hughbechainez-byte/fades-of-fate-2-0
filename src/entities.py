@@ -3,7 +3,8 @@ from __future__ import annotations
 import math
 import random
 from dataclasses import dataclass, field
-from typing import Any
+from types import MappingProxyType
+from typing import Any, Mapping, Protocol
 
 from .animation_manifest import ANIMATION_PLAYBACK_HZ, clip_for, enemy_animation_actor
 from .input_manager import InputSnapshot
@@ -34,6 +35,54 @@ KO_LIGHTNING_STYLES: dict[
     "kick": ("ko_lightning_kick", (255, 218, 82), 52.0, 0.31),
     "super": ("ko_lightning_super", (178, 241, 255), 88.0, 0.22),
 }
+
+
+class AttackRouteStep(Protocol):
+    """Narrow route boundary supplied by the gameplay route resolver."""
+
+    route_id: str
+    step_index: int
+    step_id: str
+    clip_id: str
+    move_profile: Mapping[str, object]
+    timing: Mapping[str, object]
+    events: tuple[object, ...]
+
+
+def _freeze_mapping(value: Mapping[str, object]) -> Mapping[str, object]:
+    """Copy a route/move snapshot so later config edits cannot alter a swing."""
+
+    return MappingProxyType(dict(value))
+
+
+@dataclass(frozen=True, slots=True)
+class AttackExecution:
+    """The immutable gameplay/presentation contract captured at attack start."""
+
+    route_id: str
+    step_index: int
+    step_id: str
+    move_profile: Mapping[str, object]
+    clip_id: str
+    timing: Mapping[str, object]
+    events: tuple[object, ...] = ()
+
+    @classmethod
+    def from_route_step(cls, step: AttackRouteStep) -> "AttackExecution":
+        return cls(
+            route_id=str(step.route_id),
+            step_index=int(step.step_index),
+            step_id=str(step.step_id),
+            move_profile=_freeze_mapping(step.move_profile),
+            clip_id=str(step.clip_id),
+            timing=_freeze_mapping(step.timing),
+            events=tuple(step.events),
+        )
+
+    @classmethod
+    def legacy(cls, route_id: str, step_id: str, clip_id: str, move: Mapping[str, object]) -> "AttackExecution":
+        frozen = _freeze_mapping(move)
+        return cls(route_id, 0, step_id, frozen, clip_id, frozen, ())
 
 
 def _animation_phase_offset(identity: int, state: str) -> float:
@@ -145,6 +194,13 @@ class Player:
     attack_animation_clip: str = "idle"
     attack_move_key: str = ""
     attack_timing_move: dict[str, Any] | None = None
+    attack_execution: AttackExecution | None = None
+    # Air attacks alternate through a deterministic two-entry shuffle bag.
+    # The bag is reset only on landing, so a jump can contain one attack.
+    air_attack_bag: list[str] = field(default_factory=list)
+    air_attack_seed: int = 0
+    air_attack_used: bool = False
+    air_attack_kind: str = ""
     # Previous active-window fist centre.  The combat engine uses this only
     # while an attack is active, so an old idle location cannot extend a fresh
     # strike after a state change.
@@ -236,10 +292,18 @@ class Player:
                 self.attack_timing_move = dict(self.moves["air"])
             else:
                 self.attack_timing_move = None
+            if self.attack_timing_move is not None:
+                self.attack_execution = AttackExecution.legacy(
+                    self.attack_move_key or state,
+                    f"{self.attack_move_key or state}_legacy",
+                    self.attack_animation_clip,
+                    self.attack_timing_move,
+                )
         else:
             self.attack_animation_clip = state
             self.attack_move_key = ""
             self.attack_timing_move = None
+            self.attack_execution = None
         if state in {"hurt", "downed", "dead", "eliminated"}:
             # Damage is a hard combo interruption.  Retaining a queued edge
             # here caused one later button press to launch an unrequested
@@ -252,6 +316,16 @@ class Player:
             self.queued_heavy = False
             self.light_buffer_remaining = 0.0
             self.heavy_buffer_remaining = 0.0
+
+    def begin_attack_execution(self, state: str, execution: AttackExecution) -> None:
+        """Start a route-resolved attack without depending on route-loader internals."""
+
+        timing = dict(execution.timing or execution.move_profile)
+        self.set_state(state, self._move_total(timing))
+        self.attack_execution = execution
+        self.attack_animation_clip = execution.clip_id
+        self.attack_move_key = execution.step_id
+        self.attack_timing_move = dict(execution.move_profile)
 
     def gain_super(self, amount: float) -> float:
         """Award the character-tuned amount of Chief/Dave super meter.
@@ -452,8 +526,8 @@ class Player:
             return
 
         if "alt_light" in snapshot.pressed:
-            if self.z > 1.0:
-                self.set_state("air_attack", self._move_total(self.moves["air"]))
+            if self.airborne:
+                self._start_air_attack()
             else:
                 if self.combo_repeat_lock > 0.0 and self.combo_style == "z":
                     return
@@ -464,8 +538,8 @@ class Player:
             return
 
         if "light" in snapshot.pressed:
-            if self.z > 1.0:
-                self.set_state("air_attack", self._move_total(self.moves["air"]))
+            if self.airborne:
+                self._start_air_attack()
             else:
                 if self.combo_repeat_lock > 0.0 and self.combo_style == "x":
                     return
@@ -476,10 +550,7 @@ class Player:
             return
 
         if "jump" in snapshot.pressed and self.z <= 0.0:
-            self.z = 1.0
-            self.vz = float(global_cfg["jump_velocity"])
-            self.set_state("jump")
-            game.audio.play("jump")
+            self._start_jump(game)
 
         speed_scale = float(self.config[self.character].get("speed_scale", 1.0))
         air_scale = 0.82 if self.z > 0.0 else 1.0
@@ -790,15 +861,57 @@ class Player:
     def _move_total(move: dict[str, Any]) -> float:
         return float(move["startup"]) + float(move["active"]) + float(move["recovery"])
 
+    @property
+    def airborne(self) -> bool:
+        """True for actual ballistic travel, including the takeoff simulation tick."""
+
+        return self.z > 0.001 or abs(self.vz) > 0.001
+
+    def _start_jump(self, game: Any) -> None:
+        self.z = max(0.0, self.z)
+        self.vz = float(self.config["global"]["jump_velocity"])
+        self.air_attack_used = False
+        self.air_attack_kind = ""
+        self.air_attack_bag.clear()
+        self.air_attack_seed += 1
+        self.set_state("jump")
+        game.audio.play("jump")
+
+    def _start_air_attack(self) -> bool:
+        """Consume one deterministic punch/kick choice for the current jump."""
+
+        if not self.airborne or self.air_attack_used:
+            return False
+        if not self.air_attack_bag:
+            self.air_attack_bag = ["punch", "kick"]
+            random.Random((self.slot + 1) * 1_000_003 + self.air_attack_seed).shuffle(self.air_attack_bag)
+        kind = self.air_attack_bag.pop()
+        move = dict(self.moves["air"])
+        # Current manifests expose the common legacy air strip.  The selected
+        # kind remains immutable in ``step_id`` and V2 glue can replace only
+        # this clip id when its separately authored clips are registered.
+        execution = AttackExecution.legacy("air", f"air_{kind}", "air_attack", move)
+        self.air_attack_used = True
+        self.air_attack_kind = kind
+        self.begin_attack_execution("air_attack", execution)
+        return True
+
     def _update_jump(self, game: Any, dt: float) -> None:
         if self.z <= 0.0 and self.vz <= 0.0:
             self.z = 0.0
+            self.vz = 0.0
+            self.air_attack_used = False
+            self.air_attack_kind = ""
+            self.air_attack_bag.clear()
             return
         self.vz -= float(self.config["global"]["gravity"]) * dt
         self.z += self.vz * dt
         if self.z <= 0.0:
             self.z = 0.0
             self.vz = 0.0
+            self.air_attack_used = False
+            self.air_attack_kind = ""
+            self.air_attack_bag.clear()
             if self.state in {"jump", "air_attack"}:
                 self.set_state("idle")
             game.audio.play("land")

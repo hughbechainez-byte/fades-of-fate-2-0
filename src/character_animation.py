@@ -11,7 +11,7 @@ from dataclasses import dataclass
 import json
 from pathlib import Path
 from types import MappingProxyType
-from typing import Any, Mapping
+from typing import Any, Callable, Mapping
 
 
 @dataclass(frozen=True)
@@ -144,6 +144,79 @@ class AnimationSample:
     events: tuple[AnimationEvent, ...]
     rear_vfx: tuple[VfxPlacement, ...]
     front_vfx: tuple[VfxPlacement, ...]
+
+
+@dataclass(frozen=True, slots=True)
+class PoseSpec:
+    """Compiled metadata for one complete cel in a rooted animation clip."""
+
+    pose_index: int
+    root: tuple[int, int]
+    body_bounds: tuple[int, int, int, int]
+    anchors: tuple[PoseAnchor, ...] = ()
+    events: tuple[AnimationEvent, ...] = ()
+    rear_vfx: tuple[VfxPlacement, ...] = ()
+    front_vfx: tuple[VfxPlacement, ...] = ()
+
+
+@dataclass(frozen=True, slots=True)
+class ClipSpec:
+    """Manifest-backed cel sequence; no visual fallback is permitted."""
+
+    actor_id: str
+    clip_id: str
+    loop: bool
+    hold_ticks: int
+    poses: tuple[PoseSpec, ...]
+
+
+class PlayableCharacterSampler:
+    """Resolve only registered rooted whole-cels at the authored 30 Hz rate.
+
+    The atlas/frame loader is injected so this module owns no character scale,
+    ground inference, palette mutation, or pygame lifetime.  A missing clip or
+    incomplete cel is an integration error, deliberately never an idle pose.
+    """
+
+    def __init__(
+        self,
+        clips: tuple[ClipSpec, ...],
+        frame_loader: Callable[[str, str, int], object | None],
+    ) -> None:
+        self._clips = {(clip.actor_id, clip.clip_id): clip for clip in clips}
+        if len(self._clips) != len(clips):
+            raise ValueError("duplicate playable animation clip registration")
+        self._frame_loader = frame_loader
+
+    def has_clip(self, actor_id: str, clip_id: str) -> bool:
+        return (str(actor_id), str(clip_id)) in self._clips
+
+    def sample(self, actor_id: str, clip_id: str, authored_tick: int) -> AnimationSample:
+        key = (str(actor_id), str(clip_id))
+        clip = self._clips.get(key)
+        if clip is None:
+            raise ValueError(f"unregistered playable animation clip: {key[0]}/{key[1]}")
+        if not clip.poses:
+            raise ValueError(f"registered playable animation clip has no poses: {key[0]}/{key[1]}")
+        phase = max(0, int(authored_tick)) // max(1, int(clip.hold_ticks))
+        pose = clip.poses[phase % len(clip.poses) if clip.loop else min(phase, len(clip.poses) - 1)]
+        surface = self._frame_loader(clip.actor_id, clip.clip_id, pose.pose_index)
+        if surface is None:
+            raise FileNotFoundError(
+                f"missing complete authored cel: {clip.actor_id}/{clip.clip_id} pose {pose.pose_index}"
+            )
+        return AnimationSample(
+            actor_id=clip.actor_id,
+            clip_id=clip.clip_id,
+            pose_index=pose.pose_index,
+            body_surface=surface,
+            root=pose.root,
+            body_bounds=pose.body_bounds,
+            anchors=pose.anchors,
+            events=pose.events,
+            rear_vfx=pose.rear_vfx,
+            front_vfx=pose.front_vfx,
+        )
 
 
 def _mapping(value: object, label: str) -> Mapping[str, Any]:
