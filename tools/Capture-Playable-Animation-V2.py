@@ -444,6 +444,7 @@ def _capture_idle_audit(output: Path) -> dict[str, Any]:
 
 def capture(output_dir: Path) -> dict[str, Any]:
     output_dir.mkdir(parents=True, exist_ok=True)
+    preview_active = os.environ.get("FADES_BLACK_DAVE_PREVIEW", "").strip().lower() in {"1", "true", "yes", "on"}
     pygame.init()
     pygame.display.set_mode(LOGICAL_SIZE)
     try:
@@ -470,6 +471,9 @@ def capture(output_dir: Path) -> dict[str, Any]:
                 "assets/sprites/shelly_rooted_animation_atlas.png",
                 "assets/sprites/jermaine_rooted_animation_atlas.png",
                 "assets/sprites/white_dave_rooted_animation_atlas.png",
+                "assets/sprites/black_dave_preview_atlas_v1.png",
+                "assets/sprites/black_dave_preview_metadata_v1.json",
+                "art_source/black_dave/preview/black_dave_preview_pose_board_v1.png",
                 "data/black_dave_v2_routes.json",
                 "data/playable_character_animation_v2.json",
             )
@@ -479,6 +483,16 @@ def capture(output_dir: Path) -> dict[str, Any]:
             "tree_dirty": bool(_git(["status", "--porcelain"])),
             "simulation_hz": SIMULATION_HZ,
             "gif_hz": GIF_HZ,
+            "black_dave_preview": preview_active,
+            "preview_contract": (
+                {
+                    "metadata": "assets/sprites/black_dave_preview_metadata_v1.json",
+                    "mode": "flag_gated_review_only",
+                    "full_pose_library": "deferred_pending_review",
+                }
+                if preview_active
+                else None
+            ),
             "captures": captures,
             "qa_captures": qa_captures,
             "asset_sha256": assets,

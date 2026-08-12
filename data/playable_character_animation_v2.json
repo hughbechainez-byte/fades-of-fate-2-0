@@ -37,6 +37,11 @@
       "atlas_path": "assets/sprites/black_dave_v2_animation_atlas.png",
       "vfx_atlas_path": "assets/sprites/black_dave_v2_flame_vfx_atlas.png",
       "pose_metadata_path": "assets/sprites/black_dave_v2_pose_metadata.json",
+      "review_preview": {
+        "enabled_by": "FADES_BLACK_DAVE_PREVIEW",
+        "metadata_path": "assets/sprites/black_dave_preview_metadata_v1.json",
+        "purpose": "identity_and_screen_footprint_review_before_full_pose_library"
+      },
       "route_clips": {
         "regular": ["black_dave_v2_regular_01", "black_dave_v2_regular_02", "black_dave_v2_regular_03", "black_dave_v2_regular_04", "black_dave_v2_regular_05", "black_dave_v2_regular_06", "black_dave_v2_regular_07"],
         "kick": ["black_dave_v2_kick_01", "black_dave_v2_kick_02", "black_dave_v2_kick_03", "black_dave_v2_kick_04", "black_dave_v2_kick_05", "black_dave_v2_kick_06", "black_dave_v2_kick_07"],

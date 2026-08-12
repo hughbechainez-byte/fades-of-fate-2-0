@@ -10,6 +10,7 @@ from __future__ import annotations
 
 from dataclasses import replace
 import json
+import os
 from pathlib import Path
 from typing import Any, Mapping
 
@@ -25,6 +26,7 @@ from .character_animation import (
     VfxPlacement,
     VfxSocket,
 )
+from .black_dave_preview import BlackDavePreviewLayer
 from .config import resource_path
 from .flame_effects import FlameAtlasDefinition, FlameCompositor, FlameFrame, FlameLayer
 
@@ -90,6 +92,22 @@ class PlayableAnimationV2Runtime:
         clips = self._compile_clips()
         self.sampler = PlayableCharacterSampler(tuple(clips), self._frame)
         self.flames = FlameCompositor(self._compile_flame_atlas(), v2_active=True)
+        self.black_dave_preview: BlackDavePreviewLayer | None = None
+        if os.environ.get("FADES_BLACK_DAVE_PREVIEW", "").strip().lower() in {"1", "true", "yes", "on"}:
+            black_dave_definition = self.spec.get("characters", {}).get("black_dave", {})
+            preview_definition = (
+                black_dave_definition.get("review_preview", {})
+                if isinstance(black_dave_definition, Mapping)
+                else {}
+            )
+            self.black_dave_preview = BlackDavePreviewLayer(
+                self.root / str(
+                    preview_definition.get(
+                        "metadata_path",
+                        "assets/sprites/black_dave_preview_metadata_v1.json",
+                    )
+                )
+            )
 
     @classmethod
     def from_active_resources(cls) -> "PlayableAnimationV2Runtime":
@@ -305,6 +323,12 @@ class PlayableAnimationV2Runtime:
         attack_execution: object | None = None,
     ) -> AnimationSample:
         actor_name = _name(actor)
+        if actor_name == "black_dave" and self.black_dave_preview is not None:
+            return self.black_dave_preview.sample(
+                state,
+                int(authored_tick),
+                attack_execution=attack_execution,
+            )
         return self.sampler.sample(actor_name, self._resolved_clip(actor_name, state, attack_execution), int(authored_tick))
 
     def _body_for_facing(self, body: pygame.Surface, facing: int) -> pygame.Surface:
