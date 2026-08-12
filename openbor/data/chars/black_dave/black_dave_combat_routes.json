@@ -1,0 +1,607 @@
+{
+  "version": 1,
+  "engine": "OpenBOR",
+  "model": "black_dave",
+  "source": "content/characters/black_dave/metadata/black_dave_v2_routes.json",
+  "routes": [
+    {
+      "id": "regular",
+      "steps": [
+        {
+          "id": "bdv2_regular_01",
+          "move_table": "light_combo",
+          "move_index": 1,
+          "clip_id": "black_dave_v2_regular_01",
+          "startup": 0.08,
+          "active": 0.07,
+          "recovery": 0.14,
+          "buffer_window": 0.23,
+          "cancel_start": 0.2,
+          "cancel_actions": [
+            "regular",
+            "kick",
+            "power"
+          ],
+          "hitbox_track": "fists_close_01",
+          "target_cap": 2,
+          "push_profile": "light",
+          "animation_events": [
+            "windup",
+            "contact"
+          ],
+          "vfx_events": [
+            "flame_trail",
+            "fist_contact"
+          ]
+        },
+        {
+          "id": "bdv2_regular_02",
+          "move_table": "light_combo",
+          "move_index": 0,
+          "clip_id": "black_dave_v2_regular_02",
+          "startup": 0.07,
+          "active": 0.07,
+          "recovery": 0.12,
+          "buffer_window": 0.22,
+          "cancel_start": 0.18,
+          "cancel_actions": [
+            "regular",
+            "kick",
+            "power"
+          ],
+          "hitbox_track": "fists_close_02",
+          "target_cap": 2,
+          "push_profile": "light",
+          "animation_events": [
+            "windup",
+            "contact"
+          ],
+          "vfx_events": [
+            "flame_trail",
+            "fist_contact"
+          ]
+        },
+        {
+          "id": "bdv2_regular_03",
+          "move_table": "light_combo",
+          "move_index": 3,
+          "clip_id": "black_dave_v2_regular_03",
+          "startup": 0.12,
+          "active": 0.1,
+          "recovery": 0.24,
+          "buffer_window": 0.24,
+          "cancel_start": 0.45,
+          "cancel_actions": [
+            "regular",
+            "kick"
+          ],
+          "hitbox_track": "uppercut_01",
+          "target_cap": 3,
+          "push_profile": "rise",
+          "animation_events": [
+            "launch",
+            "contact"
+          ],
+          "vfx_events": [
+            "flame_trail",
+            "fist_contact"
+          ]
+        },
+        {
+          "id": "bdv2_regular_04",
+          "move_table": "light_combo",
+          "move_index": 2,
+          "clip_id": "black_dave_v2_regular_04",
+          "startup": 0.09,
+          "active": 0.08,
+          "recovery": 0.16,
+          "buffer_window": 0.24,
+          "cancel_start": 0.23,
+          "cancel_actions": [
+            "regular",
+            "kick",
+            "power"
+          ],
+          "hitbox_track": "fists_sweep_01",
+          "target_cap": 3,
+          "push_profile": "medium",
+          "animation_events": [
+            "windup",
+            "contact"
+          ],
+          "vfx_events": [
+            "flame_trail",
+            "fist_contact"
+          ]
+        },
+        {
+          "id": "bdv2_regular_05",
+          "move_table": "light_combo",
+          "move_index": 5,
+          "clip_id": "black_dave_v2_regular_05",
+          "startup": 0.16,
+          "active": 0.1,
+          "recovery": 0.3,
+          "buffer_window": 0.28,
+          "cancel_start": 0.5,
+          "cancel_actions": [
+            "regular",
+            "kick"
+          ],
+          "hitbox_track": "fists_long_01",
+          "target_cap": 3,
+          "push_profile": "medium",
+          "animation_events": [
+            "windup",
+            "contact"
+          ],
+          "vfx_events": [
+            "flame_trail",
+            "fist_contact"
+          ]
+        },
+        {
+          "id": "bdv2_regular_06",
+          "move_table": "light_combo",
+          "move_index": 4,
+          "clip_id": "black_dave_v2_regular_06",
+          "startup": 0.14,
+          "active": 0.1,
+          "recovery": 0.28,
+          "buffer_window": 0.26,
+          "cancel_start": 0.48,
+          "cancel_actions": [
+            "regular",
+            "kick"
+          ],
+          "hitbox_track": "fists_long_02",
+          "target_cap": 4,
+          "push_profile": "medium",
+          "animation_events": [
+            "windup",
+            "contact"
+          ],
+          "vfx_events": [
+            "flame_trail",
+            "fist_contact"
+          ]
+        },
+        {
+          "id": "bdv2_regular_07",
+          "move_table": "light_combo",
+          "move_index": 12,
+          "clip_id": "black_dave_v2_regular_07",
+          "startup": 0.1,
+          "active": 0.08,
+          "recovery": 0.16,
+          "buffer_window": 0.24,
+          "cancel_start": 0.18,
+          "cancel_actions": [],
+          "hitbox_track": "fists_finish_01",
+          "target_cap": 2,
+          "push_profile": "finish",
+          "animation_events": [
+            "finish",
+            "contact"
+          ],
+          "vfx_events": [
+            "flame_burst",
+            "fist_contact"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "kick",
+      "steps": [
+        {
+          "id": "bdv2_kick_01",
+          "move_table": "light_combo",
+          "move_index": 0,
+          "clip_id": "black_dave_v2_kick_01",
+          "startup": 0.07,
+          "active": 0.07,
+          "recovery": 0.12,
+          "buffer_window": 0.22,
+          "cancel_start": 0.18,
+          "cancel_actions": [
+            "regular",
+            "kick",
+            "power"
+          ],
+          "hitbox_track": "kick_low_01",
+          "target_cap": 2,
+          "push_profile": "light",
+          "animation_events": [
+            "windup",
+            "contact"
+          ],
+          "vfx_events": [
+            "flame_trail",
+            "kick_contact"
+          ]
+        },
+        {
+          "id": "bdv2_kick_02",
+          "move_table": "light_combo",
+          "move_index": 1,
+          "clip_id": "black_dave_v2_kick_02",
+          "startup": 0.08,
+          "active": 0.07,
+          "recovery": 0.14,
+          "buffer_window": 0.23,
+          "cancel_start": 0.2,
+          "cancel_actions": [
+            "regular",
+            "kick",
+            "power"
+          ],
+          "hitbox_track": "kick_low_02",
+          "target_cap": 2,
+          "push_profile": "light",
+          "animation_events": [
+            "windup",
+            "contact"
+          ],
+          "vfx_events": [
+            "flame_trail",
+            "kick_contact"
+          ]
+        },
+        {
+          "id": "bdv2_kick_03",
+          "move_table": "light_combo",
+          "move_index": 2,
+          "clip_id": "black_dave_v2_kick_03",
+          "startup": 0.09,
+          "active": 0.08,
+          "recovery": 0.16,
+          "buffer_window": 0.24,
+          "cancel_start": 0.23,
+          "cancel_actions": [
+            "regular",
+            "kick",
+            "power"
+          ],
+          "hitbox_track": "kick_mid_01",
+          "target_cap": 3,
+          "push_profile": "medium",
+          "animation_events": [
+            "windup",
+            "contact"
+          ],
+          "vfx_events": [
+            "flame_trail",
+            "kick_contact"
+          ]
+        },
+        {
+          "id": "bdv2_kick_04",
+          "move_table": "light_combo",
+          "move_index": 4,
+          "clip_id": "black_dave_v2_kick_04",
+          "startup": 0.14,
+          "active": 0.1,
+          "recovery": 0.28,
+          "buffer_window": 0.26,
+          "cancel_start": 0.48,
+          "cancel_actions": [
+            "regular",
+            "kick"
+          ],
+          "hitbox_track": "kick_mid_02",
+          "target_cap": 4,
+          "push_profile": "medium",
+          "animation_events": [
+            "windup",
+            "contact"
+          ],
+          "vfx_events": [
+            "flame_trail",
+            "kick_contact"
+          ]
+        },
+        {
+          "id": "bdv2_kick_05",
+          "move_table": "light_combo",
+          "move_index": 3,
+          "clip_id": "black_dave_v2_kick_05",
+          "startup": 0.12,
+          "active": 0.1,
+          "recovery": 0.24,
+          "buffer_window": 0.24,
+          "cancel_start": 0.45,
+          "cancel_actions": [
+            "regular",
+            "kick"
+          ],
+          "hitbox_track": "kick_rise_01",
+          "target_cap": 3,
+          "push_profile": "rise",
+          "animation_events": [
+            "launch",
+            "contact"
+          ],
+          "vfx_events": [
+            "flame_trail",
+            "kick_contact"
+          ]
+        },
+        {
+          "id": "bdv2_kick_06",
+          "move_table": "light_combo",
+          "move_index": 5,
+          "clip_id": "black_dave_v2_kick_06",
+          "startup": 0.16,
+          "active": 0.1,
+          "recovery": 0.3,
+          "buffer_window": 0.28,
+          "cancel_start": 0.5,
+          "cancel_actions": [
+            "regular",
+            "kick"
+          ],
+          "hitbox_track": "kick_long_01",
+          "target_cap": 3,
+          "push_profile": "medium",
+          "animation_events": [
+            "windup",
+            "contact"
+          ],
+          "vfx_events": [
+            "flame_trail",
+            "kick_contact"
+          ]
+        },
+        {
+          "id": "bdv2_kick_07",
+          "move_table": "light_combo",
+          "move_index": 6,
+          "clip_id": "black_dave_v2_kick_07",
+          "startup": 0.1,
+          "active": 0.08,
+          "recovery": 0.16,
+          "buffer_window": 0.24,
+          "cancel_start": 0.18,
+          "cancel_actions": [],
+          "hitbox_track": "kick_finish_01",
+          "target_cap": 2,
+          "push_profile": "finish",
+          "animation_events": [
+            "finish",
+            "contact"
+          ],
+          "vfx_events": [
+            "flame_burst",
+            "kick_contact"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "power",
+      "steps": [
+        {
+          "id": "bdv2_power_01",
+          "move_table": "heavy_combo",
+          "move_index": 0,
+          "clip_id": "black_dave_v2_power_01",
+          "startup": 0.18,
+          "active": 0.08,
+          "recovery": 0.22,
+          "buffer_window": 0.22,
+          "cancel_start": 0.3,
+          "cancel_actions": [
+            "power"
+          ],
+          "hitbox_track": "power_01",
+          "target_cap": 2,
+          "push_profile": "medium",
+          "animation_events": [
+            "windup",
+            "contact"
+          ],
+          "vfx_events": [
+            "flame_trail",
+            "power_contact"
+          ]
+        },
+        {
+          "id": "bdv2_power_02",
+          "move_table": "heavy_combo",
+          "move_index": 1,
+          "clip_id": "black_dave_v2_power_02",
+          "startup": 0.19,
+          "active": 0.09,
+          "recovery": 0.24,
+          "buffer_window": 0.24,
+          "cancel_start": 0.34,
+          "cancel_actions": [
+            "power"
+          ],
+          "hitbox_track": "power_02",
+          "target_cap": 2,
+          "push_profile": "medium",
+          "animation_events": [
+            "windup",
+            "contact"
+          ],
+          "vfx_events": [
+            "flame_trail",
+            "power_contact"
+          ]
+        },
+        {
+          "id": "bdv2_power_03",
+          "move_table": "heavy_combo",
+          "move_index": 2,
+          "clip_id": "black_dave_v2_power_03",
+          "startup": 0.21,
+          "active": 0.1,
+          "recovery": 0.28,
+          "buffer_window": 0.26,
+          "cancel_start": 0.38,
+          "cancel_actions": [
+            "power"
+          ],
+          "hitbox_track": "power_03",
+          "target_cap": 3,
+          "push_profile": "rise",
+          "animation_events": [
+            "launch",
+            "contact"
+          ],
+          "vfx_events": [
+            "flame_trail",
+            "power_contact"
+          ]
+        },
+        {
+          "id": "bdv2_power_04",
+          "move_table": "heavy_combo",
+          "move_index": 3,
+          "clip_id": "black_dave_v2_power_04",
+          "startup": 0.23,
+          "active": 0.11,
+          "recovery": 0.34,
+          "buffer_window": 0.28,
+          "cancel_start": 0.42,
+          "cancel_actions": [
+            "power"
+          ],
+          "hitbox_track": "power_04",
+          "target_cap": 4,
+          "push_profile": "heavy",
+          "animation_events": [
+            "launch",
+            "contact"
+          ],
+          "vfx_events": [
+            "flame_trail",
+            "power_contact"
+          ]
+        },
+        {
+          "id": "bdv2_power_05",
+          "move_table": "heavy_combo",
+          "move_index": 4,
+          "clip_id": "black_dave_v2_power_05",
+          "startup": 0.16,
+          "active": 0.11,
+          "recovery": 0.24,
+          "buffer_window": 0.28,
+          "cancel_start": 0.28,
+          "cancel_actions": [
+            "power"
+          ],
+          "hitbox_track": "shockwave_01",
+          "target_cap": 3,
+          "push_profile": "shockwave",
+          "animation_events": [
+            "shockwave",
+            "contact"
+          ],
+          "vfx_events": [
+            "flame_burst",
+            "shockwave"
+          ]
+        },
+        {
+          "id": "bdv2_power_06",
+          "move_table": "heavy_combo",
+          "move_index": 5,
+          "clip_id": "black_dave_v2_power_06",
+          "startup": 0.18,
+          "active": 0.12,
+          "recovery": 0.27,
+          "buffer_window": 0.3,
+          "cancel_start": 0.31,
+          "cancel_actions": [
+            "power"
+          ],
+          "hitbox_track": "shockwave_02",
+          "target_cap": 4,
+          "push_profile": "shockwave",
+          "animation_events": [
+            "launch",
+            "shockwave"
+          ],
+          "vfx_events": [
+            "flame_burst",
+            "shockwave"
+          ]
+        },
+        {
+          "id": "bdv2_power_07",
+          "move_table": "heavy_combo",
+          "move_index": 6,
+          "clip_id": "black_dave_v2_power_07",
+          "startup": 0.2,
+          "active": 0.13,
+          "recovery": 0.32,
+          "buffer_window": 0.32,
+          "cancel_start": 0.34,
+          "cancel_actions": [],
+          "hitbox_track": "shockwave_finish",
+          "target_cap": 5,
+          "push_profile": "finish",
+          "animation_events": [
+            "finish",
+            "shockwave"
+          ],
+          "vfx_events": [
+            "flame_burst",
+            "shockwave"
+          ]
+        }
+      ]
+    }
+  ],
+  "registered_authored_clips": [
+    "air_kick",
+    "air_punch",
+    "black_dave_full_identity_transition_01",
+    "black_dave_full_identity_transition_02",
+    "black_dave_full_identity_transition_03",
+    "black_dave_v2_kick_01",
+    "black_dave_v2_kick_02",
+    "black_dave_v2_kick_03",
+    "black_dave_v2_kick_04",
+    "black_dave_v2_kick_05",
+    "black_dave_v2_kick_06",
+    "black_dave_v2_kick_07",
+    "black_dave_v2_power_01",
+    "black_dave_v2_power_02",
+    "black_dave_v2_power_03",
+    "black_dave_v2_power_04",
+    "black_dave_v2_power_05",
+    "black_dave_v2_power_06",
+    "black_dave_v2_power_07",
+    "black_dave_v2_regular_01",
+    "black_dave_v2_regular_02",
+    "black_dave_v2_regular_03",
+    "black_dave_v2_regular_04",
+    "black_dave_v2_regular_05",
+    "black_dave_v2_regular_06",
+    "black_dave_v2_regular_07",
+    "dodge",
+    "down",
+    "guard",
+    "hurt",
+    "idle",
+    "jump_apex",
+    "jump_fall",
+    "jump_land",
+    "jump_rise",
+    "jump_takeoff",
+    "pet",
+    "ranged",
+    "recovery",
+    "super",
+    "walk",
+    "walk_reverse",
+    "walk_start",
+    "walk_stop"
+  ],
+  "underpass_grade": "cool_underpass_dusk_v1"
+}

@@ -1,0 +1,5 @@
+# I-8 underpass first setpiece shell. Spawn/combat scripting is the next engine pass.
+name i8_underpass
+background data/levels/i8_underpass/background.png
+setpiece_manifest data/levels/i8_underpass/underpass_manifest.json
+model black_dave

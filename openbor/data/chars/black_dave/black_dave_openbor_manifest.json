@@ -1,0 +1,475 @@
+{
+  "version": 1,
+  "engine": "OpenBOR",
+  "model": "black_dave",
+  "status": "engine_ready_authored_pose_package",
+  "source": {
+    "metadata": "content/characters/black_dave/sprites/black_dave_full_library_v1.json",
+    "atlas": "content/characters/black_dave/sprites/black_dave_full_library_v1.png",
+    "atlas_sha256": "bc35fc68037de6d9b9c199ca35f4c131c9d426ac5fa5ccb4b4a0a793d45208d6"
+  },
+  "canvas": [
+    224,
+    160
+  ],
+  "offset": [
+    112,
+    156
+  ],
+  "pose_count": 220,
+  "clip_count": 44,
+  "clips": {
+    "idle": {
+      "frames": [
+        "sprites/idle_000.png",
+        "sprites/idle_001.png",
+        "sprites/idle_002.png",
+        "sprites/idle_003.png",
+        "sprites/idle_004.png"
+      ],
+      "delay_cs": 8
+    },
+    "guard": {
+      "frames": [
+        "sprites/guard_000.png",
+        "sprites/guard_001.png",
+        "sprites/guard_002.png",
+        "sprites/guard_003.png",
+        "sprites/guard_004.png"
+      ],
+      "delay_cs": 8
+    },
+    "walk_start": {
+      "frames": [
+        "sprites/walk_start_000.png",
+        "sprites/walk_start_001.png",
+        "sprites/walk_start_002.png",
+        "sprites/walk_start_003.png",
+        "sprites/walk_start_004.png"
+      ],
+      "delay_cs": 8
+    },
+    "walk": {
+      "frames": [
+        "sprites/walk_000.png",
+        "sprites/walk_001.png",
+        "sprites/walk_002.png",
+        "sprites/walk_003.png",
+        "sprites/walk_004.png"
+      ],
+      "delay_cs": 8
+    },
+    "walk_stop": {
+      "frames": [
+        "sprites/walk_stop_000.png",
+        "sprites/walk_stop_001.png",
+        "sprites/walk_stop_002.png",
+        "sprites/walk_stop_003.png",
+        "sprites/walk_stop_004.png"
+      ],
+      "delay_cs": 8
+    },
+    "walk_reverse": {
+      "frames": [
+        "sprites/walk_reverse_000.png",
+        "sprites/walk_reverse_001.png",
+        "sprites/walk_reverse_002.png",
+        "sprites/walk_reverse_003.png",
+        "sprites/walk_reverse_004.png"
+      ],
+      "delay_cs": 8
+    },
+    "jump_takeoff": {
+      "frames": [
+        "sprites/jump_takeoff_000.png",
+        "sprites/jump_takeoff_001.png",
+        "sprites/jump_takeoff_002.png",
+        "sprites/jump_takeoff_003.png",
+        "sprites/jump_takeoff_004.png"
+      ],
+      "delay_cs": 8
+    },
+    "jump_rise": {
+      "frames": [
+        "sprites/jump_rise_000.png",
+        "sprites/jump_rise_001.png",
+        "sprites/jump_rise_002.png",
+        "sprites/jump_rise_003.png",
+        "sprites/jump_rise_004.png"
+      ],
+      "delay_cs": 8
+    },
+    "jump_apex": {
+      "frames": [
+        "sprites/jump_apex_000.png",
+        "sprites/jump_apex_001.png",
+        "sprites/jump_apex_002.png",
+        "sprites/jump_apex_003.png",
+        "sprites/jump_apex_004.png"
+      ],
+      "delay_cs": 8
+    },
+    "jump_fall": {
+      "frames": [
+        "sprites/jump_fall_000.png",
+        "sprites/jump_fall_001.png",
+        "sprites/jump_fall_002.png",
+        "sprites/jump_fall_003.png",
+        "sprites/jump_fall_004.png"
+      ],
+      "delay_cs": 8
+    },
+    "jump_land": {
+      "frames": [
+        "sprites/jump_land_000.png",
+        "sprites/jump_land_001.png",
+        "sprites/jump_land_002.png",
+        "sprites/jump_land_003.png",
+        "sprites/jump_land_004.png"
+      ],
+      "delay_cs": 8
+    },
+    "dodge": {
+      "frames": [
+        "sprites/dodge_000.png",
+        "sprites/dodge_001.png",
+        "sprites/dodge_002.png",
+        "sprites/dodge_003.png",
+        "sprites/dodge_004.png"
+      ],
+      "delay_cs": 8
+    },
+    "hurt": {
+      "frames": [
+        "sprites/hurt_000.png",
+        "sprites/hurt_001.png",
+        "sprites/hurt_002.png",
+        "sprites/hurt_003.png",
+        "sprites/hurt_004.png"
+      ],
+      "delay_cs": 8
+    },
+    "down": {
+      "frames": [
+        "sprites/down_000.png",
+        "sprites/down_001.png",
+        "sprites/down_002.png",
+        "sprites/down_003.png",
+        "sprites/down_004.png"
+      ],
+      "delay_cs": 8
+    },
+    "recovery": {
+      "frames": [
+        "sprites/recovery_000.png",
+        "sprites/recovery_001.png",
+        "sprites/recovery_002.png",
+        "sprites/recovery_003.png",
+        "sprites/recovery_004.png"
+      ],
+      "delay_cs": 8
+    },
+    "ranged": {
+      "frames": [
+        "sprites/ranged_000.png",
+        "sprites/ranged_001.png",
+        "sprites/ranged_002.png",
+        "sprites/ranged_003.png",
+        "sprites/ranged_004.png"
+      ],
+      "delay_cs": 8
+    },
+    "super": {
+      "frames": [
+        "sprites/super_000.png",
+        "sprites/super_001.png",
+        "sprites/super_002.png",
+        "sprites/super_003.png",
+        "sprites/super_004.png"
+      ],
+      "delay_cs": 8
+    },
+    "pet": {
+      "frames": [
+        "sprites/pet_000.png",
+        "sprites/pet_001.png",
+        "sprites/pet_002.png",
+        "sprites/pet_003.png",
+        "sprites/pet_004.png"
+      ],
+      "delay_cs": 8
+    },
+    "air_punch": {
+      "frames": [
+        "sprites/air_punch_000.png",
+        "sprites/air_punch_001.png",
+        "sprites/air_punch_002.png",
+        "sprites/air_punch_003.png",
+        "sprites/air_punch_004.png"
+      ],
+      "delay_cs": 8
+    },
+    "air_kick": {
+      "frames": [
+        "sprites/air_kick_000.png",
+        "sprites/air_kick_001.png",
+        "sprites/air_kick_002.png",
+        "sprites/air_kick_003.png",
+        "sprites/air_kick_004.png"
+      ],
+      "delay_cs": 8
+    },
+    "black_dave_v2_regular_01": {
+      "frames": [
+        "sprites/black_dave_v2_regular_01_000.png",
+        "sprites/black_dave_v2_regular_01_001.png",
+        "sprites/black_dave_v2_regular_01_002.png",
+        "sprites/black_dave_v2_regular_01_003.png",
+        "sprites/black_dave_v2_regular_01_004.png"
+      ],
+      "delay_cs": 8
+    },
+    "black_dave_v2_regular_02": {
+      "frames": [
+        "sprites/black_dave_v2_regular_02_000.png",
+        "sprites/black_dave_v2_regular_02_001.png",
+        "sprites/black_dave_v2_regular_02_002.png",
+        "sprites/black_dave_v2_regular_02_003.png",
+        "sprites/black_dave_v2_regular_02_004.png"
+      ],
+      "delay_cs": 8
+    },
+    "black_dave_v2_regular_03": {
+      "frames": [
+        "sprites/black_dave_v2_regular_03_000.png",
+        "sprites/black_dave_v2_regular_03_001.png",
+        "sprites/black_dave_v2_regular_03_002.png",
+        "sprites/black_dave_v2_regular_03_003.png",
+        "sprites/black_dave_v2_regular_03_004.png"
+      ],
+      "delay_cs": 8
+    },
+    "black_dave_v2_regular_04": {
+      "frames": [
+        "sprites/black_dave_v2_regular_04_000.png",
+        "sprites/black_dave_v2_regular_04_001.png",
+        "sprites/black_dave_v2_regular_04_002.png",
+        "sprites/black_dave_v2_regular_04_003.png",
+        "sprites/black_dave_v2_regular_04_004.png"
+      ],
+      "delay_cs": 8
+    },
+    "black_dave_v2_regular_05": {
+      "frames": [
+        "sprites/black_dave_v2_regular_05_000.png",
+        "sprites/black_dave_v2_regular_05_001.png",
+        "sprites/black_dave_v2_regular_05_002.png",
+        "sprites/black_dave_v2_regular_05_003.png",
+        "sprites/black_dave_v2_regular_05_004.png"
+      ],
+      "delay_cs": 8
+    },
+    "black_dave_v2_regular_06": {
+      "frames": [
+        "sprites/black_dave_v2_regular_06_000.png",
+        "sprites/black_dave_v2_regular_06_001.png",
+        "sprites/black_dave_v2_regular_06_002.png",
+        "sprites/black_dave_v2_regular_06_003.png",
+        "sprites/black_dave_v2_regular_06_004.png"
+      ],
+      "delay_cs": 8
+    },
+    "black_dave_v2_regular_07": {
+      "frames": [
+        "sprites/black_dave_v2_regular_07_000.png",
+        "sprites/black_dave_v2_regular_07_001.png",
+        "sprites/black_dave_v2_regular_07_002.png",
+        "sprites/black_dave_v2_regular_07_003.png",
+        "sprites/black_dave_v2_regular_07_004.png"
+      ],
+      "delay_cs": 8
+    },
+    "black_dave_v2_kick_01": {
+      "frames": [
+        "sprites/black_dave_v2_kick_01_000.png",
+        "sprites/black_dave_v2_kick_01_001.png",
+        "sprites/black_dave_v2_kick_01_002.png",
+        "sprites/black_dave_v2_kick_01_003.png",
+        "sprites/black_dave_v2_kick_01_004.png"
+      ],
+      "delay_cs": 8
+    },
+    "black_dave_v2_kick_02": {
+      "frames": [
+        "sprites/black_dave_v2_kick_02_000.png",
+        "sprites/black_dave_v2_kick_02_001.png",
+        "sprites/black_dave_v2_kick_02_002.png",
+        "sprites/black_dave_v2_kick_02_003.png",
+        "sprites/black_dave_v2_kick_02_004.png"
+      ],
+      "delay_cs": 8
+    },
+    "black_dave_v2_kick_03": {
+      "frames": [
+        "sprites/black_dave_v2_kick_03_000.png",
+        "sprites/black_dave_v2_kick_03_001.png",
+        "sprites/black_dave_v2_kick_03_002.png",
+        "sprites/black_dave_v2_kick_03_003.png",
+        "sprites/black_dave_v2_kick_03_004.png"
+      ],
+      "delay_cs": 8
+    },
+    "black_dave_v2_kick_04": {
+      "frames": [
+        "sprites/black_dave_v2_kick_04_000.png",
+        "sprites/black_dave_v2_kick_04_001.png",
+        "sprites/black_dave_v2_kick_04_002.png",
+        "sprites/black_dave_v2_kick_04_003.png",
+        "sprites/black_dave_v2_kick_04_004.png"
+      ],
+      "delay_cs": 8
+    },
+    "black_dave_v2_kick_05": {
+      "frames": [
+        "sprites/black_dave_v2_kick_05_000.png",
+        "sprites/black_dave_v2_kick_05_001.png",
+        "sprites/black_dave_v2_kick_05_002.png",
+        "sprites/black_dave_v2_kick_05_003.png",
+        "sprites/black_dave_v2_kick_05_004.png"
+      ],
+      "delay_cs": 8
+    },
+    "black_dave_v2_kick_06": {
+      "frames": [
+        "sprites/black_dave_v2_kick_06_000.png",
+        "sprites/black_dave_v2_kick_06_001.png",
+        "sprites/black_dave_v2_kick_06_002.png",
+        "sprites/black_dave_v2_kick_06_003.png",
+        "sprites/black_dave_v2_kick_06_004.png"
+      ],
+      "delay_cs": 8
+    },
+    "black_dave_v2_kick_07": {
+      "frames": [
+        "sprites/black_dave_v2_kick_07_000.png",
+        "sprites/black_dave_v2_kick_07_001.png",
+        "sprites/black_dave_v2_kick_07_002.png",
+        "sprites/black_dave_v2_kick_07_003.png",
+        "sprites/black_dave_v2_kick_07_004.png"
+      ],
+      "delay_cs": 8
+    },
+    "black_dave_v2_power_01": {
+      "frames": [
+        "sprites/black_dave_v2_power_01_000.png",
+        "sprites/black_dave_v2_power_01_001.png",
+        "sprites/black_dave_v2_power_01_002.png",
+        "sprites/black_dave_v2_power_01_003.png",
+        "sprites/black_dave_v2_power_01_004.png"
+      ],
+      "delay_cs": 8
+    },
+    "black_dave_v2_power_02": {
+      "frames": [
+        "sprites/black_dave_v2_power_02_000.png",
+        "sprites/black_dave_v2_power_02_001.png",
+        "sprites/black_dave_v2_power_02_002.png",
+        "sprites/black_dave_v2_power_02_003.png",
+        "sprites/black_dave_v2_power_02_004.png"
+      ],
+      "delay_cs": 8
+    },
+    "black_dave_v2_power_03": {
+      "frames": [
+        "sprites/black_dave_v2_power_03_000.png",
+        "sprites/black_dave_v2_power_03_001.png",
+        "sprites/black_dave_v2_power_03_002.png",
+        "sprites/black_dave_v2_power_03_003.png",
+        "sprites/black_dave_v2_power_03_004.png"
+      ],
+      "delay_cs": 8
+    },
+    "black_dave_v2_power_04": {
+      "frames": [
+        "sprites/black_dave_v2_power_04_000.png",
+        "sprites/black_dave_v2_power_04_001.png",
+        "sprites/black_dave_v2_power_04_002.png",
+        "sprites/black_dave_v2_power_04_003.png",
+        "sprites/black_dave_v2_power_04_004.png"
+      ],
+      "delay_cs": 8
+    },
+    "black_dave_v2_power_05": {
+      "frames": [
+        "sprites/black_dave_v2_power_05_000.png",
+        "sprites/black_dave_v2_power_05_001.png",
+        "sprites/black_dave_v2_power_05_002.png",
+        "sprites/black_dave_v2_power_05_003.png",
+        "sprites/black_dave_v2_power_05_004.png"
+      ],
+      "delay_cs": 8
+    },
+    "black_dave_v2_power_06": {
+      "frames": [
+        "sprites/black_dave_v2_power_06_000.png",
+        "sprites/black_dave_v2_power_06_001.png",
+        "sprites/black_dave_v2_power_06_002.png",
+        "sprites/black_dave_v2_power_06_003.png",
+        "sprites/black_dave_v2_power_06_004.png"
+      ],
+      "delay_cs": 8
+    },
+    "black_dave_v2_power_07": {
+      "frames": [
+        "sprites/black_dave_v2_power_07_000.png",
+        "sprites/black_dave_v2_power_07_001.png",
+        "sprites/black_dave_v2_power_07_002.png",
+        "sprites/black_dave_v2_power_07_003.png",
+        "sprites/black_dave_v2_power_07_004.png"
+      ],
+      "delay_cs": 8
+    },
+    "black_dave_full_identity_transition_01": {
+      "frames": [
+        "sprites/black_dave_full_identity_transition_01_000.png",
+        "sprites/black_dave_full_identity_transition_01_001.png",
+        "sprites/black_dave_full_identity_transition_01_002.png",
+        "sprites/black_dave_full_identity_transition_01_003.png",
+        "sprites/black_dave_full_identity_transition_01_004.png"
+      ],
+      "delay_cs": 8
+    },
+    "black_dave_full_identity_transition_02": {
+      "frames": [
+        "sprites/black_dave_full_identity_transition_02_000.png",
+        "sprites/black_dave_full_identity_transition_02_001.png",
+        "sprites/black_dave_full_identity_transition_02_002.png",
+        "sprites/black_dave_full_identity_transition_02_003.png",
+        "sprites/black_dave_full_identity_transition_02_004.png"
+      ],
+      "delay_cs": 8
+    },
+    "black_dave_full_identity_transition_03": {
+      "frames": [
+        "sprites/black_dave_full_identity_transition_03_000.png",
+        "sprites/black_dave_full_identity_transition_03_001.png",
+        "sprites/black_dave_full_identity_transition_03_002.png",
+        "sprites/black_dave_full_identity_transition_03_003.png",
+        "sprites/black_dave_full_identity_transition_03_004.png"
+      ],
+      "delay_cs": 8
+    }
+  },
+  "environment_grade": {
+    "profile": "cool_underpass_dusk_v1",
+    "saturation_mix": 0.76,
+    "shadow_tint": [
+      18,
+      28,
+      48
+    ],
+    "edge_rule": "hard_alpha_preserved_with_navy_shadow_contours",
+    "grounding": "runtime_contact_shadow_and_shared_logical_ground_plane"
+  },
+  "combat_routes": "data/chars/black_dave/black_dave_combat_routes.json"
+}
