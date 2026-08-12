@@ -1,0 +1,531 @@
+{
+  "collision": [
+    {
+      "depth": 235.0,
+      "height": 14.0,
+      "id": "civic_hall_dusk:hall_steps:authored_planter_cluster:7",
+      "module_id": "authored_planter_cluster",
+      "width": 48.0,
+      "x": 234.0
+    },
+    {
+      "depth": 235.0,
+      "height": 18.0,
+      "id": "civic_hall_dusk:hall_steps:breakable_road_bollards:1",
+      "module_id": "breakable_road_bollards",
+      "width": 44.0,
+      "x": 412.0
+    },
+    {
+      "depth": 235.0,
+      "height": 14.0,
+      "id": "civic_hall_dusk:hall_steps:authored_planter_cluster:8",
+      "module_id": "authored_planter_cluster",
+      "width": 48.0,
+      "x": 580.0
+    },
+    {
+      "depth": 235.0,
+      "height": 16.0,
+      "id": "civic_hall_dusk:hall_steps:breakable_cart_return:2",
+      "module_id": "breakable_cart_return",
+      "width": 62.0,
+      "x": 760.0
+    },
+    {
+      "depth": 235.0,
+      "height": 14.0,
+      "id": "civic_hall_dusk:hall_garden:authored_planter_cluster:14",
+      "module_id": "authored_planter_cluster",
+      "width": 48.0,
+      "x": 877.0
+    },
+    {
+      "depth": 235.0,
+      "height": 18.0,
+      "id": "civic_hall_dusk:hall_garden:breakable_road_bollards:9",
+      "module_id": "breakable_road_bollards",
+      "width": 44.0,
+      "x": 1236.0
+    },
+    {
+      "depth": 235.0,
+      "height": 14.0,
+      "id": "civic_hall_dusk:hall_garden:authored_planter_cluster:15",
+      "module_id": "authored_planter_cluster",
+      "width": 48.0,
+      "x": 1292.0
+    }
+  ],
+  "coverage": {
+    "approved_modules_used": [
+      "ambient_haze_motion",
+      "authored_planter_cluster",
+      "breakable_cart_return",
+      "breakable_road_bollards",
+      "civic_foreground_framing",
+      "civic_ground_and_curb",
+      "civic_hall_architecture",
+      "civic_hall_far_skyline"
+    ],
+    "missing_module_families": [
+      "bushes",
+      "lights",
+      "signs",
+      "trees",
+      "vehicles"
+    ]
+  },
+  "encounter_clearance": [
+    {
+      "x_max": 674,
+      "x_min": 150,
+      "zone_id": "hall_steps"
+    },
+    {
+      "x_max": 1498,
+      "x_min": 974,
+      "zone_id": "hall_garden"
+    }
+  ],
+  "entrances": [
+    {
+      "clearance": 150,
+      "id": "entrance_left",
+      "x": 32
+    },
+    {
+      "clearance": 150,
+      "id": "exit_right",
+      "x": 1616
+    }
+  ],
+  "environment_animation": {
+    "budget": 2,
+    "time_of_day": "dusk",
+    "weather_profile": "clear"
+  },
+  "generator_version": "environment-authoring-1",
+  "layer_contract": {
+    "far": {
+      "parallax": 0.25,
+      "sort_anchor": "ground_contact"
+    },
+    "foreground": {
+      "parallax": 1.15,
+      "sort_anchor": "ground_contact"
+    },
+    "ground": {
+      "parallax": 1.0,
+      "sort_anchor": "ground_contact"
+    },
+    "mid": {
+      "parallax": 1.0,
+      "sort_anchor": "ground_contact"
+    },
+    "sky": {
+      "parallax": 0.25,
+      "sort_anchor": "ground_contact"
+    }
+  },
+  "manifest_sha256": "434b76220119af863b46551b69a6d1e8f8c4f83fb69bfe6701ecc86a62660086",
+  "native_stage_world": {
+    "description": "Generated authoring output; review and migrate through the existing StageWorld contract before shipping.",
+    "routes": [
+      {
+        "chunk_overlap": 0,
+        "chunks": [
+          {
+            "collision_ids": [
+              "civic_hall_dusk:hall_steps:authored_planter_cluster:7",
+              "civic_hall_dusk:hall_steps:breakable_road_bollards:1",
+              "civic_hall_dusk:hall_steps:authored_planter_cluster:8",
+              "civic_hall_dusk:hall_steps:breakable_cart_return:2"
+            ],
+            "foreground_layers": [
+              "near_occluder"
+            ],
+            "id": "civic_hall_dusk_hall_steps",
+            "landmark_ids": [],
+            "layers": {
+              "architecture": {
+                "asset": "assets/stage/chapter1_location_locked/chunks/awaken_church_finale/chunk_00_architecture_v1.png",
+                "height": 360,
+                "source_layer": "mid",
+                "width": 824,
+                "world_x": 0
+              },
+              "far_skyline": {
+                "asset": "assets/stage/chapter1_location_locked/chunks/awaken_church_finale/chunk_00_far_skyline_v1.png",
+                "height": 360,
+                "source_layer": "far",
+                "width": 824,
+                "world_x": 0
+              },
+              "ground": {
+                "asset": "assets/stage/chapter1_location_locked/chunks/awaken_church_finale/chunk_00_ground_v1.png",
+                "height": 360,
+                "source_layer": "ground",
+                "width": 824,
+                "world_x": 0
+              },
+              "near_occluder": {
+                "asset": "assets/stage/chapter1_location_locked/chunks/awaken_church_finale/chunk_00_near_occluder_v1.png",
+                "height": 360,
+                "source_layer": "foreground",
+                "width": 824,
+                "world_x": 0
+              }
+            },
+            "physical_scene_object_ids": [],
+            "seam_anchor": "structural_handoff",
+            "spawn_markers": [],
+            "width": 824,
+            "world_x": 0
+          },
+          {
+            "collision_ids": [
+              "civic_hall_dusk:hall_garden:authored_planter_cluster:14",
+              "civic_hall_dusk:hall_garden:breakable_road_bollards:9",
+              "civic_hall_dusk:hall_garden:authored_planter_cluster:15"
+            ],
+            "foreground_layers": [
+              "near_occluder"
+            ],
+            "id": "civic_hall_dusk_hall_garden",
+            "landmark_ids": [],
+            "layers": {
+              "architecture": {
+                "asset": "assets/stage/chapter1_location_locked/chunks/awaken_church_finale/chunk_00_architecture_v1.png",
+                "height": 360,
+                "source_layer": "mid",
+                "width": 824,
+                "world_x": 824
+              },
+              "far_skyline": {
+                "asset": "assets/stage/chapter1_location_locked/chunks/awaken_church_finale/chunk_00_far_skyline_v1.png",
+                "height": 360,
+                "source_layer": "far",
+                "width": 824,
+                "world_x": 824
+              },
+              "ground": {
+                "asset": "assets/stage/chapter1_location_locked/chunks/awaken_church_finale/chunk_00_ground_v1.png",
+                "height": 360,
+                "source_layer": "ground",
+                "width": 824,
+                "world_x": 824
+              },
+              "near_occluder": {
+                "asset": "assets/stage/chapter1_location_locked/chunks/awaken_church_finale/chunk_00_near_occluder_v1.png",
+                "height": 360,
+                "source_layer": "foreground",
+                "width": 824,
+                "world_x": 824
+              }
+            },
+            "physical_scene_object_ids": [],
+            "seam_anchor": "",
+            "spawn_markers": [],
+            "width": 824,
+            "world_x": 824
+          }
+        ],
+        "global_layers": {
+          "far_haze": "assets/stage/chapter1_location_locked/chunks/awaken_church_finale/atmosphere_haze_tile_v1.png"
+        },
+        "theme": "civic_plaza",
+        "world_width": 1648
+      }
+    ],
+    "schema_version": 1
+  },
+  "placements": [
+    {
+      "depth": 235,
+      "layer": "far",
+      "locked": false,
+      "module_id": "civic_hall_far_skyline",
+      "parallax": 0.25,
+      "placement_id": "civic_hall_dusk:hall_steps:civic_hall_far_skyline:3",
+      "scale": 1,
+      "variant": "base",
+      "x": 0,
+      "zone_id": "hall_steps"
+    },
+    {
+      "depth": 235,
+      "layer": "foreground",
+      "locked": false,
+      "module_id": "civic_foreground_framing",
+      "parallax": 1.08,
+      "placement_id": "civic_hall_dusk:hall_steps:civic_foreground_framing:6",
+      "scale": 1,
+      "variant": "base",
+      "x": 0,
+      "zone_id": "hall_steps"
+    },
+    {
+      "depth": 235,
+      "layer": "ground",
+      "locked": false,
+      "module_id": "civic_ground_and_curb",
+      "parallax": 1.0,
+      "placement_id": "civic_hall_dusk:hall_steps:civic_ground_and_curb:5",
+      "scale": 1,
+      "variant": "base",
+      "x": 0,
+      "zone_id": "hall_steps"
+    },
+    {
+      "depth": 235,
+      "layer": "mid",
+      "locked": false,
+      "module_id": "civic_hall_architecture",
+      "parallax": 0.62,
+      "placement_id": "civic_hall_dusk:hall_steps:civic_hall_architecture:4",
+      "scale": 1,
+      "variant": "base",
+      "x": 0,
+      "zone_id": "hall_steps"
+    },
+    {
+      "depth": 235,
+      "layer": "mid",
+      "locked": false,
+      "module_id": "authored_planter_cluster",
+      "parallax": 1.0,
+      "placement_id": "civic_hall_dusk:hall_steps:authored_planter_cluster:7",
+      "scale": 1,
+      "variant": "planter",
+      "x": 234,
+      "zone_id": "hall_steps"
+    },
+    {
+      "depth": 235,
+      "layer": "ground",
+      "locked": true,
+      "module_id": "breakable_road_bollards",
+      "parallax": 1.0,
+      "placement_id": "civic_hall_dusk:hall_steps:breakable_road_bollards:1",
+      "scale": 1,
+      "variant": "bollards",
+      "x": 412,
+      "zone_id": "hall_steps"
+    },
+    {
+      "depth": 235,
+      "layer": "sky",
+      "locked": true,
+      "module_id": "ambient_haze_motion",
+      "parallax": 0.25,
+      "placement_id": "civic_hall_dusk:hall_steps:ambient_haze_motion:0",
+      "scale": 1,
+      "variant": "profile",
+      "x": 412,
+      "zone_id": "hall_steps"
+    },
+    {
+      "depth": 235,
+      "layer": "mid",
+      "locked": false,
+      "module_id": "authored_planter_cluster",
+      "parallax": 1.0,
+      "placement_id": "civic_hall_dusk:hall_steps:authored_planter_cluster:8",
+      "scale": 1,
+      "variant": "planter",
+      "x": 580,
+      "zone_id": "hall_steps"
+    },
+    {
+      "depth": 235,
+      "layer": "ground",
+      "locked": true,
+      "module_id": "breakable_cart_return",
+      "parallax": 1.0,
+      "placement_id": "civic_hall_dusk:hall_steps:breakable_cart_return:2",
+      "scale": 1,
+      "variant": "shopping_cart",
+      "x": 760,
+      "zone_id": "hall_steps"
+    },
+    {
+      "depth": 235,
+      "layer": "far",
+      "locked": false,
+      "module_id": "civic_hall_far_skyline",
+      "parallax": 0.25,
+      "placement_id": "civic_hall_dusk:hall_garden:civic_hall_far_skyline:10",
+      "scale": 1,
+      "variant": "base",
+      "x": 824,
+      "zone_id": "hall_garden"
+    },
+    {
+      "depth": 235,
+      "layer": "foreground",
+      "locked": false,
+      "module_id": "civic_foreground_framing",
+      "parallax": 1.08,
+      "placement_id": "civic_hall_dusk:hall_garden:civic_foreground_framing:13",
+      "scale": 1,
+      "variant": "base",
+      "x": 824,
+      "zone_id": "hall_garden"
+    },
+    {
+      "depth": 235,
+      "layer": "ground",
+      "locked": false,
+      "module_id": "civic_ground_and_curb",
+      "parallax": 1.0,
+      "placement_id": "civic_hall_dusk:hall_garden:civic_ground_and_curb:12",
+      "scale": 1,
+      "variant": "base",
+      "x": 824,
+      "zone_id": "hall_garden"
+    },
+    {
+      "depth": 235,
+      "layer": "mid",
+      "locked": false,
+      "module_id": "civic_hall_architecture",
+      "parallax": 0.62,
+      "placement_id": "civic_hall_dusk:hall_garden:civic_hall_architecture:11",
+      "scale": 1,
+      "variant": "alternate",
+      "x": 824,
+      "zone_id": "hall_garden"
+    },
+    {
+      "depth": 235,
+      "layer": "mid",
+      "locked": false,
+      "module_id": "authored_planter_cluster",
+      "parallax": 1.0,
+      "placement_id": "civic_hall_dusk:hall_garden:authored_planter_cluster:14",
+      "scale": 1,
+      "variant": "planter",
+      "x": 877,
+      "zone_id": "hall_garden"
+    },
+    {
+      "depth": 235,
+      "layer": "ground",
+      "locked": true,
+      "module_id": "breakable_road_bollards",
+      "parallax": 1.0,
+      "placement_id": "civic_hall_dusk:hall_garden:breakable_road_bollards:9",
+      "scale": 1,
+      "variant": "bollards",
+      "x": 1236,
+      "zone_id": "hall_garden"
+    },
+    {
+      "depth": 235,
+      "layer": "mid",
+      "locked": false,
+      "module_id": "authored_planter_cluster",
+      "parallax": 1.0,
+      "placement_id": "civic_hall_dusk:hall_garden:authored_planter_cluster:15",
+      "scale": 1,
+      "variant": "planter",
+      "x": 1292,
+      "zone_id": "hall_garden"
+    }
+  ],
+  "recipe": {
+    "location_theme": "civic_plaza",
+    "scene_id": "civic_hall_dusk",
+    "seed": 1729,
+    "style_profile": "fades_environment_v1",
+    "target_length": 1648,
+    "version": 1
+  },
+  "repetition_report": {
+    "passed": true,
+    "unique_module_count": 8,
+    "violations": []
+  },
+  "schema_version": 1,
+  "source_attribution": [
+    {
+      "attribution": "existing atmosphere profile and three-band cloud phase system",
+      "module_id": "ambient_haze_motion",
+      "source": "src/atmosphere.py::AtmosphereSnapshot",
+      "source_type": "engine"
+    },
+    {
+      "attribution": "existing authored native planter renderer; no new art or runtime approximation",
+      "module_id": "authored_planter_cluster",
+      "source": "src/pixel_art.py::draw_stage_prop",
+      "source_type": "engine"
+    },
+    {
+      "attribution": "existing authored breakable cart renderer and gameplay prop contract",
+      "module_id": "breakable_cart_return",
+      "source": "src/pixel_art.py::draw_stage_prop",
+      "source_type": "engine"
+    },
+    {
+      "attribution": "existing authored breakable bollard renderer and gameplay prop contract",
+      "module_id": "breakable_road_bollards",
+      "source": "src/pixel_art.py::draw_stage_prop",
+      "source_type": "engine"
+    },
+    {
+      "attribution": "approved Chapter 1 Awaken Church near-occluder chunk; location-lock manifest",
+      "module_id": "civic_foreground_framing",
+      "sha256": "152b97d5fa0a97de9f94bdd8c35cbea40c76bb77ebf604d1d7b9817b991c8a72",
+      "source": "assets/stage/chapter1_location_locked/chunks/awaken_church_finale/chunk_00_near_occluder_v1.png",
+      "source_type": "file"
+    },
+    {
+      "attribution": "approved Chapter 1 Awaken Church ground chunk; location-lock manifest",
+      "module_id": "civic_ground_and_curb",
+      "sha256": "47777bb4e40b50d88195f5c5c042ac889d59540dead5ab07369d4d69c79a00ba",
+      "source": "assets/stage/chapter1_location_locked/chunks/awaken_church_finale/chunk_00_ground_v1.png",
+      "source_type": "file"
+    },
+    {
+      "attribution": "approved Chapter 1 Awaken Church architecture chunk; location-lock manifest",
+      "module_id": "civic_hall_architecture",
+      "sha256": "32fd8c5f08b0ce84f09c3380999dc538f337fd175a391d64a9e26d49c31dff44",
+      "source": "assets/stage/chapter1_location_locked/chunks/awaken_church_finale/chunk_00_architecture_v1.png",
+      "source_type": "file"
+    },
+    {
+      "attribution": "approved Chapter 1 Awaken Church chunk skyline; location-lock manifest",
+      "module_id": "civic_hall_far_skyline",
+      "sha256": "15f8014247fb7e989093d8e50447459085254c2339e5c1f73b1ae4ae9b1bfc9a",
+      "source": "assets/stage/chapter1_location_locked/chunks/awaken_church_finale/chunk_00_far_skyline_v1.png",
+      "source_type": "file"
+    }
+  ],
+  "spawn_markers": [
+    {
+      "depth": 235,
+      "id": "spawn_left",
+      "x": 96
+    },
+    {
+      "depth": 235,
+      "id": "spawn_right",
+      "x": 1552
+    }
+  ],
+  "zones": [
+    {
+      "category": "civic_plaza",
+      "width": 824,
+      "world_x": 0,
+      "zone_id": "hall_steps"
+    },
+    {
+      "category": "civic_plaza",
+      "width": 824,
+      "world_x": 824,
+      "zone_id": "hall_garden"
+    }
+  ]
+}

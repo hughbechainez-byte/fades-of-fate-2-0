@@ -1,0 +1,1427 @@
+{
+  "schema_version": 1,
+  "chapter": {
+    "id": "chapter_1",
+    "title": "Chapter 1 - Northbound Second Street",
+    "direction": "northbound",
+    "playable_side": "west_even_address_side",
+    "tone": "sunset parking-lot odyssey with escalating freeway shadow and a comic BMX finale"
+  },
+  "player_count_scaling": {
+    "1": {
+      "max_live_enemies": 5,
+      "enemy_health_multiplier": 1.0,
+      "enemy_damage_multiplier": 1.0,
+      "reward_multiplier": 1.0
+    },
+    "2": {
+      "max_live_enemies": 6,
+      "enemy_health_multiplier": 1.1,
+      "enemy_damage_multiplier": 1.05,
+      "reward_multiplier": 1.12
+    },
+    "3": {
+      "max_live_enemies": 7,
+      "enemy_health_multiplier": 1.18,
+      "enemy_damage_multiplier": 1.1,
+      "reward_multiplier": 1.24
+    },
+    "4": {
+      "max_live_enemies": 8,
+      "enemy_health_multiplier": 1.25,
+      "enemy_damage_multiplier": 1.15,
+      "reward_multiplier": 1.36
+    }
+  },
+  "enemy_variants": [
+    {
+      "id": "stick_heavy",
+      "runtime_kind": "stick",
+      "display_name": "HEAVY STICK RAIDER",
+      "fictional_role": "overpacked road-raider bruiser",
+      "behavior_note": "soaks multiple hits before a clear swing cycle",
+      "stat_multipliers": {
+        "health": 1.22,
+        "damage": 1.02
+      },
+      "render_tint": [
+        215,
+        196,
+        170
+      ]
+    },
+    {
+      "id": "stick_fury",
+      "runtime_kind": "stick",
+      "display_name": "STICK STORMER",
+      "fictional_role": "high-output road-raider bruiser",
+      "behavior_note": "deals visibly harder contact with crisp telegraphs",
+      "stat_multipliers": {
+        "damage": 1.25,
+        "attack_range": 1.06
+      },
+      "render_tint": [
+        206,
+        168,
+        168
+      ]
+    },
+    {
+      "id": "stick_striker",
+      "runtime_kind": "stick",
+      "display_name": "STICK DASHER",
+      "fictional_role": "fleet road-raider",
+      "behavior_note": "presses distance with faster footwork and short windows",
+      "stat_multipliers": {
+        "speed": 1.2,
+        "cooldown": 0.95
+      },
+      "render_tint": [
+        172,
+        198,
+        232
+      ]
+    },
+    {
+      "id": "cart_heavy",
+      "runtime_kind": "cart",
+      "display_name": "HEAVY CART CHARGER",
+      "fictional_role": "reinforced cart charger",
+      "behavior_note": "absorbs more punishment before the recovery window",
+      "stat_multipliers": {
+        "health": 1.24,
+        "damage": 1.03
+      },
+      "render_tint": [
+        208,
+        188,
+        152
+      ]
+    },
+    {
+      "id": "cart_fury",
+      "runtime_kind": "cart",
+      "display_name": "CART BRUISER",
+      "fictional_role": "ruthless cart charger",
+      "behavior_note": "lands stronger contact with a longer post-hit commitment",
+      "stat_multipliers": {
+        "damage": 1.28
+      },
+      "render_tint": [
+        226,
+        166,
+        157
+      ]
+    },
+    {
+      "id": "cart_striker",
+      "runtime_kind": "cart",
+      "display_name": "CART DASHER",
+      "fictional_role": "unstoppable cart charger",
+      "behavior_note": "commits into lane pressure faster than the baseline",
+      "stat_multipliers": {
+        "speed": 1.18,
+        "cooldown": 0.93
+      },
+      "render_tint": [
+        182,
+        206,
+        236
+      ]
+    },
+    {
+      "id": "whip_heavy",
+      "runtime_kind": "whip",
+      "display_name": "HEAVY CORD WHIPPER",
+      "fictional_role": "durable whip specialist",
+      "behavior_note": "takes longer to clear, then reaches harder",
+      "stat_multipliers": {
+        "health": 1.2,
+        "damage": 1.05
+      },
+      "render_tint": [
+        214,
+        194,
+        174
+      ]
+    },
+    {
+      "id": "whip_fury",
+      "runtime_kind": "whip",
+      "display_name": "WHIP ENFORCER",
+      "fictional_role": "high output whipper",
+      "behavior_note": "lands stronger whip contact at the same cadence",
+      "stat_multipliers": {
+        "damage": 1.27,
+        "attack_range": 1.08
+      },
+      "render_tint": [
+        216,
+        172,
+        172
+      ]
+    },
+    {
+      "id": "whip_striker",
+      "runtime_kind": "whip",
+      "display_name": "WHIP LANCER",
+      "fictional_role": "speedy whip specialist",
+      "behavior_note": "enters strike windows earlier with quick approach",
+      "stat_multipliers": {
+        "speed": 1.2,
+        "cooldown": 0.94
+      },
+      "render_tint": [
+        178,
+        204,
+        232
+      ]
+    },
+    {
+      "id": "pipe_heavy",
+      "runtime_kind": "pipe",
+      "display_name": "HEAVY PIPE TOSSER",
+      "fictional_role": "armored pipe tosser",
+      "behavior_note": "endures longer during pressure windows",
+      "stat_multipliers": {
+        "health": 1.22,
+        "damage": 1.04
+      },
+      "render_tint": [
+        206,
+        190,
+        160
+      ]
+    },
+    {
+      "id": "pipe_fury",
+      "runtime_kind": "pipe",
+      "display_name": "PIPE ENFORCER",
+      "fictional_role": "hard-hitting pipe tosser",
+      "behavior_note": "punishes missed movement with higher return damage",
+      "stat_multipliers": {
+        "damage": 1.3
+      },
+      "render_tint": [
+        206,
+        172,
+        172
+      ]
+    },
+    {
+      "id": "pipe_striker",
+      "runtime_kind": "pipe",
+      "display_name": "PIPE SCOUT",
+      "fictional_role": "rushes-and-throws pipe specialist",
+      "behavior_note": "closes lane distance faster while keeping same threat profile",
+      "stat_multipliers": {
+        "speed": 1.19,
+        "cooldown": 0.94
+      },
+      "render_tint": [
+        186,
+        210,
+        236
+      ]
+    },
+    {
+      "id": "homeless_heavy",
+      "runtime_kind": "homeless",
+      "display_name": "HARDENED ENCAMPMENT DRIFTER",
+      "attack_style": "glass_bottle",
+      "fictional_role": "tankier encampment drifter",
+      "behavior_note": "absorbs lane contact and stays menacing longer",
+      "stat_multipliers": {
+        "health": 1.25,
+        "damage": 1.06
+      },
+      "render_tint": [
+        204,
+        184,
+        156
+      ]
+    },
+    {
+      "id": "homeless_fury",
+      "runtime_kind": "homeless",
+      "display_name": "ENCAMPMENT ENFORCER",
+      "attack_style": "bike_tire",
+      "fictional_role": "hard-hitting encampment drifter",
+      "behavior_note": "strikes harder through the same lane pathing",
+      "stat_multipliers": {
+        "damage": 1.28
+      },
+      "render_tint": [
+        226,
+        182,
+        178
+      ]
+    },
+    {
+      "id": "homeless_striker",
+      "runtime_kind": "homeless",
+      "display_name": "ENCAMPMENT RUNNER",
+      "attack_style": "glass_bottle",
+      "fictional_role": "rapid encampment drifter",
+      "behavior_note": "presses the party with faster approach timing",
+      "stat_multipliers": {
+        "speed": 1.2,
+        "cooldown": 0.95
+      },
+      "render_tint": [
+        176,
+        204,
+        230
+      ]
+    },
+    {
+      "id": "security_heavy",
+      "runtime_kind": "security",
+      "display_name": "ARMORED SECURITY",
+      "fictional_role": "reinforced security officer",
+      "behavior_note": "holds lane control longer before yielding",
+      "stat_multipliers": {
+        "health": 1.22,
+        "damage": 1.06
+      },
+      "render_tint": [
+        206,
+        188,
+        158
+      ]
+    },
+    {
+      "id": "security_fury",
+      "runtime_kind": "security",
+      "display_name": "SECURITY ASSAULT",
+      "attack_style": "security_flashlight",
+      "fictional_role": "high-impact security officer",
+      "behavior_note": "turns lane contact into stronger punish windows",
+      "stat_multipliers": {
+        "damage": 1.25
+      },
+      "render_tint": [
+        224,
+        176,
+        176
+      ]
+    },
+    {
+      "id": "security_striker",
+      "runtime_kind": "security",
+      "display_name": "SECURITY RAPID",
+      "attack_style": "security_flashlight",
+      "fictional_role": "fast security officer",
+      "behavior_note": "initiates pressure sooner with tighter timing windows",
+      "stat_multipliers": {
+        "speed": 1.18,
+        "cooldown": 0.95
+      },
+      "render_tint": [
+        180,
+        208,
+        236
+      ]
+    },
+    {
+      "id": "police_heavy",
+      "runtime_kind": "police",
+      "display_name": "HEAVY POLICE OFFICER",
+      "attack_style": "nightstick",
+      "fictional_role": "reinforced police officer",
+      "behavior_note": "soaks more damage and keeps pressure with heavy timing",
+      "stat_multipliers": {
+        "health": 1.24,
+        "damage": 1.06
+      },
+      "render_tint": [
+        201,
+        183,
+        153
+      ]
+    },
+    {
+      "id": "police_fury",
+      "runtime_kind": "police",
+      "display_name": "POLICE ENFORCER",
+      "attack_style": "nightstick",
+      "fictional_role": "high pressure police officer",
+      "behavior_note": "lands stronger nightstick contact once in range",
+      "stat_multipliers": {
+        "damage": 1.27
+      },
+      "render_tint": [
+        218,
+        166,
+        166
+      ]
+    },
+    {
+      "id": "police_striker",
+      "runtime_kind": "police",
+      "display_name": "POLICE RAPID",
+      "attack_style": "nightstick",
+      "fictional_role": "faster police officer",
+      "behavior_note": "closes the distance rapidly for a cleaner strike window",
+      "stat_multipliers": {
+        "speed": 1.2,
+        "cooldown": 0.94
+      },
+      "render_tint": [
+        172,
+        206,
+        236
+      ]
+    },
+    {
+      "id": "couch_heavy",
+      "runtime_kind": "couch",
+      "display_name": "COUCH TANK",
+      "fictional_role": "tankier Couch phase actor",
+      "behavior_note": "stays in lane longer before recovery while soaking stress",
+      "stat_multipliers": {
+        "health": 1.18,
+        "damage": 1.06
+      },
+      "render_tint": [
+        201,
+        181,
+        145
+      ]
+    },
+    {
+      "id": "couch_fury",
+      "runtime_kind": "couch",
+      "display_name": "COUCH ENFORCER",
+      "fictional_role": "hard-hitting Couch phase actor",
+      "behavior_note": "delivers higher contact force while staying in standard lanes",
+      "stat_multipliers": {
+        "damage": 1.25
+      },
+      "render_tint": [
+        212,
+        170,
+        165
+      ]
+    },
+    {
+      "id": "couch_striker",
+      "runtime_kind": "couch",
+      "display_name": "COUCH RUSHER",
+      "fictional_role": "speed-phase Couch",
+      "behavior_note": "accelerates through walk and contact windows",
+      "stat_multipliers": {
+        "speed": 1.15,
+        "cooldown": 0.94
+      },
+      "render_tint": [
+        165,
+        193,
+        227
+      ]
+    },
+    {
+      "id": "road_raider_stick",
+      "runtime_kind": "stick",
+      "fictional_role": "road-raider harasser",
+      "behavior_note": "circles the group and attacks after a readable feint"
+    },
+    {
+      "id": "road_raider_cart",
+      "runtime_kind": "cart",
+      "fictional_role": "road-raider rusher",
+      "behavior_note": "telegraphs a lane charge and can be redirected into set dressing"
+    },
+    {
+      "id": "road_raider_pipe",
+      "runtime_kind": "pipe",
+      "fictional_role": "road-raider bruiser",
+      "behavior_note": "holds space near a landmark while lighter allies flank"
+    },
+    {
+      "id": "road_raider_whip",
+      "runtime_kind": "whip",
+      "fictional_role": "road-raider reach specialist",
+      "behavior_note": "uses a long but clearly telegraphed lane strike"
+    },
+    {
+      "id": "freeway_scout",
+      "runtime_kind": "stick",
+      "fictional_role": "fictional freeway scout",
+      "behavior_note": "appears from ramp shadows and calls a short ambush cue"
+    },
+    {
+      "id": "alley_rusher",
+      "runtime_kind": "cart",
+      "fictional_role": "fictional alley rusher",
+      "behavior_note": "uses a blocked lane only after a warning marker appears"
+    },
+    {
+      "id": "encampment_crawler",
+      "runtime_kind": "homeless",
+      "fictional_role": "encampment crawler",
+      "behavior_note": "crawls out of a tent and lunges at the first open lane"
+    },
+    {
+      "id": "encampment_drifter",
+      "runtime_kind": "homeless",
+      "fictional_role": "encampment drifter",
+      "behavior_note": "shuffles forward from a smoking tent with a slow, readable swing"
+    },
+    {
+      "id": "underpass_camp_runner",
+      "runtime_kind": "homeless",
+      "fictional_role": "underpass camp runner",
+      "behavior_note": "breaks from camp cover to pressure the flank line"
+    },
+    {
+      "id": "cart_tent_lurker",
+      "runtime_kind": "homeless",
+      "fictional_role": "cart tent lurker",
+      "behavior_note": "uses the tent edge and a low crawl to re-enter the lane"
+    },
+    {
+      "id": "encampment_bottle_scarf",
+      "runtime_kind": "homeless",
+      "display_name": "BOTTLE SCARF DRIFTER",
+      "attack_style": "glass_bottle",
+      "fictional_role": "fictional bottle-scarf drifter",
+      "behavior_note": "keeps distance and telegraphs an overhand bottle throw"
+    },
+    {
+      "id": "encampment_bottle_puffer",
+      "runtime_kind": "homeless",
+      "display_name": "BOTTLE PUFFER",
+      "attack_style": "glass_bottle",
+      "fictional_role": "fictional puffer-coat bottle thrower",
+      "behavior_note": "steps into a chest-high bottle toss after a readable windup"
+    },
+    {
+      "id": "encampment_tire_slinger",
+      "runtime_kind": "homeless",
+      "display_name": "TIRE SLINGER",
+      "attack_style": "bike_tire",
+      "fictional_role": "fictional encampment tire slinger",
+      "behavior_note": "carries a bike tire over one shoulder before an overhead hurl"
+    },
+    {
+      "id": "underpass_tire_runner",
+      "runtime_kind": "homeless",
+      "display_name": "UNDERPASS TIRE RUNNER",
+      "attack_style": "bike_tire",
+      "fictional_role": "fictional underpass tire runner",
+      "behavior_note": "repositions quickly and uses a sidearm tire throw"
+    },
+    {
+      "id": "cart_tent_bottle_pitcher",
+      "runtime_kind": "homeless",
+      "display_name": "BLANKET BOTTLE PITCHER",
+      "attack_style": "glass_bottle",
+      "fictional_role": "fictional blanket-poncho bottle pitcher",
+      "behavior_note": "uses an underhand bottle pitch from behind a broad cloth silhouette"
+    },
+    {
+      "id": "parking_security",
+      "runtime_kind": "security",
+      "fictional_role": "uniformed parking security",
+      "behavior_note": "uses badge, flashlight, radio bark, and safe spacing"
+    },
+    {
+      "id": "mall_security_watch",
+      "runtime_kind": "security",
+      "display_name": "MALL WATCH",
+      "attack_style": "security_flashlight",
+      "fictional_role": "fictional mall security watch",
+      "behavior_note": "uses a shoulder radio, silver flashlight, and measured footwork"
+    },
+    {
+      "id": "event_security_heavy",
+      "runtime_kind": "security",
+      "display_name": "EVENT SECURITY",
+      "attack_style": "security_flashlight",
+      "fictional_role": "fictional event security heavy",
+      "behavior_note": "holds the lane in segmented high-visibility gear"
+    },
+    {
+      "id": "night_security_patrol",
+      "runtime_kind": "security",
+      "display_name": "NIGHT PATROL",
+      "attack_style": "security_flashlight",
+      "fictional_role": "fictional night security patrol",
+      "behavior_note": "uses a long flashlight and reflective rain-shell piping"
+    },
+    {
+      "id": "city_patrol_nightstick",
+      "runtime_kind": "police",
+      "display_name": "BEAT PATROL",
+      "attack_style": "nightstick",
+      "fictional_role": "fictional city patrol officer",
+      "behavior_note": "uses a clearly telegraphed close-range nightstick strike"
+    },
+    {
+      "id": "transit_patrol_nightstick",
+      "runtime_kind": "police",
+      "display_name": "TRANSIT PATROL",
+      "attack_style": "nightstick",
+      "fictional_role": "fictional transit patrol officer",
+      "behavior_note": "uses a straight nightstick and tall lane-control stance"
+    },
+    {
+      "id": "riot_line_nightstick",
+      "runtime_kind": "police",
+      "display_name": "RIOT LINE",
+      "attack_style": "nightstick",
+      "fictional_role": "fictional armored line officer",
+      "behavior_note": "uses a side-handle nightstick with a slower armored windup"
+    },
+    {
+      "id": "bike_patrol_taser",
+      "runtime_kind": "police",
+      "display_name": "BIKE PATROL",
+      "attack_style": "taser",
+      "fictional_role": "fictional bike patrol officer",
+      "behavior_note": "keeps range and fires a single short-lived taser dart"
+    },
+    {
+      "id": "tactical_taser_unit",
+      "runtime_kind": "police",
+      "display_name": "TASER UNIT",
+      "attack_style": "taser",
+      "fictional_role": "fictional tactical taser officer",
+      "behavior_note": "uses a compact two-prong taser after a bright electric telegraph"
+    },
+    {
+      "id": "couch",
+      "runtime_kind": "couch",
+      "fictional_role": "Couch boss",
+      "behavior_note": "owns the Awaken front lot, BMX retreats, and crew calls"
+    }
+  ],
+  "levels": [
+    {
+      "number": 1,
+      "runtime_level_id": "chapter_1_level_1",
+      "route": {
+        "start_anchor_id": "sprouts_parking_lot",
+        "end_anchor_id": "el_cilantro_madison",
+        "start": "Sprouts Parking Lot",
+        "end": "El Cilantro at Madison",
+        "stops": [
+          "Sprouts Parking Lot",
+          "Cart Return",
+          "Wells Drive",
+          "Walmart Neighborhood Market",
+          "Town & Country Strip",
+          "Madison Avenue",
+          "El Cilantro at Madison"
+        ]
+      },
+      "establishing_shot": {
+        "id": "sprouts_deep_lot_establishing",
+        "camera_note": "Begin deep in the setback with parked-car rows, palms, cart corral, green storefront massing, and the distant northbound road.",
+        "input_gate_seconds": 1.2
+      },
+      "major_fights": [
+        {
+          "id": "sprouts_cart_return_onboarding",
+          "title": "Cart Return Basics",
+          "runtime_hook": "Sprouts Parking Lot",
+          "normal_duration_seconds": 145,
+          "experienced_duration_seconds": 92,
+          "tutorial_focus": ["move", "light_combo", "throw_cart"],
+          "spawn_groups": [
+            {
+              "id": "cart_return_gradual_arrivals",
+              "variants": ["road_raider_stick", "road_raider_stick", "road_raider_cart", "stick_heavy", "cart_fury"],
+              "player_count_additions": {
+                "2": ["road_raider_stick"],
+                "3": ["road_raider_stick", "road_raider_cart"],
+                "4": ["road_raider_stick", "road_raider_cart", "road_raider_pipe"]
+              }
+            },
+            {
+              "id": "sprouts_tent_homeless_preview",
+              "variants": ["encampment_crawler", "encampment_drifter", "homeless_heavy"],
+              "player_count_additions": {
+                "2": ["cart_tent_lurker"],
+                "3": ["underpass_camp_runner"],
+                "4": ["cart_tent_lurker", "underpass_camp_runner"]
+              }
+            }
+          ],
+          "completion_note": "Unlocks the cart interaction prompt after the first clean hit, without a full-screen tutorial panel."
+        },
+        {
+          "id": "town_country_alarm_escalation",
+          "title": "Town & Country Alarm",
+          "runtime_hook": "Town & Country",
+          "normal_duration_seconds": 190,
+          "experienced_duration_seconds": 122,
+          "spawn_groups": [
+            {
+              "id": "storefront_raiders",
+              "variants": ["road_raider_stick", "road_raider_whip", "road_raider_cart", "road_raider_pipe", "stick_fury", "cart_fury", "whip_fury", "pipe_fury"],
+              "player_count_additions": {
+                "2": ["road_raider_stick"],
+                "3": ["road_raider_cart", "road_raider_whip"],
+                "4": ["road_raider_cart", "road_raider_pipe", "road_raider_whip"]
+              }
+            },
+            {
+              "id": "alarm_security_arrival",
+              "variants": ["mall_security_watch", "event_security_heavy", "security_fury", "security_striker"],
+              "player_count_additions": {
+                "3": ["mall_security_watch"],
+                "4": ["event_security_heavy"]
+              }
+            }
+          ],
+          "completion_note": "A car alarm, pulsing hazard lights, and a rolling delivery van change the arena read before the final wave."
+        },
+        {
+          "id": "el_cilantro_corner_climax",
+          "title": "El Cilantro Corner",
+          "runtime_hook": "El Cilantro at Madison",
+          "normal_duration_seconds": 210,
+          "experienced_duration_seconds": 135,
+          "spawn_groups": [
+            {
+              "id": "madison_corner_crew",
+              "variants": ["road_raider_cart", "road_raider_stick", "road_raider_whip", "road_raider_pipe", "stick_striker", "cart_striker", "whip_striker", "pipe_striker"],
+              "player_count_additions": {
+                "2": ["road_raider_stick"],
+                "3": ["road_raider_cart", "road_raider_whip"],
+                "4": ["road_raider_pipe", "road_raider_cart", "road_raider_whip"]
+              }
+            },
+            {
+              "id": "corner_flashlight_detail",
+              "variants": ["night_security_patrol", "police_heavy", "police_fury"],
+              "player_count_additions": {
+                "2": ["night_security_patrol"],
+                "4": ["night_security_patrol"]
+              }
+            }
+          ],
+          "completion_note": "The corner locks only long enough for a meaningful route climax, then opens to the Jerry story beat."
+        }
+      ],
+      "ambush_or_optional": [
+        {
+          "id": "wells_service_alley",
+          "title": "Wells Service Alley",
+          "runtime_hook": "Wells Drive optional branch",
+          "branch_type": "optional_storefront_alley",
+          "reward": "BB tin or Super Butane cache plus score multiplier",
+          "risk": "narrow exit, alley rusher, and a time-costing side fight",
+          "normal_duration_seconds": 65,
+          "experienced_duration_seconds": 38,
+          "spawn_groups": [
+            {
+              "id": "alley_pickup_guard",
+              "variants": ["alley_rusher", "road_raider_stick", "stick_heavy", "cart_heavy"],
+              "player_count_additions": {
+                "3": ["road_raider_whip"],
+                "4": ["road_raider_cart"]
+              }
+            }
+          ]
+        }
+      ],
+      "environmental_events": [
+        {
+          "id": "sprouts_tent_camp",
+          "description": "A smoking sidewalk tent and a low cart shelter open the Sprouts lane right at the opening stretch so the new homeless ambush is visible immediately.",
+          "trigger_x": 144,
+          "x": 184,
+          "depth": 260,
+          "gate_x": 780,
+          "prop_kind": "tent_camp",
+          "spawn_groups": [
+            {
+              "id": "sprouts_tent_wave",
+              "variants": ["encampment_bottle_scarf", "encampment_bottle_puffer", "encampment_tire_slinger", "homeless_fury"],
+              "player_count_additions": {
+                "2": ["encampment_crawler"],
+                "3": ["encampment_drifter"],
+                "4": ["cart_tent_lurker", "underpass_camp_runner"]
+              }
+            }
+          ]
+        },
+        {
+          "id": "cart_return_throwable",
+          "description": "A marked cart can be pushed, thrown, or used as lane cover, and returns safely after the encounter.",
+          "trigger_x": 900
+        },
+        {
+          "id": "wells_drive_tent_camp",
+          "description": "A pair of smoking sidewalk tents and a low shopping cart shelter force the lane open before the Town & Country fight.",
+          "trigger_x": 1110,
+          "x": 1148,
+          "depth": 273,
+          "prop_kind": "tent_camp",
+          "spawn_groups": [
+            {
+              "id": "wells_drive_tent_wave",
+              "variants": ["underpass_tire_runner", "cart_tent_bottle_pitcher", "homeless_striker", "whip_striker"],
+              "player_count_additions": {
+                "2": ["encampment_crawler"],
+                "3": ["underpass_camp_runner"],
+                "4": ["cart_tent_lurker", "encampment_drifter"]
+              }
+            }
+          ]
+        },
+        {
+          "id": "town_country_alarm",
+          "description": "An alarm, vehicle hazard lights, and a slow delivery-van pass make the middle fight escalate without blocking the route."
+        }
+      ],
+      "story_beats": [
+        {
+          "id": "jerry_fresh_edge",
+          "description": "Jerry gets a staged, skippable edge-of-screen arrival at El Cilantro and points the party toward the 7-Eleven clue."
+        }
+      ],
+      "landmark_set_pieces": [
+        {
+          "id": "madison_corner_turn",
+          "description": "Madison traffic, corner curb geometry, Goodwill massing, and the El Cilantro facade create a real level ending rather than a repeated storefront."
+        }
+      ],
+      "traversal_gaps": [
+        {
+          "id": "madison_driveway_weave",
+          "description": "A driveway and temporary vehicle lane require a short depth weave with clear ground markers and no dead-end collision."
+        }
+      ],
+      "ending": {
+        "id": "jerry_to_seven_eleven",
+        "visual": "El Cilantro corner settles into a warm store-light silhouette while the party faces north.",
+        "narrative": "Jerry's clue turns the next destination into a visible 7-Eleven lead."
+      },
+      "checkpoints": ["level_start", "cart_return_clear", "town_country_clear", "el_cilantro_clear"]
+    },
+    {
+      "number": 2,
+      "runtime_level_id": "chapter_1_level_2",
+      "route": {
+        "start_anchor_id": "seven_eleven",
+        "end_anchor_id": "i8_underpass",
+        "start": "7-Eleven",
+        "end": "I-8 Underpass",
+        "stops": [
+          "7-Eleven",
+          "Fuel Islands",
+          "Carl's Jr. Edge",
+          "Madison Plaza",
+          "Recessed Storefront Threshold",
+          "Union Shell",
+          "Valvoline Bays",
+          "I-8 Underpass"
+        ]
+      },
+      "establishing_shot": {
+        "id": "seven_eleven_clue_establishing",
+        "camera_note": "Frame the 7-Eleven facade, forecourt canopy, clue marker, and far-side traffic before the player gets control.",
+        "input_gate_seconds": 1.0
+      },
+      "major_fights": [
+        {
+          "id": "seven_eleven_forecourt",
+          "title": "Forecourt Fuel Islands",
+          "runtime_hook": "7-Eleven Pad",
+          "normal_duration_seconds": 180,
+          "experienced_duration_seconds": 112,
+          "spawn_groups": [
+            {
+              "id": "forecourt_lurkers",
+              "variants": ["road_raider_stick", "road_raider_cart", "road_raider_whip", "stick_heavy", "cart_fury"],
+              "player_count_additions": {
+                "2": ["road_raider_stick"],
+                "3": ["road_raider_cart", "road_raider_pipe"],
+                "4": ["road_raider_whip", "road_raider_cart", "road_raider_pipe"]
+              }
+            },
+            {
+              "id": "forecourt_patrol_response",
+              "variants": ["city_patrol_nightstick", "bike_patrol_taser", "police_striker", "police_fury"],
+              "player_count_additions": {
+                "2": ["bike_patrol_taser"],
+                "3": ["police_striker", "city_patrol_nightstick"],
+                "4": ["police_fury", "police_striker", "bike_patrol_taser"]
+              }
+            }
+          ],
+          "completion_note": "Fuel-island bollards create readable cover; no explosive hazard can soft-lock the walk lane."
+        },
+        {
+          "id": "madison_plaza_layers",
+          "title": "Madison Plaza Layers",
+          "runtime_hook": "Madison Plaza",
+          "normal_duration_seconds": 205,
+          "experienced_duration_seconds": 132,
+          "spawn_groups": [
+            {
+              "id": "plaza_tiered_arrivals",
+              "variants": ["road_raider_stick", "road_raider_whip", "road_raider_cart", "road_raider_pipe", "stick_fury", "cart_fury", "whip_fury", "pipe_fury"],
+              "player_count_additions": {
+                "2": ["road_raider_stick"],
+                "3": ["road_raider_whip", "road_raider_cart"],
+                "4": ["road_raider_pipe", "road_raider_cart", "road_raider_whip"]
+              }
+            },
+            {
+              "id": "plaza_flashlight_response",
+              "variants": ["parking_security", "security_heavy", "security_fury", "security_striker"],
+              "player_count_additions": {
+                "2": ["parking_security"],
+                "4": ["parking_security"]
+              }
+            }
+          ],
+          "completion_note": "Carl's Jr. depth layer, plaza storefront band, and distant road layer remain separate so the lot reads in 2.5D."
+        },
+        {
+          "id": "i8_ramp_shadow",
+          "title": "I-8 Ramp Shadow",
+          "runtime_hook": "I-8 Underpass",
+          "normal_duration_seconds": 225,
+          "experienced_duration_seconds": 145,
+          "spawn_groups": [
+            {
+              "id": "ramp_scout_escalation",
+              "variants": ["freeway_scout", "road_raider_cart", "road_raider_pipe", "road_raider_whip", "stick_striker", "cart_striker", "whip_striker", "pipe_striker"],
+              "player_count_additions": {
+                "2": ["freeway_scout"],
+                "3": ["road_raider_cart", "road_raider_whip"],
+                "4": ["road_raider_pipe", "road_raider_cart", "road_raider_whip"]
+              }
+            },
+            {
+              "id": "ramp_patrol_response",
+              "variants": ["transit_patrol_nightstick", "tactical_taser_unit", "police_fury", "police_striker"],
+              "player_count_additions": {
+                "2": ["transit_patrol_nightstick"],
+                "3": ["police_striker", "tactical_taser_unit"],
+                "4": ["police_fury", "police_striker", "tactical_taser_unit"]
+              }
+            }
+          ],
+          "completion_note": "The underpass ends with a tonal shift to concrete, water reflection, ramp noise, and a clean camera exit."
+        }
+      ],
+      "ambush_or_optional": [
+        {
+          "id": "madison_recessed_threshold",
+          "title": "Recessed Threshold Cache",
+          "runtime_hook": "Madison Plaza optional threshold",
+          "branch_type": "optional_parking_route",
+          "reward": "health snack, Chief command charge, and score bonus",
+          "risk": "a recessed storefront keeps the camera tighter while a whip specialist guards the return line",
+          "normal_duration_seconds": 70,
+          "experienced_duration_seconds": 42,
+          "spawn_groups": [
+            {
+              "id": "threshold_ambush",
+              "variants": ["road_raider_whip", "alley_rusher", "whip_fury", "stick_heavy"],
+              "player_count_additions": {
+                "3": ["road_raider_stick"],
+                "4": ["road_raider_pipe"]
+              }
+            }
+          ]
+        }
+      ],
+      "environmental_events": [
+        {
+          "id": "fuel_island_spacing",
+          "description": "Fuel islands and bollards bend approach lines while preserving a visible safe route around every obstacle."
+        },
+        {
+          "id": "madison_plaza_tent_camp",
+          "description": "A smoking tent row under the plaza awning spills new fighters into the lane before the underpass shadow.",
+          "trigger_x": 1125,
+          "x": 1178,
+          "depth": 274,
+          "prop_kind": "tent_camp",
+          "spawn_groups": [
+            {
+              "id": "madison_tent_wave",
+              "variants": ["encampment_drifter", "underpass_camp_runner", "homeless_fury", "homeless_striker"],
+              "player_count_additions": {
+                "2": ["cart_tent_lurker"],
+                "3": ["encampment_crawler"],
+                "4": ["cart_tent_lurker", "encampment_crawler"]
+              }
+            }
+          ]
+        },
+        {
+          "id": "freeway_ramp_escalation",
+          "description": "Ramp traffic shadows, concrete pillars, and a passing headlight sweep increase pressure as the party enters I-8."
+        }
+      ],
+      "story_beats": [
+        {
+          "id": "seven_eleven_clue",
+          "description": "The party confirms Couch's trail at the 7-Eleven exterior before the forecourt fight begins."
+        }
+      ],
+      "landmark_set_pieces": [
+        {
+          "id": "i8_underpass_tonal_turn",
+          "description": "The playable route ends inside the underpass shadow with creek edge, retaining wall, columns, and roadway sound."
+        }
+      ],
+      "traversal_gaps": [
+        {
+          "id": "forecourt_to_ramp_weave",
+          "description": "Driveways, service bays, and a ramp merge create a short layered traversal segment with visible warning arrows."
+        }
+      ],
+      "ending": {
+        "id": "i8_to_showroom_travel",
+        "visual": "The camera pulls past the last I-8 column into a limited travel montage.",
+        "narrative": "The crew crosses the shadow toward the 690 showroom and fuel row before Soapy Joe's."
+      },
+      "checkpoints": ["level_start", "forecourt_clear", "plaza_clear", "underpass_clear"]
+    },
+    {
+      "number": 3,
+      "runtime_level_id": "chapter_1_level_3",
+      "route": {
+        "start_anchor_id": "soapy_joes",
+        "end_anchor_id": "revive_pathway",
+        "start": "Soapy Joe's",
+        "end": "Revive Pathway",
+        "stops": [
+          "Soapy Joe's",
+          "Vacuum Canopy",
+          "Starbucks Drive-Through",
+          "Marechiaro",
+          "Carl's Boot & Leather",
+          "CVS Broadway Corner",
+          "Broadway Turn",
+          "Revive Pathway"
+        ]
+      },
+      "establishing_shot": {
+        "id": "soapy_joes_canopy_establishing",
+        "camera_note": "Open on the white wash structure, vivid blue roof band, palms, wet pavement, and repeating vacuum arches.",
+        "input_gate_seconds": 1.1
+      },
+      "major_fights": [
+        {
+          "id": "soapy_joes_front_lot",
+          "title": "Soapy Joe's Front Lot",
+          "runtime_hook": "Soapy Joe's Front Lot",
+          "normal_duration_seconds": 205,
+          "experienced_duration_seconds": 130,
+          "spawn_groups": [
+            {
+              "id": "wash_lane_raiders",
+              "variants": ["road_raider_stick", "road_raider_cart", "road_raider_pipe", "road_raider_whip", "stick_fury", "cart_fury", "whip_fury", "pipe_fury"],
+              "player_count_additions": {
+                "2": ["road_raider_stick"],
+                "3": ["road_raider_cart", "road_raider_whip"],
+                "4": ["road_raider_pipe", "road_raider_cart", "road_raider_whip"]
+              }
+            }
+          ],
+          "completion_note": "Wash foam, wet reflections, and moving canopy lights remain visual dressing with collision-safe boundaries."
+        },
+        {
+          "id": "broadway_turn_pressure",
+          "title": "Broadway Turn Pressure",
+          "runtime_hook": "Broadway Turn",
+          "normal_duration_seconds": 235,
+          "experienced_duration_seconds": 150,
+          "spawn_groups": [
+            {
+              "id": "turning_corner_crew",
+              "variants": ["road_raider_cart", "road_raider_stick", "road_raider_whip", "road_raider_pipe", "stick_striker", "cart_striker", "whip_striker", "pipe_striker"],
+              "player_count_additions": {
+                "2": ["road_raider_whip"],
+                "3": ["road_raider_cart", "road_raider_pipe"],
+                "4": ["road_raider_cart", "road_raider_pipe", "road_raider_whip"]
+              }
+            },
+            {
+              "id": "broadway_flashlight_detail",
+              "variants": ["night_security_patrol", "riot_line_nightstick", "security_fury", "police_heavy", "police_striker"],
+              "player_count_additions": {
+                "3": ["riot_line_nightstick"],
+                "4": ["night_security_patrol"]
+              }
+            }
+          ],
+          "completion_note": "The major fight turns the camera with the intersection, so Broadway feels like a route change rather than a backdrop swap."
+        },
+        {
+          "id": "revive_pathway_final_push",
+          "title": "Revive Pathway Final Push",
+          "runtime_hook": "Revive Approach",
+          "normal_duration_seconds": 260,
+          "experienced_duration_seconds": 172,
+          "spawn_groups": [
+            {
+              "id": "revive_approach_crew",
+              "variants": ["road_raider_stick", "road_raider_whip", "road_raider_cart", "road_raider_pipe", "stick_fury", "cart_fury", "whip_fury", "pipe_fury"],
+              "player_count_additions": {
+                "2": ["road_raider_stick"],
+                "3": ["road_raider_whip", "road_raider_cart"],
+                "4": ["road_raider_pipe", "road_raider_cart", "road_raider_whip"]
+              }
+            }
+          ],
+          "completion_note": "The cleared pathway points to Awaken with an explicit route card instead of an unexplained mission jump."
+        }
+      ],
+      "ambush_or_optional": [
+        {
+          "id": "boot_shop_loading_bay",
+          "title": "Boot Shop Loading Bay",
+          "runtime_hook": "Boot & Leather optional bay",
+          "branch_type": "optional_storefront_alley",
+          "reward": "temporary score multiplier, weapon pickup, and a revive snack",
+          "risk": "a short side arena with a bruiser and limited dodge space",
+          "normal_duration_seconds": 78,
+          "experienced_duration_seconds": 48,
+          "spawn_groups": [
+            {
+              "id": "loading_bay_guard",
+              "variants": ["road_raider_pipe", "road_raider_stick", "pipe_striker", "stick_heavy"],
+              "player_count_additions": {
+                "2": ["road_raider_whip"],
+                "4": ["road_raider_cart"]
+              }
+            }
+          ]
+        }
+      ],
+      "environmental_events": [
+        {
+          "id": "wash_reflection_runoff",
+          "description": "Reflective runoff, canopy light sweeps, and soap foam add motion without creating hidden hazards or muddy collision."
+        },
+        {
+          "id": "broadway_tent_camp",
+          "description": "A cramped tent line by the service lane smokes up and coughs new bodies into the Broadway turn.",
+          "trigger_x": 1115,
+          "x": 1162,
+          "depth": 273,
+          "prop_kind": "tent_camp",
+          "spawn_groups": [
+            {
+              "id": "broadway_tent_wave",
+              "variants": ["encampment_crawler", "cart_tent_lurker", "homeless_heavy", "homeless_fury"],
+              "player_count_additions": {
+                "2": ["encampment_drifter"],
+                "3": ["underpass_camp_runner"],
+                "4": ["encampment_drifter", "underpass_camp_runner"]
+              }
+            }
+          ]
+        },
+        {
+          "id": "broadway_signal_change",
+          "description": "A traffic-signal cycle and passing vehicle light turn the CVS corner into a readable directional change."
+        }
+      ],
+      "story_beats": [
+        {
+          "id": "revive_route_confirmation",
+          "description": "A final clue at Revive reframes the Awaken lot as Couch's chosen stage and prepares the BMX reveal."
+        }
+      ],
+      "landmark_set_pieces": [
+        {
+          "id": "broadway_cvs_turn",
+          "description": "The CVS corner, street sign, receding Broadway storefronts, and Revive medical-office massing explain the lateral turn."
+        }
+      ],
+      "traversal_gaps": [
+        {
+          "id": "vacuum_canopy_to_broadway",
+          "description": "A drive-through lane, curb ramp, and crossing traffic create an authored pace break before the Broadway turn."
+        }
+      ],
+      "ending": {
+        "id": "revive_to_awaken",
+        "visual": "Revive signage falls behind as the route card tracks north-west toward the Awaken lot.",
+        "narrative": "The chapter turns personal: Couch is waiting by Dave's BMX."
+      },
+      "checkpoints": ["level_start", "wash_lot_clear", "broadway_turn_clear", "revive_clear"]
+    },
+    {
+      "number": 4,
+      "runtime_level_id": "chapter_1_level_4",
+      "route": {
+        "start_anchor_id": "awaken_church_lot",
+        "end_anchor_id": "daves_bmx",
+        "start": "Awaken Church",
+        "end": "Dave's BMX",
+        "stops": ["Awaken Church", "Awaken Front Lot", "Couch Showdown", "Dave's BMX"]
+      },
+      "establishing_shot": {
+        "id": "awaken_lot_bmx_establishing",
+        "camera_note": "Reveal the Awaken facade, lit front lot, Couch's silhouette, and Dave's BMX at x=1080 before the confrontation closes in.",
+        "input_gate_seconds": 1.4
+      },
+      "major_fights": [
+        {
+          "id": "awaken_arrival_scouts",
+          "title": "Awaken Arrival Scouts",
+          "runtime_hook": "Awaken South Lot",
+          "normal_duration_seconds": 130,
+          "experienced_duration_seconds": 80,
+          "spawn_groups": [
+            {
+              "id": "arrival_raiders",
+              "variants": ["road_raider_stick", "road_raider_cart", "road_raider_whip", "stick_heavy", "cart_fury"],
+              "player_count_additions": {
+                "2": ["road_raider_stick"],
+                "3": ["road_raider_cart", "road_raider_pipe"],
+                "4": ["road_raider_whip", "road_raider_cart", "road_raider_pipe"]
+              }
+            }
+          ],
+          "completion_note": "The group clears enough space for the Awaken facade and BMX story prop to become readable."
+        },
+        {
+          "id": "awaken_lot_intercept",
+          "title": "Awaken Lot Intercept",
+          "runtime_hook": "Awaken front-lot pre-boss hook",
+          "normal_duration_seconds": 165,
+          "experienced_duration_seconds": 102,
+          "spawn_groups": [
+            {
+              "id": "front_lot_intercept",
+              "variants": ["road_raider_cart", "road_raider_stick", "road_raider_pipe", "stick_heavy", "cart_striker", "pipe_striker"],
+              "player_count_additions": {
+                "2": ["road_raider_whip"],
+                "3": ["road_raider_cart", "road_raider_pipe"],
+                "4": ["road_raider_cart", "road_raider_pipe", "road_raider_whip"]
+              }
+            }
+          ],
+          "completion_note": "Couch watches from the BMX line and does not become damageable until the lot intercept is cleared."
+        },
+        {
+          "id": "couch_three_phase_showdown",
+          "title": "Couch at Awaken",
+          "runtime_hook": "Couch at Awaken",
+          "normal_duration_seconds": 310,
+          "experienced_duration_seconds": 205,
+          "spawn_groups": [
+            {
+              "id": "couch_opening",
+              "variants": ["couch"],
+              "player_count_additions": {}
+            }
+          ],
+          "completion_note": "Couch's two BMX retreats force crew clears before the final damage window; neither retreat can skip the next phase."
+        }
+      ],
+      "ambush_or_optional": [
+        {
+          "id": "bmx_lockup_cache",
+          "title": "BMX Lockup Cache",
+          "runtime_hook": "Awaken side-lot optional cache",
+          "branch_type": "optional_side_lot",
+          "reward": "Chief meter refill and a life-saving snack before the boss lock",
+          "risk": "a short side-lot ambush can drain health before Couch begins",
+          "normal_duration_seconds": 55,
+          "experienced_duration_seconds": 32,
+          "spawn_groups": [
+            {
+              "id": "side_lot_watchers",
+              "variants": ["freeway_scout", "road_raider_whip", "pipe_striker", "stick_fury"],
+              "player_count_additions": {
+                "3": ["road_raider_cart"],
+                "4": ["road_raider_pipe"]
+              }
+            }
+          ]
+        }
+      ],
+      "environmental_events": [
+        {
+          "id": "awaken_floodlight_sweep",
+          "description": "A floodlight sweep, gate rattle, and parked-bike shine make the confrontation feel staged without hiding player silhouettes."
+        },
+        {
+          "id": "awaken_tent_camp",
+          "description": "A final tent cluster smokes behind the south lot and lets the last camp fighters crawl into the approach lane.",
+          "trigger_x": 620,
+          "x": 666,
+          "depth": 274,
+          "prop_kind": "tent_camp",
+          "spawn_groups": [
+            {
+              "id": "awaken_tent_wave",
+              "variants": ["encampment_drifter", "cart_tent_lurker", "homeless_fury", "homeless_striker"],
+              "player_count_additions": {
+                "2": ["encampment_crawler"],
+                "3": ["underpass_camp_runner"],
+                "4": ["encampment_crawler", "underpass_camp_runner"]
+              }
+            }
+          ]
+        },
+        {
+          "id": "bmx_retreat_path",
+          "description": "Couch's jump arc travels to the actual BMX refuge marker, preserving collision and showing why she is temporarily unreachable."
+        }
+      ],
+      "story_beats": [
+        {
+          "id": "couch_confrontation",
+          "description": "Couch identifies the BMX, mocks the party, and escalates through two crew bargains before the final defeat."
+        }
+      ],
+      "landmark_set_pieces": [
+        {
+          "id": "awaken_bmx_finale",
+          "description": "The church facade, front-lot median, single BMX marker, and sunset end strip carry the finale's geography."
+        }
+      ],
+      "traversal_gaps": [
+        {
+          "id": "front_lot_median_weave",
+          "description": "Players move around the front-lot median before the boss lock; it is a readable depth-navigation moment, not a permanent block."
+        }
+      ],
+      "ending": {
+        "id": "bmx_sunset_celebration",
+        "visual": "The crew reunites beside Dave's BMX under a sunset lot silhouette before the results screen.",
+        "narrative": "The Chapter 1 victory beat resolves the chase while leaving the road open for the next route."
+      },
+      "checkpoints": ["level_start", "arrival_scouts_clear", "front_lot_clear", "couch_phase_two", "couch_complete"]
+    }
+  ],
+  "inter_level_travel": [
+    {
+      "from_level_id": "chapter_1_level_1",
+      "to_level_id": "chapter_1_level_2",
+      "heading": "EL CILANTRO TO 7-ELEVEN",
+      "beats": [
+        "Jerry's clue holds on the northbound road arrow.",
+        "A short moving panorama carries the party past Madison without a silent teleport."
+      ]
+    },
+    {
+      "from_level_id": "chapter_1_level_2",
+      "to_level_id": "chapter_1_level_3",
+      "heading": "I-8 TO SOAPY JOE'S",
+      "beats": [
+        "The party crosses the I-8 shadow past the 690 showroom shell.",
+        "The fuel corridor and smog row pass in a non-combat moving montage before Soapy Joe's appears."
+      ]
+    },
+    {
+      "from_level_id": "chapter_1_level_3",
+      "to_level_id": "chapter_1_level_4",
+      "heading": "REVIVE TO AWAKEN",
+      "beats": [
+        "Broadway street signs and the route turn point toward the Awaken lot.",
+        "The final approach lets the BMX and facade appear before Couch gets her opening line."
+      ]
+    }
+  ],
+  "pacing": {
+    "targets": {
+      "normal_minutes": [45, 60],
+      "experienced_minutes": [30, 40],
+      "minimum_minutes": 35,
+      "normal_travel_dialogue_minutes": [4, 7],
+      "level_target_minutes": {
+        "chapter_1_level_1": [10, 13],
+        "chapter_1_level_2": [10, 13],
+        "chapter_1_level_3": [12, 15],
+        "chapter_1_level_4": [10, 15]
+      }
+    },
+    "profiles": {
+      "normal": {
+        "level_minutes": {
+          "chapter_1_level_1": 11.25,
+          "chapter_1_level_2": 11.5,
+          "chapter_1_level_3": 13.25,
+          "chapter_1_level_4": 11.75
+        },
+        "travel_dialogue_minutes": 5.25
+      },
+      "experienced": {
+        "level_minutes": {
+          "chapter_1_level_1": 7.6,
+          "chapter_1_level_2": 7.8,
+          "chapter_1_level_3": 9.2,
+          "chapter_1_level_4": 8.6
+        },
+        "travel_dialogue_minutes": 3.4
+      },
+      "minimum": {
+        "level_minutes": {
+          "chapter_1_level_1": 7.0,
+          "chapter_1_level_2": 7.3,
+          "chapter_1_level_3": 8.5,
+          "chapter_1_level_4": 8.2
+        },
+        "travel_dialogue_minutes": 4.0
+      }
+    }
+  },
+  "couch_boss_contract": {
+    "runtime_level_id": "chapter_1_level_4",
+    "boss_variant": "couch",
+    "bike_refuge": {
+      "landmark_id": "daves_bmx",
+      "x": 1080,
+      "jump_height": 58,
+      "returns_to_front_lot_after_clear": true
+    },
+    "phases": [
+      {
+        "id": "front_lot_engage",
+        "starts_at_health_ratio": 1.0,
+        "objective": "Fight Couch in the front lot until the first health gate; Couch remains targetable."
+      },
+      {
+        "id": "bmx_bargain_one",
+        "starts_at_health_ratio": 0.67,
+        "objective": "Clear Couch's first fictional road-raider crew, then bring her back from the BMX to resume the fight.",
+        "retreat": {
+          "destination": "daves_bmx",
+          "taunt": "I'LL GIVE YOU DOPE IF YOU BEAT THEM UP!",
+          "reinforcement_variants": ["road_raider_stick", "road_raider_pipe"],
+          "player_count_additions": {
+            "2": ["road_raider_cart"],
+            "3": ["road_raider_cart", "road_raider_whip"],
+            "4": ["road_raider_cart", "road_raider_whip", "road_raider_pipe"]
+          },
+          "returns_targetable_after_clear": true
+        }
+      },
+      {
+        "id": "bmx_bargain_two_finish",
+        "starts_at_health_ratio": 0.34,
+        "objective": "Clear a larger second fictional road-raider crew, then finish Couch after she returns from the BMX.",
+        "retreat": {
+          "destination": "daves_bmx",
+          "taunt": "I'LL GIVE YOU DOPE IF YOU BEAT THEM UP!",
+          "reinforcement_variants": ["road_raider_stick", "road_raider_whip", "road_raider_cart"],
+          "player_count_additions": {
+            "2": ["road_raider_pipe"],
+            "3": ["road_raider_cart", "road_raider_pipe"],
+            "4": ["road_raider_cart", "road_raider_pipe", "road_raider_whip"]
+          },
+          "returns_targetable_after_clear": true
+        }
+      }
+    ]
+  }
+}
+

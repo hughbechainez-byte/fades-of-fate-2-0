@@ -1,3 +1,0 @@
-pygame-ce==2.5.7
-pyinstaller==6.21.0
-Pillow==12.3.0

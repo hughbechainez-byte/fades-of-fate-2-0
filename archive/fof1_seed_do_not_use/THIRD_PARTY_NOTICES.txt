@@ -1,0 +1,10 @@
+The Fades of Fate foundation demo uses Python, Pygame Community Edition,
+PyInstaller, SDL, SDL_mixer, and their dynamically bundled runtime libraries.
+
+Python: Python Software Foundation License — https://docs.python.org/3/license.html
+Pygame CE: GNU LGPL 2.1 — https://github.com/pygame-community/pygame-ce
+PyInstaller: GPL 2.0 with bootloader exception — https://pyinstaller.org/en/stable/license.html
+SDL: zlib license — https://www.libsdl.org/license.php
+
+The original key art, procedural pixel art, code, and generated chiptune in
+this demo were created for The Fades of Fate.

@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "description": "Ground-up 2.0 setpiece routes for character/combat testing. Separate from Chapter 1 location-lock geography.",
+  "routes": [
+    {
+      "level_id": "setpiece_underpass_i8",
+      "theme": "underpass_setpiece_v1",
+      "world_width": 1600,
+      "start_anchor_id": "underpass_mouth",
+      "end_anchor_id": "underpass_exit",
+      "main_panorama_asset": "assets/stage/setpieces/underpass_i8_v1/main.png",
+      "main_panorama_size": [1600, 360],
+      "far_asset": "assets/stage/setpieces/underpass_i8_v1/far.png",
+      "far_asset_size": [1600, 360],
+      "near_asset": "assets/stage/setpieces/underpass_i8_v1/near.png",
+      "near_asset_size": [1600, 360],
+      "far_haze_asset": "assets/stage/setpieces/underpass_i8_v1/haze.png",
+      "main_world_rate": 1.0,
+      "far_parallax": 0.12,
+      "far_max_offset": 48,
+      "near_parallax": 1.06,
+      "near_max_offset": 32,
+      "sky_profile_id": "i8_underpass_dimming",
+      "ground_opaque_from_y": 250,
+      "projection_profile_id": "chapter1_oblique_v2",
+      "landmarks": [
+        {
+          "id": "underpass_mouth",
+          "real_name": "I-8 Underpass Approach",
+          "display_name": "Underpass Mouth",
+          "address": "N 2nd St at I-8, El Cajon",
+          "world_x": 200,
+          "setback": "concrete_apron_and_fence_line",
+          "street_side": "west",
+          "confidence": "high"
+        },
+        {
+          "id": "underpass_core",
+          "real_name": "I-8 Underpass Core",
+          "display_name": "Underpass Core",
+          "address": "I-8 overpass deck, El Cajon",
+          "world_x": 800,
+          "setback": "deck_columns_and_asphalt_fight_floor",
+          "street_side": "west",
+          "confidence": "high"
+        },
+        {
+          "id": "underpass_exit",
+          "real_name": "I-8 Underpass Portal",
+          "display_name": "Portal Sky",
+          "address": "North of I-8 shadow, El Cajon",
+          "world_x": 1400,
+          "setback": "portal_sky_and_creek_edge",
+          "street_side": "west",
+          "confidence": "high"
+        }
+      ],
+      "physical_scene_objects": [],
+      "registered_features": []
+    }
+  ]
+}

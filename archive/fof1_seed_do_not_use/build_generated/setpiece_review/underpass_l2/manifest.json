@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "review_id": "setpiece_underpass_l2_living",
+  "theme": "seven_eleven_underpass",
+  "atmosphere_profile": "i8_underpass_dimming",
+  "logical_canvas": [
+    640,
+    360
+  ],
+  "world_width": 3200,
+  "characters": false,
+  "enemies": false,
+  "engine_path": [
+    "pixel_art.draw_stage_background",
+    "backdrop.render_route_backdrop",
+    "pixel_art._draw_chapter_one_ambient_plane",
+    "pixel_art.draw_stage_foreground"
+  ],
+  "camera_samples": [
+    1152.0,
+    1472.0,
+    1792.0,
+    2112.0,
+    2432.0
+  ],
+  "time_seconds_samples": [
+    0.0,
+    0.2,
+    0.4,
+    0.6000000000000001,
+    0.8,
+    1.0,
+    1.2000000000000002,
+    1.4000000000000001,
+    1.6,
+    1.8,
+    2.0,
+    2.2
+  ],
+  "frames": [
+    "life_00_t0.00s.png",
+    "life_01_t0.20s.png",
+    "life_02_t0.40s.png",
+    "life_03_t0.60s.png",
+    "life_04_t0.80s.png",
+    "life_05_t1.00s.png",
+    "life_06_t1.20s.png",
+    "life_07_t1.40s.png",
+    "life_08_t1.60s.png",
+    "life_09_t1.80s.png",
+    "life_10_t2.00s.png",
+    "life_11_t2.20s.png",
+    "walk_00_cam1152.png",
+    "walk_01_cam1472.png",
+    "walk_02_cam1792.png",
+    "walk_03_cam2112.png",
+    "walk_04_cam2432.png",
+    "life_contact_sheet.png",
+    "life_early_vs_late.png"
+  ],
+  "ambient": {
+    "event_count": 12,
+    "kinds": {
+      "birds": 2,
+      "mist": 3,
+      "traffic": 1,
+      "foliage_sway": 2,
+      "underpass_lights": 1,
+      "underpass_glow": 1,
+      "dust": 1,
+      "paper": 1
+    },
+    "particle_budget": 28,
+    "particle_request_total": 35
+  },
+  "generated_utc": "2026-08-12T02:28:46Z",
+  "notes": "Scenery-only living setpiece review. Approve look/life/readability before promoting this ambient density as the setpiece quality floor."
+}

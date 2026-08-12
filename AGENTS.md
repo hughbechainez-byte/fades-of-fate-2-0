@@ -1,96 +1,61 @@
-# Delivery rule
+# Fades of Fate 2.0 — Agent instructions (binding)
 
-After implementing and testing every fix, commit the focused task changes, reconcile them with the newest `origin/main`, and integrate them into the canonical `main`. Rebuild the Windows package from that exact clean `main` commit with `tools/Build-Windows.ps1 -VisualReviewApproved`, sync the resulting package to `C:\Users\blowb\Desktop\The Fades of Fate Demo`, verify the Desktop and `dist` executable hashes match, then push canonical `main` and verify remote parity. Do not report a fix complete while `main`, the Desktop build, or the remote is behind.
+Read **`2.0_CHARTER.md` first**. It wins over any older doc, chat memory, or quarantined FoF1 file.
 
-## Permanent workflow
+## Source of truth
 
-- Before every task, locate the repo root, run `git fetch --all --prune`, `git worktree list --porcelain`, and `git status --short --branch`, then identify which worktree owns `main`.
-- Never check out `main` in a secondary worktree.
-- Never treat `C:\Users\blowb\Desktop\The Fades of Fate Demo` as editable source.
-- Never touch unrelated dirty files.
-- If the current worktree has unrelated unfinished work, create a clean task branch or task worktree from the latest `origin/main` instead of editing that work directly.
-- Use `scripts\git-worktree-doctor.ps1` to audit worktree safety before and after task work.
-- Start tasks from `origin/main` on a unique `codex/<task>` branch and keep the branch name unique.
-- Finish tasks by integrating through the canonical `main` worktree, pushing without force, and refreshing the Desktop build from that final `main`.
-- Keep `BUILD_SOURCE_COMMIT.txt` in the packaged build; it must record commit SHA, branch, UTC timestamp, source path, and whether the source tree was clean.
-- Safe repo-local defaults are `pull.ff=only`, `fetch.prune=true`, and sensible upstream setup for new branches.
-After every task, finish the branch cleanup path: commit the exact changed files, fast-forward or merge into `main`, push the result, and remove any temporary task branch only after confirming the commit(s) are preserved on `main` so no work can be overwritten.
-If a task adds or changes files, commit and push them to canonical `main` before stopping. Other work elsewhere in the delivery chain is not a reason to leave finished changes uncommitted, unintegrated, or unpushed: isolate the task, reconcile both lines, and complete the delivery safely.
+- **Repo:** `https://github.com/hughbechainez-byte/fades-of-fate-2-0`  
+- **Branch:** project `main` on this remote only  
+- **Not source of truth:** `the-fades-of-fate`, Desktop FoF1 Demo folders, old agent chats that assumed FoF1
 
-For every `v*` tag, `.github/workflows/windows-desktop-release.yml` repeats the package gates on Windows and uploads the complete executable package ZIP to that tag's GitHub Release.
+## Engine: OpenBOR (ground-up)
 
-## Art style rule
+- Develop **2.0 on OpenBOR**, not on the original Pygame demo engine.  
+- Place OpenBOR project work under `openbor/`.  
+- Do **not** resume FoF1 `src/game.py` / `pixel_art` / location-lock as the product path.  
+- Art may be authored and reviewed as stills/GIFs; shipping gameplay targets OpenBOR.
 
-All gameplay art is authored and composited on the 640x360 logical canvas. Keep silhouettes, outlines, material accents, and small props crisp with integer-aligned pixels. When an external or high-resolution source is needed, crop its alpha bounds and resize with nearest-neighbor only; never use `smoothscale` for gameplay characters, tents, vehicles, or foreground props. Background vehicles may be compact, but must preserve the same hard-edged palette and deliberate pixel clusters. Add a render-contract test whenever a new asset path is introduced.
+## Hard ban: original game content
 
-### Enemy model rule
+Unless the user **explicitly** requests original-game material, you must **not**:
 
-Refer to the repository-wide character-art approach as the **rooted whole-cel authored pixel-animation standard**. A requested named enemy model must be a dedicated, manifest-backed sprite actor made from complete pose-integrated source art and registered through the authoritative animation builder and atlas. Sharing AI, timing, or motion structure is allowed; shipping another actor's rendered body with runtime recolors, alpha-bound or centroid-attached `pygame.draw` clothing/anatomy, heuristic weapon erasure, or floating equipment is not a new model. Bake the body, clothing, hands, held gear, lighting, and front/behind occlusion into every cel; keep only released projectiles and transient VFX separate, with authored hand and release anchors controlling continuity. Every registered animation phase must remain a distinct progressive whole-body cel after translation normalization; repeated timing holds do not count as authored poses. Approval GIFs must show production gameplay rendering without reticles, anchors, phase labels, or debug effects; emit any debug-overlay sheets separately. Add render-contract tests for dedicated clip coverage, provenance, unique phase silhouettes, root/ground stability, hand-to-gear attachment, release timing, state/phase distinction, and cell-edge clipping.
+| Banned | Examples |
+|--------|----------|
+| Models / art | FoF1 atlases, sedans, Couch, enemy roster, Chapter 1 plates |
+| Settings / data | FoF1 `gameplay.json` campaign, Couch bosses, FoF1 atmosphere as product |
+| Structure | Four-level Chapter 1 lock, FoF1 validators forcing Couch-in-last-level |
+| Systems | FoF1 ambient traffic cars, FoF1 location-lock as default scenery |
+| Delivery | FoF1 Windows Desktop package rules as 2.0 completion criteria |
 
-## Canonical Main Integration, Build Verification, and Publishing Protocol
+If a task would be “easier” by reusing FoF1, **stop and build ground-up** or ask the user.
 
-Apply this protocol to every task in this repository.
+## Current content scope (do not expand unprompted)
 
-- Begin from the latest canonical `main` and preserve unrelated unfinished work.
-- Temporary task branches/worktrees are isolation tools only. Completed work must land on canonical `main`; never substitute a task-branch push for `main` integration.
-- Before editing, trace the current implementation and review recent `main` commits touching the same animation, combat, effects, background, enemy, art, gameplay, build, or release subsystem.
-- Immediately before committing, integrating, building, and pushing, fetch again and inspect new `origin/main` commits plus active worktree changes that overlap the task.
-- When concurrent work has landed, replay or merge the task onto the newest canonical `main`, compare the combined result semantically, and rerun affected tests. Never resolve a conflict by blindly taking all of `ours` or `theirs`.
-- Build and publish only from the final integrated canonical `main` commit. Rebuild again if reconciliation changes that commit after an earlier build.
-- After verified push parity, remove the completed task's local/remote branch and linked worktree. Keep no stale non-main development line once its commits are preserved on `main`.
-- Never leave completed work only on a task branch, detached `HEAD`, temporary worktree, local commit, unpushed `main`, generated package, or Desktop folder.
+Only this is in-scope for active development:
 
-### Canonical worktree
+1. **Black Dave authored poses** (under `content/characters/black_dave/`)  
+2. **First setpiece / backdrop** — I-8 underpass ground-up work (under `content/setpieces/underpass_i8/`)
 
-There must be exactly one designated canonical integration and release worktree for this repository.
+No other characters, levels, bosses, or systems until the user asks.
 
-- Only that worktree may have canonical `main` checked out.
-- Only that worktree may integrate completed task branches, create final integration commits, run official clean builds, run official verification, update public Desktop or Android packages, and push canonical `main`.
-- Codex, ChatGPT Work, and human developers must use the same canonical worktree for integration and publishing.
+## Quarantine path
 
-### Required synchronization
+`archive/fof1_seed_do_not_use/` — entire original-demo seed.  
 
-Before each job and again before final integration/push:
+- Do not edit for features.  
+- Do not import assets from it without explicit user order.  
+- Do not run it as “the game” for 2.0 deliverables.
 
-1. Fetch the newest remote state with pruning.
-2. Inspect whether canonical `main` has local unpushed commits or remote commits missing locally.
-3. Inspect every active worktree and branch for overlapping files or commits.
-4. Verify the canonical worktree is clean and determine the newest canonical `main` commit.
-5. Create a unique short-lived `codex/<task>` branch/worktree from that commit when isolation is needed.
-6. If the task line already exists, integrate the newest canonical `main` before continuing.
-7. Review `main...task` and recent same-subsystem history so newer behavior is retained alongside the task.
-8. Resolve conflicts semantically and test the combined behavior; never replace whole files with an older branch snapshot.
+## Workflow
 
-### Preserve unrelated unfinished work
+- Prefer small commits on this repo’s `main` (or short-lived branches merged to it).  
+- Do not force-push.  
+- Do not report FoF1 Desktop hash parity as 2.0 completion.  
+- After art review, put review images on the user’s Desktop review folder if they use that workflow; that is for **review**, not FoF1 packaging.
 
-- Do not delete, reset, clean, stash, replace, overwrite, stage, or commit unrelated unfinished work.
-- A dirty worktree is an isolation problem to solve, not permission to skip commit, integration, build, push, or cleanup.
-- Use a clean task worktree, path-specific staging, or patch transfer when changes overlap.
-- Do not use broad destructive commands unless the exact scope is proven safe and explicitly authorized.
+## If you discover FoF1 bleed
 
-### Task implementation
-
-- Confirm whether the requested behavior already partially exists before editing.
-- Make the smallest coherent change that fully addresses the task.
-- Regenerate assets through the authoritative pipeline when needed.
-- Test ordinary playable behavior, not only source presence or self-tests.
-- Treat unexpected visual or behavioral regressions as blockers.
-
-### Commit and integrate
-
-- Commit every completed job with a descriptive message and verify its exact file/hunk scope.
-- Return to the canonical worktree, fetch again, and reconcile any newly landed `main` work before integration.
-- Fast-forward, merge, or cherry-pick the focused task commit into canonical `main` without discarding newer changes.
-- Never build the official package directly from a task branch or push a task branch as a substitute for canonical `main`.
-
-### Verification, build, publish, and cleanup
-
-- Use the repository's authoritative build-verification scripts and build from the final clean canonical commit.
-- Run the staged and Desktop executables, confirm the requested behavior, and verify artifact provenance and hash parity after publication.
-- Push canonical `main` without force, fetch it back, and prove local `main`, `origin/main`, package provenance, and Desktop output name the same commit.
-- Delete completed non-main remote branches, local branches, and linked worktrees only after their commits are demonstrably preserved or superseded on `main` and all dirty content has been classified.
-- Run `scripts/git-worktree-doctor.ps1`, `git worktree list --porcelain`, and local/remote branch inventories after cleanup; the steady state is one canonical `main` worktree and no stale development branches.
-
-### Completion criteria
-
-Do not report success unless implementation, semantic reconciliation with the newest work, commit, canonical integration, verification, artifact rebuild, provenance checks, publication, push-to-main parity, and safe temporary-branch/worktree cleanup are complete.
+1. Stop using the FoF1 path.  
+2. Move or leave the bleed in quarantine.  
+3. Tell the user what FoF1 surface was touched.  
+4. Continue only with allowed 2.0 content + OpenBOR.

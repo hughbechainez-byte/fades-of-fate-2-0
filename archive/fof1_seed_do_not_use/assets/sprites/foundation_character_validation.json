@@ -1,0 +1,725 @@
+{
+  "schema_version": 1,
+  "status": "PASS",
+  "cell_size": [
+    128,
+    128
+  ],
+  "runtime_grid": [
+    12,
+    3
+  ],
+  "row_frame_counts": {
+    "white_dave": {
+      "idle": 8,
+      "walk": 12,
+      "attacks": 8
+    },
+    "jermaine": {
+      "idle": 8,
+      "walk": 8,
+      "attacks": 8
+    }
+  },
+  "motion_contract": {
+    "appearance_only_build": true,
+    "source_walk_order": [
+      1,
+      3,
+      2,
+      4,
+      6,
+      5,
+      7,
+      9,
+      8,
+      10,
+      12,
+      11
+    ],
+    "runtime_reorder_performed": false,
+    "nearest_neighbor_only": true,
+    "root_or_timing_edit": false
+  },
+  "white_dave_appearance": {
+    "body_fat_change": "one-pixel softer lower-shirt silhouette",
+    "face_change": "rounder cheek shading within the locked head silhouette",
+    "hair_change": "shorter tapered sides and slightly blonder warm ramp",
+    "facial_hair": "one-pixel thin moustache and centered two-pixel chin patch only",
+    "pants_or_weapon_edit": false
+  },
+  "sources": {
+    "white_dave": {
+      "path": "art_source/white_dave/white_dave_foundation_motion_locked_v1.png",
+      "sha256": "94b0a92e0ea8fdf4862ced488deae3d8545517777fa1157dbbd136c09a17faf5"
+    },
+    "jermaine": {
+      "path": "art_source/jermaine/jermaine_foundation_locked_v1.png",
+      "sha256": "4b477d3aab512337c6ab7e32d1b80b6997a4c534f5d78410a42bfc4bb9532d1f"
+    }
+  },
+  "outputs": {
+    "white_dave": {
+      "path": "assets/sprites/white_dave_foundation_atlas.png",
+      "sha256": "cc276a561ab9f14f96c10e19028aaff9cd799099618c2eb43bcf5a95d84985e0",
+      "alpha": {
+        "opaque_pixels": 79633,
+        "transparent_pixels": 510191,
+        "semitransparent_pixels": 0
+      },
+      "frames": [
+        {
+          "state": "idle",
+          "frame": 1,
+          "alpha_bbox": [
+            31,
+            12,
+            91,
+            127
+          ],
+          "ground_y": 126,
+          "opaque_pixels": 3349
+        },
+        {
+          "state": "idle",
+          "frame": 2,
+          "alpha_bbox": [
+            31,
+            12,
+            91,
+            127
+          ],
+          "ground_y": 126,
+          "opaque_pixels": 3331
+        },
+        {
+          "state": "idle",
+          "frame": 3,
+          "alpha_bbox": [
+            32,
+            12,
+            91,
+            127
+          ],
+          "ground_y": 126,
+          "opaque_pixels": 3374
+        },
+        {
+          "state": "idle",
+          "frame": 4,
+          "alpha_bbox": [
+            32,
+            12,
+            91,
+            127
+          ],
+          "ground_y": 126,
+          "opaque_pixels": 3312
+        },
+        {
+          "state": "idle",
+          "frame": 5,
+          "alpha_bbox": [
+            33,
+            12,
+            91,
+            127
+          ],
+          "ground_y": 126,
+          "opaque_pixels": 3250
+        },
+        {
+          "state": "idle",
+          "frame": 6,
+          "alpha_bbox": [
+            35,
+            12,
+            92,
+            127
+          ],
+          "ground_y": 126,
+          "opaque_pixels": 3174
+        },
+        {
+          "state": "idle",
+          "frame": 7,
+          "alpha_bbox": [
+            32,
+            12,
+            90,
+            127
+          ],
+          "ground_y": 126,
+          "opaque_pixels": 3306
+        },
+        {
+          "state": "idle",
+          "frame": 8,
+          "alpha_bbox": [
+            32,
+            12,
+            90,
+            127
+          ],
+          "ground_y": 126,
+          "opaque_pixels": 3344
+        },
+        {
+          "state": "walk",
+          "frame": 1,
+          "alpha_bbox": [
+            31,
+            15,
+            92,
+            127
+          ],
+          "ground_y": 126,
+          "opaque_pixels": 3047
+        },
+        {
+          "state": "walk",
+          "frame": 2,
+          "alpha_bbox": [
+            30,
+            15,
+            87,
+            127
+          ],
+          "ground_y": 126,
+          "opaque_pixels": 2909
+        },
+        {
+          "state": "walk",
+          "frame": 3,
+          "alpha_bbox": [
+            30,
+            15,
+            86,
+            127
+          ],
+          "ground_y": 126,
+          "opaque_pixels": 2811
+        },
+        {
+          "state": "walk",
+          "frame": 4,
+          "alpha_bbox": [
+            30,
+            16,
+            86,
+            127
+          ],
+          "ground_y": 126,
+          "opaque_pixels": 2901
+        },
+        {
+          "state": "walk",
+          "frame": 5,
+          "alpha_bbox": [
+            31,
+            15,
+            95,
+            127
+          ],
+          "ground_y": 126,
+          "opaque_pixels": 3078
+        },
+        {
+          "state": "walk",
+          "frame": 6,
+          "alpha_bbox": [
+            29,
+            15,
+            91,
+            127
+          ],
+          "ground_y": 126,
+          "opaque_pixels": 3028
+        },
+        {
+          "state": "walk",
+          "frame": 7,
+          "alpha_bbox": [
+            32,
+            15,
+            93,
+            127
+          ],
+          "ground_y": 126,
+          "opaque_pixels": 3071
+        },
+        {
+          "state": "walk",
+          "frame": 8,
+          "alpha_bbox": [
+            31,
+            16,
+            89,
+            127
+          ],
+          "ground_y": 126,
+          "opaque_pixels": 2895
+        },
+        {
+          "state": "walk",
+          "frame": 9,
+          "alpha_bbox": [
+            32,
+            17,
+            89,
+            127
+          ],
+          "ground_y": 126,
+          "opaque_pixels": 2867
+        },
+        {
+          "state": "walk",
+          "frame": 10,
+          "alpha_bbox": [
+            31,
+            17,
+            91,
+            127
+          ],
+          "ground_y": 126,
+          "opaque_pixels": 2660
+        },
+        {
+          "state": "walk",
+          "frame": 11,
+          "alpha_bbox": [
+            32,
+            16,
+            97,
+            127
+          ],
+          "ground_y": 126,
+          "opaque_pixels": 3017
+        },
+        {
+          "state": "walk",
+          "frame": 12,
+          "alpha_bbox": [
+            31,
+            15,
+            92,
+            127
+          ],
+          "ground_y": 126,
+          "opaque_pixels": 3016
+        },
+        {
+          "state": "attacks",
+          "frame": 1,
+          "alpha_bbox": [
+            36,
+            27,
+            80,
+            127
+          ],
+          "ground_y": 126,
+          "opaque_pixels": 2397
+        },
+        {
+          "state": "attacks",
+          "frame": 2,
+          "alpha_bbox": [
+            29,
+            39,
+            90,
+            127
+          ],
+          "ground_y": 126,
+          "opaque_pixels": 2258
+        },
+        {
+          "state": "attacks",
+          "frame": 3,
+          "alpha_bbox": [
+            31,
+            22,
+            85,
+            127
+          ],
+          "ground_y": 126,
+          "opaque_pixels": 2367
+        },
+        {
+          "state": "attacks",
+          "frame": 4,
+          "alpha_bbox": [
+            35,
+            34,
+            119,
+            127
+          ],
+          "ground_y": 126,
+          "opaque_pixels": 2334
+        },
+        {
+          "state": "attacks",
+          "frame": 5,
+          "alpha_bbox": [
+            32,
+            40,
+            98,
+            127
+          ],
+          "ground_y": 126,
+          "opaque_pixels": 2203
+        },
+        {
+          "state": "attacks",
+          "frame": 6,
+          "alpha_bbox": [
+            39,
+            36,
+            90,
+            127
+          ],
+          "ground_y": 126,
+          "opaque_pixels": 2164
+        },
+        {
+          "state": "attacks",
+          "frame": 7,
+          "alpha_bbox": [
+            41,
+            40,
+            90,
+            127
+          ],
+          "ground_y": 126,
+          "opaque_pixels": 1989
+        },
+        {
+          "state": "attacks",
+          "frame": 8,
+          "alpha_bbox": [
+            40,
+            37,
+            86,
+            127
+          ],
+          "ground_y": 126,
+          "opaque_pixels": 2181
+        }
+      ]
+    },
+    "jermaine": {
+      "path": "assets/sprites/jermaine_foundation_atlas.png",
+      "sha256": "e3db82e09dcdf59ae248f1a24e6c294e0a26c4fadf1b83bfe010b515754429c1",
+      "alpha": {
+        "opaque_pixels": 59066,
+        "transparent_pixels": 530758,
+        "semitransparent_pixels": 0
+      },
+      "frames": [
+        {
+          "state": "idle",
+          "frame": 1,
+          "alpha_bbox": [
+            36,
+            12,
+            86,
+            127
+          ],
+          "ground_y": 126,
+          "opaque_pixels": 2470
+        },
+        {
+          "state": "idle",
+          "frame": 2,
+          "alpha_bbox": [
+            37,
+            8,
+            86,
+            127
+          ],
+          "ground_y": 126,
+          "opaque_pixels": 2543
+        },
+        {
+          "state": "idle",
+          "frame": 3,
+          "alpha_bbox": [
+            38,
+            10,
+            87,
+            127
+          ],
+          "ground_y": 126,
+          "opaque_pixels": 2488
+        },
+        {
+          "state": "idle",
+          "frame": 4,
+          "alpha_bbox": [
+            38,
+            11,
+            86,
+            127
+          ],
+          "ground_y": 126,
+          "opaque_pixels": 2442
+        },
+        {
+          "state": "idle",
+          "frame": 5,
+          "alpha_bbox": [
+            37,
+            11,
+            87,
+            127
+          ],
+          "ground_y": 126,
+          "opaque_pixels": 2498
+        },
+        {
+          "state": "idle",
+          "frame": 6,
+          "alpha_bbox": [
+            39,
+            11,
+            87,
+            127
+          ],
+          "ground_y": 126,
+          "opaque_pixels": 2503
+        },
+        {
+          "state": "idle",
+          "frame": 7,
+          "alpha_bbox": [
+            38,
+            12,
+            87,
+            127
+          ],
+          "ground_y": 126,
+          "opaque_pixels": 2446
+        },
+        {
+          "state": "idle",
+          "frame": 8,
+          "alpha_bbox": [
+            37,
+            15,
+            87,
+            127
+          ],
+          "ground_y": 126,
+          "opaque_pixels": 2431
+        },
+        {
+          "state": "walk",
+          "frame": 1,
+          "alpha_bbox": [
+            36,
+            8,
+            110,
+            127
+          ],
+          "ground_y": 126,
+          "opaque_pixels": 2849
+        },
+        {
+          "state": "walk",
+          "frame": 2,
+          "alpha_bbox": [
+            42,
+            6,
+            94,
+            127
+          ],
+          "ground_y": 126,
+          "opaque_pixels": 2465
+        },
+        {
+          "state": "walk",
+          "frame": 3,
+          "alpha_bbox": [
+            44,
+            12,
+            93,
+            127
+          ],
+          "ground_y": 126,
+          "opaque_pixels": 2129
+        },
+        {
+          "state": "walk",
+          "frame": 4,
+          "alpha_bbox": [
+            46,
+            10,
+            94,
+            127
+          ],
+          "ground_y": 126,
+          "opaque_pixels": 2484
+        },
+        {
+          "state": "walk",
+          "frame": 5,
+          "alpha_bbox": [
+            42,
+            8,
+            103,
+            127
+          ],
+          "ground_y": 126,
+          "opaque_pixels": 2641
+        },
+        {
+          "state": "walk",
+          "frame": 6,
+          "alpha_bbox": [
+            34,
+            10,
+            92,
+            127
+          ],
+          "ground_y": 126,
+          "opaque_pixels": 2370
+        },
+        {
+          "state": "walk",
+          "frame": 7,
+          "alpha_bbox": [
+            44,
+            13,
+            93,
+            127
+          ],
+          "ground_y": 126,
+          "opaque_pixels": 2112
+        },
+        {
+          "state": "walk",
+          "frame": 8,
+          "alpha_bbox": [
+            44,
+            9,
+            95,
+            127
+          ],
+          "ground_y": 126,
+          "opaque_pixels": 2518
+        },
+        {
+          "state": "attacks",
+          "frame": 1,
+          "alpha_bbox": [
+            40,
+            6,
+            92,
+            127
+          ],
+          "ground_y": 126,
+          "opaque_pixels": 2748
+        },
+        {
+          "state": "attacks",
+          "frame": 2,
+          "alpha_bbox": [
+            38,
+            15,
+            94,
+            127
+          ],
+          "ground_y": 126,
+          "opaque_pixels": 2436
+        },
+        {
+          "state": "attacks",
+          "frame": 3,
+          "alpha_bbox": [
+            29,
+            20,
+            90,
+            127
+          ],
+          "ground_y": 126,
+          "opaque_pixels": 2357
+        },
+        {
+          "state": "attacks",
+          "frame": 4,
+          "alpha_bbox": [
+            33,
+            16,
+            127,
+            127
+          ],
+          "ground_y": 126,
+          "opaque_pixels": 2459
+        },
+        {
+          "state": "attacks",
+          "frame": 5,
+          "alpha_bbox": [
+            28,
+            19,
+            92,
+            127
+          ],
+          "ground_y": 126,
+          "opaque_pixels": 2417
+        },
+        {
+          "state": "attacks",
+          "frame": 6,
+          "alpha_bbox": [
+            30,
+            16,
+            95,
+            127
+          ],
+          "ground_y": 126,
+          "opaque_pixels": 2553
+        },
+        {
+          "state": "attacks",
+          "frame": 7,
+          "alpha_bbox": [
+            28,
+            64,
+            94,
+            127
+          ],
+          "ground_y": 126,
+          "opaque_pixels": 1918
+        },
+        {
+          "state": "attacks",
+          "frame": 8,
+          "alpha_bbox": [
+            35,
+            6,
+            88,
+            127
+          ],
+          "ground_y": 126,
+          "opaque_pixels": 2789
+        }
+      ]
+    },
+    "white_dave_portrait": {
+      "path": "assets/portraits/white_dave_portrait_pixel_v2.png",
+      "sha256": "6c05f95cd15f6a6b5637f38c51e6849cd5cb625655933b3413470296e469a4e7",
+      "size": [
+        90,
+        145
+      ]
+    },
+    "jermaine_portrait": {
+      "path": "assets/portraits/jermaine_portrait_pixel_v1.png",
+      "sha256": "88d318c9b1b3a394cd0c1a315e5f5413d259efd0ce6ce2c93c49e082e5341f09",
+      "size": [
+        90,
+        145
+      ]
+    }
+  }
+}

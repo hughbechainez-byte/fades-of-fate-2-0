@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "review_id": "setpiece_underpass_groundup_living",
+  "plate_source": "docs/visual_direction/target_renders/ch1_l2_i8_underpass_target_clean.png",
+  "logical_canvas": [
+    640,
+    360
+  ],
+  "characters": false,
+  "enemies": false,
+  "legacy_vehicle_models": false,
+  "uses_fof1_location_lock_plate": false,
+  "life_layers": [
+    "birds",
+    "mist",
+    "foliage_sway",
+    "soft_practical_glow",
+    "paper_dust"
+  ],
+  "frames": [
+    "life_00_tick000.png",
+    "life_01_tick006.png",
+    "life_02_tick012.png",
+    "life_03_tick018.png",
+    "life_04_tick024.png",
+    "life_05_tick030.png",
+    "life_06_tick036.png",
+    "life_07_tick042.png",
+    "life_08_tick048.png",
+    "life_09_tick054.png",
+    "life_10_tick060.png",
+    "life_11_tick066.png",
+    "life_contact_sheet.png",
+    "life_early_vs_late.png",
+    "plate_source_scaled.png"
+  ],
+  "generated_utc": "2026-08-12T02:37:02Z",
+  "notes": "Living setpiece review on the 2.0 target aesthetic. Approve/request edits before promoting as quality floor."
+}
