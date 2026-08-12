@@ -17,5 +17,15 @@
     "haze.png": "data/levels/i8_underpass/art/haze.png",
     "haze_tile.png": "data/levels/i8_underpass/art/haze_tile.png"
   },
-  "source_manifest": "content/setpieces/underpass_i8/art/manifest.json"
+  "source_manifest": "content/setpieces/underpass_i8/art/manifest.json",
+  "stage_id": "i8_underpass",
+  "background": "data/levels/i8_underpass/background.png",
+  "background_source": "content/setpieces/underpass_i8/lookdev/target_renders/ch1_l2_i8_underpass_target_clean.png",
+  "background_pixels": [
+    1280,
+    720
+  ],
+  "player_model": "black_dave",
+  "visual_match": "approved_underpass_lookdev_still",
+  "fof1_content": false
 }

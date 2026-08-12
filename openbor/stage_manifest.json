@@ -1,0 +1,14 @@
+{
+  "stage_id": "underpass_i8",
+  "engine": "OpenBOR",
+  "title": "I-8 Underpass playable test",
+  "background": "data/bgs/underpass_i8.png",
+  "background_source": "content/setpieces/underpass_i8/lookdev/target_renders/ch1_l2_i8_underpass_target_clean.png",
+  "background_pixels": [1280, 720],
+  "video": "a1280x720",
+  "player": "BlackDave",
+  "player_sprites": "content/characters/black_dave/sprites (full library cells)",
+  "fof1_content": false,
+  "enemies": false,
+  "notes": "Visually identical plate to the approved underpass lookdev still. OpenBOR ground-up pack only."
+}

@@ -1,5 +1,4 @@
 # Fades of Fate 2.0 ground-up OpenBOR module
-name Fades of Fate 2.0
-engine OpenBOR
-models data/models.txt
-levels data/levels.txt
+name	Fades of Fate 2.0
+models	data/models.txt
+levels	data/levels.txt

@@ -14,3 +14,12 @@ __pycache__/
 .mypy_cache/
 .DS_Store
 Thumbs.db
+
+# Local OpenBOR engine (downloadable; large)
+openbor_engine/squashfs-root/
+openbor_engine/*.AppImage
+openbor/Logs/
+openbor/Saves/
+openbor/Paks/
+openbor/Screenshots/
+.venv/

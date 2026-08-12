@@ -1,5 +1,17 @@
-# I-8 underpass first setpiece shell. Spawn/combat scripting is the next engine pass.
-name i8_underpass
-background data/levels/i8_underpass/background.png
-setpiece_manifest data/levels/i8_underpass/underpass_manifest.json
-model black_dave
+# I-8 underpass — playable test stage
+# Background is the approved clean underpass still (1280x720), visually identical.
+
+settime	0
+notime	1
+noslow	1
+direction	both
+
+spawn1	200 280
+spawn2	260 280
+spawn3	320 280
+spawn4	380 280
+
+background	data/levels/i8_underpass/background.png
+
+cameratype	0
+order	a
