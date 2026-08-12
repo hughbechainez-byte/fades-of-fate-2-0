@@ -473,6 +473,9 @@ def capture(output_dir: Path) -> dict[str, Any]:
                 "assets/sprites/white_dave_rooted_animation_atlas.png",
                 "assets/sprites/black_dave_preview_atlas_v1.png",
                 "assets/sprites/black_dave_preview_metadata_v1.json",
+                "assets/sprites/black_dave_full_library_v1.png",
+                "assets/sprites/black_dave_full_library_v1.json",
+                "data/character_art_style_standard.json",
                 "art_source/black_dave/preview/black_dave_preview_pose_board_v1.png",
                 "data/black_dave_v2_routes.json",
                 "data/playable_character_animation_v2.json",
@@ -484,15 +487,13 @@ def capture(output_dir: Path) -> dict[str, Any]:
             "simulation_hz": SIMULATION_HZ,
             "gif_hz": GIF_HZ,
             "black_dave_preview": preview_active,
-            "preview_contract": (
-                {
-                    "metadata": "assets/sprites/black_dave_preview_metadata_v1.json",
-                    "mode": "flag_gated_review_only",
-                    "full_pose_library": "deferred_pending_review",
-                }
-                if preview_active
-                else None
-            ),
+            "preview_contract": {
+                "metadata": "assets/sprites/black_dave_preview_metadata_v1.json",
+                "mode": "flag_gated_review_only" if preview_active else "disabled",
+                "full_pose_library": "assets/sprites/black_dave_full_library_v1.json",
+                "authored_pose_count": 220,
+                "environment_grade": "cool_underpass_dusk_v1",
+            },
             "captures": captures,
             "qa_captures": qa_captures,
             "asset_sha256": assets,

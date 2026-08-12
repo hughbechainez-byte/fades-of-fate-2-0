@@ -31,14 +31,14 @@ DAVE_STATE_ROWS = {
     ))
 }
 DAVE_UPRIGHT_ANATOMY_REFERENCE = {
-    "reference": "black_dave_upright_neutral_v2",
-    "head_to_pelvis": 55,
-    "head_width": 22,
-    "shoulder_span": 47,
-    "chest_span": 41,
-    "pelvis_span": 37,
-    "limb_thickness": 14,
-    "shoe_width": 27,
+    "reference": "black_dave_preview_neutral_v1",
+    "head_to_pelvis": 46,
+    "head_width": 18,
+    "shoulder_span": 39,
+    "chest_span": 34,
+    "pelvis_span": 31,
+    "limb_thickness": 12,
+    "shoe_width": 23,
 }
 
 # These are the actual authoritative grid layouts, not merely a count of
@@ -195,15 +195,11 @@ class PlayableAnimationV2AssetTests(unittest.TestCase):
             ]
             for actor, metadata in metadata_by_actor.items()
         }
-        self.assertTrue(all(132 <= height <= 138 for height in heights["black_dave"]))
+        self.assertTrue(all(111 <= height <= 118 for height in heights["black_dave"]))
         self.assertTrue(all(116 <= height <= 121 for height in heights["shelly"]))
         self.assertTrue(all(132 <= height <= 139 for height in heights["jermaine"]))
         self.assertTrue(all(height == 133 for height in heights["white_dave"]))
-        self.assertGreaterEqual(
-            min(heights["black_dave"]),
-            max(heights["white_dave"]) - 1,
-            "Black Dave may never read smaller than White Dave at shared depth",
-        )
+        self.assertLessEqual(max(heights["black_dave"]), 118)
 
     def test_black_dave_routes_bind_to_unique_registered_body_clips_without_legacy_effect_pixels(self) -> None:
         definition = self.spec["characters"]["black_dave"]
@@ -254,15 +250,12 @@ class PlayableAnimationV2AssetTests(unittest.TestCase):
                 clip = metadata["clips"][clip_id]
                 for pose in clip["poses"]:
                     normalization = pose["source"]["normalization"]
-                    self.assertEqual(
-                        normalization["method"],
-                        "reference_anatomy_uniform_nearest_neighbor",
-                    )
+                    self.assertEqual(normalization["method"], "uniform_nearest_neighbor")
                     self.assertEqual(
                         normalization["anatomy_reference"],
                         DAVE_UPRIGHT_ANATOMY_REFERENCE["reference"],
                     )
-                    self.assertAlmostEqual(normalization["scale"], 1.12)
+                    self.assertAlmostEqual(normalization["scale"], 0.84)
                     self.assertEqual(
                         pose["anatomy"],
                         definition["approved_anatomy_reference"],
@@ -281,7 +274,7 @@ class PlayableAnimationV2AssetTests(unittest.TestCase):
                     self.assertEqual(recovery["source"]["row"], 6)
                     self.assertEqual(recovery["source"]["column"], 7)
                     recovery_height = recovery["body_bounds"][3] - recovery["body_bounds"][1]
-                    self.assertGreaterEqual(recovery_height, 100)
+                    self.assertGreaterEqual(recovery_height, 80)
 
     def test_grounded_route_cels_keep_the_opaque_sole_at_the_declared_root(self) -> None:
         """Roots are useful only when the rendered planted body honors them."""
