@@ -1,0 +1,431 @@
+{
+  "schema_version": 1,
+  "entity_id": "homeless_man",
+  "runtime_name": "HomelessMan",
+  "runtime_build": "OpenBOR 4.0 Build 7949",
+  "source_pose_manifest": "content/characters/homeless_man/sprites/pose_manifest.json",
+  "model": "openbor/data/chars/homeless_man/homeless_man.txt",
+  "model_sha256": "61d2a3881b56f6de675c3e3306664d619652a63900dba40d25fc603733b500c9",
+  "controller": "data/scripts/homeless_man_ai.c",
+  "controller_sha256": "28a64a626b35b71809c37c8d9ee7ffb63c338cdc3fc1d8ee144a4dfc84319e2f",
+  "contact_callback": "data/scripts/entity_enemy_contact.c",
+  "contact_callback_sha256": "7009cd5a9616d345fee786a115ff938a929f1a171678e0cc668f05c1537448ec",
+  "root": [
+    96,
+    156
+  ],
+  "unique_approved": 120,
+  "unique_referenced": 120,
+  "unique_runtime_reachable": 120,
+  "animation_owner": "thinkscript",
+  "damage_route": "native drop/falling signal -> scripted FALL range -> scripted down range -> RISE",
+  "death_route": "health zero -> 60-tick DEATH presentation -> killentity removal; QA death holds for capture while health remains positive",
+  "death_config": [
+    "death_air",
+    "death_ground",
+    "remove_vanish_air",
+    "remove_vanish_ground"
+  ],
+  "native_animation_banks": [
+    "spawn",
+    "idle",
+    "walk",
+    "turn",
+    "attack1",
+    "attack2",
+    "attack3",
+    "pain",
+    "pain2",
+    "fall",
+    "rise",
+    "death"
+  ],
+  "clips": {
+    "spawn": {
+      "native_animation": "spawn",
+      "frame_start": 0,
+      "frame_end": 5,
+      "pose_ids": [
+        "hm_spawn_entry_001",
+        "hm_spawn_entry_002",
+        "hm_spawn_entry_003",
+        "hm_spawn_entry_004",
+        "hm_spawn_entry_005",
+        "hm_spawn_entry_006"
+      ],
+      "production_trigger": "level spawn",
+      "timing_ticks": {
+        "total": 34
+      },
+      "qa_request": 1,
+      "frame_owner": "thinkscript"
+    },
+    "idle": {
+      "native_animation": "idle",
+      "frame_start": 0,
+      "frame_end": 7,
+      "pose_ids": [
+        "hm_idle_001",
+        "hm_idle_002",
+        "hm_idle_003",
+        "hm_idle_004",
+        "hm_idle_005",
+        "hm_idle_006",
+        "hm_idle_007",
+        "hm_idle_008"
+      ],
+      "production_trigger": "no active AI action",
+      "timing_ticks": {
+        "loop": 96
+      },
+      "qa_request": 2,
+      "frame_owner": "thinkscript"
+    },
+    "alert_aggro": {
+      "native_animation": "idle",
+      "frame_start": 8,
+      "frame_end": 11,
+      "pose_ids": [
+        "hm_alert_aggro_001",
+        "hm_alert_aggro_002",
+        "hm_alert_aggro_003",
+        "hm_alert_aggro_004"
+      ],
+      "production_trigger": "target enters aggro radius",
+      "timing_ticks": {
+        "total": 24
+      },
+      "qa_request": 3,
+      "frame_owner": "thinkscript"
+    },
+    "taunt_hesitate": {
+      "native_animation": "idle",
+      "frame_start": 12,
+      "frame_end": 19,
+      "pose_ids": [
+        "hm_taunt_hesitate_001",
+        "hm_taunt_hesitate_002",
+        "hm_taunt_hesitate_003",
+        "hm_taunt_hesitate_004",
+        "hm_taunt_hesitate_005",
+        "hm_taunt_hesitate_006",
+        "hm_taunt_hesitate_007",
+        "hm_taunt_hesitate_008"
+      ],
+      "production_trigger": "long-range behavior timer",
+      "timing_ticks": {
+        "total": 52
+      },
+      "qa_request": 11,
+      "frame_owner": "thinkscript"
+    },
+    "walk_start": {
+      "native_animation": "walk",
+      "frame_start": 0,
+      "frame_end": 3,
+      "pose_ids": [
+        "hm_walk_start_001",
+        "hm_walk_start_002",
+        "hm_walk_start_003",
+        "hm_walk_start_004"
+      ],
+      "production_trigger": "AI chase begins and displacement succeeds",
+      "timing_ticks": {
+        "total": 12
+      },
+      "qa_request": 4,
+      "frame_owner": "thinkscript"
+    },
+    "walk_loop": {
+      "native_animation": "walk",
+      "frame_start": 4,
+      "frame_end": 15,
+      "pose_ids": [
+        "hm_walk_loop_001",
+        "hm_walk_loop_002",
+        "hm_walk_loop_003",
+        "hm_walk_loop_004",
+        "hm_walk_loop_005",
+        "hm_walk_loop_006",
+        "hm_walk_loop_007",
+        "hm_walk_loop_008",
+        "hm_walk_loop_009",
+        "hm_walk_loop_010",
+        "hm_walk_loop_011",
+        "hm_walk_loop_012"
+      ],
+      "production_trigger": "AI chase remains active",
+      "timing_ticks": {
+        "loop": 54
+      },
+      "qa_request": 5,
+      "frame_owner": "thinkscript"
+    },
+    "walk_stop": {
+      "native_animation": "walk",
+      "frame_start": 16,
+      "frame_end": 19,
+      "pose_ids": [
+        "hm_walk_stop_001",
+        "hm_walk_stop_002",
+        "hm_walk_stop_003",
+        "hm_walk_stop_004"
+      ],
+      "production_trigger": "attack range reached or chase stops",
+      "timing_ticks": {
+        "total": 12
+      },
+      "qa_request": 6,
+      "frame_owner": "thinkscript"
+    },
+    "turn_pivot": {
+      "native_animation": "turn",
+      "frame_start": 0,
+      "frame_end": 3,
+      "pose_ids": [
+        "hm_turn_pivot_001",
+        "hm_turn_pivot_002",
+        "hm_turn_pivot_003",
+        "hm_turn_pivot_004"
+      ],
+      "production_trigger": "target crosses facing",
+      "timing_ticks": {
+        "total": 10
+      },
+      "qa_request": 7,
+      "frame_owner": "thinkscript"
+    },
+    "unarmed_jab": {
+      "native_animation": "attack1",
+      "frame_start": 0,
+      "frame_end": 7,
+      "pose_ids": [
+        "hm_unarmed_jab_001",
+        "hm_unarmed_jab_002",
+        "hm_unarmed_jab_003",
+        "hm_unarmed_jab_004",
+        "hm_unarmed_jab_005",
+        "hm_unarmed_jab_006",
+        "hm_unarmed_jab_007",
+        "hm_unarmed_jab_008"
+      ],
+      "production_trigger": "close-range AI attack choice A with token",
+      "timing_ticks": {
+        "startup": 8,
+        "active": 4,
+        "recovery": 16
+      },
+      "qa_request": 8,
+      "frame_owner": "thinkscript"
+    },
+    "two_hand_shove": {
+      "native_animation": "attack2",
+      "frame_start": 0,
+      "frame_end": 7,
+      "pose_ids": [
+        "hm_two_hand_shove_001",
+        "hm_two_hand_shove_002",
+        "hm_two_hand_shove_003",
+        "hm_two_hand_shove_004",
+        "hm_two_hand_shove_005",
+        "hm_two_hand_shove_006",
+        "hm_two_hand_shove_007",
+        "hm_two_hand_shove_008"
+      ],
+      "production_trigger": "close-range AI attack choice B with cooldown clear",
+      "timing_ticks": {
+        "startup": 10,
+        "active": 6,
+        "recovery": 18
+      },
+      "qa_request": 9,
+      "frame_owner": "thinkscript"
+    },
+    "heavy_overhand": {
+      "native_animation": "attack3",
+      "frame_start": 0,
+      "frame_end": 9,
+      "pose_ids": [
+        "hm_heavy_overhand_001",
+        "hm_heavy_overhand_002",
+        "hm_heavy_overhand_003",
+        "hm_heavy_overhand_004",
+        "hm_heavy_overhand_005",
+        "hm_heavy_overhand_006",
+        "hm_heavy_overhand_007",
+        "hm_heavy_overhand_008",
+        "hm_heavy_overhand_009",
+        "hm_heavy_overhand_010"
+      ],
+      "production_trigger": "telegraphed heavy AI choice with token",
+      "timing_ticks": {
+        "startup": 18,
+        "active": 6,
+        "recovery": 24
+      },
+      "qa_request": 10,
+      "frame_owner": "thinkscript"
+    },
+    "light_pain": {
+      "native_animation": "pain",
+      "frame_start": 0,
+      "frame_end": 4,
+      "pose_ids": [
+        "hm_light_pain_001",
+        "hm_light_pain_002",
+        "hm_light_pain_003",
+        "hm_light_pain_004",
+        "hm_light_pain_005"
+      ],
+      "production_trigger": "non-knockdown damage",
+      "timing_ticks": {
+        "total": 18
+      },
+      "qa_request": 12,
+      "frame_owner": "thinkscript"
+    },
+    "heavy_pain": {
+      "native_animation": "pain2",
+      "frame_start": 0,
+      "frame_end": 6,
+      "pose_ids": [
+        "hm_heavy_pain_001",
+        "hm_heavy_pain_002",
+        "hm_heavy_pain_003",
+        "hm_heavy_pain_004",
+        "hm_heavy_pain_005",
+        "hm_heavy_pain_006",
+        "hm_heavy_pain_007"
+      ],
+      "production_trigger": "high-stun damage without knockdown",
+      "timing_ticks": {
+        "total": 26
+      },
+      "qa_request": 13,
+      "frame_owner": "thinkscript"
+    },
+    "knockdown_fall": {
+      "native_animation": "fall",
+      "frame_start": 0,
+      "frame_end": 7,
+      "pose_ids": [
+        "hm_knockdown_fall_001",
+        "hm_knockdown_fall_002",
+        "hm_knockdown_fall_003",
+        "hm_knockdown_fall_004",
+        "hm_knockdown_fall_005",
+        "hm_knockdown_fall_006",
+        "hm_knockdown_fall_007",
+        "hm_knockdown_fall_008"
+      ],
+      "production_trigger": "knockdown damage",
+      "timing_ticks": {
+        "total": 38
+      },
+      "qa_request": 14,
+      "frame_owner": "thinkscript"
+    },
+    "down": {
+      "native_animation": "fall",
+      "frame_start": 8,
+      "frame_end": 13,
+      "pose_ids": [
+        "hm_down_001",
+        "hm_down_002",
+        "hm_down_003",
+        "hm_down_004",
+        "hm_down_005",
+        "hm_down_006"
+      ],
+      "production_trigger": "fall completes with health above zero",
+      "timing_ticks": {
+        "minimum": 42
+      },
+      "qa_request": 15,
+      "frame_owner": "thinkscript"
+    },
+    "rise": {
+      "native_animation": "rise",
+      "frame_start": 0,
+      "frame_end": 7,
+      "pose_ids": [
+        "hm_rise_001",
+        "hm_rise_002",
+        "hm_rise_003",
+        "hm_rise_004",
+        "hm_rise_005",
+        "hm_rise_006",
+        "hm_rise_007",
+        "hm_rise_008"
+      ],
+      "production_trigger": "down timer expires with health above zero",
+      "timing_ticks": {
+        "total": 42
+      },
+      "qa_request": 16,
+      "frame_owner": "thinkscript"
+    },
+    "death": {
+      "native_animation": "death",
+      "frame_start": 0,
+      "frame_end": 9,
+      "pose_ids": [
+        "hm_death_001",
+        "hm_death_002",
+        "hm_death_003",
+        "hm_death_004",
+        "hm_death_005",
+        "hm_death_006",
+        "hm_death_007",
+        "hm_death_008",
+        "hm_death_009",
+        "hm_death_010"
+      ],
+      "production_trigger": "health reaches zero",
+      "timing_ticks": {
+        "total": 60
+      },
+      "qa_request": 17,
+      "frame_owner": "thinkscript"
+    }
+  },
+  "qa": {
+    "request_global": "fof2_qa_hm_request",
+    "request_range": [
+      1,
+      17
+    ],
+    "request_zero": "exit QA hold and resume production AI",
+    "state_requests": {
+      "spawn": 1,
+      "idle": 2,
+      "alert_aggro": 3,
+      "walk_start": 4,
+      "walk_loop": 5,
+      "walk_stop": 6,
+      "turn_pivot": 7,
+      "unarmed_jab": 8,
+      "two_hand_shove": 9,
+      "heavy_overhand": 10,
+      "taunt_hesitate": 11,
+      "light_pain": 12,
+      "heavy_pain": 13,
+      "knockdown_fall": 14,
+      "down": 15,
+      "rise": 16,
+      "death": 17
+    },
+    "pose_log_prefix": "[FOF2_POSE] ",
+    "direct_pose_request_global": "fof2_qa_hm_pose",
+    "direct_pose_entity_global": "fof2_qa_hm_entity",
+    "direct_pose_request_range": [
+      0,
+      119
+    ],
+    "direct_pose_off": "absent or -1 resumes normal controller state",
+    "direct_pose_mapping": "pose-manifest order; exact native animation and frame; held until request changes",
+    "qa_death": "nonlethal held presentation; real health-zero death still removes after 60 ticks"
+  },
+  "gameplay_evidence": [],
+  "source_pose_manifest_sha256": "c5bd068a41207cf4883e818bc8a77175e56f2251097f2aef7d161f1be62de9d3"
+}

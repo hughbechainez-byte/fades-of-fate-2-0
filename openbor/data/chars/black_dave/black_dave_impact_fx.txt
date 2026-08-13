@@ -1,0 +1,13 @@
+name BlackDaveImpact
+type none
+health 1
+lifespan 0.2
+subject_to_gravity 0
+candamage none
+anim spawn
+    offset 24 24
+    delay 3
+    frame data/chars/black_dave/effects/black_dave_impact_00.png
+    frame data/chars/black_dave/effects/black_dave_impact_01.png
+    frame data/chars/black_dave/effects/black_dave_impact_02.png
+    frame data/chars/black_dave/effects/black_dave_impact_03.png

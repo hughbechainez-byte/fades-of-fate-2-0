@@ -1,0 +1,5676 @@
+{
+  "schema_version": 1,
+  "entity_id": "homeless_man",
+  "generator": "tools/Build-OpenBOR-Entity-Art.py",
+  "source_design": "content/characters/homeless_man/metadata/production_manifest.json",
+  "source_sheets": [
+    {
+      "path": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_01.png",
+      "sha256": "9fda91b4fa4ba194d44ca2a5c57520bda3b3097cd58212f9879097975ad29c1c",
+      "body_count": 20,
+      "discarded_unattached_pixels": 5
+    },
+    {
+      "path": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_02.png",
+      "sha256": "428781ef5538cf47ce5e6270e517b590affb3ad70db17d4815e181009d79c088",
+      "body_count": 20,
+      "discarded_unattached_pixels": 6
+    },
+    {
+      "path": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_03.png",
+      "sha256": "d9d87fb6f2ed680bbfb01609455e58df3141fa24a95c6ff8a45516d08fdcc9bf",
+      "body_count": 20,
+      "discarded_unattached_pixels": 6
+    },
+    {
+      "path": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_04.png",
+      "sha256": "0ccba163672e3c58d67dd38b078a400cf28fbc29eb58d1250a6009bfdfb05668",
+      "body_count": 20,
+      "discarded_unattached_pixels": 5
+    },
+    {
+      "path": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_05.png",
+      "sha256": "242a97762326c413948f5ec6f980f59ebfe72a8fbd8bdbec17e873e5b9d37870",
+      "body_count": 20,
+      "discarded_unattached_pixels": 31
+    },
+    {
+      "path": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_06.png",
+      "sha256": "fba36a8c6e27bbc4b7e612998c84c8488bb4c78943bb72d98a35638a492902ce",
+      "body_count": 20,
+      "discarded_unattached_pixels": 15
+    }
+  ],
+  "canvas": [
+    192,
+    160
+  ],
+  "root": [
+    96,
+    156
+  ],
+  "fixed_entity_scale": 0.43548387,
+  "palette": {
+    "entries": 256,
+    "transparency_index": 0,
+    "opaque_colors": 255,
+    "sha256": "69ad05a3af8c16d3a76b2a76f453a6b05d71251af914ab208bd92dc599cb13cf",
+    "dithering": false,
+    "shared_across_model": true
+  },
+  "poses": [
+    {
+      "id": "hm_spawn_entry_001",
+      "group": "spawn_entry",
+      "group_index": 1,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        82,
+        47,
+        133,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_01.png",
+      "source_cell": 1,
+      "source_row": 1,
+      "source_column": 1,
+      "path": "content/characters/homeless_man/sprites/poses/hm_spawn_entry_001.png",
+      "sha256": "d1f54d1ef25f340fd987252bb230634d843f702b5fe0afa981367d6ede7d3bb0",
+      "clips": [
+        "spawn"
+      ],
+      "actions": [
+        "spawn"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_spawn_entry_001.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "spawn",
+        "frame_index": 0,
+        "phase": "presentation",
+        "body_box": [
+          82,
+          47,
+          51,
+          110,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_spawn_entry_002",
+      "group": "spawn_entry",
+      "group_index": 2,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        82,
+        48,
+        149,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_01.png",
+      "source_cell": 2,
+      "source_row": 1,
+      "source_column": 2,
+      "path": "content/characters/homeless_man/sprites/poses/hm_spawn_entry_002.png",
+      "sha256": "1c1df8e9cbb0729c54faf9be9a79a2453f10f1e1ed52330e3da9194ff69aca47",
+      "clips": [
+        "spawn"
+      ],
+      "actions": [
+        "spawn"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_spawn_entry_002.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "spawn",
+        "frame_index": 1,
+        "phase": "presentation",
+        "body_box": [
+          82,
+          48,
+          67,
+          109,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_spawn_entry_003",
+      "group": "spawn_entry",
+      "group_index": 3,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        81,
+        47,
+        147,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_01.png",
+      "source_cell": 3,
+      "source_row": 1,
+      "source_column": 3,
+      "path": "content/characters/homeless_man/sprites/poses/hm_spawn_entry_003.png",
+      "sha256": "18339ef2397ddf145adc1523498e4bc1bd5ca30c6fedd5efbbeffd88e5eb8b63",
+      "clips": [
+        "spawn"
+      ],
+      "actions": [
+        "spawn"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_spawn_entry_003.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "spawn",
+        "frame_index": 2,
+        "phase": "presentation",
+        "body_box": [
+          81,
+          47,
+          66,
+          110,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_spawn_entry_004",
+      "group": "spawn_entry",
+      "group_index": 4,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        86,
+        51,
+        144,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_01.png",
+      "source_cell": 4,
+      "source_row": 1,
+      "source_column": 4,
+      "path": "content/characters/homeless_man/sprites/poses/hm_spawn_entry_004.png",
+      "sha256": "866745d749d3222be3d3bb0426d4bc1d45db33eb2854e5d3d00739d664308210",
+      "clips": [
+        "spawn"
+      ],
+      "actions": [
+        "spawn"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_spawn_entry_004.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "spawn",
+        "frame_index": 3,
+        "phase": "presentation",
+        "body_box": [
+          86,
+          51,
+          58,
+          106,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_spawn_entry_005",
+      "group": "spawn_entry",
+      "group_index": 5,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        80,
+        46,
+        135,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_01.png",
+      "source_cell": 5,
+      "source_row": 1,
+      "source_column": 5,
+      "path": "content/characters/homeless_man/sprites/poses/hm_spawn_entry_005.png",
+      "sha256": "15466b7167c388883c916de21553ea47c9533c3d859659d25c7ea6f4082fd255",
+      "clips": [
+        "spawn"
+      ],
+      "actions": [
+        "spawn"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_spawn_entry_005.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "spawn",
+        "frame_index": 4,
+        "phase": "presentation",
+        "body_box": [
+          80,
+          46,
+          55,
+          111,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_spawn_entry_006",
+      "group": "spawn_entry",
+      "group_index": 6,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        86,
+        50,
+        153,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_01.png",
+      "source_cell": 6,
+      "source_row": 2,
+      "source_column": 1,
+      "path": "content/characters/homeless_man/sprites/poses/hm_spawn_entry_006.png",
+      "sha256": "f1f6b033df7e7b3d291a7618ee4dbe73af87d004a3e9c381c8bd304b077317e3",
+      "clips": [
+        "spawn"
+      ],
+      "actions": [
+        "spawn"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_spawn_entry_006.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "spawn",
+        "frame_index": 5,
+        "phase": "presentation",
+        "body_box": [
+          86,
+          50,
+          67,
+          107,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_idle_001",
+      "group": "idle",
+      "group_index": 1,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        78,
+        47,
+        125,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_01.png",
+      "source_cell": 7,
+      "source_row": 2,
+      "source_column": 2,
+      "path": "content/characters/homeless_man/sprites/poses/hm_idle_001.png",
+      "sha256": "747a128a88a45af724e8f182d4a2b90bd84ac8147ef47f35908d8b1b1fa56a93",
+      "clips": [
+        "idle"
+      ],
+      "actions": [
+        "idle"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_idle_001.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "idle",
+        "frame_index": 0,
+        "phase": "presentation",
+        "body_box": [
+          78,
+          47,
+          47,
+          110,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_idle_002",
+      "group": "idle",
+      "group_index": 2,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        80,
+        47,
+        127,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_01.png",
+      "source_cell": 8,
+      "source_row": 2,
+      "source_column": 3,
+      "path": "content/characters/homeless_man/sprites/poses/hm_idle_002.png",
+      "sha256": "0996c4a979e7a0f119efb9ef2b3cd200bfacb0abf7d2d198ba39dc221d96e949",
+      "clips": [
+        "idle"
+      ],
+      "actions": [
+        "idle"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_idle_002.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "idle",
+        "frame_index": 1,
+        "phase": "presentation",
+        "body_box": [
+          80,
+          47,
+          47,
+          110,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_idle_003",
+      "group": "idle",
+      "group_index": 3,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        62,
+        49,
+        116,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_01.png",
+      "source_cell": 9,
+      "source_row": 2,
+      "source_column": 4,
+      "path": "content/characters/homeless_man/sprites/poses/hm_idle_003.png",
+      "sha256": "4b964f6fd49ec51f1c31412e5a91599e66807c639078c96079a820b54854e609",
+      "clips": [
+        "idle"
+      ],
+      "actions": [
+        "idle"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_idle_003.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "idle",
+        "frame_index": 2,
+        "phase": "presentation",
+        "body_box": [
+          62,
+          49,
+          54,
+          108,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_idle_004",
+      "group": "idle",
+      "group_index": 4,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        80,
+        51,
+        142,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_01.png",
+      "source_cell": 10,
+      "source_row": 2,
+      "source_column": 5,
+      "path": "content/characters/homeless_man/sprites/poses/hm_idle_004.png",
+      "sha256": "eaab8c354c652553a7e149021707ef426e47aadb65650cf2e2004d751290ca75",
+      "clips": [
+        "idle"
+      ],
+      "actions": [
+        "idle"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_idle_004.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "idle",
+        "frame_index": 3,
+        "phase": "presentation",
+        "body_box": [
+          80,
+          51,
+          62,
+          106,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_idle_005",
+      "group": "idle",
+      "group_index": 5,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        85,
+        49,
+        138,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_01.png",
+      "source_cell": 11,
+      "source_row": 3,
+      "source_column": 1,
+      "path": "content/characters/homeless_man/sprites/poses/hm_idle_005.png",
+      "sha256": "4b3373ae0c0d3ecd1baf441ca5a7d6b5f06230f8978763fd278a9e4ab9af6a88",
+      "clips": [
+        "idle"
+      ],
+      "actions": [
+        "idle"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_idle_005.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "idle",
+        "frame_index": 4,
+        "phase": "presentation",
+        "body_box": [
+          85,
+          49,
+          53,
+          108,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_idle_006",
+      "group": "idle",
+      "group_index": 6,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        86,
+        49,
+        137,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_01.png",
+      "source_cell": 12,
+      "source_row": 3,
+      "source_column": 2,
+      "path": "content/characters/homeless_man/sprites/poses/hm_idle_006.png",
+      "sha256": "43051c9d23734fa3ddd94b3a14763f0c871d201322d5781cf0e3c1ae5329f6f7",
+      "clips": [
+        "idle"
+      ],
+      "actions": [
+        "idle"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_idle_006.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "idle",
+        "frame_index": 5,
+        "phase": "presentation",
+        "body_box": [
+          86,
+          49,
+          51,
+          108,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_idle_007",
+      "group": "idle",
+      "group_index": 7,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        81,
+        50,
+        128,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_01.png",
+      "source_cell": 13,
+      "source_row": 3,
+      "source_column": 3,
+      "path": "content/characters/homeless_man/sprites/poses/hm_idle_007.png",
+      "sha256": "37d2fc5740f304abb47941db7d0f4522480d1dccfea2a5d832d3cdc7cca86823",
+      "clips": [
+        "idle"
+      ],
+      "actions": [
+        "idle"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_idle_007.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "idle",
+        "frame_index": 6,
+        "phase": "presentation",
+        "body_box": [
+          81,
+          50,
+          47,
+          107,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_idle_008",
+      "group": "idle",
+      "group_index": 8,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        80,
+        46,
+        135,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_01.png",
+      "source_cell": 14,
+      "source_row": 3,
+      "source_column": 4,
+      "path": "content/characters/homeless_man/sprites/poses/hm_idle_008.png",
+      "sha256": "8914ce974a019eed0c08c11e33c0731257f4ee00dc0bc8353ebf3bdf76f97a58",
+      "clips": [
+        "idle"
+      ],
+      "actions": [
+        "idle"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_idle_008.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "idle",
+        "frame_index": 7,
+        "phase": "presentation",
+        "body_box": [
+          80,
+          46,
+          55,
+          111,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_alert_aggro_001",
+      "group": "alert_aggro",
+      "group_index": 1,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        88,
+        48,
+        149,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_01.png",
+      "source_cell": 15,
+      "source_row": 3,
+      "source_column": 5,
+      "path": "content/characters/homeless_man/sprites/poses/hm_alert_aggro_001.png",
+      "sha256": "79c0fde062e74c46badc1bb9a726d51f6cd9473776c1c7d39619ed5e1f7af0f2",
+      "clips": [
+        "alert_aggro"
+      ],
+      "actions": [
+        "alert_aggro"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_alert_aggro_001.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "idle",
+        "frame_index": 8,
+        "phase": "presentation",
+        "body_box": [
+          88,
+          48,
+          61,
+          109,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_alert_aggro_002",
+      "group": "alert_aggro",
+      "group_index": 2,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        42,
+        54,
+        109,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_01.png",
+      "source_cell": 16,
+      "source_row": 4,
+      "source_column": 1,
+      "path": "content/characters/homeless_man/sprites/poses/hm_alert_aggro_002.png",
+      "sha256": "23f4e05796e324135d006b8f1aaf69711f9bfee21a38bfc2084c96dc32eef2fc",
+      "clips": [
+        "alert_aggro"
+      ],
+      "actions": [
+        "alert_aggro"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_alert_aggro_002.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "idle",
+        "frame_index": 9,
+        "phase": "presentation",
+        "body_box": [
+          42,
+          54,
+          67,
+          103,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_alert_aggro_003",
+      "group": "alert_aggro",
+      "group_index": 3,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        85,
+        52,
+        149,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_01.png",
+      "source_cell": 17,
+      "source_row": 4,
+      "source_column": 2,
+      "path": "content/characters/homeless_man/sprites/poses/hm_alert_aggro_003.png",
+      "sha256": "633cc95c4e3b3b76ff6ca756541e620105bc0d2b8878ed80fc160cbbc3067bb3",
+      "clips": [
+        "alert_aggro"
+      ],
+      "actions": [
+        "alert_aggro"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_alert_aggro_003.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "idle",
+        "frame_index": 10,
+        "phase": "presentation",
+        "body_box": [
+          85,
+          52,
+          64,
+          105,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_alert_aggro_004",
+      "group": "alert_aggro",
+      "group_index": 4,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        85,
+        52,
+        145,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_01.png",
+      "source_cell": 18,
+      "source_row": 4,
+      "source_column": 3,
+      "path": "content/characters/homeless_man/sprites/poses/hm_alert_aggro_004.png",
+      "sha256": "0a6edf7829ebf6ed445ed04d8e7b033873bc692a5ddea87346cf0d8e17a02098",
+      "clips": [
+        "alert_aggro"
+      ],
+      "actions": [
+        "alert_aggro"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_alert_aggro_004.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "idle",
+        "frame_index": 11,
+        "phase": "presentation",
+        "body_box": [
+          85,
+          52,
+          60,
+          105,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_walk_start_001",
+      "group": "walk_start",
+      "group_index": 1,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        43,
+        54,
+        126,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_01.png",
+      "source_cell": 19,
+      "source_row": 4,
+      "source_column": 4,
+      "path": "content/characters/homeless_man/sprites/poses/hm_walk_start_001.png",
+      "sha256": "3f5a47368c01c88f8f1b77adb52f580bc97d00a167b73bf4bd492339b9cb6000",
+      "clips": [
+        "walk_start"
+      ],
+      "actions": [
+        "walk_start"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_walk_start_001.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "walk",
+        "frame_index": 0,
+        "phase": "presentation",
+        "body_box": [
+          43,
+          54,
+          83,
+          103,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_walk_start_002",
+      "group": "walk_start",
+      "group_index": 2,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        83,
+        53,
+        166,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_01.png",
+      "source_cell": 20,
+      "source_row": 4,
+      "source_column": 5,
+      "path": "content/characters/homeless_man/sprites/poses/hm_walk_start_002.png",
+      "sha256": "458a52a523706adc19c95120189f6c49cc59ec853e5d815f406ce28c0b8d3f61",
+      "clips": [
+        "walk_start"
+      ],
+      "actions": [
+        "walk_start"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_walk_start_002.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "walk",
+        "frame_index": 1,
+        "phase": "presentation",
+        "body_box": [
+          83,
+          53,
+          83,
+          104,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_walk_start_003",
+      "group": "walk_start",
+      "group_index": 3,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        54,
+        47,
+        112,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_02.png",
+      "source_cell": 1,
+      "source_row": 1,
+      "source_column": 1,
+      "path": "content/characters/homeless_man/sprites/poses/hm_walk_start_003.png",
+      "sha256": "588e3560dbc71ce4eb2b302b035259504d8363e3a85a4fe4e646c530fee1546c",
+      "clips": [
+        "walk_start"
+      ],
+      "actions": [
+        "walk_start"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_walk_start_003.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "walk",
+        "frame_index": 2,
+        "phase": "presentation",
+        "body_box": [
+          54,
+          47,
+          58,
+          110,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_walk_start_004",
+      "group": "walk_start",
+      "group_index": 4,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        60,
+        47,
+        116,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_02.png",
+      "source_cell": 2,
+      "source_row": 1,
+      "source_column": 2,
+      "path": "content/characters/homeless_man/sprites/poses/hm_walk_start_004.png",
+      "sha256": "3430c256e488052f7e4d447468c3e647e1d4a1a295f61da3e26d0781da5f8a73",
+      "clips": [
+        "walk_start"
+      ],
+      "actions": [
+        "walk_start"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_walk_start_004.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "walk",
+        "frame_index": 3,
+        "phase": "presentation",
+        "body_box": [
+          60,
+          47,
+          56,
+          110,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_walk_loop_001",
+      "group": "walk_loop",
+      "group_index": 1,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        81,
+        47,
+        139,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_02.png",
+      "source_cell": 3,
+      "source_row": 1,
+      "source_column": 3,
+      "path": "content/characters/homeless_man/sprites/poses/hm_walk_loop_001.png",
+      "sha256": "f64a9406f1af0e1ae574a44cba4350da013e37e1391e95f7add04324968ec63d",
+      "clips": [
+        "walk_loop"
+      ],
+      "actions": [
+        "walk_loop"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_walk_loop_001.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "walk",
+        "frame_index": 4,
+        "phase": "presentation",
+        "body_box": [
+          81,
+          47,
+          58,
+          110,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_walk_loop_002",
+      "group": "walk_loop",
+      "group_index": 2,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        82,
+        47,
+        131,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_02.png",
+      "source_cell": 4,
+      "source_row": 1,
+      "source_column": 4,
+      "path": "content/characters/homeless_man/sprites/poses/hm_walk_loop_002.png",
+      "sha256": "e3e0ccb240fc6c0b67234d3de8b38f9154aee70a961cbb259b948642fd54b363",
+      "clips": [
+        "walk_loop"
+      ],
+      "actions": [
+        "walk_loop"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_walk_loop_002.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "walk",
+        "frame_index": 5,
+        "phase": "presentation",
+        "body_box": [
+          82,
+          47,
+          49,
+          110,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_walk_loop_003",
+      "group": "walk_loop",
+      "group_index": 3,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        67,
+        47,
+        114,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_02.png",
+      "source_cell": 5,
+      "source_row": 1,
+      "source_column": 5,
+      "path": "content/characters/homeless_man/sprites/poses/hm_walk_loop_003.png",
+      "sha256": "d2fa60a60b5dc2e34f7562bc51b323e6d0646fb85147d8e06de5bebd8b0db7f7",
+      "clips": [
+        "walk_loop"
+      ],
+      "actions": [
+        "walk_loop"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_walk_loop_003.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "walk",
+        "frame_index": 6,
+        "phase": "presentation",
+        "body_box": [
+          67,
+          47,
+          47,
+          110,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_walk_loop_004",
+      "group": "walk_loop",
+      "group_index": 4,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        78,
+        49,
+        134,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_02.png",
+      "source_cell": 6,
+      "source_row": 2,
+      "source_column": 1,
+      "path": "content/characters/homeless_man/sprites/poses/hm_walk_loop_004.png",
+      "sha256": "a85a69d4622c7122a5ddea1a4c04d25e651890716c5c4d25f44cde740e8aeb77",
+      "clips": [
+        "walk_loop"
+      ],
+      "actions": [
+        "walk_loop"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_walk_loop_004.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "walk",
+        "frame_index": 7,
+        "phase": "presentation",
+        "body_box": [
+          78,
+          49,
+          56,
+          108,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_walk_loop_005",
+      "group": "walk_loop",
+      "group_index": 5,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        76,
+        47,
+        137,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_02.png",
+      "source_cell": 7,
+      "source_row": 2,
+      "source_column": 2,
+      "path": "content/characters/homeless_man/sprites/poses/hm_walk_loop_005.png",
+      "sha256": "2b6073cbc246b78ca3fdfa56f8025deb1a9355fcdc21c4a19da55f69291b967b",
+      "clips": [
+        "walk_loop"
+      ],
+      "actions": [
+        "walk_loop"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_walk_loop_005.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "walk",
+        "frame_index": 8,
+        "phase": "presentation",
+        "body_box": [
+          76,
+          47,
+          61,
+          110,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_walk_loop_006",
+      "group": "walk_loop",
+      "group_index": 6,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        86,
+        47,
+        132,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_02.png",
+      "source_cell": 8,
+      "source_row": 2,
+      "source_column": 3,
+      "path": "content/characters/homeless_man/sprites/poses/hm_walk_loop_006.png",
+      "sha256": "ca7e85e59637787f96250ae7de5f9c71cb0c0b429cf42e1b53916407d5405cb1",
+      "clips": [
+        "walk_loop"
+      ],
+      "actions": [
+        "walk_loop"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_walk_loop_006.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "walk",
+        "frame_index": 9,
+        "phase": "presentation",
+        "body_box": [
+          86,
+          47,
+          46,
+          110,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_walk_loop_007",
+      "group": "walk_loop",
+      "group_index": 7,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        80,
+        49,
+        148,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_02.png",
+      "source_cell": 9,
+      "source_row": 2,
+      "source_column": 4,
+      "path": "content/characters/homeless_man/sprites/poses/hm_walk_loop_007.png",
+      "sha256": "f61c92d41e8b1453b50b73829e3b10adc3164fec15edb0c055a9adee59edf954",
+      "clips": [
+        "walk_loop"
+      ],
+      "actions": [
+        "walk_loop"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_walk_loop_007.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "walk",
+        "frame_index": 10,
+        "phase": "presentation",
+        "body_box": [
+          80,
+          49,
+          68,
+          108,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_walk_loop_008",
+      "group": "walk_loop",
+      "group_index": 8,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        73,
+        49,
+        124,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_02.png",
+      "source_cell": 10,
+      "source_row": 2,
+      "source_column": 5,
+      "path": "content/characters/homeless_man/sprites/poses/hm_walk_loop_008.png",
+      "sha256": "3631e4169def1136290122deac7a875603825768c88f0445a3abc011f6606260",
+      "clips": [
+        "walk_loop"
+      ],
+      "actions": [
+        "walk_loop"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_walk_loop_008.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "walk",
+        "frame_index": 11,
+        "phase": "presentation",
+        "body_box": [
+          73,
+          49,
+          51,
+          108,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_walk_loop_009",
+      "group": "walk_loop",
+      "group_index": 9,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        38,
+        52,
+        113,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_02.png",
+      "source_cell": 11,
+      "source_row": 3,
+      "source_column": 1,
+      "path": "content/characters/homeless_man/sprites/poses/hm_walk_loop_009.png",
+      "sha256": "e58e1373bf17f1f4fa405119200276dc33cce5f20c3a5db390b6d03413155ed9",
+      "clips": [
+        "walk_loop"
+      ],
+      "actions": [
+        "walk_loop"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_walk_loop_009.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "walk",
+        "frame_index": 12,
+        "phase": "presentation",
+        "body_box": [
+          38,
+          52,
+          75,
+          105,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_walk_loop_010",
+      "group": "walk_loop",
+      "group_index": 10,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        80,
+        49,
+        139,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_02.png",
+      "source_cell": 12,
+      "source_row": 3,
+      "source_column": 2,
+      "path": "content/characters/homeless_man/sprites/poses/hm_walk_loop_010.png",
+      "sha256": "a2387258cfb8c5164be9ccf2d99b12667d1edf62e2ea00f29dfa07343fd83257",
+      "clips": [
+        "walk_loop"
+      ],
+      "actions": [
+        "walk_loop"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_walk_loop_010.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "walk",
+        "frame_index": 13,
+        "phase": "presentation",
+        "body_box": [
+          80,
+          49,
+          59,
+          108,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_walk_loop_011",
+      "group": "walk_loop",
+      "group_index": 11,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        71,
+        48,
+        123,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_02.png",
+      "source_cell": 13,
+      "source_row": 3,
+      "source_column": 3,
+      "path": "content/characters/homeless_man/sprites/poses/hm_walk_loop_011.png",
+      "sha256": "aa1d1e28315b8f790c92a116855663b069496cb2b91ae809236763be5f8192d8",
+      "clips": [
+        "walk_loop"
+      ],
+      "actions": [
+        "walk_loop"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_walk_loop_011.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "walk",
+        "frame_index": 14,
+        "phase": "presentation",
+        "body_box": [
+          71,
+          48,
+          52,
+          109,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_walk_loop_012",
+      "group": "walk_loop",
+      "group_index": 12,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        80,
+        50,
+        131,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_02.png",
+      "source_cell": 14,
+      "source_row": 3,
+      "source_column": 4,
+      "path": "content/characters/homeless_man/sprites/poses/hm_walk_loop_012.png",
+      "sha256": "17638f4c6f02d0f4e653509b7aaf775cdc7372dc1d17d703e344efd1f67f6af5",
+      "clips": [
+        "walk_loop"
+      ],
+      "actions": [
+        "walk_loop"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_walk_loop_012.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "walk",
+        "frame_index": 15,
+        "phase": "presentation",
+        "body_box": [
+          80,
+          50,
+          51,
+          107,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_walk_stop_001",
+      "group": "walk_stop",
+      "group_index": 1,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        78,
+        49,
+        126,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_02.png",
+      "source_cell": 15,
+      "source_row": 3,
+      "source_column": 5,
+      "path": "content/characters/homeless_man/sprites/poses/hm_walk_stop_001.png",
+      "sha256": "446a576b18c261adb29504b800e0ae3d58e6515e46c8fb59025ebffefdff9a79",
+      "clips": [
+        "walk_stop"
+      ],
+      "actions": [
+        "walk_stop"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_walk_stop_001.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "walk",
+        "frame_index": 16,
+        "phase": "presentation",
+        "body_box": [
+          78,
+          49,
+          48,
+          108,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_walk_stop_002",
+      "group": "walk_stop",
+      "group_index": 2,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        81,
+        49,
+        128,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_02.png",
+      "source_cell": 16,
+      "source_row": 4,
+      "source_column": 1,
+      "path": "content/characters/homeless_man/sprites/poses/hm_walk_stop_002.png",
+      "sha256": "f79900721173ea138e784f6e504d3a100e5f082e7446f638ff1e33ec8779930e",
+      "clips": [
+        "walk_stop"
+      ],
+      "actions": [
+        "walk_stop"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_walk_stop_002.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "walk",
+        "frame_index": 17,
+        "phase": "presentation",
+        "body_box": [
+          81,
+          49,
+          47,
+          108,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_walk_stop_003",
+      "group": "walk_stop",
+      "group_index": 3,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        81,
+        49,
+        126,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_02.png",
+      "source_cell": 17,
+      "source_row": 4,
+      "source_column": 2,
+      "path": "content/characters/homeless_man/sprites/poses/hm_walk_stop_003.png",
+      "sha256": "b89a4fa6b57e0d7be6bc98a3f1837e8b08757c0a62d382236e27d62bdb3b78e8",
+      "clips": [
+        "walk_stop"
+      ],
+      "actions": [
+        "walk_stop"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_walk_stop_003.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "walk",
+        "frame_index": 18,
+        "phase": "presentation",
+        "body_box": [
+          81,
+          49,
+          45,
+          108,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_walk_stop_004",
+      "group": "walk_stop",
+      "group_index": 4,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        82,
+        49,
+        131,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_02.png",
+      "source_cell": 18,
+      "source_row": 4,
+      "source_column": 3,
+      "path": "content/characters/homeless_man/sprites/poses/hm_walk_stop_004.png",
+      "sha256": "97ff9a19074a225847bc28992994ebe5a2fb7b4087df543c6c48e0e1a28c6c4e",
+      "clips": [
+        "walk_stop"
+      ],
+      "actions": [
+        "walk_stop"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_walk_stop_004.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "walk",
+        "frame_index": 19,
+        "phase": "presentation",
+        "body_box": [
+          82,
+          49,
+          49,
+          108,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_turn_pivot_001",
+      "group": "turn_pivot",
+      "group_index": 1,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        76,
+        51,
+        135,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_02.png",
+      "source_cell": 19,
+      "source_row": 4,
+      "source_column": 4,
+      "path": "content/characters/homeless_man/sprites/poses/hm_turn_pivot_001.png",
+      "sha256": "8a16f7d45939fbeb9f38bf422743c7f104c9f610fc3ddd2428b0ee66c61119a8",
+      "clips": [
+        "turn_pivot"
+      ],
+      "actions": [
+        "turn_pivot"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_turn_pivot_001.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "turn",
+        "frame_index": 0,
+        "phase": "presentation",
+        "body_box": [
+          76,
+          51,
+          59,
+          106,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_turn_pivot_002",
+      "group": "turn_pivot",
+      "group_index": 2,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        76,
+        49,
+        136,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_02.png",
+      "source_cell": 20,
+      "source_row": 4,
+      "source_column": 5,
+      "path": "content/characters/homeless_man/sprites/poses/hm_turn_pivot_002.png",
+      "sha256": "11b8b82d232eed0a4cfe5676ef0ce3d30f89b6fb3b478d663a646eb49d0baabe",
+      "clips": [
+        "turn_pivot"
+      ],
+      "actions": [
+        "turn_pivot"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_turn_pivot_002.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "turn",
+        "frame_index": 1,
+        "phase": "presentation",
+        "body_box": [
+          76,
+          49,
+          60,
+          108,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_turn_pivot_003",
+      "group": "turn_pivot",
+      "group_index": 3,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        61,
+        48,
+        114,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_03.png",
+      "source_cell": 1,
+      "source_row": 1,
+      "source_column": 1,
+      "path": "content/characters/homeless_man/sprites/poses/hm_turn_pivot_003.png",
+      "sha256": "526cc0908a5e7c63f2ba804854c22c8c2fa0ef2786dab49ac5060d5fb166ba99",
+      "clips": [
+        "turn_pivot"
+      ],
+      "actions": [
+        "turn_pivot"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_turn_pivot_003.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "turn",
+        "frame_index": 2,
+        "phase": "presentation",
+        "body_box": [
+          61,
+          48,
+          53,
+          109,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_turn_pivot_004",
+      "group": "turn_pivot",
+      "group_index": 4,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        74,
+        49,
+        128,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_03.png",
+      "source_cell": 2,
+      "source_row": 1,
+      "source_column": 2,
+      "path": "content/characters/homeless_man/sprites/poses/hm_turn_pivot_004.png",
+      "sha256": "5f1057183453050f1a052ef479f7691f1edecdc960102271fe48065c496583b2",
+      "clips": [
+        "turn_pivot"
+      ],
+      "actions": [
+        "turn_pivot"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_turn_pivot_004.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "turn",
+        "frame_index": 3,
+        "phase": "presentation",
+        "body_box": [
+          74,
+          49,
+          54,
+          108,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_unarmed_jab_001",
+      "group": "unarmed_jab",
+      "group_index": 1,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        85,
+        49,
+        147,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_03.png",
+      "source_cell": 3,
+      "source_row": 1,
+      "source_column": 3,
+      "path": "content/characters/homeless_man/sprites/poses/hm_unarmed_jab_001.png",
+      "sha256": "8f7a28b72ca2f5f3fe949f0b4b73bd6c363bc216512e82ffe6989c23fe25dd1c",
+      "clips": [
+        "unarmed_jab"
+      ],
+      "actions": [
+        "unarmed_jab"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_unarmed_jab_001.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "attack1",
+        "frame_index": 0,
+        "phase": "startup",
+        "body_box": [
+          85,
+          49,
+          62,
+          108,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_unarmed_jab_002",
+      "group": "unarmed_jab",
+      "group_index": 2,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        84,
+        53,
+        164,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_03.png",
+      "source_cell": 4,
+      "source_row": 1,
+      "source_column": 4,
+      "path": "content/characters/homeless_man/sprites/poses/hm_unarmed_jab_002.png",
+      "sha256": "b6d2cc235dd79943411d404ff5062de2112a946b605025c3f8364a734aef6628",
+      "clips": [
+        "unarmed_jab"
+      ],
+      "actions": [
+        "unarmed_jab"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_unarmed_jab_002.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "attack1",
+        "frame_index": 1,
+        "phase": "startup",
+        "body_box": [
+          84,
+          53,
+          80,
+          104,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_unarmed_jab_003",
+      "group": "unarmed_jab",
+      "group_index": 3,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        84,
+        53,
+        165,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_03.png",
+      "source_cell": 5,
+      "source_row": 1,
+      "source_column": 5,
+      "path": "content/characters/homeless_man/sprites/poses/hm_unarmed_jab_003.png",
+      "sha256": "ed9720fb730982d893d2f8c39aa1e65bb906933638b991ba3a8fcb96fb424138",
+      "clips": [
+        "unarmed_jab"
+      ],
+      "actions": [
+        "unarmed_jab"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_unarmed_jab_003.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "attack1",
+        "frame_index": 2,
+        "phase": "startup",
+        "body_box": [
+          84,
+          53,
+          81,
+          104,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_unarmed_jab_004",
+      "group": "unarmed_jab",
+      "group_index": 4,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        85,
+        54,
+        183,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_03.png",
+      "source_cell": 6,
+      "source_row": 2,
+      "source_column": 1,
+      "path": "content/characters/homeless_man/sprites/poses/hm_unarmed_jab_004.png",
+      "sha256": "64e9f66d4c3d545363bb4f0b90661bb12e04f511cd3c499b3dde657cfd10e861",
+      "clips": [
+        "unarmed_jab"
+      ],
+      "actions": [
+        "unarmed_jab"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_unarmed_jab_004.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "attack1",
+        "frame_index": 3,
+        "phase": "active",
+        "body_box": [
+          85,
+          54,
+          98,
+          103,
+          14
+        ],
+        "attack_box": [
+          154,
+          88,
+          37,
+          30,
+          7,
+          0,
+          0,
+          0,
+          4,
+          14
+        ]
+      }
+    },
+    {
+      "id": "hm_unarmed_jab_005",
+      "group": "unarmed_jab",
+      "group_index": 5,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        85,
+        50,
+        146,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_03.png",
+      "source_cell": 7,
+      "source_row": 2,
+      "source_column": 2,
+      "path": "content/characters/homeless_man/sprites/poses/hm_unarmed_jab_005.png",
+      "sha256": "520995eda498563dbbdc284975af98761f955028c009ffdec12d33774723ae83",
+      "clips": [
+        "unarmed_jab"
+      ],
+      "actions": [
+        "unarmed_jab"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_unarmed_jab_005.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "attack1",
+        "frame_index": 4,
+        "phase": "active",
+        "body_box": [
+          85,
+          50,
+          61,
+          107,
+          14
+        ],
+        "attack_box": [
+          133,
+          85,
+          58,
+          30,
+          7,
+          0,
+          0,
+          0,
+          4,
+          14
+        ]
+      }
+    },
+    {
+      "id": "hm_unarmed_jab_006",
+      "group": "unarmed_jab",
+      "group_index": 6,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        82,
+        50,
+        145,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_03.png",
+      "source_cell": 8,
+      "source_row": 2,
+      "source_column": 3,
+      "path": "content/characters/homeless_man/sprites/poses/hm_unarmed_jab_006.png",
+      "sha256": "4e3d695d9e85e7375cc709b5739171bb5df172dceed182f6b05bf99b9b1e42e7",
+      "clips": [
+        "unarmed_jab"
+      ],
+      "actions": [
+        "unarmed_jab"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_unarmed_jab_006.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "attack1",
+        "frame_index": 5,
+        "phase": "recovery",
+        "body_box": [
+          82,
+          50,
+          63,
+          107,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_unarmed_jab_007",
+      "group": "unarmed_jab",
+      "group_index": 7,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        85,
+        49,
+        139,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_03.png",
+      "source_cell": 9,
+      "source_row": 2,
+      "source_column": 4,
+      "path": "content/characters/homeless_man/sprites/poses/hm_unarmed_jab_007.png",
+      "sha256": "316c8e023ba35f64276ccf36ed15a28ecf6f9aef2b65905ec10349e643f7fd96",
+      "clips": [
+        "unarmed_jab"
+      ],
+      "actions": [
+        "unarmed_jab"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_unarmed_jab_007.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "attack1",
+        "frame_index": 6,
+        "phase": "recovery",
+        "body_box": [
+          85,
+          49,
+          54,
+          108,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_unarmed_jab_008",
+      "group": "unarmed_jab",
+      "group_index": 8,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        87,
+        50,
+        142,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_03.png",
+      "source_cell": 10,
+      "source_row": 2,
+      "source_column": 5,
+      "path": "content/characters/homeless_man/sprites/poses/hm_unarmed_jab_008.png",
+      "sha256": "9a8dbd02e435d10a92848d82e8de541089b7cd2cc1f90f4b6dce9ec843c6d044",
+      "clips": [
+        "unarmed_jab"
+      ],
+      "actions": [
+        "unarmed_jab"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_unarmed_jab_008.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "attack1",
+        "frame_index": 7,
+        "phase": "recovery",
+        "body_box": [
+          87,
+          50,
+          55,
+          107,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_two_hand_shove_001",
+      "group": "two_hand_shove",
+      "group_index": 1,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        84,
+        56,
+        159,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_03.png",
+      "source_cell": 11,
+      "source_row": 3,
+      "source_column": 1,
+      "path": "content/characters/homeless_man/sprites/poses/hm_two_hand_shove_001.png",
+      "sha256": "56f5f0496ab73cba9c25d5a597f083374c99f7e88f1f38dbff4fcf03145c9904",
+      "clips": [
+        "two_hand_shove"
+      ],
+      "actions": [
+        "two_hand_shove"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_two_hand_shove_001.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "attack2",
+        "frame_index": 0,
+        "phase": "startup",
+        "body_box": [
+          84,
+          56,
+          75,
+          101,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_two_hand_shove_002",
+      "group": "two_hand_shove",
+      "group_index": 2,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        85,
+        57,
+        165,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_03.png",
+      "source_cell": 12,
+      "source_row": 3,
+      "source_column": 2,
+      "path": "content/characters/homeless_man/sprites/poses/hm_two_hand_shove_002.png",
+      "sha256": "de4debce3c48bc1fe4c902c77d0cf798245ab0f48b30f3ec0afbd9a814cbad32",
+      "clips": [
+        "two_hand_shove"
+      ],
+      "actions": [
+        "two_hand_shove"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_two_hand_shove_002.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "attack2",
+        "frame_index": 1,
+        "phase": "startup",
+        "body_box": [
+          85,
+          57,
+          80,
+          100,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_two_hand_shove_003",
+      "group": "two_hand_shove",
+      "group_index": 3,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        82,
+        56,
+        161,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_03.png",
+      "source_cell": 13,
+      "source_row": 3,
+      "source_column": 3,
+      "path": "content/characters/homeless_man/sprites/poses/hm_two_hand_shove_003.png",
+      "sha256": "3a0b3d3933ecdd5a7ae731edf5184d60ba87ad60c75ae5667470e79202a6741e",
+      "clips": [
+        "two_hand_shove"
+      ],
+      "actions": [
+        "two_hand_shove"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_two_hand_shove_003.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "attack2",
+        "frame_index": 2,
+        "phase": "startup",
+        "body_box": [
+          82,
+          56,
+          79,
+          101,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_two_hand_shove_004",
+      "group": "two_hand_shove",
+      "group_index": 4,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        83,
+        56,
+        165,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_03.png",
+      "source_cell": 14,
+      "source_row": 3,
+      "source_column": 4,
+      "path": "content/characters/homeless_man/sprites/poses/hm_two_hand_shove_004.png",
+      "sha256": "3251bdd431ba0e359674b8621cde7b6494672017ac11b76bfe43acaa24562862",
+      "clips": [
+        "two_hand_shove"
+      ],
+      "actions": [
+        "two_hand_shove"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_two_hand_shove_004.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "attack2",
+        "frame_index": 3,
+        "phase": "active",
+        "body_box": [
+          83,
+          56,
+          82,
+          101,
+          14
+        ],
+        "attack_box": [
+          136,
+          89,
+          55,
+          30,
+          9,
+          0,
+          0,
+          0,
+          4,
+          18
+        ]
+      }
+    },
+    {
+      "id": "hm_two_hand_shove_005",
+      "group": "two_hand_shove",
+      "group_index": 5,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        87,
+        57,
+        172,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_03.png",
+      "source_cell": 15,
+      "source_row": 3,
+      "source_column": 5,
+      "path": "content/characters/homeless_man/sprites/poses/hm_two_hand_shove_005.png",
+      "sha256": "db24ed9165a26d4f4d8a5bb9f51370df1bdf3f193a2731c27dae2d47176c9a45",
+      "clips": [
+        "two_hand_shove"
+      ],
+      "actions": [
+        "two_hand_shove"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_two_hand_shove_005.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "attack2",
+        "frame_index": 4,
+        "phase": "active",
+        "body_box": [
+          87,
+          57,
+          85,
+          100,
+          14
+        ],
+        "attack_box": [
+          143,
+          90,
+          48,
+          30,
+          9,
+          0,
+          0,
+          0,
+          4,
+          18
+        ]
+      }
+    },
+    {
+      "id": "hm_two_hand_shove_006",
+      "group": "two_hand_shove",
+      "group_index": 6,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        83,
+        57,
+        164,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_03.png",
+      "source_cell": 16,
+      "source_row": 4,
+      "source_column": 1,
+      "path": "content/characters/homeless_man/sprites/poses/hm_two_hand_shove_006.png",
+      "sha256": "978c7c52d1e491c4e25430b07d50d2e1e3ea859f748672f0ee53c109605cd9ec",
+      "clips": [
+        "two_hand_shove"
+      ],
+      "actions": [
+        "two_hand_shove"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_two_hand_shove_006.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "attack2",
+        "frame_index": 5,
+        "phase": "recovery",
+        "body_box": [
+          83,
+          57,
+          81,
+          100,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_two_hand_shove_007",
+      "group": "two_hand_shove",
+      "group_index": 7,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        85,
+        54,
+        144,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_03.png",
+      "source_cell": 17,
+      "source_row": 4,
+      "source_column": 2,
+      "path": "content/characters/homeless_man/sprites/poses/hm_two_hand_shove_007.png",
+      "sha256": "28e382f3d59838340d47283be1cac1e4750642a9304105caf7fc1ce05da28164",
+      "clips": [
+        "two_hand_shove"
+      ],
+      "actions": [
+        "two_hand_shove"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_two_hand_shove_007.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "attack2",
+        "frame_index": 6,
+        "phase": "recovery",
+        "body_box": [
+          85,
+          54,
+          59,
+          103,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_two_hand_shove_008",
+      "group": "two_hand_shove",
+      "group_index": 8,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        85,
+        53,
+        141,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_03.png",
+      "source_cell": 18,
+      "source_row": 4,
+      "source_column": 3,
+      "path": "content/characters/homeless_man/sprites/poses/hm_two_hand_shove_008.png",
+      "sha256": "85003a9b9f22a67ae0fdeba4ba6bdf313fbf241683ab626c7f7feedcb7dcfb4a",
+      "clips": [
+        "two_hand_shove"
+      ],
+      "actions": [
+        "two_hand_shove"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_two_hand_shove_008.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "attack2",
+        "frame_index": 7,
+        "phase": "recovery",
+        "body_box": [
+          85,
+          53,
+          56,
+          104,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_heavy_overhand_001",
+      "group": "heavy_overhand",
+      "group_index": 1,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        82,
+        56,
+        154,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_03.png",
+      "source_cell": 19,
+      "source_row": 4,
+      "source_column": 4,
+      "path": "content/characters/homeless_man/sprites/poses/hm_heavy_overhand_001.png",
+      "sha256": "80d68a7bbcd3b5c915d2cd1bc9ecb36d3d7dc3943447b64299238a04a59e8903",
+      "clips": [
+        "heavy_overhand"
+      ],
+      "actions": [
+        "heavy_overhand"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_heavy_overhand_001.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "attack3",
+        "frame_index": 0,
+        "phase": "startup",
+        "body_box": [
+          82,
+          56,
+          72,
+          101,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_heavy_overhand_002",
+      "group": "heavy_overhand",
+      "group_index": 2,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        81,
+        58,
+        152,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_03.png",
+      "source_cell": 20,
+      "source_row": 4,
+      "source_column": 5,
+      "path": "content/characters/homeless_man/sprites/poses/hm_heavy_overhand_002.png",
+      "sha256": "b5c1e0a5f3f89e5708282b35251a4d79979fb8e4001754bb23d247ba1c6d0c04",
+      "clips": [
+        "heavy_overhand"
+      ],
+      "actions": [
+        "heavy_overhand"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_heavy_overhand_002.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "attack3",
+        "frame_index": 1,
+        "phase": "startup",
+        "body_box": [
+          81,
+          58,
+          71,
+          99,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_heavy_overhand_003",
+      "group": "heavy_overhand",
+      "group_index": 3,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        80,
+        57,
+        158,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_04.png",
+      "source_cell": 1,
+      "source_row": 1,
+      "source_column": 1,
+      "path": "content/characters/homeless_man/sprites/poses/hm_heavy_overhand_003.png",
+      "sha256": "aacfc715ab72d39a686fb1c99a136677cc2aec4f413678779d79a5ba678dbc44",
+      "clips": [
+        "heavy_overhand"
+      ],
+      "actions": [
+        "heavy_overhand"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_heavy_overhand_003.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "attack3",
+        "frame_index": 2,
+        "phase": "startup",
+        "body_box": [
+          80,
+          57,
+          78,
+          100,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_heavy_overhand_004",
+      "group": "heavy_overhand",
+      "group_index": 4,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        78,
+        61,
+        153,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_04.png",
+      "source_cell": 2,
+      "source_row": 1,
+      "source_column": 2,
+      "path": "content/characters/homeless_man/sprites/poses/hm_heavy_overhand_004.png",
+      "sha256": "4dc5fc6e7071dd59419f70ec93e3e62a369e1453baf783be3a310d9329ff3f52",
+      "clips": [
+        "heavy_overhand"
+      ],
+      "actions": [
+        "heavy_overhand"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_heavy_overhand_004.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "attack3",
+        "frame_index": 3,
+        "phase": "startup",
+        "body_box": [
+          78,
+          61,
+          75,
+          96,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_heavy_overhand_005",
+      "group": "heavy_overhand",
+      "group_index": 5,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        82,
+        61,
+        156,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_04.png",
+      "source_cell": 3,
+      "source_row": 1,
+      "source_column": 3,
+      "path": "content/characters/homeless_man/sprites/poses/hm_heavy_overhand_005.png",
+      "sha256": "b680556a929b5c3ff7f7708eee2259f77463274b55ce1ac6b1da064d4da93794",
+      "clips": [
+        "heavy_overhand"
+      ],
+      "actions": [
+        "heavy_overhand"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_heavy_overhand_005.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "attack3",
+        "frame_index": 4,
+        "phase": "startup",
+        "body_box": [
+          82,
+          61,
+          74,
+          96,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_heavy_overhand_006",
+      "group": "heavy_overhand",
+      "group_index": 6,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        80,
+        72,
+        150,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_04.png",
+      "source_cell": 4,
+      "source_row": 1,
+      "source_column": 4,
+      "path": "content/characters/homeless_man/sprites/poses/hm_heavy_overhand_006.png",
+      "sha256": "8e912fef31fae62867a23ab142836a627c029498f9b50fb4355153b8e2b0db77",
+      "clips": [
+        "heavy_overhand"
+      ],
+      "actions": [
+        "heavy_overhand"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_heavy_overhand_006.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "attack3",
+        "frame_index": 5,
+        "phase": "active",
+        "body_box": [
+          80,
+          72,
+          70,
+          85,
+          14
+        ],
+        "attack_box": [
+          133,
+          100,
+          58,
+          30,
+          15,
+          1,
+          0,
+          0,
+          4,
+          16
+        ]
+      }
+    },
+    {
+      "id": "hm_heavy_overhand_007",
+      "group": "heavy_overhand",
+      "group_index": 7,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        80,
+        86,
+        159,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_04.png",
+      "source_cell": 5,
+      "source_row": 1,
+      "source_column": 5,
+      "path": "content/characters/homeless_man/sprites/poses/hm_heavy_overhand_007.png",
+      "sha256": "9312bd92e9accef4f96942dfbf08c9f34467030514f67be92ebeafca75be4380",
+      "clips": [
+        "heavy_overhand"
+      ],
+      "actions": [
+        "heavy_overhand"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_heavy_overhand_007.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "attack3",
+        "frame_index": 6,
+        "phase": "active",
+        "body_box": [
+          80,
+          86,
+          79,
+          71,
+          14
+        ],
+        "attack_box": [
+          133,
+          109,
+          58,
+          30,
+          15,
+          1,
+          0,
+          0,
+          4,
+          16
+        ]
+      }
+    },
+    {
+      "id": "hm_heavy_overhand_008",
+      "group": "heavy_overhand",
+      "group_index": 8,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        56,
+        71,
+        118,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_04.png",
+      "source_cell": 6,
+      "source_row": 2,
+      "source_column": 1,
+      "path": "content/characters/homeless_man/sprites/poses/hm_heavy_overhand_008.png",
+      "sha256": "1ed1b3d4fc3621a69bbfa88b40b6c48e822f9691d6361a57b66647bd5968e313",
+      "clips": [
+        "heavy_overhand"
+      ],
+      "actions": [
+        "heavy_overhand"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_heavy_overhand_008.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "attack3",
+        "frame_index": 7,
+        "phase": "recovery",
+        "body_box": [
+          56,
+          71,
+          62,
+          86,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_heavy_overhand_009",
+      "group": "heavy_overhand",
+      "group_index": 9,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        56,
+        56,
+        118,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_04.png",
+      "source_cell": 7,
+      "source_row": 2,
+      "source_column": 2,
+      "path": "content/characters/homeless_man/sprites/poses/hm_heavy_overhand_009.png",
+      "sha256": "0986580bbc3ee80c700fb0ec8a0f878aa06521764971c25c845e0cbde81e8459",
+      "clips": [
+        "heavy_overhand"
+      ],
+      "actions": [
+        "heavy_overhand"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_heavy_overhand_009.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "attack3",
+        "frame_index": 8,
+        "phase": "recovery",
+        "body_box": [
+          56,
+          56,
+          62,
+          101,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_heavy_overhand_010",
+      "group": "heavy_overhand",
+      "group_index": 10,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        52,
+        57,
+        116,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_04.png",
+      "source_cell": 8,
+      "source_row": 2,
+      "source_column": 3,
+      "path": "content/characters/homeless_man/sprites/poses/hm_heavy_overhand_010.png",
+      "sha256": "2ee9b44426f995f61daa5b43e55f6adce1113925e6edd77073d137fa85db0553",
+      "clips": [
+        "heavy_overhand"
+      ],
+      "actions": [
+        "heavy_overhand"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_heavy_overhand_010.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "attack3",
+        "frame_index": 9,
+        "phase": "recovery",
+        "body_box": [
+          52,
+          57,
+          64,
+          100,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_taunt_hesitate_001",
+      "group": "taunt_hesitate",
+      "group_index": 1,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        76,
+        57,
+        137,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_04.png",
+      "source_cell": 9,
+      "source_row": 2,
+      "source_column": 4,
+      "path": "content/characters/homeless_man/sprites/poses/hm_taunt_hesitate_001.png",
+      "sha256": "14c403fd04b512f684505706d153d66d814a742980cfd0aea5b57e5c2fa4435d",
+      "clips": [
+        "taunt_hesitate"
+      ],
+      "actions": [
+        "taunt_hesitate"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_taunt_hesitate_001.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "idle",
+        "frame_index": 12,
+        "phase": "presentation",
+        "body_box": [
+          76,
+          57,
+          61,
+          100,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_taunt_hesitate_002",
+      "group": "taunt_hesitate",
+      "group_index": 2,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        52,
+        56,
+        127,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_04.png",
+      "source_cell": 10,
+      "source_row": 2,
+      "source_column": 5,
+      "path": "content/characters/homeless_man/sprites/poses/hm_taunt_hesitate_002.png",
+      "sha256": "e3952995b3aa7eec11d36e6893aec593648dfcf763b58ad3f4a8c835c527690a",
+      "clips": [
+        "taunt_hesitate"
+      ],
+      "actions": [
+        "taunt_hesitate"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_taunt_hesitate_002.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "idle",
+        "frame_index": 13,
+        "phase": "presentation",
+        "body_box": [
+          52,
+          56,
+          75,
+          101,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_taunt_hesitate_003",
+      "group": "taunt_hesitate",
+      "group_index": 3,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        76,
+        58,
+        151,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_04.png",
+      "source_cell": 11,
+      "source_row": 3,
+      "source_column": 1,
+      "path": "content/characters/homeless_man/sprites/poses/hm_taunt_hesitate_003.png",
+      "sha256": "5eac416eea6da1af012f2fd2485e22c49843ca4522f5d104cbd0f30813cb2de4",
+      "clips": [
+        "taunt_hesitate"
+      ],
+      "actions": [
+        "taunt_hesitate"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_taunt_hesitate_003.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "idle",
+        "frame_index": 14,
+        "phase": "presentation",
+        "body_box": [
+          76,
+          58,
+          75,
+          99,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_taunt_hesitate_004",
+      "group": "taunt_hesitate",
+      "group_index": 4,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        37,
+        59,
+        123,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_04.png",
+      "source_cell": 12,
+      "source_row": 3,
+      "source_column": 2,
+      "path": "content/characters/homeless_man/sprites/poses/hm_taunt_hesitate_004.png",
+      "sha256": "c40b033eb1ba9bb9e14b9eb264295290242545a651546a66e58b1dcc897543ad",
+      "clips": [
+        "taunt_hesitate"
+      ],
+      "actions": [
+        "taunt_hesitate"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_taunt_hesitate_004.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "idle",
+        "frame_index": 15,
+        "phase": "presentation",
+        "body_box": [
+          37,
+          59,
+          86,
+          98,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_taunt_hesitate_005",
+      "group": "taunt_hesitate",
+      "group_index": 5,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        61,
+        57,
+        117,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_04.png",
+      "source_cell": 13,
+      "source_row": 3,
+      "source_column": 3,
+      "path": "content/characters/homeless_man/sprites/poses/hm_taunt_hesitate_005.png",
+      "sha256": "174149edba1a444ed4dd8c2a43017eb6bde8745b69c7ec23235bf64a1dcd015b",
+      "clips": [
+        "taunt_hesitate"
+      ],
+      "actions": [
+        "taunt_hesitate"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_taunt_hesitate_005.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "idle",
+        "frame_index": 16,
+        "phase": "presentation",
+        "body_box": [
+          61,
+          57,
+          56,
+          100,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_taunt_hesitate_006",
+      "group": "taunt_hesitate",
+      "group_index": 6,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        78,
+        60,
+        139,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_04.png",
+      "source_cell": 14,
+      "source_row": 3,
+      "source_column": 4,
+      "path": "content/characters/homeless_man/sprites/poses/hm_taunt_hesitate_006.png",
+      "sha256": "e64bc7919ca1c859ee31144d688ae59103dd57f3440e02b068cb7a5d26c7aa47",
+      "clips": [
+        "taunt_hesitate"
+      ],
+      "actions": [
+        "taunt_hesitate"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_taunt_hesitate_006.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "idle",
+        "frame_index": 17,
+        "phase": "presentation",
+        "body_box": [
+          78,
+          60,
+          61,
+          97,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_taunt_hesitate_007",
+      "group": "taunt_hesitate",
+      "group_index": 7,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        76,
+        58,
+        141,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_04.png",
+      "source_cell": 15,
+      "source_row": 3,
+      "source_column": 5,
+      "path": "content/characters/homeless_man/sprites/poses/hm_taunt_hesitate_007.png",
+      "sha256": "e6949dc3022f01a9d46915bab49f8b00a1de9353cb3ddbd28570c2a5eab8a601",
+      "clips": [
+        "taunt_hesitate"
+      ],
+      "actions": [
+        "taunt_hesitate"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_taunt_hesitate_007.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "idle",
+        "frame_index": 18,
+        "phase": "presentation",
+        "body_box": [
+          76,
+          58,
+          65,
+          99,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_taunt_hesitate_008",
+      "group": "taunt_hesitate",
+      "group_index": 8,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        82,
+        58,
+        141,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_04.png",
+      "source_cell": 16,
+      "source_row": 4,
+      "source_column": 1,
+      "path": "content/characters/homeless_man/sprites/poses/hm_taunt_hesitate_008.png",
+      "sha256": "82385d66b3427a151ef737ebc053ef13f31a570632b8e7f408c6d55f0b178cee",
+      "clips": [
+        "taunt_hesitate"
+      ],
+      "actions": [
+        "taunt_hesitate"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_taunt_hesitate_008.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "idle",
+        "frame_index": 19,
+        "phase": "presentation",
+        "body_box": [
+          82,
+          58,
+          59,
+          99,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_light_pain_001",
+      "group": "light_pain",
+      "group_index": 1,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        80,
+        61,
+        148,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_04.png",
+      "source_cell": 17,
+      "source_row": 4,
+      "source_column": 2,
+      "path": "content/characters/homeless_man/sprites/poses/hm_light_pain_001.png",
+      "sha256": "acd2d00928f1c18f76527611936fd714e549c93424c6c03c64bdf09a59d30f42",
+      "clips": [
+        "light_pain"
+      ],
+      "actions": [
+        "light_pain"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_light_pain_001.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "pain",
+        "frame_index": 0,
+        "phase": "presentation",
+        "body_box": [
+          80,
+          61,
+          68,
+          96,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_light_pain_002",
+      "group": "light_pain",
+      "group_index": 2,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        81,
+        74,
+        141,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_04.png",
+      "source_cell": 18,
+      "source_row": 4,
+      "source_column": 3,
+      "path": "content/characters/homeless_man/sprites/poses/hm_light_pain_002.png",
+      "sha256": "a5c24f38667298300ef10c1ee33459d94331c2445f9ce6bcbee1ded0b49cb687",
+      "clips": [
+        "light_pain"
+      ],
+      "actions": [
+        "light_pain"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_light_pain_002.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "pain",
+        "frame_index": 1,
+        "phase": "presentation",
+        "body_box": [
+          81,
+          74,
+          60,
+          83,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_light_pain_003",
+      "group": "light_pain",
+      "group_index": 3,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        81,
+        62,
+        141,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_04.png",
+      "source_cell": 19,
+      "source_row": 4,
+      "source_column": 4,
+      "path": "content/characters/homeless_man/sprites/poses/hm_light_pain_003.png",
+      "sha256": "012d45747d5cbac4defd4ce989a10385efa4fc463147a93b4af2435e123661fa",
+      "clips": [
+        "light_pain"
+      ],
+      "actions": [
+        "light_pain"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_light_pain_003.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "pain",
+        "frame_index": 2,
+        "phase": "presentation",
+        "body_box": [
+          81,
+          62,
+          60,
+          95,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_light_pain_004",
+      "group": "light_pain",
+      "group_index": 4,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        68,
+        66,
+        146,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_04.png",
+      "source_cell": 20,
+      "source_row": 4,
+      "source_column": 5,
+      "path": "content/characters/homeless_man/sprites/poses/hm_light_pain_004.png",
+      "sha256": "7aaa3a334b0ce124b6a2a3e2eb6b5affba7978e9fb0dea23e8539ebcfe3f04c3",
+      "clips": [
+        "light_pain"
+      ],
+      "actions": [
+        "light_pain"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_light_pain_004.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "pain",
+        "frame_index": 3,
+        "phase": "presentation",
+        "body_box": [
+          68,
+          66,
+          78,
+          91,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_light_pain_005",
+      "group": "light_pain",
+      "group_index": 5,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        82,
+        61,
+        143,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_05.png",
+      "source_cell": 1,
+      "source_row": 1,
+      "source_column": 1,
+      "path": "content/characters/homeless_man/sprites/poses/hm_light_pain_005.png",
+      "sha256": "4f45f641eb3371fb96ff9ef5127321d3c642a0171df913da4872386993bf5b3e",
+      "clips": [
+        "light_pain"
+      ],
+      "actions": [
+        "light_pain"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_light_pain_005.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "pain",
+        "frame_index": 4,
+        "phase": "presentation",
+        "body_box": [
+          82,
+          61,
+          61,
+          96,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_heavy_pain_001",
+      "group": "heavy_pain",
+      "group_index": 1,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        80,
+        60,
+        141,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_05.png",
+      "source_cell": 2,
+      "source_row": 1,
+      "source_column": 2,
+      "path": "content/characters/homeless_man/sprites/poses/hm_heavy_pain_001.png",
+      "sha256": "3f77f51b1de35dbccb99c034bb630a01d1399f31ede56f0e3285cda50b480517",
+      "clips": [
+        "heavy_pain"
+      ],
+      "actions": [
+        "heavy_pain"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_heavy_pain_001.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "pain2",
+        "frame_index": 0,
+        "phase": "presentation",
+        "body_box": [
+          80,
+          60,
+          61,
+          97,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_heavy_pain_002",
+      "group": "heavy_pain",
+      "group_index": 2,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        42,
+        63,
+        112,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_05.png",
+      "source_cell": 3,
+      "source_row": 1,
+      "source_column": 3,
+      "path": "content/characters/homeless_man/sprites/poses/hm_heavy_pain_002.png",
+      "sha256": "c995687d570e452e38b48866361470dbad78996d705648b8040fd8a6ba8765ff",
+      "clips": [
+        "heavy_pain"
+      ],
+      "actions": [
+        "heavy_pain"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_heavy_pain_002.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "pain2",
+        "frame_index": 1,
+        "phase": "presentation",
+        "body_box": [
+          42,
+          63,
+          70,
+          94,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_heavy_pain_003",
+      "group": "heavy_pain",
+      "group_index": 3,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        42,
+        62,
+        114,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_05.png",
+      "source_cell": 4,
+      "source_row": 1,
+      "source_column": 4,
+      "path": "content/characters/homeless_man/sprites/poses/hm_heavy_pain_003.png",
+      "sha256": "21de2806bf515a0ba5a2cc74806ea90dc7b05c956e39d23830db6b3392bef6ce",
+      "clips": [
+        "heavy_pain"
+      ],
+      "actions": [
+        "heavy_pain"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_heavy_pain_003.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "pain2",
+        "frame_index": 2,
+        "phase": "presentation",
+        "body_box": [
+          42,
+          62,
+          72,
+          95,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_heavy_pain_004",
+      "group": "heavy_pain",
+      "group_index": 4,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        57,
+        85,
+        127,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_05.png",
+      "source_cell": 5,
+      "source_row": 1,
+      "source_column": 5,
+      "path": "content/characters/homeless_man/sprites/poses/hm_heavy_pain_004.png",
+      "sha256": "908a9269622568c643642317453016d8c91ae201d14685b85f100c03cf8bd733",
+      "clips": [
+        "heavy_pain"
+      ],
+      "actions": [
+        "heavy_pain"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_heavy_pain_004.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "pain2",
+        "frame_index": 3,
+        "phase": "presentation",
+        "body_box": [
+          57,
+          85,
+          70,
+          72,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_heavy_pain_005",
+      "group": "heavy_pain",
+      "group_index": 5,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        56,
+        77,
+        144,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_05.png",
+      "source_cell": 6,
+      "source_row": 2,
+      "source_column": 1,
+      "path": "content/characters/homeless_man/sprites/poses/hm_heavy_pain_005.png",
+      "sha256": "2950bb1ea2f660783e6af0c1583c5cfabba4e92ccc17d7fc9d0d4b316c020e6a",
+      "clips": [
+        "heavy_pain"
+      ],
+      "actions": [
+        "heavy_pain"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_heavy_pain_005.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "pain2",
+        "frame_index": 4,
+        "phase": "presentation",
+        "body_box": [
+          56,
+          77,
+          88,
+          80,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_heavy_pain_006",
+      "group": "heavy_pain",
+      "group_index": 6,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        54,
+        73,
+        139,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_05.png",
+      "source_cell": 7,
+      "source_row": 2,
+      "source_column": 2,
+      "path": "content/characters/homeless_man/sprites/poses/hm_heavy_pain_006.png",
+      "sha256": "bbfa9dc0ae90a882849771c494ac3e6c3bb6ec49368ab3a2fa98fae7c0f36545",
+      "clips": [
+        "heavy_pain"
+      ],
+      "actions": [
+        "heavy_pain"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_heavy_pain_006.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "pain2",
+        "frame_index": 5,
+        "phase": "presentation",
+        "body_box": [
+          54,
+          73,
+          85,
+          84,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_heavy_pain_007",
+      "group": "heavy_pain",
+      "group_index": 7,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        40,
+        64,
+        131,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_05.png",
+      "source_cell": 8,
+      "source_row": 2,
+      "source_column": 3,
+      "path": "content/characters/homeless_man/sprites/poses/hm_heavy_pain_007.png",
+      "sha256": "16a92716fd04962411c603b14bb063da0e3699a0702a6e3c61a18c48de9d7382",
+      "clips": [
+        "heavy_pain"
+      ],
+      "actions": [
+        "heavy_pain"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_heavy_pain_007.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "pain2",
+        "frame_index": 6,
+        "phase": "presentation",
+        "body_box": [
+          40,
+          64,
+          91,
+          93,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_knockdown_fall_001",
+      "group": "knockdown_fall",
+      "group_index": 1,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        27,
+        76,
+        121,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_05.png",
+      "source_cell": 9,
+      "source_row": 2,
+      "source_column": 4,
+      "path": "content/characters/homeless_man/sprites/poses/hm_knockdown_fall_001.png",
+      "sha256": "6d2dcb9fa2e7fe38262dec3ae15534ee29074721899a7dd7b033e842ed07a873",
+      "clips": [
+        "knockdown_fall"
+      ],
+      "actions": [
+        "knockdown_fall"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_knockdown_fall_001.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "fall",
+        "frame_index": 0,
+        "phase": "presentation",
+        "body_box": [
+          27,
+          76,
+          94,
+          81,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_knockdown_fall_002",
+      "group": "knockdown_fall",
+      "group_index": 2,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        35,
+        101,
+        136,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_05.png",
+      "source_cell": 10,
+      "source_row": 2,
+      "source_column": 5,
+      "path": "content/characters/homeless_man/sprites/poses/hm_knockdown_fall_002.png",
+      "sha256": "1685ac5e2085b8eac7429eaf1c209747b3f6877444b4e1653e3fec7922553d42",
+      "clips": [
+        "knockdown_fall"
+      ],
+      "actions": [
+        "knockdown_fall"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_knockdown_fall_002.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "fall",
+        "frame_index": 1,
+        "phase": "presentation",
+        "body_box": [
+          35,
+          101,
+          101,
+          56,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_knockdown_fall_003",
+      "group": "knockdown_fall",
+      "group_index": 3,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        51,
+        96,
+        138,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_05.png",
+      "source_cell": 11,
+      "source_row": 3,
+      "source_column": 1,
+      "path": "content/characters/homeless_man/sprites/poses/hm_knockdown_fall_003.png",
+      "sha256": "5054fb4b3a1fbffb3ea00b58ab8d970e925099672eeed4d5a3bb9fb121c55084",
+      "clips": [
+        "knockdown_fall"
+      ],
+      "actions": [
+        "knockdown_fall"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_knockdown_fall_003.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "fall",
+        "frame_index": 2,
+        "phase": "presentation",
+        "body_box": [
+          51,
+          96,
+          87,
+          61,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_knockdown_fall_004",
+      "group": "knockdown_fall",
+      "group_index": 4,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        61,
+        83,
+        138,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_05.png",
+      "source_cell": 12,
+      "source_row": 3,
+      "source_column": 2,
+      "path": "content/characters/homeless_man/sprites/poses/hm_knockdown_fall_004.png",
+      "sha256": "bc06ad678c5f812151fb7d793f6ad0548ee32bc8237464bb9124a49a7ba1a228",
+      "clips": [
+        "knockdown_fall"
+      ],
+      "actions": [
+        "knockdown_fall"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_knockdown_fall_004.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "fall",
+        "frame_index": 3,
+        "phase": "presentation",
+        "body_box": [
+          61,
+          83,
+          77,
+          74,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_knockdown_fall_005",
+      "group": "knockdown_fall",
+      "group_index": 5,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        62,
+        108,
+        156,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_05.png",
+      "source_cell": 13,
+      "source_row": 3,
+      "source_column": 3,
+      "path": "content/characters/homeless_man/sprites/poses/hm_knockdown_fall_005.png",
+      "sha256": "f75704c6e9005d1ebf8fa9cfae9380653b03dbaacae4533326b57b2a6c8ef3f7",
+      "clips": [
+        "knockdown_fall"
+      ],
+      "actions": [
+        "knockdown_fall"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_knockdown_fall_005.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "fall",
+        "frame_index": 4,
+        "phase": "presentation",
+        "body_box": [
+          62,
+          108,
+          94,
+          49,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_knockdown_fall_006",
+      "group": "knockdown_fall",
+      "group_index": 6,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        32,
+        113,
+        137,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_05.png",
+      "source_cell": 14,
+      "source_row": 3,
+      "source_column": 4,
+      "path": "content/characters/homeless_man/sprites/poses/hm_knockdown_fall_006.png",
+      "sha256": "3456a2b68f809bd0593177f3ee4820faf151542dec3582603e2b6a1ecf1f6990",
+      "clips": [
+        "knockdown_fall"
+      ],
+      "actions": [
+        "knockdown_fall"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_knockdown_fall_006.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "fall",
+        "frame_index": 5,
+        "phase": "presentation",
+        "body_box": [
+          32,
+          113,
+          105,
+          44,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_knockdown_fall_007",
+      "group": "knockdown_fall",
+      "group_index": 7,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        68,
+        115,
+        169,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_05.png",
+      "source_cell": 15,
+      "source_row": 3,
+      "source_column": 5,
+      "path": "content/characters/homeless_man/sprites/poses/hm_knockdown_fall_007.png",
+      "sha256": "6c722ca05e924f3215ad1ecdced2121fd3c144d9984135ae38fa6276c11a0386",
+      "clips": [
+        "knockdown_fall"
+      ],
+      "actions": [
+        "knockdown_fall"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_knockdown_fall_007.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "fall",
+        "frame_index": 6,
+        "phase": "presentation",
+        "body_box": [
+          68,
+          115,
+          101,
+          42,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_knockdown_fall_008",
+      "group": "knockdown_fall",
+      "group_index": 8,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        56,
+        118,
+        154,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_05.png",
+      "source_cell": 16,
+      "source_row": 4,
+      "source_column": 1,
+      "path": "content/characters/homeless_man/sprites/poses/hm_knockdown_fall_008.png",
+      "sha256": "af55f2a3b523a2dc85001d3075c39087de62e4269a0d4870365516d22ab66dc8",
+      "clips": [
+        "knockdown_fall"
+      ],
+      "actions": [
+        "knockdown_fall"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_knockdown_fall_008.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "fall",
+        "frame_index": 7,
+        "phase": "presentation",
+        "body_box": [
+          56,
+          118,
+          98,
+          39,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_down_001",
+      "group": "down",
+      "group_index": 1,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        60,
+        119,
+        154,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_05.png",
+      "source_cell": 17,
+      "source_row": 4,
+      "source_column": 2,
+      "path": "content/characters/homeless_man/sprites/poses/hm_down_001.png",
+      "sha256": "8736478eae1e0b201c9654cf670c152c1b9a0b5c1d60ef327145498e58bdf53e",
+      "clips": [
+        "down"
+      ],
+      "actions": [
+        "down"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_down_001.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "fall",
+        "frame_index": 8,
+        "phase": "presentation",
+        "body_box": [
+          60,
+          119,
+          94,
+          38,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_down_002",
+      "group": "down",
+      "group_index": 2,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        54,
+        125,
+        153,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_05.png",
+      "source_cell": 18,
+      "source_row": 4,
+      "source_column": 3,
+      "path": "content/characters/homeless_man/sprites/poses/hm_down_002.png",
+      "sha256": "3f4640d8cffa9aa1799c0ec09192bb46fb304a6ec9fa0d37be545dde78af2015",
+      "clips": [
+        "down"
+      ],
+      "actions": [
+        "down"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_down_002.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "fall",
+        "frame_index": 9,
+        "phase": "presentation",
+        "body_box": [
+          54,
+          125,
+          99,
+          32,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_down_003",
+      "group": "down",
+      "group_index": 3,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        64,
+        126,
+        152,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_05.png",
+      "source_cell": 19,
+      "source_row": 4,
+      "source_column": 4,
+      "path": "content/characters/homeless_man/sprites/poses/hm_down_003.png",
+      "sha256": "e7f2749d49749c0c16a02039159593703a4e78ceb5cd9e485feb6875437de8bf",
+      "clips": [
+        "down"
+      ],
+      "actions": [
+        "down"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_down_003.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "fall",
+        "frame_index": 10,
+        "phase": "presentation",
+        "body_box": [
+          64,
+          126,
+          88,
+          31,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_down_004",
+      "group": "down",
+      "group_index": 4,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        53,
+        117,
+        138,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_05.png",
+      "source_cell": 20,
+      "source_row": 4,
+      "source_column": 5,
+      "path": "content/characters/homeless_man/sprites/poses/hm_down_004.png",
+      "sha256": "58664429b3be33defafd44dbfd59b8a3279c8e784654047b5f5b80921b7944cd",
+      "clips": [
+        "down"
+      ],
+      "actions": [
+        "down"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_down_004.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "fall",
+        "frame_index": 11,
+        "phase": "presentation",
+        "body_box": [
+          53,
+          117,
+          85,
+          40,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_down_005",
+      "group": "down",
+      "group_index": 5,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        65,
+        100,
+        165,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_06.png",
+      "source_cell": 1,
+      "source_row": 1,
+      "source_column": 1,
+      "path": "content/characters/homeless_man/sprites/poses/hm_down_005.png",
+      "sha256": "abda68ef773ec154f7b59822f2abf4e7f0f3ad351b2aba37873296f87df6117f",
+      "clips": [
+        "down"
+      ],
+      "actions": [
+        "down"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_down_005.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "fall",
+        "frame_index": 12,
+        "phase": "presentation",
+        "body_box": [
+          65,
+          100,
+          100,
+          57,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_down_006",
+      "group": "down",
+      "group_index": 6,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        24,
+        110,
+        115,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_06.png",
+      "source_cell": 2,
+      "source_row": 1,
+      "source_column": 2,
+      "path": "content/characters/homeless_man/sprites/poses/hm_down_006.png",
+      "sha256": "f255b7aaa1d679dcd40c1487790433f4c9ecf2f02a9adeb559d1b3370625b52b",
+      "clips": [
+        "down"
+      ],
+      "actions": [
+        "down"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_down_006.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "fall",
+        "frame_index": 13,
+        "phase": "presentation",
+        "body_box": [
+          24,
+          110,
+          91,
+          47,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_rise_001",
+      "group": "rise",
+      "group_index": 1,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        88,
+        105,
+        179,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_06.png",
+      "source_cell": 3,
+      "source_row": 1,
+      "source_column": 3,
+      "path": "content/characters/homeless_man/sprites/poses/hm_rise_001.png",
+      "sha256": "8106f23d75f17089da11d38e92d5b46cfbe6c3ce914554d7329f32e2d846f67d",
+      "clips": [
+        "rise"
+      ],
+      "actions": [
+        "rise"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_rise_001.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "rise",
+        "frame_index": 0,
+        "phase": "presentation",
+        "body_box": [
+          88,
+          105,
+          91,
+          52,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_rise_002",
+      "group": "rise",
+      "group_index": 2,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        40,
+        96,
+        128,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_06.png",
+      "source_cell": 4,
+      "source_row": 1,
+      "source_column": 4,
+      "path": "content/characters/homeless_man/sprites/poses/hm_rise_002.png",
+      "sha256": "8a7561ddd666bd49e4666f8298a2c1343e2268353111a199c0455c88198c1000",
+      "clips": [
+        "rise"
+      ],
+      "actions": [
+        "rise"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_rise_002.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "rise",
+        "frame_index": 1,
+        "phase": "presentation",
+        "body_box": [
+          40,
+          96,
+          88,
+          61,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_rise_003",
+      "group": "rise",
+      "group_index": 3,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        42,
+        87,
+        113,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_06.png",
+      "source_cell": 5,
+      "source_row": 1,
+      "source_column": 5,
+      "path": "content/characters/homeless_man/sprites/poses/hm_rise_003.png",
+      "sha256": "41c520e9b7e7b4ae3aa63fa202e4724694295f477d9b1a11e157b6a255f0fba3",
+      "clips": [
+        "rise"
+      ],
+      "actions": [
+        "rise"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_rise_003.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "rise",
+        "frame_index": 2,
+        "phase": "presentation",
+        "body_box": [
+          42,
+          87,
+          71,
+          70,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_rise_004",
+      "group": "rise",
+      "group_index": 4,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        86,
+        86,
+        155,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_06.png",
+      "source_cell": 6,
+      "source_row": 2,
+      "source_column": 1,
+      "path": "content/characters/homeless_man/sprites/poses/hm_rise_004.png",
+      "sha256": "6828490d688eda6ec191a53b377dbd250f98f8d7e76b0ab42a4f9842cbef099d",
+      "clips": [
+        "rise"
+      ],
+      "actions": [
+        "rise"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_rise_004.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "rise",
+        "frame_index": 3,
+        "phase": "presentation",
+        "body_box": [
+          86,
+          86,
+          69,
+          71,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_rise_005",
+      "group": "rise",
+      "group_index": 5,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        38,
+        90,
+        115,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_06.png",
+      "source_cell": 7,
+      "source_row": 2,
+      "source_column": 2,
+      "path": "content/characters/homeless_man/sprites/poses/hm_rise_005.png",
+      "sha256": "e5faa730660f9b76538b6e1f85015a080c6cba51a09efe58be2d8d53143654b9",
+      "clips": [
+        "rise"
+      ],
+      "actions": [
+        "rise"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_rise_005.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "rise",
+        "frame_index": 4,
+        "phase": "presentation",
+        "body_box": [
+          38,
+          90,
+          77,
+          67,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_rise_006",
+      "group": "rise",
+      "group_index": 6,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        86,
+        83,
+        156,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_06.png",
+      "source_cell": 8,
+      "source_row": 2,
+      "source_column": 3,
+      "path": "content/characters/homeless_man/sprites/poses/hm_rise_006.png",
+      "sha256": "acc16e6fd5e50aaddd7464792cda053fe0834b70ce37c0703ad9bb9de5922e34",
+      "clips": [
+        "rise"
+      ],
+      "actions": [
+        "rise"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_rise_006.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "rise",
+        "frame_index": 5,
+        "phase": "presentation",
+        "body_box": [
+          86,
+          83,
+          70,
+          74,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_rise_007",
+      "group": "rise",
+      "group_index": 7,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        49,
+        75,
+        111,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_06.png",
+      "source_cell": 9,
+      "source_row": 2,
+      "source_column": 4,
+      "path": "content/characters/homeless_man/sprites/poses/hm_rise_007.png",
+      "sha256": "6b99afea07b1f8ff7eb3c40e443626ffef522a2c7fd05b8e566e2be0ec16d38f",
+      "clips": [
+        "rise"
+      ],
+      "actions": [
+        "rise"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_rise_007.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "rise",
+        "frame_index": 6,
+        "phase": "presentation",
+        "body_box": [
+          49,
+          75,
+          62,
+          82,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_rise_008",
+      "group": "rise",
+      "group_index": 8,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        86,
+        59,
+        147,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_06.png",
+      "source_cell": 10,
+      "source_row": 2,
+      "source_column": 5,
+      "path": "content/characters/homeless_man/sprites/poses/hm_rise_008.png",
+      "sha256": "1c47fac27f8e276ec72b205bc253c489cf720b7043c9097925faf6de281d56a0",
+      "clips": [
+        "rise"
+      ],
+      "actions": [
+        "rise"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_rise_008.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "rise",
+        "frame_index": 7,
+        "phase": "presentation",
+        "body_box": [
+          86,
+          59,
+          61,
+          98,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_death_001",
+      "group": "death",
+      "group_index": 1,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        81,
+        82,
+        134,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_06.png",
+      "source_cell": 11,
+      "source_row": 3,
+      "source_column": 1,
+      "path": "content/characters/homeless_man/sprites/poses/hm_death_001.png",
+      "sha256": "d6186d450abbdaf2c8b293298fe829de126f9c1dd664607add4ae93a830cd870",
+      "clips": [
+        "death"
+      ],
+      "actions": [
+        "death"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_death_001.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "death",
+        "frame_index": 0,
+        "phase": "presentation",
+        "body_box": [
+          81,
+          82,
+          53,
+          75,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_death_002",
+      "group": "death",
+      "group_index": 2,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        83,
+        77,
+        140,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_06.png",
+      "source_cell": 12,
+      "source_row": 3,
+      "source_column": 2,
+      "path": "content/characters/homeless_man/sprites/poses/hm_death_002.png",
+      "sha256": "986c0cdd6464222bc71b84ae4a78f51541e3531a36187c0d6231b4e6172d2e72",
+      "clips": [
+        "death"
+      ],
+      "actions": [
+        "death"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_death_002.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "death",
+        "frame_index": 1,
+        "phase": "presentation",
+        "body_box": [
+          83,
+          77,
+          57,
+          80,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_death_003",
+      "group": "death",
+      "group_index": 3,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        63,
+        75,
+        156,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_06.png",
+      "source_cell": 13,
+      "source_row": 3,
+      "source_column": 3,
+      "path": "content/characters/homeless_man/sprites/poses/hm_death_003.png",
+      "sha256": "556c5b9defee7c9965780916d58b7e3817ea5c68507e6307cf641ccf9000b45d",
+      "clips": [
+        "death"
+      ],
+      "actions": [
+        "death"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_death_003.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "death",
+        "frame_index": 2,
+        "phase": "presentation",
+        "body_box": [
+          63,
+          75,
+          93,
+          82,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_death_004",
+      "group": "death",
+      "group_index": 4,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        51,
+        81,
+        149,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_06.png",
+      "source_cell": 14,
+      "source_row": 3,
+      "source_column": 4,
+      "path": "content/characters/homeless_man/sprites/poses/hm_death_004.png",
+      "sha256": "7eccda329659c280e42390bfb69fc89b45a4620c62dc562c3d686921f0e14f1d",
+      "clips": [
+        "death"
+      ],
+      "actions": [
+        "death"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_death_004.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "death",
+        "frame_index": 3,
+        "phase": "presentation",
+        "body_box": [
+          51,
+          81,
+          98,
+          76,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_death_005",
+      "group": "death",
+      "group_index": 5,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        9,
+        100,
+        128,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_06.png",
+      "source_cell": 15,
+      "source_row": 3,
+      "source_column": 5,
+      "path": "content/characters/homeless_man/sprites/poses/hm_death_005.png",
+      "sha256": "0fb44b977a00090172d362e8263bb14bd35fd759fe86792e27d839efbed37150",
+      "clips": [
+        "death"
+      ],
+      "actions": [
+        "death"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_death_005.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "death",
+        "frame_index": 4,
+        "phase": "presentation",
+        "body_box": [
+          9,
+          100,
+          119,
+          57,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_death_006",
+      "group": "death",
+      "group_index": 6,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        64,
+        93,
+        164,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_06.png",
+      "source_cell": 16,
+      "source_row": 4,
+      "source_column": 1,
+      "path": "content/characters/homeless_man/sprites/poses/hm_death_006.png",
+      "sha256": "788e8b00e02a1241720a15699e167a5e924c93b223a97ebf3798199baf650495",
+      "clips": [
+        "death"
+      ],
+      "actions": [
+        "death"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_death_006.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "death",
+        "frame_index": 5,
+        "phase": "presentation",
+        "body_box": [
+          64,
+          93,
+          100,
+          64,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_death_007",
+      "group": "death",
+      "group_index": 7,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        70,
+        119,
+        171,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_06.png",
+      "source_cell": 17,
+      "source_row": 4,
+      "source_column": 2,
+      "path": "content/characters/homeless_man/sprites/poses/hm_death_007.png",
+      "sha256": "fd84abf06fcefa2a439121e29dead2ecd8bdbcd7c1de9642151930d621f033f9",
+      "clips": [
+        "death"
+      ],
+      "actions": [
+        "death"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_death_007.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "death",
+        "frame_index": 6,
+        "phase": "presentation",
+        "body_box": [
+          70,
+          119,
+          101,
+          38,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_death_008",
+      "group": "death",
+      "group_index": 8,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        66,
+        117,
+        174,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_06.png",
+      "source_cell": 18,
+      "source_row": 4,
+      "source_column": 3,
+      "path": "content/characters/homeless_man/sprites/poses/hm_death_008.png",
+      "sha256": "466cf72aad7849b523b8cf24eb388081bfc3c050bd7d6ccf2fb7ccc6fb03b7eb",
+      "clips": [
+        "death"
+      ],
+      "actions": [
+        "death"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_death_008.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "death",
+        "frame_index": 7,
+        "phase": "presentation",
+        "body_box": [
+          66,
+          117,
+          108,
+          40,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_death_009",
+      "group": "death",
+      "group_index": 9,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        79,
+        124,
+        180,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_06.png",
+      "source_cell": 19,
+      "source_row": 4,
+      "source_column": 4,
+      "path": "content/characters/homeless_man/sprites/poses/hm_death_009.png",
+      "sha256": "00dc9268bdefd2487aad26424005f003d4c4420bf1e985e010b2e5c8b03885d7",
+      "clips": [
+        "death"
+      ],
+      "actions": [
+        "death"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_death_009.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "death",
+        "frame_index": 8,
+        "phase": "presentation",
+        "body_box": [
+          79,
+          124,
+          101,
+          33,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "hm_death_010",
+      "group": "death",
+      "group_index": 10,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        38,
+        121,
+        145,
+        157
+      ],
+      "source_sheet": "content/characters/homeless_man/art_source/production/homeless_man_pose_sheet_06.png",
+      "source_cell": 20,
+      "source_row": 4,
+      "source_column": 5,
+      "path": "content/characters/homeless_man/sprites/poses/hm_death_010.png",
+      "sha256": "9c6c6b56f409b82df4f91ba266ce47520c7247d89e52130e91dc78bb780be1bf",
+      "clips": [
+        "death"
+      ],
+      "actions": [
+        "death"
+      ],
+      "generated_path": "openbor/data/chars/homeless_man/sprites/hm_death_010.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "death",
+        "frame_index": 9,
+        "phase": "presentation",
+        "body_box": [
+          38,
+          121,
+          107,
+          36,
+          14
+        ],
+        "attack_box": null
+      }
+    }
+  ],
+  "clips": {
+    "spawn": {
+      "pose_ids": [
+        "hm_spawn_entry_001",
+        "hm_spawn_entry_002",
+        "hm_spawn_entry_003",
+        "hm_spawn_entry_004",
+        "hm_spawn_entry_005",
+        "hm_spawn_entry_006"
+      ],
+      "action_type": "spawn",
+      "trigger": "level spawn",
+      "native_animation": "SPAWN"
+    },
+    "idle": {
+      "pose_ids": [
+        "hm_idle_001",
+        "hm_idle_002",
+        "hm_idle_003",
+        "hm_idle_004",
+        "hm_idle_005",
+        "hm_idle_006",
+        "hm_idle_007",
+        "hm_idle_008"
+      ],
+      "action_type": "idle",
+      "trigger": "no active AI action",
+      "native_animation": "IDLE"
+    },
+    "alert_aggro": {
+      "pose_ids": [
+        "hm_alert_aggro_001",
+        "hm_alert_aggro_002",
+        "hm_alert_aggro_003",
+        "hm_alert_aggro_004"
+      ],
+      "action_type": "transition",
+      "trigger": "target enters aggro radius",
+      "native_animation": "controller range in IDLE"
+    },
+    "walk_start": {
+      "pose_ids": [
+        "hm_walk_start_001",
+        "hm_walk_start_002",
+        "hm_walk_start_003",
+        "hm_walk_start_004"
+      ],
+      "action_type": "transition",
+      "trigger": "AI chase begins and displacement succeeds",
+      "native_animation": "controller range in WALK"
+    },
+    "walk_loop": {
+      "pose_ids": [
+        "hm_walk_loop_001",
+        "hm_walk_loop_002",
+        "hm_walk_loop_003",
+        "hm_walk_loop_004",
+        "hm_walk_loop_005",
+        "hm_walk_loop_006",
+        "hm_walk_loop_007",
+        "hm_walk_loop_008",
+        "hm_walk_loop_009",
+        "hm_walk_loop_010",
+        "hm_walk_loop_011",
+        "hm_walk_loop_012"
+      ],
+      "action_type": "walk",
+      "trigger": "AI chase remains active",
+      "native_animation": "WALK"
+    },
+    "walk_stop": {
+      "pose_ids": [
+        "hm_walk_stop_001",
+        "hm_walk_stop_002",
+        "hm_walk_stop_003",
+        "hm_walk_stop_004"
+      ],
+      "action_type": "transition",
+      "trigger": "attack range reached or chase stops",
+      "native_animation": "controller range in WALK"
+    },
+    "turn_pivot": {
+      "pose_ids": [
+        "hm_turn_pivot_001",
+        "hm_turn_pivot_002",
+        "hm_turn_pivot_003",
+        "hm_turn_pivot_004"
+      ],
+      "action_type": "transition",
+      "trigger": "target crosses facing",
+      "native_animation": "TURN"
+    },
+    "unarmed_jab": {
+      "pose_ids": [
+        "hm_unarmed_jab_001",
+        "hm_unarmed_jab_002",
+        "hm_unarmed_jab_003",
+        "hm_unarmed_jab_004",
+        "hm_unarmed_jab_005",
+        "hm_unarmed_jab_006",
+        "hm_unarmed_jab_007",
+        "hm_unarmed_jab_008"
+      ],
+      "action_type": "light_attack",
+      "trigger": "close-range AI attack choice A with token",
+      "native_animation": "ATTACK1"
+    },
+    "two_hand_shove": {
+      "pose_ids": [
+        "hm_two_hand_shove_001",
+        "hm_two_hand_shove_002",
+        "hm_two_hand_shove_003",
+        "hm_two_hand_shove_004",
+        "hm_two_hand_shove_005",
+        "hm_two_hand_shove_006",
+        "hm_two_hand_shove_007",
+        "hm_two_hand_shove_008"
+      ],
+      "action_type": "light_attack",
+      "trigger": "close-range AI attack choice B with cooldown clear",
+      "native_animation": "ATTACK2"
+    },
+    "heavy_overhand": {
+      "pose_ids": [
+        "hm_heavy_overhand_001",
+        "hm_heavy_overhand_002",
+        "hm_heavy_overhand_003",
+        "hm_heavy_overhand_004",
+        "hm_heavy_overhand_005",
+        "hm_heavy_overhand_006",
+        "hm_heavy_overhand_007",
+        "hm_heavy_overhand_008",
+        "hm_heavy_overhand_009",
+        "hm_heavy_overhand_010"
+      ],
+      "action_type": "heavy_attack",
+      "trigger": "telegraphed heavy AI choice with token",
+      "native_animation": "ATTACK3"
+    },
+    "taunt_hesitate": {
+      "pose_ids": [
+        "hm_taunt_hesitate_001",
+        "hm_taunt_hesitate_002",
+        "hm_taunt_hesitate_003",
+        "hm_taunt_hesitate_004",
+        "hm_taunt_hesitate_005",
+        "hm_taunt_hesitate_006",
+        "hm_taunt_hesitate_007",
+        "hm_taunt_hesitate_008"
+      ],
+      "action_type": "transition",
+      "trigger": "long-range behavior timer",
+      "native_animation": "controller range in IDLE"
+    },
+    "light_pain": {
+      "pose_ids": [
+        "hm_light_pain_001",
+        "hm_light_pain_002",
+        "hm_light_pain_003",
+        "hm_light_pain_004",
+        "hm_light_pain_005"
+      ],
+      "action_type": "light_pain",
+      "trigger": "non-knockdown damage",
+      "native_animation": "PAIN"
+    },
+    "heavy_pain": {
+      "pose_ids": [
+        "hm_heavy_pain_001",
+        "hm_heavy_pain_002",
+        "hm_heavy_pain_003",
+        "hm_heavy_pain_004",
+        "hm_heavy_pain_005",
+        "hm_heavy_pain_006",
+        "hm_heavy_pain_007"
+      ],
+      "action_type": "heavy_pain",
+      "trigger": "high-stun damage without knockdown",
+      "native_animation": "PAIN2"
+    },
+    "knockdown_fall": {
+      "pose_ids": [
+        "hm_knockdown_fall_001",
+        "hm_knockdown_fall_002",
+        "hm_knockdown_fall_003",
+        "hm_knockdown_fall_004",
+        "hm_knockdown_fall_005",
+        "hm_knockdown_fall_006",
+        "hm_knockdown_fall_007",
+        "hm_knockdown_fall_008"
+      ],
+      "action_type": "knockdown",
+      "trigger": "knockdown damage",
+      "native_animation": "FALL"
+    },
+    "down": {
+      "pose_ids": [
+        "hm_down_001",
+        "hm_down_002",
+        "hm_down_003",
+        "hm_down_004",
+        "hm_down_005",
+        "hm_down_006"
+      ],
+      "action_type": "down",
+      "trigger": "fall completes with health above zero",
+      "native_animation": "engine down state"
+    },
+    "rise": {
+      "pose_ids": [
+        "hm_rise_001",
+        "hm_rise_002",
+        "hm_rise_003",
+        "hm_rise_004",
+        "hm_rise_005",
+        "hm_rise_006",
+        "hm_rise_007",
+        "hm_rise_008"
+      ],
+      "action_type": "rise",
+      "trigger": "down timer expires with health above zero",
+      "native_animation": "RISE"
+    },
+    "death": {
+      "pose_ids": [
+        "hm_death_001",
+        "hm_death_002",
+        "hm_death_003",
+        "hm_death_004",
+        "hm_death_005",
+        "hm_death_006",
+        "hm_death_007",
+        "hm_death_008",
+        "hm_death_009",
+        "hm_death_010"
+      ],
+      "action_type": "death",
+      "trigger": "health reaches zero",
+      "native_animation": "DEATH"
+    }
+  },
+  "near_duplicate_reviews": [],
+  "review_contact_sheet": "content/characters/homeless_man/sprites/review/homeless_man_pose_contact_sheet.png",
+  "runtime": {
+    "build": "OpenBOR 4.0 Build 7949",
+    "model": "openbor/data/chars/homeless_man/homeless_man.txt",
+    "manifest": "openbor/data/chars/homeless_man/homeless_man_openbor_manifest.json",
+    "model_sha256": "61d2a3881b56f6de675c3e3306664d619652a63900dba40d25fc603733b500c9",
+    "controller": "data/scripts/homeless_man_ai.c",
+    "controller_sha256": "28a64a626b35b71809c37c8d9ee7ffb63c338cdc3fc1d8ee144a4dfc84319e2f",
+    "animation_owner": "thinkscript",
+    "unique_referenced_pose_count": 120,
+    "unique_runtime_reachable_pose_count": 120,
+    "qa_request_global": "fof2_qa_hm_request",
+    "qa_request_range": [
+      1,
+      17
+    ],
+    "pose_log_prefix": "[FOF2_POSE] ",
+    "direct_pose_request_global": "fof2_qa_hm_pose",
+    "direct_pose_entity_global": "fof2_qa_hm_entity",
+    "direct_pose_request_range": [
+      0,
+      119
+    ],
+    "gameplay_evidence": []
+  }
+}

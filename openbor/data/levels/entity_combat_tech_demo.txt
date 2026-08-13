@@ -1,0 +1,27 @@
+# Fades of Fate 2.0 entity combat tech demo — OpenBOR Build 7949.
+# Panel-only free-walk profile; creates no stage art.
+settime 0
+notime 1
+noslow 1
+direction both
+
+spawn1 200 280 0
+updatescript data/scripts/entity_tech_demo.c
+updatedscript data/scripts/entity_pose_overlay.c
+
+panel data/levels/i8_underpass/panels/underpass_a.png
+panel data/levels/i8_underpass/panels/underpass_b.png
+panel data/levels/i8_underpass/panels/underpass_c.png
+panel data/levels/i8_underpass/panels/underpass_d.png
+order abcd
+cameratype 0
+
+spawn HomelessMan
+alias QA_HomelessMan
+coords 400 280 0
+at 0
+
+spawn PoliceOfficer
+alias QA_PoliceOfficer
+coords 540 292 0
+at 0

@@ -1,0 +1,25 @@
+name BlackDaveFlameShot
+type pshot
+health 1
+speed 6
+lifespan 2
+subject_to_gravity 0
+candamage enemy
+didhitscript data/scripts/black_dave_contact.c
+anim idle
+    offset 24 24
+    delay 3
+    loop 1
+    bbox 10 10 28 28 12
+    attack 8 8 32 32 18 3 0 0 4 20
+    frame data/chars/black_dave/effects/black_dave_shot_00.png
+    bbox 10 10 28 28 12
+    attack 8 8 32 32 18 3 0 0 4 20
+    frame data/chars/black_dave/effects/black_dave_shot_01.png
+    bbox 10 10 28 28 12
+    attack 8 8 32 32 18 3 0 0 4 20
+    frame data/chars/black_dave/effects/black_dave_shot_02.png
+    bbox 10 10 28 28 12
+    attack 8 8 32 32 18 3 0 0 4 20
+    frame data/chars/black_dave/effects/black_dave_shot_03.png
+    attack 0

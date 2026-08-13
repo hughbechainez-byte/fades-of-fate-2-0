@@ -1,0 +1,5683 @@
+{
+  "schema_version": 1,
+  "entity_id": "police_officer",
+  "generator": "tools/Build-OpenBOR-Entity-Art.py",
+  "source_design": "content/characters/police_officer/metadata/production_manifest.json",
+  "source_sheets": [
+    {
+      "path": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_01.png",
+      "sha256": "f9f53b664a1703970d69d1010dda0e72fa8b19601a94b61b5b7ca79ecc198b67",
+      "body_count": 20,
+      "discarded_unattached_pixels": 6
+    },
+    {
+      "path": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_02.png",
+      "sha256": "e3d3d126891df452113b6576ec36f88f49655b127d134992fc18d53f3c4e9f34",
+      "body_count": 20,
+      "discarded_unattached_pixels": 50
+    },
+    {
+      "path": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_03.png",
+      "sha256": "268e7499d142752eb07d3bdbc30f001d3525443ea830528b9bf2b3b921a4058b",
+      "body_count": 20,
+      "discarded_unattached_pixels": 0
+    },
+    {
+      "path": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_04.png",
+      "sha256": "1ec135ce1e7cab4e5fd673cbd1791ba3b5c4660d2d077b88828fa8e2a48e3d72",
+      "body_count": 20,
+      "discarded_unattached_pixels": 0
+    },
+    {
+      "path": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_05.png",
+      "sha256": "6f0a72f44fec9fc34ea53ef208a3a525a6ca29d376e95c8b0bbccf096c3943e6",
+      "body_count": 20,
+      "discarded_unattached_pixels": 0
+    },
+    {
+      "path": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_06.png",
+      "sha256": "05be5d09f890821c3b8c1a3a9c838dde65677cd2b84d15615874afd52bd3ca5b",
+      "body_count": 20,
+      "discarded_unattached_pixels": 0
+    }
+  ],
+  "canvas": [
+    192,
+    160
+  ],
+  "root": [
+    96,
+    156
+  ],
+  "fixed_entity_scale": 0.44710579,
+  "palette": {
+    "entries": 256,
+    "transparency_index": 0,
+    "opaque_colors": 255,
+    "sha256": "774d6d93a2355b50fd9cf2a1c01cbf6168169a78f7c5edef83dd71efbca2ae1c",
+    "dithering": false,
+    "shared_across_model": true
+  },
+  "poses": [
+    {
+      "id": "po_spawn_entry_001",
+      "group": "spawn_entry",
+      "group_index": 1,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        48,
+        46,
+        118,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_01.png",
+      "source_cell": 1,
+      "source_row": 1,
+      "source_column": 1,
+      "path": "content/characters/police_officer/sprites/poses/po_spawn_entry_001.png",
+      "sha256": "6c2aedd926c42be8b2e1fee8c0cca5d4bc8febb71a46035f11c688d2167a2def",
+      "clips": [
+        "spawn"
+      ],
+      "actions": [
+        "spawn"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_spawn_entry_001.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "spawn",
+        "frame_index": 0,
+        "phase": "presentation",
+        "body_box": [
+          48,
+          46,
+          70,
+          111,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_spawn_entry_002",
+      "group": "spawn_entry",
+      "group_index": 2,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        37,
+        48,
+        112,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_01.png",
+      "source_cell": 2,
+      "source_row": 1,
+      "source_column": 2,
+      "path": "content/characters/police_officer/sprites/poses/po_spawn_entry_002.png",
+      "sha256": "4ce5018ae9c9e5e6066a9109768f416736033d7dec9eae07e6223563ad71360d",
+      "clips": [
+        "spawn"
+      ],
+      "actions": [
+        "spawn"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_spawn_entry_002.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "spawn",
+        "frame_index": 1,
+        "phase": "presentation",
+        "body_box": [
+          37,
+          48,
+          75,
+          109,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_spawn_entry_003",
+      "group": "spawn_entry",
+      "group_index": 3,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        62,
+        45,
+        122,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_01.png",
+      "source_cell": 3,
+      "source_row": 1,
+      "source_column": 3,
+      "path": "content/characters/police_officer/sprites/poses/po_spawn_entry_003.png",
+      "sha256": "c4ef7409bab1ad469353e8e119b799121228fd199291887434aa569289f5b831",
+      "clips": [
+        "spawn"
+      ],
+      "actions": [
+        "spawn"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_spawn_entry_003.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "spawn",
+        "frame_index": 2,
+        "phase": "presentation",
+        "body_box": [
+          62,
+          45,
+          60,
+          112,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_spawn_entry_004",
+      "group": "spawn_entry",
+      "group_index": 4,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        49,
+        47,
+        115,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_01.png",
+      "source_cell": 4,
+      "source_row": 1,
+      "source_column": 4,
+      "path": "content/characters/police_officer/sprites/poses/po_spawn_entry_004.png",
+      "sha256": "f03f68ca5a383afbfc9ecebe0a0d403b4a4c4da7841f5f8aa713b55405042e80",
+      "clips": [
+        "spawn"
+      ],
+      "actions": [
+        "spawn"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_spawn_entry_004.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "spawn",
+        "frame_index": 3,
+        "phase": "presentation",
+        "body_box": [
+          49,
+          47,
+          66,
+          110,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_spawn_entry_005",
+      "group": "spawn_entry",
+      "group_index": 5,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        64,
+        45,
+        145,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_01.png",
+      "source_cell": 5,
+      "source_row": 1,
+      "source_column": 5,
+      "path": "content/characters/police_officer/sprites/poses/po_spawn_entry_005.png",
+      "sha256": "c7fc35fc2378294d2012f5c9ff6ec47b04bc7645f180d03b20ec229320b1f331",
+      "clips": [
+        "spawn"
+      ],
+      "actions": [
+        "spawn"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_spawn_entry_005.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "spawn",
+        "frame_index": 4,
+        "phase": "presentation",
+        "body_box": [
+          64,
+          45,
+          81,
+          112,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_idle_001",
+      "group": "idle",
+      "group_index": 1,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        69,
+        44,
+        114,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_01.png",
+      "source_cell": 6,
+      "source_row": 2,
+      "source_column": 1,
+      "path": "content/characters/police_officer/sprites/poses/po_idle_001.png",
+      "sha256": "d7bb218cfeae62d4d26ab66de276afed46f9b7facf5e078d8c873fe663947c58",
+      "clips": [
+        "idle"
+      ],
+      "actions": [
+        "idle"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_idle_001.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "idle",
+        "frame_index": 0,
+        "phase": "presentation",
+        "body_box": [
+          69,
+          44,
+          45,
+          113,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_idle_002",
+      "group": "idle",
+      "group_index": 2,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        72,
+        45,
+        117,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_01.png",
+      "source_cell": 7,
+      "source_row": 2,
+      "source_column": 2,
+      "path": "content/characters/police_officer/sprites/poses/po_idle_002.png",
+      "sha256": "917424bfcbd4490acd6a28c61d2fe78cbb63a0bfa32b70bf80edf25f4d100128",
+      "clips": [
+        "idle"
+      ],
+      "actions": [
+        "idle"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_idle_002.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "idle",
+        "frame_index": 1,
+        "phase": "presentation",
+        "body_box": [
+          72,
+          45,
+          45,
+          112,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_idle_003",
+      "group": "idle",
+      "group_index": 3,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        69,
+        45,
+        114,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_01.png",
+      "source_cell": 8,
+      "source_row": 2,
+      "source_column": 3,
+      "path": "content/characters/police_officer/sprites/poses/po_idle_003.png",
+      "sha256": "43f5f8c3a4f2d9bac492459324e2c60cd7415daba8ba156c384f8272bcd853f7",
+      "clips": [
+        "idle"
+      ],
+      "actions": [
+        "idle"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_idle_003.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "idle",
+        "frame_index": 2,
+        "phase": "presentation",
+        "body_box": [
+          69,
+          45,
+          45,
+          112,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_idle_004",
+      "group": "idle",
+      "group_index": 4,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        68,
+        46,
+        117,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_01.png",
+      "source_cell": 9,
+      "source_row": 2,
+      "source_column": 4,
+      "path": "content/characters/police_officer/sprites/poses/po_idle_004.png",
+      "sha256": "7adaf97a7807b7ffd51842e1c05655170d66eea93c2306c765a99188c6971038",
+      "clips": [
+        "idle"
+      ],
+      "actions": [
+        "idle"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_idle_004.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "idle",
+        "frame_index": 3,
+        "phase": "presentation",
+        "body_box": [
+          68,
+          46,
+          49,
+          111,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_idle_005",
+      "group": "idle",
+      "group_index": 5,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        56,
+        49,
+        116,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_01.png",
+      "source_cell": 10,
+      "source_row": 2,
+      "source_column": 5,
+      "path": "content/characters/police_officer/sprites/poses/po_idle_005.png",
+      "sha256": "a9c85d1ea1546c153920783d9845ed9a15c525565c66214dab64a19c5a8d90d8",
+      "clips": [
+        "idle"
+      ],
+      "actions": [
+        "idle"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_idle_005.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "idle",
+        "frame_index": 4,
+        "phase": "presentation",
+        "body_box": [
+          56,
+          49,
+          60,
+          108,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_idle_006",
+      "group": "idle",
+      "group_index": 6,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        63,
+        45,
+        116,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_01.png",
+      "source_cell": 11,
+      "source_row": 3,
+      "source_column": 1,
+      "path": "content/characters/police_officer/sprites/poses/po_idle_006.png",
+      "sha256": "252eb0510ecf03ddae86b63bd963ea4510bfb2584ec237bc427b1a395aacfa51",
+      "clips": [
+        "idle"
+      ],
+      "actions": [
+        "idle"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_idle_006.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "idle",
+        "frame_index": 5,
+        "phase": "presentation",
+        "body_box": [
+          63,
+          45,
+          53,
+          112,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_idle_007",
+      "group": "idle",
+      "group_index": 7,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        69,
+        45,
+        128,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_01.png",
+      "source_cell": 12,
+      "source_row": 3,
+      "source_column": 2,
+      "path": "content/characters/police_officer/sprites/poses/po_idle_007.png",
+      "sha256": "59a66ab0f52d8bb68cc52b207d59c370ed5c8fa9505169ad9d624af863bd8d62",
+      "clips": [
+        "idle"
+      ],
+      "actions": [
+        "idle"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_idle_007.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "idle",
+        "frame_index": 6,
+        "phase": "presentation",
+        "body_box": [
+          69,
+          45,
+          59,
+          112,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_idle_008",
+      "group": "idle",
+      "group_index": 8,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        81,
+        45,
+        127,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_01.png",
+      "source_cell": 13,
+      "source_row": 3,
+      "source_column": 3,
+      "path": "content/characters/police_officer/sprites/poses/po_idle_008.png",
+      "sha256": "9265485968b6e81eecf45954961a54d44a067aeb5bd68e0af7e3dcdeb270a885",
+      "clips": [
+        "idle"
+      ],
+      "actions": [
+        "idle"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_idle_008.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "idle",
+        "frame_index": 7,
+        "phase": "presentation",
+        "body_box": [
+          81,
+          45,
+          46,
+          112,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_alert_command_001",
+      "group": "alert_command",
+      "group_index": 1,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        68,
+        42,
+        131,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_01.png",
+      "source_cell": 14,
+      "source_row": 3,
+      "source_column": 4,
+      "path": "content/characters/police_officer/sprites/poses/po_alert_command_001.png",
+      "sha256": "fa9b3bf1398ab5d3d2e139b9b1f7cf80b72b897f226a1f36cd1c69a07a238417",
+      "clips": [
+        "alert_command"
+      ],
+      "actions": [
+        "alert_command"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_alert_command_001.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "idle",
+        "frame_index": 8,
+        "phase": "presentation",
+        "body_box": [
+          68,
+          42,
+          63,
+          115,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_alert_command_002",
+      "group": "alert_command",
+      "group_index": 2,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        66,
+        45,
+        147,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_01.png",
+      "source_cell": 15,
+      "source_row": 3,
+      "source_column": 5,
+      "path": "content/characters/police_officer/sprites/poses/po_alert_command_002.png",
+      "sha256": "b8f999138443ab36506e0c71a2d2e8719cf5754bc22a6ab35bda0029dfbeab1c",
+      "clips": [
+        "alert_command"
+      ],
+      "actions": [
+        "alert_command"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_alert_command_002.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "idle",
+        "frame_index": 9,
+        "phase": "presentation",
+        "body_box": [
+          66,
+          45,
+          81,
+          112,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_alert_command_003",
+      "group": "alert_command",
+      "group_index": 3,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        66,
+        47,
+        145,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_01.png",
+      "source_cell": 16,
+      "source_row": 4,
+      "source_column": 1,
+      "path": "content/characters/police_officer/sprites/poses/po_alert_command_003.png",
+      "sha256": "75cbdfed10ccd48631383528578810a91cad3c000603ab9fa12fb3fddd6e498f",
+      "clips": [
+        "alert_command"
+      ],
+      "actions": [
+        "alert_command"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_alert_command_003.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "idle",
+        "frame_index": 10,
+        "phase": "presentation",
+        "body_box": [
+          66,
+          47,
+          79,
+          110,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_alert_command_004",
+      "group": "alert_command",
+      "group_index": 4,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        54,
+        49,
+        113,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_01.png",
+      "source_cell": 17,
+      "source_row": 4,
+      "source_column": 2,
+      "path": "content/characters/police_officer/sprites/poses/po_alert_command_004.png",
+      "sha256": "63ec6fd92030755abe2b4cc37678d432df8bbc94100c17653f0fb06bb3e9584b",
+      "clips": [
+        "alert_command"
+      ],
+      "actions": [
+        "alert_command"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_alert_command_004.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "idle",
+        "frame_index": 11,
+        "phase": "presentation",
+        "body_box": [
+          54,
+          49,
+          59,
+          108,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_alert_command_005",
+      "group": "alert_command",
+      "group_index": 5,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        55,
+        50,
+        136,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_01.png",
+      "source_cell": 18,
+      "source_row": 4,
+      "source_column": 3,
+      "path": "content/characters/police_officer/sprites/poses/po_alert_command_005.png",
+      "sha256": "0cfa017da909e151164b4d4c8c9de0cdc5e3b0420ab37f8569993e1ee6f00b46",
+      "clips": [
+        "alert_command"
+      ],
+      "actions": [
+        "alert_command"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_alert_command_005.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "idle",
+        "frame_index": 12,
+        "phase": "presentation",
+        "body_box": [
+          55,
+          50,
+          81,
+          107,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_alert_command_006",
+      "group": "alert_command",
+      "group_index": 6,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        49,
+        50,
+        125,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_01.png",
+      "source_cell": 19,
+      "source_row": 4,
+      "source_column": 4,
+      "path": "content/characters/police_officer/sprites/poses/po_alert_command_006.png",
+      "sha256": "ac97c687822e7e346631c40c3b5c2794a75bd01548b76c7405951790cb3bc08d",
+      "clips": [
+        "alert_command"
+      ],
+      "actions": [
+        "alert_command"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_alert_command_006.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "idle",
+        "frame_index": 13,
+        "phase": "presentation",
+        "body_box": [
+          49,
+          50,
+          76,
+          107,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_walk_start_001",
+      "group": "walk_start",
+      "group_index": 1,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        86,
+        56,
+        167,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_01.png",
+      "source_cell": 20,
+      "source_row": 4,
+      "source_column": 5,
+      "path": "content/characters/police_officer/sprites/poses/po_walk_start_001.png",
+      "sha256": "afcf445f94b7513205954ec5a33924905c45760d0f338269c26b610472002919",
+      "clips": [
+        "walk_start"
+      ],
+      "actions": [
+        "walk_start"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_walk_start_001.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "walk",
+        "frame_index": 0,
+        "phase": "presentation",
+        "body_box": [
+          86,
+          56,
+          81,
+          101,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_walk_start_002",
+      "group": "walk_start",
+      "group_index": 2,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        52,
+        45,
+        112,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_02.png",
+      "source_cell": 1,
+      "source_row": 1,
+      "source_column": 1,
+      "path": "content/characters/police_officer/sprites/poses/po_walk_start_002.png",
+      "sha256": "6792c6fb559daa0bd1b9129e856e5247697ec0ad83b99e1f788d132b9fc39a4c",
+      "clips": [
+        "walk_start"
+      ],
+      "actions": [
+        "walk_start"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_walk_start_002.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "walk",
+        "frame_index": 1,
+        "phase": "presentation",
+        "body_box": [
+          52,
+          45,
+          60,
+          112,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_walk_start_003",
+      "group": "walk_start",
+      "group_index": 3,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        53,
+        46,
+        114,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_02.png",
+      "source_cell": 2,
+      "source_row": 1,
+      "source_column": 2,
+      "path": "content/characters/police_officer/sprites/poses/po_walk_start_003.png",
+      "sha256": "bc4b87278c5690d07dceda74dee02134442904307bbd594bd59ba0541fd98b02",
+      "clips": [
+        "walk_start"
+      ],
+      "actions": [
+        "walk_start"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_walk_start_003.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "walk",
+        "frame_index": 2,
+        "phase": "presentation",
+        "body_box": [
+          53,
+          46,
+          61,
+          111,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_walk_start_004",
+      "group": "walk_start",
+      "group_index": 4,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        54,
+        46,
+        115,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_02.png",
+      "source_cell": 3,
+      "source_row": 1,
+      "source_column": 3,
+      "path": "content/characters/police_officer/sprites/poses/po_walk_start_004.png",
+      "sha256": "ec9289e3de0227239cd3fbbe82acaaa4149dc4c064a8973e1aba20b44e83ce6f",
+      "clips": [
+        "walk_start"
+      ],
+      "actions": [
+        "walk_start"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_walk_start_004.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "walk",
+        "frame_index": 3,
+        "phase": "presentation",
+        "body_box": [
+          54,
+          46,
+          61,
+          111,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_walk_loop_001",
+      "group": "walk_loop",
+      "group_index": 1,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        52,
+        46,
+        113,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_02.png",
+      "source_cell": 4,
+      "source_row": 1,
+      "source_column": 4,
+      "path": "content/characters/police_officer/sprites/poses/po_walk_loop_001.png",
+      "sha256": "2050c7e79e9640600ebb4a57739bfe5a84dc708b6358d07f18e54ad38a939d83",
+      "clips": [
+        "walk_loop"
+      ],
+      "actions": [
+        "walk_loop"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_walk_loop_001.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "walk",
+        "frame_index": 4,
+        "phase": "presentation",
+        "body_box": [
+          52,
+          46,
+          61,
+          111,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_walk_loop_002",
+      "group": "walk_loop",
+      "group_index": 2,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        58,
+        46,
+        117,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_02.png",
+      "source_cell": 5,
+      "source_row": 1,
+      "source_column": 5,
+      "path": "content/characters/police_officer/sprites/poses/po_walk_loop_002.png",
+      "sha256": "a656abe042b30bec21585863984f99a080c75f8691b76c542e3b9c1eefc71f7d",
+      "clips": [
+        "walk_loop"
+      ],
+      "actions": [
+        "walk_loop"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_walk_loop_002.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "walk",
+        "frame_index": 5,
+        "phase": "presentation",
+        "body_box": [
+          58,
+          46,
+          59,
+          111,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_walk_loop_003",
+      "group": "walk_loop",
+      "group_index": 3,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        87,
+        43,
+        136,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_02.png",
+      "source_cell": 6,
+      "source_row": 2,
+      "source_column": 1,
+      "path": "content/characters/police_officer/sprites/poses/po_walk_loop_003.png",
+      "sha256": "bc664073c40d3b4953d87b72f15b0a65599ac256dbe31b9c52461960bb6f19cc",
+      "clips": [
+        "walk_loop"
+      ],
+      "actions": [
+        "walk_loop"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_walk_loop_003.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "walk",
+        "frame_index": 6,
+        "phase": "presentation",
+        "body_box": [
+          87,
+          43,
+          49,
+          114,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_walk_loop_004",
+      "group": "walk_loop",
+      "group_index": 4,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        85,
+        44,
+        142,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_02.png",
+      "source_cell": 7,
+      "source_row": 2,
+      "source_column": 2,
+      "path": "content/characters/police_officer/sprites/poses/po_walk_loop_004.png",
+      "sha256": "45e6408f2f0fb95368446e7ed248af43bd7106c10b113e887c5a7a1a7bb27062",
+      "clips": [
+        "walk_loop"
+      ],
+      "actions": [
+        "walk_loop"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_walk_loop_004.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "walk",
+        "frame_index": 7,
+        "phase": "presentation",
+        "body_box": [
+          85,
+          44,
+          57,
+          113,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_walk_loop_005",
+      "group": "walk_loop",
+      "group_index": 5,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        86,
+        44,
+        136,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_02.png",
+      "source_cell": 8,
+      "source_row": 2,
+      "source_column": 3,
+      "path": "content/characters/police_officer/sprites/poses/po_walk_loop_005.png",
+      "sha256": "2b85eacfa4c4f5fef64bafcac9c177ed56800d3f1cc013a88033d27695348174",
+      "clips": [
+        "walk_loop"
+      ],
+      "actions": [
+        "walk_loop"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_walk_loop_005.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "walk",
+        "frame_index": 8,
+        "phase": "presentation",
+        "body_box": [
+          86,
+          44,
+          50,
+          113,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_walk_loop_006",
+      "group": "walk_loop",
+      "group_index": 6,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        52,
+        44,
+        116,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_02.png",
+      "source_cell": 9,
+      "source_row": 2,
+      "source_column": 4,
+      "path": "content/characters/police_officer/sprites/poses/po_walk_loop_006.png",
+      "sha256": "32cabd1bcdc6690d42ccbbfcdf768e9670840d70c36d054af8bb37298496bd54",
+      "clips": [
+        "walk_loop"
+      ],
+      "actions": [
+        "walk_loop"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_walk_loop_006.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "walk",
+        "frame_index": 9,
+        "phase": "presentation",
+        "body_box": [
+          52,
+          44,
+          64,
+          113,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_walk_loop_007",
+      "group": "walk_loop",
+      "group_index": 7,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        82,
+        44,
+        147,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_02.png",
+      "source_cell": 10,
+      "source_row": 2,
+      "source_column": 5,
+      "path": "content/characters/police_officer/sprites/poses/po_walk_loop_007.png",
+      "sha256": "81d734a89dace918bb4f2eeffb1aedc1bbaeced2a581f3ca1ae3d173c3eba5be",
+      "clips": [
+        "walk_loop"
+      ],
+      "actions": [
+        "walk_loop"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_walk_loop_007.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "walk",
+        "frame_index": 10,
+        "phase": "presentation",
+        "body_box": [
+          82,
+          44,
+          65,
+          113,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_walk_loop_008",
+      "group": "walk_loop",
+      "group_index": 8,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        82,
+        46,
+        149,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_02.png",
+      "source_cell": 11,
+      "source_row": 3,
+      "source_column": 1,
+      "path": "content/characters/police_officer/sprites/poses/po_walk_loop_008.png",
+      "sha256": "475365f4628a16dfeb76e92c8c236e7302a8a0c667464818b2d93836254331c3",
+      "clips": [
+        "walk_loop"
+      ],
+      "actions": [
+        "walk_loop"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_walk_loop_008.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "walk",
+        "frame_index": 11,
+        "phase": "presentation",
+        "body_box": [
+          82,
+          46,
+          67,
+          111,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_walk_loop_009",
+      "group": "walk_loop",
+      "group_index": 9,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        82,
+        43,
+        147,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_02.png",
+      "source_cell": 12,
+      "source_row": 3,
+      "source_column": 2,
+      "path": "content/characters/police_officer/sprites/poses/po_walk_loop_009.png",
+      "sha256": "cbc84d9248d258a53f6dcedec5e78732ecd083210e8ac115771bc06cb47a5982",
+      "clips": [
+        "walk_loop"
+      ],
+      "actions": [
+        "walk_loop"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_walk_loop_009.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "walk",
+        "frame_index": 12,
+        "phase": "presentation",
+        "body_box": [
+          82,
+          43,
+          65,
+          114,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_walk_loop_010",
+      "group": "walk_loop",
+      "group_index": 10,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        82,
+        43,
+        147,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_02.png",
+      "source_cell": 13,
+      "source_row": 3,
+      "source_column": 3,
+      "path": "content/characters/police_officer/sprites/poses/po_walk_loop_010.png",
+      "sha256": "331c67f63932d5150d02a4b42087e81f51f930a77af6a93961c7b4976a90f6bf",
+      "clips": [
+        "walk_loop"
+      ],
+      "actions": [
+        "walk_loop"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_walk_loop_010.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "walk",
+        "frame_index": 13,
+        "phase": "presentation",
+        "body_box": [
+          82,
+          43,
+          65,
+          114,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_walk_loop_011",
+      "group": "walk_loop",
+      "group_index": 11,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        55,
+        45,
+        120,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_02.png",
+      "source_cell": 14,
+      "source_row": 3,
+      "source_column": 4,
+      "path": "content/characters/police_officer/sprites/poses/po_walk_loop_011.png",
+      "sha256": "9ff481b921d9ff7bceb8c06728e1f8f85e40ff12d54ae53d7dfe8cd1d039529f",
+      "clips": [
+        "walk_loop"
+      ],
+      "actions": [
+        "walk_loop"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_walk_loop_011.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "walk",
+        "frame_index": 14,
+        "phase": "presentation",
+        "body_box": [
+          55,
+          45,
+          65,
+          112,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_walk_loop_012",
+      "group": "walk_loop",
+      "group_index": 12,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        57,
+        44,
+        111,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_02.png",
+      "source_cell": 15,
+      "source_row": 3,
+      "source_column": 5,
+      "path": "content/characters/police_officer/sprites/poses/po_walk_loop_012.png",
+      "sha256": "ea59053fa7aa80309043109c6ea63aac641491e1e57bbdf45fe834dca254cbc7",
+      "clips": [
+        "walk_loop"
+      ],
+      "actions": [
+        "walk_loop"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_walk_loop_012.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "walk",
+        "frame_index": 15,
+        "phase": "presentation",
+        "body_box": [
+          57,
+          44,
+          54,
+          113,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_walk_stop_001",
+      "group": "walk_stop",
+      "group_index": 1,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        80,
+        46,
+        144,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_02.png",
+      "source_cell": 16,
+      "source_row": 4,
+      "source_column": 1,
+      "path": "content/characters/police_officer/sprites/poses/po_walk_stop_001.png",
+      "sha256": "26eb11dd98a5fc5aa16f8089418a906a3d55ffd4f7760470f63518aee11b7bda",
+      "clips": [
+        "walk_stop"
+      ],
+      "actions": [
+        "walk_stop"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_walk_stop_001.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "walk",
+        "frame_index": 16,
+        "phase": "presentation",
+        "body_box": [
+          80,
+          46,
+          64,
+          111,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_walk_stop_002",
+      "group": "walk_stop",
+      "group_index": 2,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        56,
+        46,
+        115,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_02.png",
+      "source_cell": 17,
+      "source_row": 4,
+      "source_column": 2,
+      "path": "content/characters/police_officer/sprites/poses/po_walk_stop_002.png",
+      "sha256": "2e74e8671ff3fed94bfb3158f87e8812acdf98aadc14a85ccb4a667a426a0e6e",
+      "clips": [
+        "walk_stop"
+      ],
+      "actions": [
+        "walk_stop"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_walk_stop_002.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "walk",
+        "frame_index": 17,
+        "phase": "presentation",
+        "body_box": [
+          56,
+          46,
+          59,
+          111,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_walk_stop_003",
+      "group": "walk_stop",
+      "group_index": 3,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        70,
+        44,
+        116,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_02.png",
+      "source_cell": 18,
+      "source_row": 4,
+      "source_column": 3,
+      "path": "content/characters/police_officer/sprites/poses/po_walk_stop_003.png",
+      "sha256": "02bbdb36bae3a8caa3106209d266c57648557206fe7a1e8cf2e5e2100f7018be",
+      "clips": [
+        "walk_stop"
+      ],
+      "actions": [
+        "walk_stop"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_walk_stop_003.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "walk",
+        "frame_index": 18,
+        "phase": "presentation",
+        "body_box": [
+          70,
+          44,
+          46,
+          113,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_walk_stop_004",
+      "group": "walk_stop",
+      "group_index": 4,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        68,
+        44,
+        115,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_02.png",
+      "source_cell": 19,
+      "source_row": 4,
+      "source_column": 4,
+      "path": "content/characters/police_officer/sprites/poses/po_walk_stop_004.png",
+      "sha256": "2cf7748370010b717b44377640766559c9202bf3d5ddff7baf1d1a71011b2b17",
+      "clips": [
+        "walk_stop"
+      ],
+      "actions": [
+        "walk_stop"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_walk_stop_004.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "walk",
+        "frame_index": 19,
+        "phase": "presentation",
+        "body_box": [
+          68,
+          44,
+          47,
+          113,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_turn_pivot_001",
+      "group": "turn_pivot",
+      "group_index": 1,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        66,
+        45,
+        117,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_02.png",
+      "source_cell": 20,
+      "source_row": 4,
+      "source_column": 5,
+      "path": "content/characters/police_officer/sprites/poses/po_turn_pivot_001.png",
+      "sha256": "158aa1e24f2ed4613d76997311a73a337d8668258af140c49253d4c126347093",
+      "clips": [
+        "turn_pivot"
+      ],
+      "actions": [
+        "turn_pivot"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_turn_pivot_001.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "turn",
+        "frame_index": 0,
+        "phase": "presentation",
+        "body_box": [
+          66,
+          45,
+          51,
+          112,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_turn_pivot_002",
+      "group": "turn_pivot",
+      "group_index": 2,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        61,
+        45,
+        116,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_03.png",
+      "source_cell": 1,
+      "source_row": 1,
+      "source_column": 1,
+      "path": "content/characters/police_officer/sprites/poses/po_turn_pivot_002.png",
+      "sha256": "1a1f394eb069cd8c95cc9a54828f245984b610426129c1b646518d1f5d61d2ad",
+      "clips": [
+        "turn_pivot"
+      ],
+      "actions": [
+        "turn_pivot"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_turn_pivot_002.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "turn",
+        "frame_index": 1,
+        "phase": "presentation",
+        "body_box": [
+          61,
+          45,
+          55,
+          112,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_turn_pivot_003",
+      "group": "turn_pivot",
+      "group_index": 3,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        67,
+        46,
+        114,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_03.png",
+      "source_cell": 2,
+      "source_row": 1,
+      "source_column": 2,
+      "path": "content/characters/police_officer/sprites/poses/po_turn_pivot_003.png",
+      "sha256": "868948b9184489ba2963efde6e3120b5f30670ca4ecc430cabbfb4eb555303db",
+      "clips": [
+        "turn_pivot"
+      ],
+      "actions": [
+        "turn_pivot"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_turn_pivot_003.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "turn",
+        "frame_index": 2,
+        "phase": "presentation",
+        "body_box": [
+          67,
+          46,
+          47,
+          111,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_turn_pivot_004",
+      "group": "turn_pivot",
+      "group_index": 4,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        59,
+        46,
+        114,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_03.png",
+      "source_cell": 3,
+      "source_row": 1,
+      "source_column": 3,
+      "path": "content/characters/police_officer/sprites/poses/po_turn_pivot_004.png",
+      "sha256": "744cb5023e138d923a9e47a97afcf984d9d90f0710dce803b7f20942fdc070bc",
+      "clips": [
+        "turn_pivot"
+      ],
+      "actions": [
+        "turn_pivot"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_turn_pivot_004.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "turn",
+        "frame_index": 3,
+        "phase": "presentation",
+        "body_box": [
+          59,
+          46,
+          55,
+          111,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_baton_jab_001",
+      "group": "baton_jab",
+      "group_index": 1,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        60,
+        46,
+        117,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_03.png",
+      "source_cell": 4,
+      "source_row": 1,
+      "source_column": 4,
+      "path": "content/characters/police_officer/sprites/poses/po_baton_jab_001.png",
+      "sha256": "ae6c50b7bdd3997390b828e37d3f250f0ffd8c67dacf049e7ed4ab33aed711a4",
+      "clips": [
+        "baton_jab"
+      ],
+      "actions": [
+        "baton_jab"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_baton_jab_001.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "attack1",
+        "frame_index": 0,
+        "phase": "startup",
+        "body_box": [
+          60,
+          46,
+          57,
+          111,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_baton_jab_002",
+      "group": "baton_jab",
+      "group_index": 2,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        56,
+        46,
+        123,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_03.png",
+      "source_cell": 5,
+      "source_row": 1,
+      "source_column": 5,
+      "path": "content/characters/police_officer/sprites/poses/po_baton_jab_002.png",
+      "sha256": "903018ee45d80a74c6f4b01b7e953361a24fd8d968c69c78af13966a21edf2f9",
+      "clips": [
+        "baton_jab"
+      ],
+      "actions": [
+        "baton_jab"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_baton_jab_002.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "attack1",
+        "frame_index": 1,
+        "phase": "startup",
+        "body_box": [
+          56,
+          46,
+          67,
+          111,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_baton_jab_003",
+      "group": "baton_jab",
+      "group_index": 3,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        82,
+        48,
+        143,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_03.png",
+      "source_cell": 6,
+      "source_row": 2,
+      "source_column": 1,
+      "path": "content/characters/police_officer/sprites/poses/po_baton_jab_003.png",
+      "sha256": "77930ce33e44e367e1b6e047d97165b498c62dc73bb2b3fcdc7ffaacc2972906",
+      "clips": [
+        "baton_jab"
+      ],
+      "actions": [
+        "baton_jab"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_baton_jab_003.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "attack1",
+        "frame_index": 2,
+        "phase": "startup",
+        "body_box": [
+          82,
+          48,
+          61,
+          109,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_baton_jab_004",
+      "group": "baton_jab",
+      "group_index": 4,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        85,
+        52,
+        151,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_03.png",
+      "source_cell": 7,
+      "source_row": 2,
+      "source_column": 2,
+      "path": "content/characters/police_officer/sprites/poses/po_baton_jab_004.png",
+      "sha256": "2d8c5ef196974f6960fbc124ca808ad3d6ca8777e171412ba79522c3c9ca5dd5",
+      "clips": [
+        "baton_jab"
+      ],
+      "actions": [
+        "baton_jab"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_baton_jab_004.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "attack1",
+        "frame_index": 3,
+        "phase": "active",
+        "body_box": [
+          85,
+          52,
+          66,
+          105,
+          14
+        ],
+        "attack_box": [
+          133,
+          87,
+          58,
+          30,
+          8,
+          0,
+          0,
+          0,
+          4,
+          14
+        ]
+      }
+    },
+    {
+      "id": "po_baton_jab_005",
+      "group": "baton_jab",
+      "group_index": 5,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        48,
+        53,
+        142,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_03.png",
+      "source_cell": 8,
+      "source_row": 2,
+      "source_column": 3,
+      "path": "content/characters/police_officer/sprites/poses/po_baton_jab_005.png",
+      "sha256": "76c3bca99672471683c01c16363a782beb579a6d3d1a4b0ae12c4a00404bd21f",
+      "clips": [
+        "baton_jab"
+      ],
+      "actions": [
+        "baton_jab"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_baton_jab_005.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "attack1",
+        "frame_index": 4,
+        "phase": "active",
+        "body_box": [
+          48,
+          53,
+          94,
+          104,
+          14
+        ],
+        "attack_box": [
+          133,
+          87,
+          58,
+          30,
+          8,
+          0,
+          0,
+          0,
+          4,
+          14
+        ]
+      }
+    },
+    {
+      "id": "po_baton_jab_006",
+      "group": "baton_jab",
+      "group_index": 6,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        48,
+        53,
+        158,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_03.png",
+      "source_cell": 9,
+      "source_row": 2,
+      "source_column": 4,
+      "path": "content/characters/police_officer/sprites/poses/po_baton_jab_006.png",
+      "sha256": "50c6988c589c66fc6b6ff1250352b649af9621e0769eeb75e5f33ac58660c847",
+      "clips": [
+        "baton_jab"
+      ],
+      "actions": [
+        "baton_jab"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_baton_jab_006.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "attack1",
+        "frame_index": 5,
+        "phase": "recovery",
+        "body_box": [
+          48,
+          53,
+          110,
+          104,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_baton_jab_007",
+      "group": "baton_jab",
+      "group_index": 7,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        53,
+        56,
+        173,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_03.png",
+      "source_cell": 10,
+      "source_row": 2,
+      "source_column": 5,
+      "path": "content/characters/police_officer/sprites/poses/po_baton_jab_007.png",
+      "sha256": "e5d11754b7c1ecde1de6fd77248ba5a5c36799ed8485fea70b4f1ada3388c6a2",
+      "clips": [
+        "baton_jab"
+      ],
+      "actions": [
+        "baton_jab"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_baton_jab_007.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "attack1",
+        "frame_index": 6,
+        "phase": "recovery",
+        "body_box": [
+          53,
+          56,
+          120,
+          101,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_baton_jab_008",
+      "group": "baton_jab",
+      "group_index": 8,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        85,
+        54,
+        149,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_03.png",
+      "source_cell": 11,
+      "source_row": 3,
+      "source_column": 1,
+      "path": "content/characters/police_officer/sprites/poses/po_baton_jab_008.png",
+      "sha256": "8f811173eca92a0096ebeb49d2b0c7d3651e7e68a22d1d7ba82fc6aff065e62e",
+      "clips": [
+        "baton_jab"
+      ],
+      "actions": [
+        "baton_jab"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_baton_jab_008.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "attack1",
+        "frame_index": 7,
+        "phase": "recovery",
+        "body_box": [
+          85,
+          54,
+          64,
+          103,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_baton_backhand_001",
+      "group": "baton_backhand",
+      "group_index": 1,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        84,
+        53,
+        150,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_03.png",
+      "source_cell": 12,
+      "source_row": 3,
+      "source_column": 2,
+      "path": "content/characters/police_officer/sprites/poses/po_baton_backhand_001.png",
+      "sha256": "bb12b0066bc7fe7a4ac949107acf93c77349d24fb6069137cb42a33d338daac8",
+      "clips": [
+        "baton_backhand"
+      ],
+      "actions": [
+        "baton_backhand"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_baton_backhand_001.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "attack2",
+        "frame_index": 0,
+        "phase": "startup",
+        "body_box": [
+          84,
+          53,
+          66,
+          104,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_baton_backhand_002",
+      "group": "baton_backhand",
+      "group_index": 2,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        50,
+        54,
+        129,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_03.png",
+      "source_cell": 13,
+      "source_row": 3,
+      "source_column": 3,
+      "path": "content/characters/police_officer/sprites/poses/po_baton_backhand_002.png",
+      "sha256": "94d8d4f7ae8fa5903ac92f73ba332da5d431358137d225c85036a4c57f5b445a",
+      "clips": [
+        "baton_backhand"
+      ],
+      "actions": [
+        "baton_backhand"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_baton_backhand_002.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "attack2",
+        "frame_index": 1,
+        "phase": "startup",
+        "body_box": [
+          50,
+          54,
+          79,
+          103,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_baton_backhand_003",
+      "group": "baton_backhand",
+      "group_index": 3,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        53,
+        54,
+        154,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_03.png",
+      "source_cell": 14,
+      "source_row": 3,
+      "source_column": 4,
+      "path": "content/characters/police_officer/sprites/poses/po_baton_backhand_003.png",
+      "sha256": "dc6a46a484cf652fa3872def3b7f4545eb345555142038d26429792e8d688093",
+      "clips": [
+        "baton_backhand"
+      ],
+      "actions": [
+        "baton_backhand"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_baton_backhand_003.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "attack2",
+        "frame_index": 2,
+        "phase": "startup",
+        "body_box": [
+          53,
+          54,
+          101,
+          103,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_baton_backhand_004",
+      "group": "baton_backhand",
+      "group_index": 4,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        54,
+        54,
+        161,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_03.png",
+      "source_cell": 15,
+      "source_row": 3,
+      "source_column": 5,
+      "path": "content/characters/police_officer/sprites/poses/po_baton_backhand_004.png",
+      "sha256": "ac76d17513109459d968833adb2959287785b589f40fb178b908d676163de2d9",
+      "clips": [
+        "baton_backhand"
+      ],
+      "actions": [
+        "baton_backhand"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_baton_backhand_004.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "attack2",
+        "frame_index": 3,
+        "phase": "active",
+        "body_box": [
+          54,
+          54,
+          107,
+          103,
+          14
+        ],
+        "attack_box": [
+          133,
+          88,
+          58,
+          30,
+          11,
+          0,
+          0,
+          0,
+          4,
+          16
+        ]
+      }
+    },
+    {
+      "id": "po_baton_backhand_005",
+      "group": "baton_backhand",
+      "group_index": 5,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        82,
+        52,
+        143,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_03.png",
+      "source_cell": 16,
+      "source_row": 4,
+      "source_column": 1,
+      "path": "content/characters/police_officer/sprites/poses/po_baton_backhand_005.png",
+      "sha256": "6d305699f3e397a915749ec7fe41b44921c9866339019cf22c3c4281350715a1",
+      "clips": [
+        "baton_backhand"
+      ],
+      "actions": [
+        "baton_backhand"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_baton_backhand_005.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "attack2",
+        "frame_index": 4,
+        "phase": "active",
+        "body_box": [
+          82,
+          52,
+          61,
+          105,
+          14
+        ],
+        "attack_box": [
+          133,
+          87,
+          58,
+          30,
+          11,
+          0,
+          0,
+          0,
+          4,
+          16
+        ]
+      }
+    },
+    {
+      "id": "po_baton_backhand_006",
+      "group": "baton_backhand",
+      "group_index": 6,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        82,
+        53,
+        146,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_03.png",
+      "source_cell": 17,
+      "source_row": 4,
+      "source_column": 2,
+      "path": "content/characters/police_officer/sprites/poses/po_baton_backhand_006.png",
+      "sha256": "48e0d6e6b2b657c55f2093368cd061fb9c35794a4fee4622a9f727308233b982",
+      "clips": [
+        "baton_backhand"
+      ],
+      "actions": [
+        "baton_backhand"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_baton_backhand_006.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "attack2",
+        "frame_index": 5,
+        "phase": "recovery",
+        "body_box": [
+          82,
+          53,
+          64,
+          104,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_baton_backhand_007",
+      "group": "baton_backhand",
+      "group_index": 7,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        51,
+        55,
+        144,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_03.png",
+      "source_cell": 18,
+      "source_row": 4,
+      "source_column": 3,
+      "path": "content/characters/police_officer/sprites/poses/po_baton_backhand_007.png",
+      "sha256": "89868d8dceec5b48e5864495c5896a76634a77d957200c70d0404398cf0f50d2",
+      "clips": [
+        "baton_backhand"
+      ],
+      "actions": [
+        "baton_backhand"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_baton_backhand_007.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "attack2",
+        "frame_index": 6,
+        "phase": "recovery",
+        "body_box": [
+          51,
+          55,
+          93,
+          102,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_baton_backhand_008",
+      "group": "baton_backhand",
+      "group_index": 8,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        53,
+        54,
+        149,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_03.png",
+      "source_cell": 19,
+      "source_row": 4,
+      "source_column": 4,
+      "path": "content/characters/police_officer/sprites/poses/po_baton_backhand_008.png",
+      "sha256": "5bd04068575865be54c1f4ea01c1efefc383897ff49b06cb96531036420c5439",
+      "clips": [
+        "baton_backhand"
+      ],
+      "actions": [
+        "baton_backhand"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_baton_backhand_008.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "attack2",
+        "frame_index": 7,
+        "phase": "recovery",
+        "body_box": [
+          53,
+          54,
+          96,
+          103,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_baton_overhead_001",
+      "group": "baton_overhead",
+      "group_index": 1,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        82,
+        42,
+        143,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_03.png",
+      "source_cell": 20,
+      "source_row": 4,
+      "source_column": 5,
+      "path": "content/characters/police_officer/sprites/poses/po_baton_overhead_001.png",
+      "sha256": "562f232bbc7aa6947b95e08851f87cd47d4f46cadf2aef8220e33a56031a609b",
+      "clips": [
+        "baton_overhead"
+      ],
+      "actions": [
+        "baton_overhead"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_baton_overhead_001.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "attack3",
+        "frame_index": 0,
+        "phase": "startup",
+        "body_box": [
+          82,
+          42,
+          61,
+          115,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_baton_overhead_002",
+      "group": "baton_overhead",
+      "group_index": 2,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        43,
+        38,
+        113,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_04.png",
+      "source_cell": 1,
+      "source_row": 1,
+      "source_column": 1,
+      "path": "content/characters/police_officer/sprites/poses/po_baton_overhead_002.png",
+      "sha256": "6c568f0703d5798b122043b4e48d97b3e958fee3137ac911e833642a2135208c",
+      "clips": [
+        "baton_overhead"
+      ],
+      "actions": [
+        "baton_overhead"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_baton_overhead_002.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "attack3",
+        "frame_index": 1,
+        "phase": "startup",
+        "body_box": [
+          43,
+          38,
+          70,
+          119,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_baton_overhead_003",
+      "group": "baton_overhead",
+      "group_index": 3,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        46,
+        45,
+        114,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_04.png",
+      "source_cell": 2,
+      "source_row": 1,
+      "source_column": 2,
+      "path": "content/characters/police_officer/sprites/poses/po_baton_overhead_003.png",
+      "sha256": "6d86ada8796e965a94ce3981c0a1ffe18b13bf97c88c111fc8e3378cdfd9fcaa",
+      "clips": [
+        "baton_overhead"
+      ],
+      "actions": [
+        "baton_overhead"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_baton_overhead_003.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "attack3",
+        "frame_index": 2,
+        "phase": "startup",
+        "body_box": [
+          46,
+          45,
+          68,
+          112,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_baton_overhead_004",
+      "group": "baton_overhead",
+      "group_index": 4,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        42,
+        38,
+        114,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_04.png",
+      "source_cell": 3,
+      "source_row": 1,
+      "source_column": 3,
+      "path": "content/characters/police_officer/sprites/poses/po_baton_overhead_004.png",
+      "sha256": "dd30cf0474a686cfce359212a7e8fd52778886dc3937f7920a7b2b969458e097",
+      "clips": [
+        "baton_overhead"
+      ],
+      "actions": [
+        "baton_overhead"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_baton_overhead_004.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "attack3",
+        "frame_index": 3,
+        "phase": "startup",
+        "body_box": [
+          42,
+          38,
+          72,
+          119,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_baton_overhead_005",
+      "group": "baton_overhead",
+      "group_index": 5,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        38,
+        58,
+        145,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_04.png",
+      "source_cell": 4,
+      "source_row": 1,
+      "source_column": 4,
+      "path": "content/characters/police_officer/sprites/poses/po_baton_overhead_005.png",
+      "sha256": "e5b84aa5ab1d206ad3ceeb8e70df378e8ab7cb7522fc7072da9edccc54793630",
+      "clips": [
+        "baton_overhead"
+      ],
+      "actions": [
+        "baton_overhead"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_baton_overhead_005.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "attack3",
+        "frame_index": 4,
+        "phase": "startup",
+        "body_box": [
+          38,
+          58,
+          107,
+          99,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_baton_overhead_006",
+      "group": "baton_overhead",
+      "group_index": 6,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        41,
+        65,
+        147,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_04.png",
+      "source_cell": 5,
+      "source_row": 1,
+      "source_column": 5,
+      "path": "content/characters/police_officer/sprites/poses/po_baton_overhead_006.png",
+      "sha256": "7d9149c3fe86276e9529db337395496de7666d41fdd157ff585ed6c078f8ee59",
+      "clips": [
+        "baton_overhead"
+      ],
+      "actions": [
+        "baton_overhead"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_baton_overhead_006.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "attack3",
+        "frame_index": 5,
+        "phase": "active",
+        "body_box": [
+          41,
+          65,
+          106,
+          92,
+          14
+        ],
+        "attack_box": [
+          133,
+          95,
+          58,
+          30,
+          16,
+          1,
+          0,
+          0,
+          4,
+          16
+        ]
+      }
+    },
+    {
+      "id": "po_baton_overhead_007",
+      "group": "baton_overhead",
+      "group_index": 7,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        50,
+        56,
+        115,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_04.png",
+      "source_cell": 6,
+      "source_row": 2,
+      "source_column": 1,
+      "path": "content/characters/police_officer/sprites/poses/po_baton_overhead_007.png",
+      "sha256": "6e68a67540f1c226bbc7abb2803bb68fc87890f304f285f74d0428d78ad2fb4b",
+      "clips": [
+        "baton_overhead"
+      ],
+      "actions": [
+        "baton_overhead"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_baton_overhead_007.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "attack3",
+        "frame_index": 6,
+        "phase": "active",
+        "body_box": [
+          50,
+          56,
+          65,
+          101,
+          14
+        ],
+        "attack_box": [
+          109,
+          89,
+          58,
+          30,
+          16,
+          1,
+          0,
+          0,
+          4,
+          16
+        ]
+      }
+    },
+    {
+      "id": "po_baton_overhead_008",
+      "group": "baton_overhead",
+      "group_index": 8,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        54,
+        56,
+        117,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_04.png",
+      "source_cell": 7,
+      "source_row": 2,
+      "source_column": 2,
+      "path": "content/characters/police_officer/sprites/poses/po_baton_overhead_008.png",
+      "sha256": "e97432327deee8bdddd538760589779d99c0aeb04c12b2153570c8018868a048",
+      "clips": [
+        "baton_overhead"
+      ],
+      "actions": [
+        "baton_overhead"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_baton_overhead_008.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "attack3",
+        "frame_index": 7,
+        "phase": "recovery",
+        "body_box": [
+          54,
+          56,
+          63,
+          101,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_baton_overhead_009",
+      "group": "baton_overhead",
+      "group_index": 9,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        54,
+        59,
+        117,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_04.png",
+      "source_cell": 8,
+      "source_row": 2,
+      "source_column": 3,
+      "path": "content/characters/police_officer/sprites/poses/po_baton_overhead_009.png",
+      "sha256": "996c046af225715b4455914bd473bf440c7c7d204ea1dbccba8c0a2ceee58b93",
+      "clips": [
+        "baton_overhead"
+      ],
+      "actions": [
+        "baton_overhead"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_baton_overhead_009.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "attack3",
+        "frame_index": 8,
+        "phase": "recovery",
+        "body_box": [
+          54,
+          59,
+          63,
+          98,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_baton_overhead_010",
+      "group": "baton_overhead",
+      "group_index": 10,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        56,
+        52,
+        115,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_04.png",
+      "source_cell": 9,
+      "source_row": 2,
+      "source_column": 4,
+      "path": "content/characters/police_officer/sprites/poses/po_baton_overhead_010.png",
+      "sha256": "2022805e0228122fce1c9c3dd39fe4933bfb5937906ba2641f37e5d9fc25f3f3",
+      "clips": [
+        "baton_overhead"
+      ],
+      "actions": [
+        "baton_overhead"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_baton_overhead_010.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "attack3",
+        "frame_index": 9,
+        "phase": "recovery",
+        "body_box": [
+          56,
+          52,
+          59,
+          105,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_block_001",
+      "group": "block",
+      "group_index": 1,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        58,
+        55,
+        126,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_04.png",
+      "source_cell": 10,
+      "source_row": 2,
+      "source_column": 5,
+      "path": "content/characters/police_officer/sprites/poses/po_block_001.png",
+      "sha256": "e43d222ed6222542221c1db4915fc64de08466752cf0548b3847820747872622",
+      "clips": [
+        "block"
+      ],
+      "actions": [
+        "block"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_block_001.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "block",
+        "frame_index": 0,
+        "phase": "presentation",
+        "body_box": [
+          58,
+          55,
+          68,
+          102,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_block_002",
+      "group": "block",
+      "group_index": 2,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        51,
+        72,
+        115,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_04.png",
+      "source_cell": 11,
+      "source_row": 3,
+      "source_column": 1,
+      "path": "content/characters/police_officer/sprites/poses/po_block_002.png",
+      "sha256": "d6bcb6569476b27b2d1101262a470e5c442ed28ad806c7a9462c0d4325018cb5",
+      "clips": [
+        "block"
+      ],
+      "actions": [
+        "block"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_block_002.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "block",
+        "frame_index": 1,
+        "phase": "presentation",
+        "body_box": [
+          51,
+          72,
+          64,
+          85,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_block_003",
+      "group": "block",
+      "group_index": 3,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        78,
+        58,
+        145,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_04.png",
+      "source_cell": 12,
+      "source_row": 3,
+      "source_column": 2,
+      "path": "content/characters/police_officer/sprites/poses/po_block_003.png",
+      "sha256": "6c0f772769ddb073d81dc29b1b6e00df6b0c64962c3ebcd9ceb19d00b1495306",
+      "clips": [
+        "block"
+      ],
+      "actions": [
+        "block"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_block_003.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "block",
+        "frame_index": 2,
+        "phase": "presentation",
+        "body_box": [
+          78,
+          58,
+          67,
+          99,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_block_004",
+      "group": "block",
+      "group_index": 4,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        51,
+        60,
+        114,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_04.png",
+      "source_cell": 13,
+      "source_row": 3,
+      "source_column": 3,
+      "path": "content/characters/police_officer/sprites/poses/po_block_004.png",
+      "sha256": "946f34a3a891331fb5f971b2776d6397970405b67dd9bddb3cb36e527ddf457a",
+      "clips": [
+        "block"
+      ],
+      "actions": [
+        "block"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_block_004.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "block",
+        "frame_index": 3,
+        "phase": "presentation",
+        "body_box": [
+          51,
+          60,
+          63,
+          97,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_block_impact_001",
+      "group": "block_impact",
+      "group_index": 1,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        52,
+        55,
+        115,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_04.png",
+      "source_cell": 14,
+      "source_row": 3,
+      "source_column": 4,
+      "path": "content/characters/police_officer/sprites/poses/po_block_impact_001.png",
+      "sha256": "6367227f43cf2a3397056aaf3a4681867345fc8399d043fa20fad7923a83d4ac",
+      "clips": [
+        "block_impact"
+      ],
+      "actions": [
+        "block_impact"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_block_impact_001.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "blockpain",
+        "frame_index": 0,
+        "phase": "presentation",
+        "body_box": [
+          52,
+          55,
+          63,
+          102,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_block_impact_002",
+      "group": "block_impact",
+      "group_index": 2,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        53,
+        56,
+        115,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_04.png",
+      "source_cell": 15,
+      "source_row": 3,
+      "source_column": 5,
+      "path": "content/characters/police_officer/sprites/poses/po_block_impact_002.png",
+      "sha256": "d6db084d712c03c5570d20e1294a2ef07b8039ddda67e576a1573b8d10fe907f",
+      "clips": [
+        "block_impact"
+      ],
+      "actions": [
+        "block_impact"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_block_impact_002.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "blockpain",
+        "frame_index": 1,
+        "phase": "presentation",
+        "body_box": [
+          53,
+          56,
+          62,
+          101,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_block_impact_003",
+      "group": "block_impact",
+      "group_index": 3,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        44,
+        54,
+        116,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_04.png",
+      "source_cell": 16,
+      "source_row": 4,
+      "source_column": 1,
+      "path": "content/characters/police_officer/sprites/poses/po_block_impact_003.png",
+      "sha256": "849eb0ff9eabb9f461fed03ca30beaf409313cc1e7c94f2f27afb8aadbc165fd",
+      "clips": [
+        "block_impact"
+      ],
+      "actions": [
+        "block_impact"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_block_impact_003.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "blockpain",
+        "frame_index": 2,
+        "phase": "presentation",
+        "body_box": [
+          44,
+          54,
+          72,
+          103,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_light_pain_001",
+      "group": "light_pain",
+      "group_index": 1,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        44,
+        56,
+        114,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_04.png",
+      "source_cell": 17,
+      "source_row": 4,
+      "source_column": 2,
+      "path": "content/characters/police_officer/sprites/poses/po_light_pain_001.png",
+      "sha256": "35683e81104d9977cfd329e42f57f6b1213a51bd354b0a4b8293df1d416940ae",
+      "clips": [
+        "light_pain"
+      ],
+      "actions": [
+        "light_pain"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_light_pain_001.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "pain",
+        "frame_index": 0,
+        "phase": "presentation",
+        "body_box": [
+          44,
+          56,
+          70,
+          101,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_light_pain_002",
+      "group": "light_pain",
+      "group_index": 2,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        46,
+        54,
+        115,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_04.png",
+      "source_cell": 18,
+      "source_row": 4,
+      "source_column": 3,
+      "path": "content/characters/police_officer/sprites/poses/po_light_pain_002.png",
+      "sha256": "3ff50c0d9b0c1b684e843759f0da81257a790d88b5b668e91ca8108fd40112bc",
+      "clips": [
+        "light_pain"
+      ],
+      "actions": [
+        "light_pain"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_light_pain_002.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "pain",
+        "frame_index": 1,
+        "phase": "presentation",
+        "body_box": [
+          46,
+          54,
+          69,
+          103,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_light_pain_003",
+      "group": "light_pain",
+      "group_index": 3,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        49,
+        54,
+        116,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_04.png",
+      "source_cell": 19,
+      "source_row": 4,
+      "source_column": 4,
+      "path": "content/characters/police_officer/sprites/poses/po_light_pain_003.png",
+      "sha256": "ad5229a602b5edf49c6d24fc10c5b541700c7f14281c32e71cb18a273dd854b9",
+      "clips": [
+        "light_pain"
+      ],
+      "actions": [
+        "light_pain"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_light_pain_003.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "pain",
+        "frame_index": 2,
+        "phase": "presentation",
+        "body_box": [
+          49,
+          54,
+          67,
+          103,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_light_pain_004",
+      "group": "light_pain",
+      "group_index": 4,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        50,
+        61,
+        114,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_04.png",
+      "source_cell": 20,
+      "source_row": 4,
+      "source_column": 5,
+      "path": "content/characters/police_officer/sprites/poses/po_light_pain_004.png",
+      "sha256": "f592da8ee60bfd87b43c177988782856bac56283fd23fdaa701ed817964ea096",
+      "clips": [
+        "light_pain"
+      ],
+      "actions": [
+        "light_pain"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_light_pain_004.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "pain",
+        "frame_index": 3,
+        "phase": "presentation",
+        "body_box": [
+          50,
+          61,
+          64,
+          96,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_light_pain_005",
+      "group": "light_pain",
+      "group_index": 5,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        55,
+        41,
+        117,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_05.png",
+      "source_cell": 1,
+      "source_row": 1,
+      "source_column": 1,
+      "path": "content/characters/police_officer/sprites/poses/po_light_pain_005.png",
+      "sha256": "31efc223a096d14c06524455248b5ecd43b4d1ee1076e887371d2174fe4de401",
+      "clips": [
+        "light_pain"
+      ],
+      "actions": [
+        "light_pain"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_light_pain_005.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "pain",
+        "frame_index": 4,
+        "phase": "presentation",
+        "body_box": [
+          55,
+          41,
+          62,
+          116,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_heavy_pain_001",
+      "group": "heavy_pain",
+      "group_index": 1,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        47,
+        45,
+        116,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_05.png",
+      "source_cell": 2,
+      "source_row": 1,
+      "source_column": 2,
+      "path": "content/characters/police_officer/sprites/poses/po_heavy_pain_001.png",
+      "sha256": "839de8c15bb33374d6838c132e68bd565437df1cb02437d8f63a3de615255e2b",
+      "clips": [
+        "heavy_pain"
+      ],
+      "actions": [
+        "heavy_pain"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_heavy_pain_001.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "pain2",
+        "frame_index": 0,
+        "phase": "presentation",
+        "body_box": [
+          47,
+          45,
+          69,
+          112,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_heavy_pain_002",
+      "group": "heavy_pain",
+      "group_index": 2,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        53,
+        50,
+        115,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_05.png",
+      "source_cell": 3,
+      "source_row": 1,
+      "source_column": 3,
+      "path": "content/characters/police_officer/sprites/poses/po_heavy_pain_002.png",
+      "sha256": "40e736c141af1057767d53533022001021f46983f8b6639abb5e656d83f9fe55",
+      "clips": [
+        "heavy_pain"
+      ],
+      "actions": [
+        "heavy_pain"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_heavy_pain_002.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "pain2",
+        "frame_index": 1,
+        "phase": "presentation",
+        "body_box": [
+          53,
+          50,
+          62,
+          107,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_heavy_pain_003",
+      "group": "heavy_pain",
+      "group_index": 3,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        64,
+        74,
+        123,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_05.png",
+      "source_cell": 4,
+      "source_row": 1,
+      "source_column": 4,
+      "path": "content/characters/police_officer/sprites/poses/po_heavy_pain_003.png",
+      "sha256": "63046d6d915eb7328e1ce82ccdc526d2fcbccffde23f8a948f85842e817acf97",
+      "clips": [
+        "heavy_pain"
+      ],
+      "actions": [
+        "heavy_pain"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_heavy_pain_003.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "pain2",
+        "frame_index": 2,
+        "phase": "presentation",
+        "body_box": [
+          64,
+          74,
+          59,
+          83,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_heavy_pain_004",
+      "group": "heavy_pain",
+      "group_index": 4,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        70,
+        48,
+        143,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_05.png",
+      "source_cell": 5,
+      "source_row": 1,
+      "source_column": 5,
+      "path": "content/characters/police_officer/sprites/poses/po_heavy_pain_004.png",
+      "sha256": "34d4ae682354ab89f7bc4bec0eac7e1e3981480ef463c65d1133e16f80d0481d",
+      "clips": [
+        "heavy_pain"
+      ],
+      "actions": [
+        "heavy_pain"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_heavy_pain_004.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "pain2",
+        "frame_index": 3,
+        "phase": "presentation",
+        "body_box": [
+          70,
+          48,
+          73,
+          109,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_heavy_pain_005",
+      "group": "heavy_pain",
+      "group_index": 5,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        54,
+        88,
+        121,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_05.png",
+      "source_cell": 6,
+      "source_row": 2,
+      "source_column": 1,
+      "path": "content/characters/police_officer/sprites/poses/po_heavy_pain_005.png",
+      "sha256": "4241b7951b08c99c4d34b05c928860c0e6d6718def2c6d240272a75f7d0dac62",
+      "clips": [
+        "heavy_pain"
+      ],
+      "actions": [
+        "heavy_pain"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_heavy_pain_005.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "pain2",
+        "frame_index": 4,
+        "phase": "presentation",
+        "body_box": [
+          54,
+          88,
+          67,
+          69,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_heavy_pain_006",
+      "group": "heavy_pain",
+      "group_index": 6,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        37,
+        62,
+        116,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_05.png",
+      "source_cell": 7,
+      "source_row": 2,
+      "source_column": 2,
+      "path": "content/characters/police_officer/sprites/poses/po_heavy_pain_006.png",
+      "sha256": "cf1c8b536323b203e0bf5502a1d8175e71892071df80a26ae6fbf1fe6ead7c8e",
+      "clips": [
+        "heavy_pain"
+      ],
+      "actions": [
+        "heavy_pain"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_heavy_pain_006.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "pain2",
+        "frame_index": 5,
+        "phase": "presentation",
+        "body_box": [
+          37,
+          62,
+          79,
+          95,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_heavy_pain_007",
+      "group": "heavy_pain",
+      "group_index": 7,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        53,
+        88,
+        140,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_05.png",
+      "source_cell": 8,
+      "source_row": 2,
+      "source_column": 3,
+      "path": "content/characters/police_officer/sprites/poses/po_heavy_pain_007.png",
+      "sha256": "976db052ab54cc0104b4d50611b1422572ed75d1092a8515c7cf924c8a55f0bf",
+      "clips": [
+        "heavy_pain"
+      ],
+      "actions": [
+        "heavy_pain"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_heavy_pain_007.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "pain2",
+        "frame_index": 6,
+        "phase": "presentation",
+        "body_box": [
+          53,
+          88,
+          87,
+          69,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_knockdown_fall_001",
+      "group": "knockdown_fall",
+      "group_index": 1,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        40,
+        73,
+        126,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_05.png",
+      "source_cell": 9,
+      "source_row": 2,
+      "source_column": 4,
+      "path": "content/characters/police_officer/sprites/poses/po_knockdown_fall_001.png",
+      "sha256": "2eb86f3a129e71abeac5407f293c48020ba66a6b713cf718924dc2380d644aca",
+      "clips": [
+        "knockdown_fall"
+      ],
+      "actions": [
+        "knockdown_fall"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_knockdown_fall_001.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "fall",
+        "frame_index": 0,
+        "phase": "presentation",
+        "body_box": [
+          40,
+          73,
+          86,
+          84,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_knockdown_fall_002",
+      "group": "knockdown_fall",
+      "group_index": 2,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        84,
+        68,
+        156,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_05.png",
+      "source_cell": 10,
+      "source_row": 2,
+      "source_column": 5,
+      "path": "content/characters/police_officer/sprites/poses/po_knockdown_fall_002.png",
+      "sha256": "7579f86614e19189bb543fcdc5e9363d1a4555d293850501ce7cde39f2fbcb08",
+      "clips": [
+        "knockdown_fall"
+      ],
+      "actions": [
+        "knockdown_fall"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_knockdown_fall_002.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "fall",
+        "frame_index": 1,
+        "phase": "presentation",
+        "body_box": [
+          84,
+          68,
+          72,
+          89,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_knockdown_fall_003",
+      "group": "knockdown_fall",
+      "group_index": 3,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        58,
+        79,
+        153,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_05.png",
+      "source_cell": 11,
+      "source_row": 3,
+      "source_column": 1,
+      "path": "content/characters/police_officer/sprites/poses/po_knockdown_fall_003.png",
+      "sha256": "d9d34e3f16e3c6ce0db02618645e455e153dd549787013b0d4fa2cee193279fc",
+      "clips": [
+        "knockdown_fall"
+      ],
+      "actions": [
+        "knockdown_fall"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_knockdown_fall_003.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "fall",
+        "frame_index": 2,
+        "phase": "presentation",
+        "body_box": [
+          58,
+          79,
+          95,
+          78,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_knockdown_fall_004",
+      "group": "knockdown_fall",
+      "group_index": 4,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        31,
+        64,
+        118,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_05.png",
+      "source_cell": 12,
+      "source_row": 3,
+      "source_column": 2,
+      "path": "content/characters/police_officer/sprites/poses/po_knockdown_fall_004.png",
+      "sha256": "0a265405d40a4372e2fe4112bfe3e5ac8ebab65a3055bd33b02ccb386af43d20",
+      "clips": [
+        "knockdown_fall"
+      ],
+      "actions": [
+        "knockdown_fall"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_knockdown_fall_004.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "fall",
+        "frame_index": 3,
+        "phase": "presentation",
+        "body_box": [
+          31,
+          64,
+          87,
+          93,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_knockdown_fall_005",
+      "group": "knockdown_fall",
+      "group_index": 5,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        74,
+        94,
+        165,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_05.png",
+      "source_cell": 13,
+      "source_row": 3,
+      "source_column": 3,
+      "path": "content/characters/police_officer/sprites/poses/po_knockdown_fall_005.png",
+      "sha256": "59f23830eb041b107548df74e515cf341632ec7f906e881e1d1b82649b0bbca8",
+      "clips": [
+        "knockdown_fall"
+      ],
+      "actions": [
+        "knockdown_fall"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_knockdown_fall_005.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "fall",
+        "frame_index": 4,
+        "phase": "presentation",
+        "body_box": [
+          74,
+          94,
+          91,
+          63,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_knockdown_fall_006",
+      "group": "knockdown_fall",
+      "group_index": 6,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        74,
+        111,
+        153,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_05.png",
+      "source_cell": 14,
+      "source_row": 3,
+      "source_column": 4,
+      "path": "content/characters/police_officer/sprites/poses/po_knockdown_fall_006.png",
+      "sha256": "2c50d5a5bfe179e428aaf5acecd4c3fb74112e1cd2120d62c418e7af09b1220b",
+      "clips": [
+        "knockdown_fall"
+      ],
+      "actions": [
+        "knockdown_fall"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_knockdown_fall_006.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "fall",
+        "frame_index": 5,
+        "phase": "presentation",
+        "body_box": [
+          74,
+          111,
+          79,
+          46,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_knockdown_fall_007",
+      "group": "knockdown_fall",
+      "group_index": 7,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        69,
+        92,
+        161,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_05.png",
+      "source_cell": 15,
+      "source_row": 3,
+      "source_column": 5,
+      "path": "content/characters/police_officer/sprites/poses/po_knockdown_fall_007.png",
+      "sha256": "4b0def430b244d45b878b0367cce512470474c40e530430a77dba42bda8bef29",
+      "clips": [
+        "knockdown_fall"
+      ],
+      "actions": [
+        "knockdown_fall"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_knockdown_fall_007.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "fall",
+        "frame_index": 6,
+        "phase": "presentation",
+        "body_box": [
+          69,
+          92,
+          92,
+          65,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_knockdown_fall_008",
+      "group": "knockdown_fall",
+      "group_index": 8,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        34,
+        109,
+        134,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_05.png",
+      "source_cell": 16,
+      "source_row": 4,
+      "source_column": 1,
+      "path": "content/characters/police_officer/sprites/poses/po_knockdown_fall_008.png",
+      "sha256": "07c418ede62aed2e3dc0263032b271a671915f8b1473019dd813dd7670ffaeaf",
+      "clips": [
+        "knockdown_fall"
+      ],
+      "actions": [
+        "knockdown_fall"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_knockdown_fall_008.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "fall",
+        "frame_index": 7,
+        "phase": "presentation",
+        "body_box": [
+          34,
+          109,
+          100,
+          48,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_down_001",
+      "group": "down",
+      "group_index": 1,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        16,
+        122,
+        114,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_05.png",
+      "source_cell": 17,
+      "source_row": 4,
+      "source_column": 2,
+      "path": "content/characters/police_officer/sprites/poses/po_down_001.png",
+      "sha256": "5b91b88c69dac94e62be36c97a783e92725f05c9c6932c10eaf62300004329fe",
+      "clips": [
+        "down"
+      ],
+      "actions": [
+        "down"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_down_001.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "fall",
+        "frame_index": 8,
+        "phase": "presentation",
+        "body_box": [
+          16,
+          122,
+          98,
+          35,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_down_002",
+      "group": "down",
+      "group_index": 2,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        58,
+        109,
+        158,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_05.png",
+      "source_cell": 18,
+      "source_row": 4,
+      "source_column": 3,
+      "path": "content/characters/police_officer/sprites/poses/po_down_002.png",
+      "sha256": "a94f026815928d05f2e778433615a7c09ab2cafd414aeba80ab1364b9b826500",
+      "clips": [
+        "down"
+      ],
+      "actions": [
+        "down"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_down_002.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "fall",
+        "frame_index": 9,
+        "phase": "presentation",
+        "body_box": [
+          58,
+          109,
+          100,
+          48,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_down_003",
+      "group": "down",
+      "group_index": 3,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        64,
+        116,
+        139,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_05.png",
+      "source_cell": 19,
+      "source_row": 4,
+      "source_column": 4,
+      "path": "content/characters/police_officer/sprites/poses/po_down_003.png",
+      "sha256": "d5bc369f8f75077012938f85fa27bf8d5b97b036dfbf8da20f31efe6706df3b1",
+      "clips": [
+        "down"
+      ],
+      "actions": [
+        "down"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_down_003.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "fall",
+        "frame_index": 10,
+        "phase": "presentation",
+        "body_box": [
+          64,
+          116,
+          75,
+          41,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_down_004",
+      "group": "down",
+      "group_index": 4,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        21,
+        127,
+        137,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_05.png",
+      "source_cell": 20,
+      "source_row": 4,
+      "source_column": 5,
+      "path": "content/characters/police_officer/sprites/poses/po_down_004.png",
+      "sha256": "64fa340a98015fab73f6a581e7a5b2f1185c94a8f8c679558f1b3cb662d3353d",
+      "clips": [
+        "down"
+      ],
+      "actions": [
+        "down"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_down_004.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "fall",
+        "frame_index": 11,
+        "phase": "presentation",
+        "body_box": [
+          21,
+          127,
+          116,
+          30,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_down_005",
+      "group": "down",
+      "group_index": 5,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        29,
+        111,
+        127,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_06.png",
+      "source_cell": 1,
+      "source_row": 1,
+      "source_column": 1,
+      "path": "content/characters/police_officer/sprites/poses/po_down_005.png",
+      "sha256": "9eb5dbdc802b4d2db4b405b31ec9f1cc048c85c7b9abe06dc0a0bf8e1a68a0c9",
+      "clips": [
+        "down"
+      ],
+      "actions": [
+        "down"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_down_005.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "fall",
+        "frame_index": 12,
+        "phase": "presentation",
+        "body_box": [
+          29,
+          111,
+          98,
+          46,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_down_006",
+      "group": "down",
+      "group_index": 6,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        58,
+        109,
+        126,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_06.png",
+      "source_cell": 2,
+      "source_row": 1,
+      "source_column": 2,
+      "path": "content/characters/police_officer/sprites/poses/po_down_006.png",
+      "sha256": "18b66ae088a4fc9f6b2587312e9d66eb17f4d8d41f963583f76f63b452b2c186",
+      "clips": [
+        "down"
+      ],
+      "actions": [
+        "down"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_down_006.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "fall",
+        "frame_index": 13,
+        "phase": "presentation",
+        "body_box": [
+          58,
+          109,
+          68,
+          48,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_rise_001",
+      "group": "rise",
+      "group_index": 1,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        46,
+        90,
+        133,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_06.png",
+      "source_cell": 3,
+      "source_row": 1,
+      "source_column": 3,
+      "path": "content/characters/police_officer/sprites/poses/po_rise_001.png",
+      "sha256": "985ae3d346498c0476473f1e256f85bdc6001d7b37fbcc632f15fe9651bcf7df",
+      "clips": [
+        "rise"
+      ],
+      "actions": [
+        "rise"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_rise_001.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "rise",
+        "frame_index": 0,
+        "phase": "presentation",
+        "body_box": [
+          46,
+          90,
+          87,
+          67,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_rise_002",
+      "group": "rise",
+      "group_index": 2,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        55,
+        83,
+        120,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_06.png",
+      "source_cell": 4,
+      "source_row": 1,
+      "source_column": 4,
+      "path": "content/characters/police_officer/sprites/poses/po_rise_002.png",
+      "sha256": "6dee4d2b5538a94a2a88a3fc8c6935b911ee68fc5e5c47f06f0f0d6a4808e21f",
+      "clips": [
+        "rise"
+      ],
+      "actions": [
+        "rise"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_rise_002.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "rise",
+        "frame_index": 1,
+        "phase": "presentation",
+        "body_box": [
+          55,
+          83,
+          65,
+          74,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_rise_003",
+      "group": "rise",
+      "group_index": 3,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        32,
+        96,
+        112,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_06.png",
+      "source_cell": 5,
+      "source_row": 1,
+      "source_column": 5,
+      "path": "content/characters/police_officer/sprites/poses/po_rise_003.png",
+      "sha256": "b97390fb9d2f88e87112c0ca91686fbb72befb752aeff6916cc10ad262e4c38f",
+      "clips": [
+        "rise"
+      ],
+      "actions": [
+        "rise"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_rise_003.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "rise",
+        "frame_index": 2,
+        "phase": "presentation",
+        "body_box": [
+          32,
+          96,
+          80,
+          61,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_rise_004",
+      "group": "rise",
+      "group_index": 4,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        52,
+        81,
+        118,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_06.png",
+      "source_cell": 6,
+      "source_row": 2,
+      "source_column": 1,
+      "path": "content/characters/police_officer/sprites/poses/po_rise_004.png",
+      "sha256": "a2e31de38fdd4fc6deac74b58ab0ea1081efe545d903d734ad3a969ddcd77173",
+      "clips": [
+        "rise"
+      ],
+      "actions": [
+        "rise"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_rise_004.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "rise",
+        "frame_index": 3,
+        "phase": "presentation",
+        "body_box": [
+          52,
+          81,
+          66,
+          76,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_rise_005",
+      "group": "rise",
+      "group_index": 5,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        64,
+        94,
+        137,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_06.png",
+      "source_cell": 7,
+      "source_row": 2,
+      "source_column": 2,
+      "path": "content/characters/police_officer/sprites/poses/po_rise_005.png",
+      "sha256": "733ae97874b64c6cee2f8cdc3f81a1ddcc73a613ad5394cd50802aa862ed76cb",
+      "clips": [
+        "rise"
+      ],
+      "actions": [
+        "rise"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_rise_005.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "rise",
+        "frame_index": 4,
+        "phase": "presentation",
+        "body_box": [
+          64,
+          94,
+          73,
+          63,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_rise_006",
+      "group": "rise",
+      "group_index": 6,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        62,
+        74,
+        128,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_06.png",
+      "source_cell": 8,
+      "source_row": 2,
+      "source_column": 3,
+      "path": "content/characters/police_officer/sprites/poses/po_rise_006.png",
+      "sha256": "f2ce8f72369421540c7bc9831e27bcc174c180eb2a317ef98bb2aa9a584351fb",
+      "clips": [
+        "rise"
+      ],
+      "actions": [
+        "rise"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_rise_006.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "rise",
+        "frame_index": 5,
+        "phase": "presentation",
+        "body_box": [
+          62,
+          74,
+          66,
+          83,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_rise_007",
+      "group": "rise",
+      "group_index": 7,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        55,
+        63,
+        126,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_06.png",
+      "source_cell": 9,
+      "source_row": 2,
+      "source_column": 4,
+      "path": "content/characters/police_officer/sprites/poses/po_rise_007.png",
+      "sha256": "dd2eaa6b63435b5a9e620ea02bf51c5f2ba46008013b65c78f977bb9b3542e86",
+      "clips": [
+        "rise"
+      ],
+      "actions": [
+        "rise"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_rise_007.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "rise",
+        "frame_index": 6,
+        "phase": "presentation",
+        "body_box": [
+          55,
+          63,
+          71,
+          94,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_rise_008",
+      "group": "rise",
+      "group_index": 8,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        58,
+        55,
+        129,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_06.png",
+      "source_cell": 10,
+      "source_row": 2,
+      "source_column": 5,
+      "path": "content/characters/police_officer/sprites/poses/po_rise_008.png",
+      "sha256": "967c19fc4932e6fb128fa6f8528d6eefa81f0cc4b02e62876d3cedf1a44d1f18",
+      "clips": [
+        "rise"
+      ],
+      "actions": [
+        "rise"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_rise_008.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "rise",
+        "frame_index": 7,
+        "phase": "presentation",
+        "body_box": [
+          58,
+          55,
+          71,
+          102,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_death_001",
+      "group": "death",
+      "group_index": 1,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        60,
+        56,
+        140,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_06.png",
+      "source_cell": 11,
+      "source_row": 3,
+      "source_column": 1,
+      "path": "content/characters/police_officer/sprites/poses/po_death_001.png",
+      "sha256": "0dee98f7dce26ea2530474e61c03ae3aa0a77529f1c0451f5998926c931cdd5e",
+      "clips": [
+        "death"
+      ],
+      "actions": [
+        "death"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_death_001.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "death",
+        "frame_index": 0,
+        "phase": "presentation",
+        "body_box": [
+          60,
+          56,
+          80,
+          101,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_death_002",
+      "group": "death",
+      "group_index": 2,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        60,
+        83,
+        148,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_06.png",
+      "source_cell": 12,
+      "source_row": 3,
+      "source_column": 2,
+      "path": "content/characters/police_officer/sprites/poses/po_death_002.png",
+      "sha256": "9e23b2ccd746f0c5073f880cdfca294a471b671da460fa35e02387b5b5e14257",
+      "clips": [
+        "death"
+      ],
+      "actions": [
+        "death"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_death_002.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "death",
+        "frame_index": 1,
+        "phase": "presentation",
+        "body_box": [
+          60,
+          83,
+          88,
+          74,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_death_003",
+      "group": "death",
+      "group_index": 3,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        70,
+        84,
+        142,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_06.png",
+      "source_cell": 13,
+      "source_row": 3,
+      "source_column": 3,
+      "path": "content/characters/police_officer/sprites/poses/po_death_003.png",
+      "sha256": "3f886cb2a3f4489b70375a4be9d98758212d6a91a37033d218e2b85597c8b929",
+      "clips": [
+        "death"
+      ],
+      "actions": [
+        "death"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_death_003.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "death",
+        "frame_index": 2,
+        "phase": "presentation",
+        "body_box": [
+          70,
+          84,
+          72,
+          73,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_death_004",
+      "group": "death",
+      "group_index": 4,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        59,
+        95,
+        138,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_06.png",
+      "source_cell": 14,
+      "source_row": 3,
+      "source_column": 4,
+      "path": "content/characters/police_officer/sprites/poses/po_death_004.png",
+      "sha256": "4cfe6951817101aa3472520292da2bf59722c43d1fd51b700cd0952b16d99fa1",
+      "clips": [
+        "death"
+      ],
+      "actions": [
+        "death"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_death_004.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "death",
+        "frame_index": 3,
+        "phase": "presentation",
+        "body_box": [
+          59,
+          95,
+          79,
+          62,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_death_005",
+      "group": "death",
+      "group_index": 5,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        56,
+        110,
+        150,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_06.png",
+      "source_cell": 15,
+      "source_row": 3,
+      "source_column": 5,
+      "path": "content/characters/police_officer/sprites/poses/po_death_005.png",
+      "sha256": "b8f6bbdb94a0f72275f3cd1673be32a9b4b53c8ae98085cad4fd65f0014a3aa9",
+      "clips": [
+        "death"
+      ],
+      "actions": [
+        "death"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_death_005.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "death",
+        "frame_index": 4,
+        "phase": "presentation",
+        "body_box": [
+          56,
+          110,
+          94,
+          47,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_death_006",
+      "group": "death",
+      "group_index": 6,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        30,
+        118,
+        135,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_06.png",
+      "source_cell": 16,
+      "source_row": 4,
+      "source_column": 1,
+      "path": "content/characters/police_officer/sprites/poses/po_death_006.png",
+      "sha256": "02e772cf50ad776a88ef8a7c4e2deaa8db852d2603811aa0d16b7395e2c826c1",
+      "clips": [
+        "death"
+      ],
+      "actions": [
+        "death"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_death_006.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "death",
+        "frame_index": 5,
+        "phase": "presentation",
+        "body_box": [
+          30,
+          118,
+          105,
+          39,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_death_007",
+      "group": "death",
+      "group_index": 7,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        12,
+        118,
+        109,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_06.png",
+      "source_cell": 17,
+      "source_row": 4,
+      "source_column": 2,
+      "path": "content/characters/police_officer/sprites/poses/po_death_007.png",
+      "sha256": "2b29d099b083bd717d9fbfb9a44af425d4d74e19b11c1e277078a5e428ae8bdc",
+      "clips": [
+        "death"
+      ],
+      "actions": [
+        "death"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_death_007.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "death",
+        "frame_index": 6,
+        "phase": "presentation",
+        "body_box": [
+          12,
+          118,
+          97,
+          39,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_death_008",
+      "group": "death",
+      "group_index": 8,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        43,
+        116,
+        129,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_06.png",
+      "source_cell": 18,
+      "source_row": 4,
+      "source_column": 3,
+      "path": "content/characters/police_officer/sprites/poses/po_death_008.png",
+      "sha256": "0bad1ed3f909fff7b8b980ec7c0177ec6b9e534424a3e87b627d90a8fae2b901",
+      "clips": [
+        "death"
+      ],
+      "actions": [
+        "death"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_death_008.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "death",
+        "frame_index": 7,
+        "phase": "presentation",
+        "body_box": [
+          43,
+          116,
+          86,
+          41,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_death_009",
+      "group": "death",
+      "group_index": 9,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        33,
+        126,
+        126,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_06.png",
+      "source_cell": 19,
+      "source_row": 4,
+      "source_column": 4,
+      "path": "content/characters/police_officer/sprites/poses/po_death_009.png",
+      "sha256": "6e0e853713b06ca945424a47d3ed649bb2dccb62dd1ba1e972271092898b536a",
+      "clips": [
+        "death"
+      ],
+      "actions": [
+        "death"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_death_009.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "death",
+        "frame_index": 8,
+        "phase": "presentation",
+        "body_box": [
+          33,
+          126,
+          93,
+          31,
+          14
+        ],
+        "attack_box": null
+      }
+    },
+    {
+      "id": "po_death_010",
+      "group": "death",
+      "group_index": 10,
+      "approved": true,
+      "root": [
+        96,
+        156
+      ],
+      "body_bounds": [
+        16,
+        127,
+        128,
+        157
+      ],
+      "source_sheet": "content/characters/police_officer/art_source/production/police_officer_pose_sheet_06.png",
+      "source_cell": 20,
+      "source_row": 4,
+      "source_column": 5,
+      "path": "content/characters/police_officer/sprites/poses/po_death_010.png",
+      "sha256": "68bda5cda811885fd04ce832c8cffe626658e2c026e603632e3e144e69a29153",
+      "clips": [
+        "death"
+      ],
+      "actions": [
+        "death"
+      ],
+      "generated_path": "openbor/data/chars/police_officer/sprites/po_death_010.png",
+      "runtime_reachable": true,
+      "gameplay_evidence": [],
+      "runtime": {
+        "model_animation": "death",
+        "frame_index": 9,
+        "phase": "presentation",
+        "body_box": [
+          16,
+          127,
+          112,
+          30,
+          14
+        ],
+        "attack_box": null
+      }
+    }
+  ],
+  "clips": {
+    "spawn": {
+      "pose_ids": [
+        "po_spawn_entry_001",
+        "po_spawn_entry_002",
+        "po_spawn_entry_003",
+        "po_spawn_entry_004",
+        "po_spawn_entry_005"
+      ],
+      "action_type": "spawn",
+      "trigger": "level spawn",
+      "native_animation": "SPAWN"
+    },
+    "idle": {
+      "pose_ids": [
+        "po_idle_001",
+        "po_idle_002",
+        "po_idle_003",
+        "po_idle_004",
+        "po_idle_005",
+        "po_idle_006",
+        "po_idle_007",
+        "po_idle_008"
+      ],
+      "action_type": "idle",
+      "trigger": "no active AI action",
+      "native_animation": "IDLE"
+    },
+    "alert_command": {
+      "pose_ids": [
+        "po_alert_command_001",
+        "po_alert_command_002",
+        "po_alert_command_003",
+        "po_alert_command_004",
+        "po_alert_command_005",
+        "po_alert_command_006"
+      ],
+      "action_type": "transition",
+      "trigger": "first aggro or authored level event",
+      "native_animation": "controller range in IDLE"
+    },
+    "walk_start": {
+      "pose_ids": [
+        "po_walk_start_001",
+        "po_walk_start_002",
+        "po_walk_start_003",
+        "po_walk_start_004"
+      ],
+      "action_type": "transition",
+      "trigger": "AI chase begins and displacement succeeds",
+      "native_animation": "controller range in WALK"
+    },
+    "walk_loop": {
+      "pose_ids": [
+        "po_walk_loop_001",
+        "po_walk_loop_002",
+        "po_walk_loop_003",
+        "po_walk_loop_004",
+        "po_walk_loop_005",
+        "po_walk_loop_006",
+        "po_walk_loop_007",
+        "po_walk_loop_008",
+        "po_walk_loop_009",
+        "po_walk_loop_010",
+        "po_walk_loop_011",
+        "po_walk_loop_012"
+      ],
+      "action_type": "walk",
+      "trigger": "AI chase remains active",
+      "native_animation": "WALK"
+    },
+    "walk_stop": {
+      "pose_ids": [
+        "po_walk_stop_001",
+        "po_walk_stop_002",
+        "po_walk_stop_003",
+        "po_walk_stop_004"
+      ],
+      "action_type": "transition",
+      "trigger": "attack range reached or chase stops",
+      "native_animation": "controller range in WALK"
+    },
+    "turn_pivot": {
+      "pose_ids": [
+        "po_turn_pivot_001",
+        "po_turn_pivot_002",
+        "po_turn_pivot_003",
+        "po_turn_pivot_004"
+      ],
+      "action_type": "transition",
+      "trigger": "target crosses facing",
+      "native_animation": "TURN"
+    },
+    "baton_jab": {
+      "pose_ids": [
+        "po_baton_jab_001",
+        "po_baton_jab_002",
+        "po_baton_jab_003",
+        "po_baton_jab_004",
+        "po_baton_jab_005",
+        "po_baton_jab_006",
+        "po_baton_jab_007",
+        "po_baton_jab_008"
+      ],
+      "action_type": "light_attack",
+      "trigger": "close-range AI attack choice A with token",
+      "native_animation": "ATTACK1"
+    },
+    "baton_backhand": {
+      "pose_ids": [
+        "po_baton_backhand_001",
+        "po_baton_backhand_002",
+        "po_baton_backhand_003",
+        "po_baton_backhand_004",
+        "po_baton_backhand_005",
+        "po_baton_backhand_006",
+        "po_baton_backhand_007",
+        "po_baton_backhand_008"
+      ],
+      "action_type": "light_attack",
+      "trigger": "close-range AI attack choice B with token",
+      "native_animation": "ATTACK2"
+    },
+    "baton_overhead": {
+      "pose_ids": [
+        "po_baton_overhead_001",
+        "po_baton_overhead_002",
+        "po_baton_overhead_003",
+        "po_baton_overhead_004",
+        "po_baton_overhead_005",
+        "po_baton_overhead_006",
+        "po_baton_overhead_007",
+        "po_baton_overhead_008",
+        "po_baton_overhead_009",
+        "po_baton_overhead_010"
+      ],
+      "action_type": "heavy_attack",
+      "trigger": "telegraphed heavy AI choice with token",
+      "native_animation": "ATTACK3"
+    },
+    "block": {
+      "pose_ids": [
+        "po_block_001",
+        "po_block_002",
+        "po_block_003",
+        "po_block_004"
+      ],
+      "action_type": "block",
+      "trigger": "incoming attack windup inside guard range and block cooldown clear",
+      "native_animation": "BLOCK"
+    },
+    "block_impact": {
+      "pose_ids": [
+        "po_block_impact_001",
+        "po_block_impact_002",
+        "po_block_impact_003"
+      ],
+      "action_type": "block_impact",
+      "trigger": "confirmed blocked hit",
+      "native_animation": "BLOCKPAIN"
+    },
+    "light_pain": {
+      "pose_ids": [
+        "po_light_pain_001",
+        "po_light_pain_002",
+        "po_light_pain_003",
+        "po_light_pain_004",
+        "po_light_pain_005"
+      ],
+      "action_type": "light_pain",
+      "trigger": "non-knockdown damage",
+      "native_animation": "PAIN"
+    },
+    "heavy_pain": {
+      "pose_ids": [
+        "po_heavy_pain_001",
+        "po_heavy_pain_002",
+        "po_heavy_pain_003",
+        "po_heavy_pain_004",
+        "po_heavy_pain_005",
+        "po_heavy_pain_006",
+        "po_heavy_pain_007"
+      ],
+      "action_type": "heavy_pain",
+      "trigger": "high-stun damage without knockdown",
+      "native_animation": "PAIN2"
+    },
+    "knockdown_fall": {
+      "pose_ids": [
+        "po_knockdown_fall_001",
+        "po_knockdown_fall_002",
+        "po_knockdown_fall_003",
+        "po_knockdown_fall_004",
+        "po_knockdown_fall_005",
+        "po_knockdown_fall_006",
+        "po_knockdown_fall_007",
+        "po_knockdown_fall_008"
+      ],
+      "action_type": "knockdown",
+      "trigger": "knockdown damage",
+      "native_animation": "FALL"
+    },
+    "down": {
+      "pose_ids": [
+        "po_down_001",
+        "po_down_002",
+        "po_down_003",
+        "po_down_004",
+        "po_down_005",
+        "po_down_006"
+      ],
+      "action_type": "down",
+      "trigger": "fall completes with health above zero",
+      "native_animation": "engine down state"
+    },
+    "rise": {
+      "pose_ids": [
+        "po_rise_001",
+        "po_rise_002",
+        "po_rise_003",
+        "po_rise_004",
+        "po_rise_005",
+        "po_rise_006",
+        "po_rise_007",
+        "po_rise_008"
+      ],
+      "action_type": "rise",
+      "trigger": "down timer expires with health above zero",
+      "native_animation": "RISE"
+    },
+    "death": {
+      "pose_ids": [
+        "po_death_001",
+        "po_death_002",
+        "po_death_003",
+        "po_death_004",
+        "po_death_005",
+        "po_death_006",
+        "po_death_007",
+        "po_death_008",
+        "po_death_009",
+        "po_death_010"
+      ],
+      "action_type": "death",
+      "trigger": "health reaches zero",
+      "native_animation": "DEATH"
+    }
+  },
+  "near_duplicate_reviews": [],
+  "review_contact_sheet": "content/characters/police_officer/sprites/review/police_officer_pose_contact_sheet.png",
+  "runtime": {
+    "build": "OpenBOR 4.0 Build 7949",
+    "model": "openbor/data/chars/police_officer/police_officer.txt",
+    "manifest": "openbor/data/chars/police_officer/police_officer_openbor_manifest.json",
+    "model_sha256": "b7b2bdd2fcd6956edd589a166a2a891485e5c0b33ff13aa77a7045d0d3fdf651",
+    "controller": "data/scripts/police_officer_ai.c",
+    "controller_sha256": "2d456eac84ef95734fd4e5138aa50faf4a6188308c622ec18d5722a88413d5f5",
+    "animation_owner": "thinkscript",
+    "unique_referenced_pose_count": 120,
+    "unique_runtime_reachable_pose_count": 120,
+    "qa_request_global": "fof2_qa_po_request",
+    "qa_request_range": [
+      1,
+      18
+    ],
+    "pose_log_prefix": "[FOF2_POSE] ",
+    "direct_pose_request_global": "fof2_qa_po_pose",
+    "direct_pose_entity_global": "fof2_qa_po_entity",
+    "direct_pose_request_range": [
+      0,
+      119
+    ],
+    "gameplay_evidence": []
+  }
+}

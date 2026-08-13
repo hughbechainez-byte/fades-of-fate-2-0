@@ -1,0 +1,1992 @@
+{
+  "schema_version": 1,
+  "entity": "black_dave",
+  "trigger": "fof2_qa_dave_enabled == 1 or Build 7949 input playback mode",
+  "simulation_hz": 60,
+  "hold_ticks_per_pose": 12,
+  "request_count": 220,
+  "duration_ticks": 2640,
+  "log_contract": "one literal one-argument [FOF2_POSE] <pose_id> line per request",
+  "requests": [
+    {
+      "request": 0,
+      "pose_id": "bd_entry_respawn_001",
+      "animation": "spawn",
+      "animation_constant": "ANI_SPAWN",
+      "frame": 0,
+      "start_tick": 0,
+      "hold_ticks": 12
+    },
+    {
+      "request": 1,
+      "pose_id": "bd_entry_respawn_002",
+      "animation": "spawn",
+      "animation_constant": "ANI_SPAWN",
+      "frame": 1,
+      "start_tick": 12,
+      "hold_ticks": 12
+    },
+    {
+      "request": 2,
+      "pose_id": "bd_entry_respawn_003",
+      "animation": "spawn",
+      "animation_constant": "ANI_SPAWN",
+      "frame": 2,
+      "start_tick": 24,
+      "hold_ticks": 12
+    },
+    {
+      "request": 3,
+      "pose_id": "bd_entry_respawn_004",
+      "animation": "spawn",
+      "animation_constant": "ANI_SPAWN",
+      "frame": 3,
+      "start_tick": 36,
+      "hold_ticks": 12
+    },
+    {
+      "request": 4,
+      "pose_id": "bd_entry_respawn_005",
+      "animation": "spawn",
+      "animation_constant": "ANI_SPAWN",
+      "frame": 4,
+      "start_tick": 48,
+      "hold_ticks": 12
+    },
+    {
+      "request": 5,
+      "pose_id": "bd_entry_respawn_006",
+      "animation": "spawn",
+      "animation_constant": "ANI_SPAWN",
+      "frame": 5,
+      "start_tick": 60,
+      "hold_ticks": 12
+    },
+    {
+      "request": 6,
+      "pose_id": "bd_idle_001",
+      "animation": "idle",
+      "animation_constant": "ANI_IDLE",
+      "frame": 0,
+      "start_tick": 72,
+      "hold_ticks": 12
+    },
+    {
+      "request": 7,
+      "pose_id": "bd_idle_002",
+      "animation": "idle",
+      "animation_constant": "ANI_IDLE",
+      "frame": 1,
+      "start_tick": 84,
+      "hold_ticks": 12
+    },
+    {
+      "request": 8,
+      "pose_id": "bd_idle_003",
+      "animation": "idle",
+      "animation_constant": "ANI_IDLE",
+      "frame": 2,
+      "start_tick": 96,
+      "hold_ticks": 12
+    },
+    {
+      "request": 9,
+      "pose_id": "bd_idle_004",
+      "animation": "idle",
+      "animation_constant": "ANI_IDLE",
+      "frame": 3,
+      "start_tick": 108,
+      "hold_ticks": 12
+    },
+    {
+      "request": 10,
+      "pose_id": "bd_idle_005",
+      "animation": "idle",
+      "animation_constant": "ANI_IDLE",
+      "frame": 4,
+      "start_tick": 120,
+      "hold_ticks": 12
+    },
+    {
+      "request": 11,
+      "pose_id": "bd_idle_006",
+      "animation": "idle",
+      "animation_constant": "ANI_IDLE",
+      "frame": 5,
+      "start_tick": 132,
+      "hold_ticks": 12
+    },
+    {
+      "request": 12,
+      "pose_id": "bd_idle_007",
+      "animation": "idle",
+      "animation_constant": "ANI_IDLE",
+      "frame": 6,
+      "start_tick": 144,
+      "hold_ticks": 12
+    },
+    {
+      "request": 13,
+      "pose_id": "bd_idle_008",
+      "animation": "idle",
+      "animation_constant": "ANI_IDLE",
+      "frame": 7,
+      "start_tick": 156,
+      "hold_ticks": 12
+    },
+    {
+      "request": 14,
+      "pose_id": "bd_walk_start_001",
+      "animation": "walk",
+      "animation_constant": "ANI_WALK",
+      "frame": 0,
+      "start_tick": 168,
+      "hold_ticks": 12
+    },
+    {
+      "request": 15,
+      "pose_id": "bd_walk_start_002",
+      "animation": "walk",
+      "animation_constant": "ANI_WALK",
+      "frame": 1,
+      "start_tick": 180,
+      "hold_ticks": 12
+    },
+    {
+      "request": 16,
+      "pose_id": "bd_walk_start_003",
+      "animation": "walk",
+      "animation_constant": "ANI_WALK",
+      "frame": 2,
+      "start_tick": 192,
+      "hold_ticks": 12
+    },
+    {
+      "request": 17,
+      "pose_id": "bd_walk_start_004",
+      "animation": "walk",
+      "animation_constant": "ANI_WALK",
+      "frame": 3,
+      "start_tick": 204,
+      "hold_ticks": 12
+    },
+    {
+      "request": 18,
+      "pose_id": "bd_walk_loop_001",
+      "animation": "walk",
+      "animation_constant": "ANI_WALK",
+      "frame": 4,
+      "start_tick": 216,
+      "hold_ticks": 12
+    },
+    {
+      "request": 19,
+      "pose_id": "bd_walk_loop_002",
+      "animation": "walk",
+      "animation_constant": "ANI_WALK",
+      "frame": 5,
+      "start_tick": 228,
+      "hold_ticks": 12
+    },
+    {
+      "request": 20,
+      "pose_id": "bd_walk_loop_003",
+      "animation": "walk",
+      "animation_constant": "ANI_WALK",
+      "frame": 6,
+      "start_tick": 240,
+      "hold_ticks": 12
+    },
+    {
+      "request": 21,
+      "pose_id": "bd_walk_loop_004",
+      "animation": "walk",
+      "animation_constant": "ANI_WALK",
+      "frame": 7,
+      "start_tick": 252,
+      "hold_ticks": 12
+    },
+    {
+      "request": 22,
+      "pose_id": "bd_walk_loop_005",
+      "animation": "walk",
+      "animation_constant": "ANI_WALK",
+      "frame": 8,
+      "start_tick": 264,
+      "hold_ticks": 12
+    },
+    {
+      "request": 23,
+      "pose_id": "bd_walk_loop_006",
+      "animation": "walk",
+      "animation_constant": "ANI_WALK",
+      "frame": 9,
+      "start_tick": 276,
+      "hold_ticks": 12
+    },
+    {
+      "request": 24,
+      "pose_id": "bd_walk_loop_007",
+      "animation": "walk",
+      "animation_constant": "ANI_WALK",
+      "frame": 10,
+      "start_tick": 288,
+      "hold_ticks": 12
+    },
+    {
+      "request": 25,
+      "pose_id": "bd_walk_loop_008",
+      "animation": "walk",
+      "animation_constant": "ANI_WALK",
+      "frame": 11,
+      "start_tick": 300,
+      "hold_ticks": 12
+    },
+    {
+      "request": 26,
+      "pose_id": "bd_walk_loop_009",
+      "animation": "walk",
+      "animation_constant": "ANI_WALK",
+      "frame": 12,
+      "start_tick": 312,
+      "hold_ticks": 12
+    },
+    {
+      "request": 27,
+      "pose_id": "bd_walk_loop_010",
+      "animation": "walk",
+      "animation_constant": "ANI_WALK",
+      "frame": 13,
+      "start_tick": 324,
+      "hold_ticks": 12
+    },
+    {
+      "request": 28,
+      "pose_id": "bd_walk_loop_011",
+      "animation": "walk",
+      "animation_constant": "ANI_WALK",
+      "frame": 14,
+      "start_tick": 336,
+      "hold_ticks": 12
+    },
+    {
+      "request": 29,
+      "pose_id": "bd_walk_loop_012",
+      "animation": "walk",
+      "animation_constant": "ANI_WALK",
+      "frame": 15,
+      "start_tick": 348,
+      "hold_ticks": 12
+    },
+    {
+      "request": 30,
+      "pose_id": "bd_walk_stop_001",
+      "animation": "walk",
+      "animation_constant": "ANI_WALK",
+      "frame": 16,
+      "start_tick": 360,
+      "hold_ticks": 12
+    },
+    {
+      "request": 31,
+      "pose_id": "bd_walk_stop_002",
+      "animation": "walk",
+      "animation_constant": "ANI_WALK",
+      "frame": 17,
+      "start_tick": 372,
+      "hold_ticks": 12
+    },
+    {
+      "request": 32,
+      "pose_id": "bd_walk_stop_003",
+      "animation": "walk",
+      "animation_constant": "ANI_WALK",
+      "frame": 18,
+      "start_tick": 384,
+      "hold_ticks": 12
+    },
+    {
+      "request": 33,
+      "pose_id": "bd_walk_stop_004",
+      "animation": "walk",
+      "animation_constant": "ANI_WALK",
+      "frame": 19,
+      "start_tick": 396,
+      "hold_ticks": 12
+    },
+    {
+      "request": 34,
+      "pose_id": "bd_pivot_001",
+      "animation": "turn",
+      "animation_constant": "ANI_TURN",
+      "frame": 0,
+      "start_tick": 408,
+      "hold_ticks": 12
+    },
+    {
+      "request": 35,
+      "pose_id": "bd_pivot_002",
+      "animation": "turn",
+      "animation_constant": "ANI_TURN",
+      "frame": 1,
+      "start_tick": 420,
+      "hold_ticks": 12
+    },
+    {
+      "request": 36,
+      "pose_id": "bd_pivot_003",
+      "animation": "turn",
+      "animation_constant": "ANI_TURN",
+      "frame": 2,
+      "start_tick": 432,
+      "hold_ticks": 12
+    },
+    {
+      "request": 37,
+      "pose_id": "bd_pivot_004",
+      "animation": "turn",
+      "animation_constant": "ANI_TURN",
+      "frame": 3,
+      "start_tick": 444,
+      "hold_ticks": 12
+    },
+    {
+      "request": 38,
+      "pose_id": "bd_jump_family_001",
+      "animation": "jumpdelay",
+      "animation_constant": "ANI_JUMPDELAY",
+      "frame": 0,
+      "start_tick": 456,
+      "hold_ticks": 12
+    },
+    {
+      "request": 39,
+      "pose_id": "bd_jump_family_002",
+      "animation": "jumpdelay",
+      "animation_constant": "ANI_JUMPDELAY",
+      "frame": 1,
+      "start_tick": 468,
+      "hold_ticks": 12
+    },
+    {
+      "request": 40,
+      "pose_id": "bd_jump_family_003",
+      "animation": "jumpdelay",
+      "animation_constant": "ANI_JUMPDELAY",
+      "frame": 2,
+      "start_tick": 480,
+      "hold_ticks": 12
+    },
+    {
+      "request": 41,
+      "pose_id": "bd_jump_family_004",
+      "animation": "jumpdelay",
+      "animation_constant": "ANI_JUMPDELAY",
+      "frame": 3,
+      "start_tick": 492,
+      "hold_ticks": 12
+    },
+    {
+      "request": 42,
+      "pose_id": "bd_jump_family_005",
+      "animation": "jump",
+      "animation_constant": "ANI_JUMP",
+      "frame": 0,
+      "start_tick": 504,
+      "hold_ticks": 12
+    },
+    {
+      "request": 43,
+      "pose_id": "bd_jump_family_006",
+      "animation": "jump",
+      "animation_constant": "ANI_JUMP",
+      "frame": 1,
+      "start_tick": 516,
+      "hold_ticks": 12
+    },
+    {
+      "request": 44,
+      "pose_id": "bd_jump_family_007",
+      "animation": "jump",
+      "animation_constant": "ANI_JUMP",
+      "frame": 2,
+      "start_tick": 528,
+      "hold_ticks": 12
+    },
+    {
+      "request": 45,
+      "pose_id": "bd_jump_family_008",
+      "animation": "jump",
+      "animation_constant": "ANI_JUMP",
+      "frame": 3,
+      "start_tick": 540,
+      "hold_ticks": 12
+    },
+    {
+      "request": 46,
+      "pose_id": "bd_jump_family_009",
+      "animation": "jump",
+      "animation_constant": "ANI_JUMP",
+      "frame": 4,
+      "start_tick": 552,
+      "hold_ticks": 12
+    },
+    {
+      "request": 47,
+      "pose_id": "bd_jump_family_010",
+      "animation": "jump",
+      "animation_constant": "ANI_JUMP",
+      "frame": 5,
+      "start_tick": 564,
+      "hold_ticks": 12
+    },
+    {
+      "request": 48,
+      "pose_id": "bd_jump_family_011",
+      "animation": "jumpland",
+      "animation_constant": "ANI_JUMPLAND",
+      "frame": 0,
+      "start_tick": 576,
+      "hold_ticks": 12
+    },
+    {
+      "request": 49,
+      "pose_id": "bd_jump_family_012",
+      "animation": "jumpland",
+      "animation_constant": "ANI_JUMPLAND",
+      "frame": 1,
+      "start_tick": 588,
+      "hold_ticks": 12
+    },
+    {
+      "request": 50,
+      "pose_id": "bd_jump_family_013",
+      "animation": "jumpland",
+      "animation_constant": "ANI_JUMPLAND",
+      "frame": 2,
+      "start_tick": 600,
+      "hold_ticks": 12
+    },
+    {
+      "request": 51,
+      "pose_id": "bd_jump_family_014",
+      "animation": "jumpland",
+      "animation_constant": "ANI_JUMPLAND",
+      "frame": 3,
+      "start_tick": 612,
+      "hold_ticks": 12
+    },
+    {
+      "request": 52,
+      "pose_id": "bd_guard_001",
+      "animation": "block",
+      "animation_constant": "ANI_BLOCK",
+      "frame": 0,
+      "start_tick": 624,
+      "hold_ticks": 12
+    },
+    {
+      "request": 53,
+      "pose_id": "bd_guard_002",
+      "animation": "block",
+      "animation_constant": "ANI_BLOCK",
+      "frame": 1,
+      "start_tick": 636,
+      "hold_ticks": 12
+    },
+    {
+      "request": 54,
+      "pose_id": "bd_guard_003",
+      "animation": "block",
+      "animation_constant": "ANI_BLOCK",
+      "frame": 2,
+      "start_tick": 648,
+      "hold_ticks": 12
+    },
+    {
+      "request": 55,
+      "pose_id": "bd_guard_004",
+      "animation": "block",
+      "animation_constant": "ANI_BLOCK",
+      "frame": 3,
+      "start_tick": 660,
+      "hold_ticks": 12
+    },
+    {
+      "request": 56,
+      "pose_id": "bd_guard_005",
+      "animation": "block",
+      "animation_constant": "ANI_BLOCK",
+      "frame": 4,
+      "start_tick": 672,
+      "hold_ticks": 12
+    },
+    {
+      "request": 57,
+      "pose_id": "bd_guard_006",
+      "animation": "block",
+      "animation_constant": "ANI_BLOCK",
+      "frame": 5,
+      "start_tick": 684,
+      "hold_ticks": 12
+    },
+    {
+      "request": 58,
+      "pose_id": "bd_guard_007",
+      "animation": "blockpain",
+      "animation_constant": "ANI_BLOCKPAIN",
+      "frame": 0,
+      "start_tick": 696,
+      "hold_ticks": 12
+    },
+    {
+      "request": 59,
+      "pose_id": "bd_guard_008",
+      "animation": "blockpain",
+      "animation_constant": "ANI_BLOCKPAIN",
+      "frame": 1,
+      "start_tick": 708,
+      "hold_ticks": 12
+    },
+    {
+      "request": 60,
+      "pose_id": "bd_dodge_001",
+      "animation": "dodge",
+      "animation_constant": "ANI_DODGE",
+      "frame": 0,
+      "start_tick": 720,
+      "hold_ticks": 12
+    },
+    {
+      "request": 61,
+      "pose_id": "bd_dodge_002",
+      "animation": "dodge",
+      "animation_constant": "ANI_DODGE",
+      "frame": 1,
+      "start_tick": 732,
+      "hold_ticks": 12
+    },
+    {
+      "request": 62,
+      "pose_id": "bd_dodge_003",
+      "animation": "dodge",
+      "animation_constant": "ANI_DODGE",
+      "frame": 2,
+      "start_tick": 744,
+      "hold_ticks": 12
+    },
+    {
+      "request": 63,
+      "pose_id": "bd_dodge_004",
+      "animation": "dodge",
+      "animation_constant": "ANI_DODGE",
+      "frame": 3,
+      "start_tick": 756,
+      "hold_ticks": 12
+    },
+    {
+      "request": 64,
+      "pose_id": "bd_dodge_005",
+      "animation": "dodge",
+      "animation_constant": "ANI_DODGE",
+      "frame": 4,
+      "start_tick": 768,
+      "hold_ticks": 12
+    },
+    {
+      "request": 65,
+      "pose_id": "bd_dodge_006",
+      "animation": "dodge",
+      "animation_constant": "ANI_DODGE",
+      "frame": 5,
+      "start_tick": 780,
+      "hold_ticks": 12
+    },
+    {
+      "request": 66,
+      "pose_id": "bd_dodge_007",
+      "animation": "dodge",
+      "animation_constant": "ANI_DODGE",
+      "frame": 6,
+      "start_tick": 792,
+      "hold_ticks": 12
+    },
+    {
+      "request": 67,
+      "pose_id": "bd_dodge_008",
+      "animation": "dodge",
+      "animation_constant": "ANI_DODGE",
+      "frame": 7,
+      "start_tick": 804,
+      "hold_ticks": 12
+    },
+    {
+      "request": 68,
+      "pose_id": "bd_ranged_special_001",
+      "animation": "attackup",
+      "animation_constant": "ANI_ATTACKUP",
+      "frame": 0,
+      "start_tick": 816,
+      "hold_ticks": 12
+    },
+    {
+      "request": 69,
+      "pose_id": "bd_ranged_special_002",
+      "animation": "attackup",
+      "animation_constant": "ANI_ATTACKUP",
+      "frame": 1,
+      "start_tick": 828,
+      "hold_ticks": 12
+    },
+    {
+      "request": 70,
+      "pose_id": "bd_ranged_special_003",
+      "animation": "attackup",
+      "animation_constant": "ANI_ATTACKUP",
+      "frame": 2,
+      "start_tick": 840,
+      "hold_ticks": 12
+    },
+    {
+      "request": 71,
+      "pose_id": "bd_ranged_special_004",
+      "animation": "attackup",
+      "animation_constant": "ANI_ATTACKUP",
+      "frame": 3,
+      "start_tick": 852,
+      "hold_ticks": 12
+    },
+    {
+      "request": 72,
+      "pose_id": "bd_ranged_special_005",
+      "animation": "attackup",
+      "animation_constant": "ANI_ATTACKUP",
+      "frame": 4,
+      "start_tick": 864,
+      "hold_ticks": 12
+    },
+    {
+      "request": 73,
+      "pose_id": "bd_ranged_special_006",
+      "animation": "attackup",
+      "animation_constant": "ANI_ATTACKUP",
+      "frame": 5,
+      "start_tick": 876,
+      "hold_ticks": 12
+    },
+    {
+      "request": 74,
+      "pose_id": "bd_ranged_special_007",
+      "animation": "attackup",
+      "animation_constant": "ANI_ATTACKUP",
+      "frame": 6,
+      "start_tick": 888,
+      "hold_ticks": 12
+    },
+    {
+      "request": 75,
+      "pose_id": "bd_ranged_special_008",
+      "animation": "attackup",
+      "animation_constant": "ANI_ATTACKUP",
+      "frame": 7,
+      "start_tick": 900,
+      "hold_ticks": 12
+    },
+    {
+      "request": 76,
+      "pose_id": "bd_ranged_special_009",
+      "animation": "attackup",
+      "animation_constant": "ANI_ATTACKUP",
+      "frame": 8,
+      "start_tick": 912,
+      "hold_ticks": 12
+    },
+    {
+      "request": 77,
+      "pose_id": "bd_ranged_special_010",
+      "animation": "attackup",
+      "animation_constant": "ANI_ATTACKUP",
+      "frame": 9,
+      "start_tick": 924,
+      "hold_ticks": 12
+    },
+    {
+      "request": 78,
+      "pose_id": "bd_ranged_special_011",
+      "animation": "attackup",
+      "animation_constant": "ANI_ATTACKUP",
+      "frame": 10,
+      "start_tick": 936,
+      "hold_ticks": 12
+    },
+    {
+      "request": 79,
+      "pose_id": "bd_ranged_special_012",
+      "animation": "attackup",
+      "animation_constant": "ANI_ATTACKUP",
+      "frame": 11,
+      "start_tick": 948,
+      "hold_ticks": 12
+    },
+    {
+      "request": 80,
+      "pose_id": "bd_ranged_special_013",
+      "animation": "attackup",
+      "animation_constant": "ANI_ATTACKUP",
+      "frame": 12,
+      "start_tick": 960,
+      "hold_ticks": 12
+    },
+    {
+      "request": 81,
+      "pose_id": "bd_ranged_special_014",
+      "animation": "attackup",
+      "animation_constant": "ANI_ATTACKUP",
+      "frame": 13,
+      "start_tick": 972,
+      "hold_ticks": 12
+    },
+    {
+      "request": 82,
+      "pose_id": "bd_super_001",
+      "animation": "special",
+      "animation_constant": "ANI_SPECIAL",
+      "frame": 0,
+      "start_tick": 984,
+      "hold_ticks": 12
+    },
+    {
+      "request": 83,
+      "pose_id": "bd_super_002",
+      "animation": "special",
+      "animation_constant": "ANI_SPECIAL",
+      "frame": 1,
+      "start_tick": 996,
+      "hold_ticks": 12
+    },
+    {
+      "request": 84,
+      "pose_id": "bd_super_003",
+      "animation": "special",
+      "animation_constant": "ANI_SPECIAL",
+      "frame": 2,
+      "start_tick": 1008,
+      "hold_ticks": 12
+    },
+    {
+      "request": 85,
+      "pose_id": "bd_super_004",
+      "animation": "special",
+      "animation_constant": "ANI_SPECIAL",
+      "frame": 3,
+      "start_tick": 1020,
+      "hold_ticks": 12
+    },
+    {
+      "request": 86,
+      "pose_id": "bd_super_005",
+      "animation": "special",
+      "animation_constant": "ANI_SPECIAL",
+      "frame": 4,
+      "start_tick": 1032,
+      "hold_ticks": 12
+    },
+    {
+      "request": 87,
+      "pose_id": "bd_super_006",
+      "animation": "special",
+      "animation_constant": "ANI_SPECIAL",
+      "frame": 5,
+      "start_tick": 1044,
+      "hold_ticks": 12
+    },
+    {
+      "request": 88,
+      "pose_id": "bd_super_007",
+      "animation": "special",
+      "animation_constant": "ANI_SPECIAL",
+      "frame": 6,
+      "start_tick": 1056,
+      "hold_ticks": 12
+    },
+    {
+      "request": 89,
+      "pose_id": "bd_super_008",
+      "animation": "special",
+      "animation_constant": "ANI_SPECIAL",
+      "frame": 7,
+      "start_tick": 1068,
+      "hold_ticks": 12
+    },
+    {
+      "request": 90,
+      "pose_id": "bd_super_009",
+      "animation": "special",
+      "animation_constant": "ANI_SPECIAL",
+      "frame": 8,
+      "start_tick": 1080,
+      "hold_ticks": 12
+    },
+    {
+      "request": 91,
+      "pose_id": "bd_super_010",
+      "animation": "special",
+      "animation_constant": "ANI_SPECIAL",
+      "frame": 9,
+      "start_tick": 1092,
+      "hold_ticks": 12
+    },
+    {
+      "request": 92,
+      "pose_id": "bd_super_011",
+      "animation": "special",
+      "animation_constant": "ANI_SPECIAL",
+      "frame": 10,
+      "start_tick": 1104,
+      "hold_ticks": 12
+    },
+    {
+      "request": 93,
+      "pose_id": "bd_super_012",
+      "animation": "special",
+      "animation_constant": "ANI_SPECIAL",
+      "frame": 11,
+      "start_tick": 1116,
+      "hold_ticks": 12
+    },
+    {
+      "request": 94,
+      "pose_id": "bd_super_013",
+      "animation": "special",
+      "animation_constant": "ANI_SPECIAL",
+      "frame": 12,
+      "start_tick": 1128,
+      "hold_ticks": 12
+    },
+    {
+      "request": 95,
+      "pose_id": "bd_super_014",
+      "animation": "special",
+      "animation_constant": "ANI_SPECIAL",
+      "frame": 13,
+      "start_tick": 1140,
+      "hold_ticks": 12
+    },
+    {
+      "request": 96,
+      "pose_id": "bd_super_015",
+      "animation": "special",
+      "animation_constant": "ANI_SPECIAL",
+      "frame": 14,
+      "start_tick": 1152,
+      "hold_ticks": 12
+    },
+    {
+      "request": 97,
+      "pose_id": "bd_super_016",
+      "animation": "special",
+      "animation_constant": "ANI_SPECIAL",
+      "frame": 15,
+      "start_tick": 1164,
+      "hold_ticks": 12
+    },
+    {
+      "request": 98,
+      "pose_id": "bd_air_punch_001",
+      "animation": "jumpattack",
+      "animation_constant": "ANI_JUMPATTACK",
+      "frame": 0,
+      "start_tick": 1176,
+      "hold_ticks": 12
+    },
+    {
+      "request": 99,
+      "pose_id": "bd_air_punch_002",
+      "animation": "jumpattack",
+      "animation_constant": "ANI_JUMPATTACK",
+      "frame": 1,
+      "start_tick": 1188,
+      "hold_ticks": 12
+    },
+    {
+      "request": 100,
+      "pose_id": "bd_air_punch_003",
+      "animation": "jumpattack",
+      "animation_constant": "ANI_JUMPATTACK",
+      "frame": 2,
+      "start_tick": 1200,
+      "hold_ticks": 12
+    },
+    {
+      "request": 101,
+      "pose_id": "bd_air_punch_004",
+      "animation": "jumpattack",
+      "animation_constant": "ANI_JUMPATTACK",
+      "frame": 3,
+      "start_tick": 1212,
+      "hold_ticks": 12
+    },
+    {
+      "request": 102,
+      "pose_id": "bd_air_punch_005",
+      "animation": "jumpattack",
+      "animation_constant": "ANI_JUMPATTACK",
+      "frame": 4,
+      "start_tick": 1224,
+      "hold_ticks": 12
+    },
+    {
+      "request": 103,
+      "pose_id": "bd_air_punch_006",
+      "animation": "jumpattack",
+      "animation_constant": "ANI_JUMPATTACK",
+      "frame": 5,
+      "start_tick": 1236,
+      "hold_ticks": 12
+    },
+    {
+      "request": 104,
+      "pose_id": "bd_air_punch_007",
+      "animation": "jumpattack",
+      "animation_constant": "ANI_JUMPATTACK",
+      "frame": 6,
+      "start_tick": 1248,
+      "hold_ticks": 12
+    },
+    {
+      "request": 105,
+      "pose_id": "bd_air_punch_008",
+      "animation": "jumpattack",
+      "animation_constant": "ANI_JUMPATTACK",
+      "frame": 7,
+      "start_tick": 1260,
+      "hold_ticks": 12
+    },
+    {
+      "request": 106,
+      "pose_id": "bd_air_kick_001",
+      "animation": "jumpattack2",
+      "animation_constant": "ANI_JUMPATTACK2",
+      "frame": 0,
+      "start_tick": 1272,
+      "hold_ticks": 12
+    },
+    {
+      "request": 107,
+      "pose_id": "bd_air_kick_002",
+      "animation": "jumpattack2",
+      "animation_constant": "ANI_JUMPATTACK2",
+      "frame": 1,
+      "start_tick": 1284,
+      "hold_ticks": 12
+    },
+    {
+      "request": 108,
+      "pose_id": "bd_air_kick_003",
+      "animation": "jumpattack2",
+      "animation_constant": "ANI_JUMPATTACK2",
+      "frame": 2,
+      "start_tick": 1296,
+      "hold_ticks": 12
+    },
+    {
+      "request": 109,
+      "pose_id": "bd_air_kick_004",
+      "animation": "jumpattack2",
+      "animation_constant": "ANI_JUMPATTACK2",
+      "frame": 3,
+      "start_tick": 1308,
+      "hold_ticks": 12
+    },
+    {
+      "request": 110,
+      "pose_id": "bd_air_kick_005",
+      "animation": "jumpattack2",
+      "animation_constant": "ANI_JUMPATTACK2",
+      "frame": 4,
+      "start_tick": 1320,
+      "hold_ticks": 12
+    },
+    {
+      "request": 111,
+      "pose_id": "bd_air_kick_006",
+      "animation": "jumpattack2",
+      "animation_constant": "ANI_JUMPATTACK2",
+      "frame": 5,
+      "start_tick": 1332,
+      "hold_ticks": 12
+    },
+    {
+      "request": 112,
+      "pose_id": "bd_air_kick_007",
+      "animation": "jumpattack2",
+      "animation_constant": "ANI_JUMPATTACK2",
+      "frame": 6,
+      "start_tick": 1344,
+      "hold_ticks": 12
+    },
+    {
+      "request": 113,
+      "pose_id": "bd_air_kick_008",
+      "animation": "jumpattack2",
+      "animation_constant": "ANI_JUMPATTACK2",
+      "frame": 7,
+      "start_tick": 1356,
+      "hold_ticks": 12
+    },
+    {
+      "request": 114,
+      "pose_id": "bd_light_pain_001",
+      "animation": "pain",
+      "animation_constant": "ANI_PAIN",
+      "frame": 0,
+      "start_tick": 1368,
+      "hold_ticks": 12
+    },
+    {
+      "request": 115,
+      "pose_id": "bd_light_pain_002",
+      "animation": "pain",
+      "animation_constant": "ANI_PAIN",
+      "frame": 1,
+      "start_tick": 1380,
+      "hold_ticks": 12
+    },
+    {
+      "request": 116,
+      "pose_id": "bd_light_pain_003",
+      "animation": "pain",
+      "animation_constant": "ANI_PAIN",
+      "frame": 2,
+      "start_tick": 1392,
+      "hold_ticks": 12
+    },
+    {
+      "request": 117,
+      "pose_id": "bd_light_pain_004",
+      "animation": "pain",
+      "animation_constant": "ANI_PAIN",
+      "frame": 3,
+      "start_tick": 1404,
+      "hold_ticks": 12
+    },
+    {
+      "request": 118,
+      "pose_id": "bd_light_pain_005",
+      "animation": "pain",
+      "animation_constant": "ANI_PAIN",
+      "frame": 4,
+      "start_tick": 1416,
+      "hold_ticks": 12
+    },
+    {
+      "request": 119,
+      "pose_id": "bd_heavy_pain_fall_001",
+      "animation": "fall",
+      "animation_constant": "ANI_FALL",
+      "frame": 0,
+      "start_tick": 1428,
+      "hold_ticks": 12
+    },
+    {
+      "request": 120,
+      "pose_id": "bd_heavy_pain_fall_002",
+      "animation": "fall",
+      "animation_constant": "ANI_FALL",
+      "frame": 1,
+      "start_tick": 1440,
+      "hold_ticks": 12
+    },
+    {
+      "request": 121,
+      "pose_id": "bd_heavy_pain_fall_003",
+      "animation": "fall",
+      "animation_constant": "ANI_FALL",
+      "frame": 2,
+      "start_tick": 1452,
+      "hold_ticks": 12
+    },
+    {
+      "request": 122,
+      "pose_id": "bd_heavy_pain_fall_004",
+      "animation": "fall",
+      "animation_constant": "ANI_FALL",
+      "frame": 3,
+      "start_tick": 1464,
+      "hold_ticks": 12
+    },
+    {
+      "request": 123,
+      "pose_id": "bd_heavy_pain_fall_005",
+      "animation": "fall",
+      "animation_constant": "ANI_FALL",
+      "frame": 4,
+      "start_tick": 1476,
+      "hold_ticks": 12
+    },
+    {
+      "request": 124,
+      "pose_id": "bd_heavy_pain_fall_006",
+      "animation": "fall",
+      "animation_constant": "ANI_FALL",
+      "frame": 5,
+      "start_tick": 1488,
+      "hold_ticks": 12
+    },
+    {
+      "request": 125,
+      "pose_id": "bd_heavy_pain_fall_007",
+      "animation": "fall",
+      "animation_constant": "ANI_FALL",
+      "frame": 6,
+      "start_tick": 1500,
+      "hold_ticks": 12
+    },
+    {
+      "request": 126,
+      "pose_id": "bd_heavy_pain_fall_008",
+      "animation": "fall",
+      "animation_constant": "ANI_FALL",
+      "frame": 7,
+      "start_tick": 1512,
+      "hold_ticks": 12
+    },
+    {
+      "request": 127,
+      "pose_id": "bd_down_001",
+      "animation": "fall",
+      "animation_constant": "ANI_FALL",
+      "frame": 8,
+      "start_tick": 1524,
+      "hold_ticks": 12
+    },
+    {
+      "request": 128,
+      "pose_id": "bd_down_002",
+      "animation": "fall",
+      "animation_constant": "ANI_FALL",
+      "frame": 9,
+      "start_tick": 1536,
+      "hold_ticks": 12
+    },
+    {
+      "request": 129,
+      "pose_id": "bd_down_003",
+      "animation": "fall",
+      "animation_constant": "ANI_FALL",
+      "frame": 10,
+      "start_tick": 1548,
+      "hold_ticks": 12
+    },
+    {
+      "request": 130,
+      "pose_id": "bd_down_004",
+      "animation": "fall",
+      "animation_constant": "ANI_FALL",
+      "frame": 11,
+      "start_tick": 1560,
+      "hold_ticks": 12
+    },
+    {
+      "request": 131,
+      "pose_id": "bd_down_005",
+      "animation": "fall",
+      "animation_constant": "ANI_FALL",
+      "frame": 12,
+      "start_tick": 1572,
+      "hold_ticks": 12
+    },
+    {
+      "request": 132,
+      "pose_id": "bd_down_006",
+      "animation": "fall",
+      "animation_constant": "ANI_FALL",
+      "frame": 13,
+      "start_tick": 1584,
+      "hold_ticks": 12
+    },
+    {
+      "request": 133,
+      "pose_id": "bd_rise_001",
+      "animation": "rise",
+      "animation_constant": "ANI_RISE",
+      "frame": 0,
+      "start_tick": 1596,
+      "hold_ticks": 12
+    },
+    {
+      "request": 134,
+      "pose_id": "bd_rise_002",
+      "animation": "rise",
+      "animation_constant": "ANI_RISE",
+      "frame": 1,
+      "start_tick": 1608,
+      "hold_ticks": 12
+    },
+    {
+      "request": 135,
+      "pose_id": "bd_rise_003",
+      "animation": "rise",
+      "animation_constant": "ANI_RISE",
+      "frame": 2,
+      "start_tick": 1620,
+      "hold_ticks": 12
+    },
+    {
+      "request": 136,
+      "pose_id": "bd_rise_004",
+      "animation": "rise",
+      "animation_constant": "ANI_RISE",
+      "frame": 3,
+      "start_tick": 1632,
+      "hold_ticks": 12
+    },
+    {
+      "request": 137,
+      "pose_id": "bd_rise_005",
+      "animation": "rise",
+      "animation_constant": "ANI_RISE",
+      "frame": 4,
+      "start_tick": 1644,
+      "hold_ticks": 12
+    },
+    {
+      "request": 138,
+      "pose_id": "bd_rise_006",
+      "animation": "rise",
+      "animation_constant": "ANI_RISE",
+      "frame": 5,
+      "start_tick": 1656,
+      "hold_ticks": 12
+    },
+    {
+      "request": 139,
+      "pose_id": "bd_rise_007",
+      "animation": "rise",
+      "animation_constant": "ANI_RISE",
+      "frame": 6,
+      "start_tick": 1668,
+      "hold_ticks": 12
+    },
+    {
+      "request": 140,
+      "pose_id": "bd_rise_008",
+      "animation": "rise",
+      "animation_constant": "ANI_RISE",
+      "frame": 7,
+      "start_tick": 1680,
+      "hold_ticks": 12
+    },
+    {
+      "request": 141,
+      "pose_id": "bd_interaction_pickup_001",
+      "animation": "get",
+      "animation_constant": "ANI_GET",
+      "frame": 0,
+      "start_tick": 1692,
+      "hold_ticks": 12
+    },
+    {
+      "request": 142,
+      "pose_id": "bd_interaction_pickup_002",
+      "animation": "get",
+      "animation_constant": "ANI_GET",
+      "frame": 1,
+      "start_tick": 1704,
+      "hold_ticks": 12
+    },
+    {
+      "request": 143,
+      "pose_id": "bd_interaction_pickup_003",
+      "animation": "get",
+      "animation_constant": "ANI_GET",
+      "frame": 2,
+      "start_tick": 1716,
+      "hold_ticks": 12
+    },
+    {
+      "request": 144,
+      "pose_id": "bd_interaction_pickup_004",
+      "animation": "get",
+      "animation_constant": "ANI_GET",
+      "frame": 3,
+      "start_tick": 1728,
+      "hold_ticks": 12
+    },
+    {
+      "request": 145,
+      "pose_id": "bd_interaction_pickup_005",
+      "animation": "get",
+      "animation_constant": "ANI_GET",
+      "frame": 4,
+      "start_tick": 1740,
+      "hold_ticks": 12
+    },
+    {
+      "request": 146,
+      "pose_id": "bd_interaction_pickup_006",
+      "animation": "get",
+      "animation_constant": "ANI_GET",
+      "frame": 5,
+      "start_tick": 1752,
+      "hold_ticks": 12
+    },
+    {
+      "request": 147,
+      "pose_id": "bd_interaction_pickup_007",
+      "animation": "get",
+      "animation_constant": "ANI_GET",
+      "frame": 6,
+      "start_tick": 1764,
+      "hold_ticks": 12
+    },
+    {
+      "request": 148,
+      "pose_id": "bd_interaction_pickup_008",
+      "animation": "get",
+      "animation_constant": "ANI_GET",
+      "frame": 7,
+      "start_tick": 1776,
+      "hold_ticks": 12
+    },
+    {
+      "request": 149,
+      "pose_id": "bd_combat_shared_001",
+      "animation": "freespecial1",
+      "animation_constant": "ANI_FREESPECIAL1",
+      "frame": 0,
+      "start_tick": 1788,
+      "hold_ticks": 12
+    },
+    {
+      "request": 150,
+      "pose_id": "bd_combat_shared_002",
+      "animation": "freespecial1",
+      "animation_constant": "ANI_FREESPECIAL1",
+      "frame": 1,
+      "start_tick": 1800,
+      "hold_ticks": 12
+    },
+    {
+      "request": 151,
+      "pose_id": "bd_combat_shared_003",
+      "animation": "freespecial1",
+      "animation_constant": "ANI_FREESPECIAL1",
+      "frame": 2,
+      "start_tick": 1812,
+      "hold_ticks": 12
+    },
+    {
+      "request": 152,
+      "pose_id": "bd_combat_shared_004",
+      "animation": "freespecial1",
+      "animation_constant": "ANI_FREESPECIAL1",
+      "frame": 3,
+      "start_tick": 1824,
+      "hold_ticks": 12
+    },
+    {
+      "request": 153,
+      "pose_id": "bd_combat_shared_005",
+      "animation": "freespecial1",
+      "animation_constant": "ANI_FREESPECIAL1",
+      "frame": 4,
+      "start_tick": 1836,
+      "hold_ticks": 12
+    },
+    {
+      "request": 154,
+      "pose_id": "bd_regular_01_specific_001",
+      "animation": "freespecial1",
+      "animation_constant": "ANI_FREESPECIAL1",
+      "frame": 5,
+      "start_tick": 1848,
+      "hold_ticks": 12
+    },
+    {
+      "request": 155,
+      "pose_id": "bd_regular_01_specific_002",
+      "animation": "freespecial1",
+      "animation_constant": "ANI_FREESPECIAL1",
+      "frame": 6,
+      "start_tick": 1860,
+      "hold_ticks": 12
+    },
+    {
+      "request": 156,
+      "pose_id": "bd_regular_01_specific_003",
+      "animation": "freespecial1",
+      "animation_constant": "ANI_FREESPECIAL1",
+      "frame": 7,
+      "start_tick": 1872,
+      "hold_ticks": 12
+    },
+    {
+      "request": 157,
+      "pose_id": "bd_kick_01_specific_001",
+      "animation": "freespecial1",
+      "animation_constant": "ANI_FREESPECIAL1",
+      "frame": 13,
+      "start_tick": 1884,
+      "hold_ticks": 12
+    },
+    {
+      "request": 158,
+      "pose_id": "bd_kick_01_specific_002",
+      "animation": "freespecial1",
+      "animation_constant": "ANI_FREESPECIAL1",
+      "frame": 14,
+      "start_tick": 1896,
+      "hold_ticks": 12
+    },
+    {
+      "request": 159,
+      "pose_id": "bd_kick_01_specific_003",
+      "animation": "freespecial1",
+      "animation_constant": "ANI_FREESPECIAL1",
+      "frame": 15,
+      "start_tick": 1908,
+      "hold_ticks": 12
+    },
+    {
+      "request": 160,
+      "pose_id": "bd_combat_shared_006",
+      "animation": "freespecial1",
+      "animation_constant": "ANI_FREESPECIAL1",
+      "frame": 21,
+      "start_tick": 1920,
+      "hold_ticks": 12
+    },
+    {
+      "request": 161,
+      "pose_id": "bd_combat_shared_007",
+      "animation": "freespecial1",
+      "animation_constant": "ANI_FREESPECIAL1",
+      "frame": 22,
+      "start_tick": 1932,
+      "hold_ticks": 12
+    },
+    {
+      "request": 162,
+      "pose_id": "bd_combat_shared_008",
+      "animation": "freespecial1",
+      "animation_constant": "ANI_FREESPECIAL1",
+      "frame": 23,
+      "start_tick": 1944,
+      "hold_ticks": 12
+    },
+    {
+      "request": 163,
+      "pose_id": "bd_power_01_specific_001",
+      "animation": "freespecial1",
+      "animation_constant": "ANI_FREESPECIAL1",
+      "frame": 24,
+      "start_tick": 1956,
+      "hold_ticks": 12
+    },
+    {
+      "request": 164,
+      "pose_id": "bd_power_01_specific_002",
+      "animation": "freespecial1",
+      "animation_constant": "ANI_FREESPECIAL1",
+      "frame": 25,
+      "start_tick": 1968,
+      "hold_ticks": 12
+    },
+    {
+      "request": 165,
+      "pose_id": "bd_power_01_specific_003",
+      "animation": "freespecial1",
+      "animation_constant": "ANI_FREESPECIAL1",
+      "frame": 26,
+      "start_tick": 1980,
+      "hold_ticks": 12
+    },
+    {
+      "request": 166,
+      "pose_id": "bd_regular_02_specific_001",
+      "animation": "freespecial2",
+      "animation_constant": "ANI_FREESPECIAL2",
+      "frame": 5,
+      "start_tick": 1992,
+      "hold_ticks": 12
+    },
+    {
+      "request": 167,
+      "pose_id": "bd_regular_02_specific_002",
+      "animation": "freespecial2",
+      "animation_constant": "ANI_FREESPECIAL2",
+      "frame": 6,
+      "start_tick": 2004,
+      "hold_ticks": 12
+    },
+    {
+      "request": 168,
+      "pose_id": "bd_regular_02_specific_003",
+      "animation": "freespecial2",
+      "animation_constant": "ANI_FREESPECIAL2",
+      "frame": 7,
+      "start_tick": 2016,
+      "hold_ticks": 12
+    },
+    {
+      "request": 169,
+      "pose_id": "bd_kick_02_specific_001",
+      "animation": "freespecial2",
+      "animation_constant": "ANI_FREESPECIAL2",
+      "frame": 13,
+      "start_tick": 2028,
+      "hold_ticks": 12
+    },
+    {
+      "request": 170,
+      "pose_id": "bd_kick_02_specific_002",
+      "animation": "freespecial2",
+      "animation_constant": "ANI_FREESPECIAL2",
+      "frame": 14,
+      "start_tick": 2040,
+      "hold_ticks": 12
+    },
+    {
+      "request": 171,
+      "pose_id": "bd_kick_02_specific_003",
+      "animation": "freespecial2",
+      "animation_constant": "ANI_FREESPECIAL2",
+      "frame": 15,
+      "start_tick": 2052,
+      "hold_ticks": 12
+    },
+    {
+      "request": 172,
+      "pose_id": "bd_power_02_specific_001",
+      "animation": "freespecial2",
+      "animation_constant": "ANI_FREESPECIAL2",
+      "frame": 24,
+      "start_tick": 2064,
+      "hold_ticks": 12
+    },
+    {
+      "request": 173,
+      "pose_id": "bd_power_02_specific_002",
+      "animation": "freespecial2",
+      "animation_constant": "ANI_FREESPECIAL2",
+      "frame": 25,
+      "start_tick": 2076,
+      "hold_ticks": 12
+    },
+    {
+      "request": 174,
+      "pose_id": "bd_power_02_specific_003",
+      "animation": "freespecial2",
+      "animation_constant": "ANI_FREESPECIAL2",
+      "frame": 26,
+      "start_tick": 2088,
+      "hold_ticks": 12
+    },
+    {
+      "request": 175,
+      "pose_id": "bd_regular_03_specific_001",
+      "animation": "freespecial3",
+      "animation_constant": "ANI_FREESPECIAL3",
+      "frame": 5,
+      "start_tick": 2100,
+      "hold_ticks": 12
+    },
+    {
+      "request": 176,
+      "pose_id": "bd_regular_03_specific_002",
+      "animation": "freespecial3",
+      "animation_constant": "ANI_FREESPECIAL3",
+      "frame": 6,
+      "start_tick": 2112,
+      "hold_ticks": 12
+    },
+    {
+      "request": 177,
+      "pose_id": "bd_regular_03_specific_003",
+      "animation": "freespecial3",
+      "animation_constant": "ANI_FREESPECIAL3",
+      "frame": 7,
+      "start_tick": 2124,
+      "hold_ticks": 12
+    },
+    {
+      "request": 178,
+      "pose_id": "bd_kick_03_specific_001",
+      "animation": "freespecial3",
+      "animation_constant": "ANI_FREESPECIAL3",
+      "frame": 13,
+      "start_tick": 2136,
+      "hold_ticks": 12
+    },
+    {
+      "request": 179,
+      "pose_id": "bd_kick_03_specific_002",
+      "animation": "freespecial3",
+      "animation_constant": "ANI_FREESPECIAL3",
+      "frame": 14,
+      "start_tick": 2148,
+      "hold_ticks": 12
+    },
+    {
+      "request": 180,
+      "pose_id": "bd_kick_03_specific_003",
+      "animation": "freespecial3",
+      "animation_constant": "ANI_FREESPECIAL3",
+      "frame": 15,
+      "start_tick": 2160,
+      "hold_ticks": 12
+    },
+    {
+      "request": 181,
+      "pose_id": "bd_power_03_specific_001",
+      "animation": "freespecial3",
+      "animation_constant": "ANI_FREESPECIAL3",
+      "frame": 24,
+      "start_tick": 2172,
+      "hold_ticks": 12
+    },
+    {
+      "request": 182,
+      "pose_id": "bd_power_03_specific_002",
+      "animation": "freespecial3",
+      "animation_constant": "ANI_FREESPECIAL3",
+      "frame": 25,
+      "start_tick": 2184,
+      "hold_ticks": 12
+    },
+    {
+      "request": 183,
+      "pose_id": "bd_power_03_specific_003",
+      "animation": "freespecial3",
+      "animation_constant": "ANI_FREESPECIAL3",
+      "frame": 26,
+      "start_tick": 2196,
+      "hold_ticks": 12
+    },
+    {
+      "request": 184,
+      "pose_id": "bd_regular_04_specific_001",
+      "animation": "freespecial4",
+      "animation_constant": "ANI_FREESPECIAL4",
+      "frame": 5,
+      "start_tick": 2208,
+      "hold_ticks": 12
+    },
+    {
+      "request": 185,
+      "pose_id": "bd_regular_04_specific_002",
+      "animation": "freespecial4",
+      "animation_constant": "ANI_FREESPECIAL4",
+      "frame": 6,
+      "start_tick": 2220,
+      "hold_ticks": 12
+    },
+    {
+      "request": 186,
+      "pose_id": "bd_regular_04_specific_003",
+      "animation": "freespecial4",
+      "animation_constant": "ANI_FREESPECIAL4",
+      "frame": 7,
+      "start_tick": 2232,
+      "hold_ticks": 12
+    },
+    {
+      "request": 187,
+      "pose_id": "bd_kick_04_specific_001",
+      "animation": "freespecial4",
+      "animation_constant": "ANI_FREESPECIAL4",
+      "frame": 13,
+      "start_tick": 2244,
+      "hold_ticks": 12
+    },
+    {
+      "request": 188,
+      "pose_id": "bd_kick_04_specific_002",
+      "animation": "freespecial4",
+      "animation_constant": "ANI_FREESPECIAL4",
+      "frame": 14,
+      "start_tick": 2256,
+      "hold_ticks": 12
+    },
+    {
+      "request": 189,
+      "pose_id": "bd_kick_04_specific_003",
+      "animation": "freespecial4",
+      "animation_constant": "ANI_FREESPECIAL4",
+      "frame": 15,
+      "start_tick": 2268,
+      "hold_ticks": 12
+    },
+    {
+      "request": 190,
+      "pose_id": "bd_power_04_specific_001",
+      "animation": "freespecial4",
+      "animation_constant": "ANI_FREESPECIAL4",
+      "frame": 24,
+      "start_tick": 2280,
+      "hold_ticks": 12
+    },
+    {
+      "request": 191,
+      "pose_id": "bd_power_04_specific_002",
+      "animation": "freespecial4",
+      "animation_constant": "ANI_FREESPECIAL4",
+      "frame": 25,
+      "start_tick": 2292,
+      "hold_ticks": 12
+    },
+    {
+      "request": 192,
+      "pose_id": "bd_power_04_specific_003",
+      "animation": "freespecial4",
+      "animation_constant": "ANI_FREESPECIAL4",
+      "frame": 26,
+      "start_tick": 2304,
+      "hold_ticks": 12
+    },
+    {
+      "request": 193,
+      "pose_id": "bd_regular_05_specific_001",
+      "animation": "freespecial5",
+      "animation_constant": "ANI_FREESPECIAL5",
+      "frame": 5,
+      "start_tick": 2316,
+      "hold_ticks": 12
+    },
+    {
+      "request": 194,
+      "pose_id": "bd_regular_05_specific_002",
+      "animation": "freespecial5",
+      "animation_constant": "ANI_FREESPECIAL5",
+      "frame": 6,
+      "start_tick": 2328,
+      "hold_ticks": 12
+    },
+    {
+      "request": 195,
+      "pose_id": "bd_regular_05_specific_003",
+      "animation": "freespecial5",
+      "animation_constant": "ANI_FREESPECIAL5",
+      "frame": 7,
+      "start_tick": 2340,
+      "hold_ticks": 12
+    },
+    {
+      "request": 196,
+      "pose_id": "bd_kick_05_specific_001",
+      "animation": "freespecial5",
+      "animation_constant": "ANI_FREESPECIAL5",
+      "frame": 13,
+      "start_tick": 2352,
+      "hold_ticks": 12
+    },
+    {
+      "request": 197,
+      "pose_id": "bd_kick_05_specific_002",
+      "animation": "freespecial5",
+      "animation_constant": "ANI_FREESPECIAL5",
+      "frame": 14,
+      "start_tick": 2364,
+      "hold_ticks": 12
+    },
+    {
+      "request": 198,
+      "pose_id": "bd_kick_05_specific_003",
+      "animation": "freespecial5",
+      "animation_constant": "ANI_FREESPECIAL5",
+      "frame": 15,
+      "start_tick": 2376,
+      "hold_ticks": 12
+    },
+    {
+      "request": 199,
+      "pose_id": "bd_power_05_specific_001",
+      "animation": "freespecial5",
+      "animation_constant": "ANI_FREESPECIAL5",
+      "frame": 24,
+      "start_tick": 2388,
+      "hold_ticks": 12
+    },
+    {
+      "request": 200,
+      "pose_id": "bd_power_05_specific_002",
+      "animation": "freespecial5",
+      "animation_constant": "ANI_FREESPECIAL5",
+      "frame": 25,
+      "start_tick": 2400,
+      "hold_ticks": 12
+    },
+    {
+      "request": 201,
+      "pose_id": "bd_power_05_specific_003",
+      "animation": "freespecial5",
+      "animation_constant": "ANI_FREESPECIAL5",
+      "frame": 26,
+      "start_tick": 2412,
+      "hold_ticks": 12
+    },
+    {
+      "request": 202,
+      "pose_id": "bd_regular_06_specific_001",
+      "animation": "freespecial6",
+      "animation_constant": "ANI_FREESPECIAL6",
+      "frame": 5,
+      "start_tick": 2424,
+      "hold_ticks": 12
+    },
+    {
+      "request": 203,
+      "pose_id": "bd_regular_06_specific_002",
+      "animation": "freespecial6",
+      "animation_constant": "ANI_FREESPECIAL6",
+      "frame": 6,
+      "start_tick": 2436,
+      "hold_ticks": 12
+    },
+    {
+      "request": 204,
+      "pose_id": "bd_regular_06_specific_003",
+      "animation": "freespecial6",
+      "animation_constant": "ANI_FREESPECIAL6",
+      "frame": 7,
+      "start_tick": 2448,
+      "hold_ticks": 12
+    },
+    {
+      "request": 205,
+      "pose_id": "bd_kick_06_specific_001",
+      "animation": "freespecial6",
+      "animation_constant": "ANI_FREESPECIAL6",
+      "frame": 13,
+      "start_tick": 2460,
+      "hold_ticks": 12
+    },
+    {
+      "request": 206,
+      "pose_id": "bd_kick_06_specific_002",
+      "animation": "freespecial6",
+      "animation_constant": "ANI_FREESPECIAL6",
+      "frame": 14,
+      "start_tick": 2472,
+      "hold_ticks": 12
+    },
+    {
+      "request": 207,
+      "pose_id": "bd_kick_06_specific_003",
+      "animation": "freespecial6",
+      "animation_constant": "ANI_FREESPECIAL6",
+      "frame": 15,
+      "start_tick": 2484,
+      "hold_ticks": 12
+    },
+    {
+      "request": 208,
+      "pose_id": "bd_power_06_specific_001",
+      "animation": "freespecial6",
+      "animation_constant": "ANI_FREESPECIAL6",
+      "frame": 24,
+      "start_tick": 2496,
+      "hold_ticks": 12
+    },
+    {
+      "request": 209,
+      "pose_id": "bd_power_06_specific_002",
+      "animation": "freespecial6",
+      "animation_constant": "ANI_FREESPECIAL6",
+      "frame": 25,
+      "start_tick": 2508,
+      "hold_ticks": 12
+    },
+    {
+      "request": 210,
+      "pose_id": "bd_power_06_specific_003",
+      "animation": "freespecial6",
+      "animation_constant": "ANI_FREESPECIAL6",
+      "frame": 26,
+      "start_tick": 2520,
+      "hold_ticks": 12
+    },
+    {
+      "request": 211,
+      "pose_id": "bd_regular_07_specific_001",
+      "animation": "freespecial7",
+      "animation_constant": "ANI_FREESPECIAL7",
+      "frame": 5,
+      "start_tick": 2532,
+      "hold_ticks": 12
+    },
+    {
+      "request": 212,
+      "pose_id": "bd_regular_07_specific_002",
+      "animation": "freespecial7",
+      "animation_constant": "ANI_FREESPECIAL7",
+      "frame": 6,
+      "start_tick": 2544,
+      "hold_ticks": 12
+    },
+    {
+      "request": 213,
+      "pose_id": "bd_regular_07_specific_003",
+      "animation": "freespecial7",
+      "animation_constant": "ANI_FREESPECIAL7",
+      "frame": 7,
+      "start_tick": 2556,
+      "hold_ticks": 12
+    },
+    {
+      "request": 214,
+      "pose_id": "bd_kick_07_specific_001",
+      "animation": "freespecial7",
+      "animation_constant": "ANI_FREESPECIAL7",
+      "frame": 13,
+      "start_tick": 2568,
+      "hold_ticks": 12
+    },
+    {
+      "request": 215,
+      "pose_id": "bd_kick_07_specific_002",
+      "animation": "freespecial7",
+      "animation_constant": "ANI_FREESPECIAL7",
+      "frame": 14,
+      "start_tick": 2580,
+      "hold_ticks": 12
+    },
+    {
+      "request": 216,
+      "pose_id": "bd_kick_07_specific_003",
+      "animation": "freespecial7",
+      "animation_constant": "ANI_FREESPECIAL7",
+      "frame": 15,
+      "start_tick": 2592,
+      "hold_ticks": 12
+    },
+    {
+      "request": 217,
+      "pose_id": "bd_power_07_specific_001",
+      "animation": "freespecial7",
+      "animation_constant": "ANI_FREESPECIAL7",
+      "frame": 24,
+      "start_tick": 2604,
+      "hold_ticks": 12
+    },
+    {
+      "request": 218,
+      "pose_id": "bd_power_07_specific_002",
+      "animation": "freespecial7",
+      "animation_constant": "ANI_FREESPECIAL7",
+      "frame": 25,
+      "start_tick": 2616,
+      "hold_ticks": 12
+    },
+    {
+      "request": 219,
+      "pose_id": "bd_power_07_specific_003",
+      "animation": "freespecial7",
+      "animation_constant": "ANI_FREESPECIAL7",
+      "frame": 26,
+      "start_tick": 2628,
+      "hold_ticks": 12
+    }
+  ]
+}

@@ -1,31 +1,121 @@
 {
-  "theme": "underpass_setpiece_v1",
-  "display_name": "I-8 Underpass Setpiece (ground-up)",
-  "world_width": 1600,
-  "height": 360,
-  "main": "assets/stage/setpieces/underpass_i8_v1/main.png",
-  "far": "assets/stage/setpieces/underpass_i8_v1/far.png",
-  "near": "assets/stage/setpieces/underpass_i8_v1/near.png",
-  "haze": "assets/stage/setpieces/underpass_i8_v1/haze.png",
-  "atmosphere_profile": "i8_underpass_dimming",
-  "source_plate": "docs/visual_direction/target_renders/ch1_l2_i8_underpass_target_clean.png",
-  "engine": "OpenBOR",
-  "runtime_assets": {
-    "main.png": "data/levels/i8_underpass/art/main.png",
-    "far.png": "data/levels/i8_underpass/art/far.png",
-    "near.png": "data/levels/i8_underpass/art/near.png",
-    "haze.png": "data/levels/i8_underpass/art/haze.png",
-    "haze_tile.png": "data/levels/i8_underpass/art/haze_tile.png"
-  },
-  "source_manifest": "content/setpieces/underpass_i8/art/manifest.json",
-  "stage_id": "i8_underpass",
-  "background": "data/levels/i8_underpass/background.png",
-  "background_source": "content/setpieces/underpass_i8/lookdev/target_renders/ch1_l2_i8_underpass_target_clean.png",
-  "background_pixels": [
-    1280,
-    720
+  "schema_version": 4,
+  "stage_id": "i8_underpass_entity_tech_demo_backdrop",
+  "display_name": "I-8 Underpass Panel-Only Entity Tech Demo Backdrop",
+  "engine": "OpenBOR 4.0 Build 7949",
+  "maturity": "tech_demo_backdrop",
+  "scope": "ground-up Fades of Fate 2.0 entity combat presentation",
+  "fof1_content": false,
+  "viewport": [
+    640,
+    360
   ],
-  "player_model": "black_dave",
-  "visual_match": "approved_underpass_lookdev_still",
-  "fof1_content": false
+  "world_size": [
+    2560,
+    360
+  ],
+  "panel_order": "abcd",
+  "runtime_profile": {
+    "level": "data/levels/entity_combat_tech_demo.txt",
+    "panel_only": true,
+    "forbidden_backdrop_directives": [
+      "background",
+      "bglayer",
+      "fglayer",
+      "layer"
+    ],
+    "package_inputs": [
+      "data/levels/i8_underpass/panels/underpass_a.png",
+      "data/levels/i8_underpass/panels/underpass_b.png",
+      "data/levels/i8_underpass/panels/underpass_c.png",
+      "data/levels/i8_underpass/panels/underpass_d.png"
+    ]
+  },
+  "source_provenance": {
+    "source_branch": "origin/codex/sunset-underpass-stage",
+    "source_commit": "84fd94e4ca1b858cdd9f2f28393944aa7cfcd783",
+    "description": "Verified original 2.0 sunset-underpass art; imported as deterministic build input without FoF1 material.",
+    "build_inputs_not_packaged": {
+      "far": {
+        "path": "openbor/data/levels/i8_underpass/art/far.png",
+        "size": [
+          2048,
+          360
+        ],
+        "bytes": 144773,
+        "sha256": "c1a406d156fb05faaa2c7aa0f7f76d59573db703a6a2541aeadfe89fbf5e0ce9"
+      },
+      "mid": {
+        "path": "openbor/data/levels/i8_underpass/art/mid.png",
+        "size": [
+          1792,
+          360
+        ],
+        "bytes": 3739,
+        "sha256": "8b5ab8416b2d3a6ab6f9d7805f66cd261940267ece786ce28c6d4dc98f60bada"
+      }
+    },
+    "verified_cutout_panel_sha256": {
+      "a": "49ef42eccbdfa7fedac536fd1ed6ba832162861cafdd79958313f24103b09a9a",
+      "b": "3d04f2b1539e34451fe29a5d6b3bd97aa9d79df2a49a74462d5934404c0d08d6",
+      "c": "22f2b9e0be352720aa1dd06e4e1437e058040c6f0ccafca025abb6c8467e97f4",
+      "d": "95c5bf518354f4f1a061f3618afcf6fef43cf4c01e1921ed8ee0fa3fb22f9d26"
+    }
+  },
+  "flattening": {
+    "builder": "tools/Build-OpenBOR-Entity-Tech-Demo.py",
+    "method": "nearest-neighbor indexed far layer, then nonzero mid layer, behind the exact authored portal mask",
+    "opaque_panel_pixels_preserved": true,
+    "shared_palette_sha256": "2c369c672f5f0c09e5c35e27e4bc33f43cac803405f9c48f47fa032d0b4a553d",
+    "palette_index_0": "reserved for transparency but unused by every flattened runtime panel",
+    "portal_pixel_counts": {
+      "a": 37436,
+      "b": 9295,
+      "c": 6175,
+      "d": 48666
+    },
+    "idempotence": "pass"
+  },
+  "runtime_assets": {
+    "data/levels/i8_underpass/panels/underpass_a.png": {
+      "bytes": 69967,
+      "sha256": "a0e86bb6c2349a23fec1b3a0916e52e2cff9d230be4a11915b4a276fe8742842"
+    },
+    "data/levels/i8_underpass/panels/underpass_b.png": {
+      "bytes": 56444,
+      "sha256": "01695b5f8ce3562537c51472f5ea61b40d138d13ef7d926495de1090a4bcfa45"
+    },
+    "data/levels/i8_underpass/panels/underpass_c.png": {
+      "bytes": 53410,
+      "sha256": "5e6ac33577852c1f53d577e79a452f6a3a0910184c150ce2a21a981042cc2dbc"
+    },
+    "data/levels/i8_underpass/panels/underpass_d.png": {
+      "bytes": 77529,
+      "sha256": "d9a73f3e6d0970d15d6e6dacb2252c32bb3218e960a649aa64185e9f9419c0c5"
+    }
+  },
+  "validation": {
+    "asset_preflight": "pass",
+    "panel_only_positive_contract": "pass",
+    "negative_contracts": {
+      "transparent_index_0_void": "rejected",
+      "duplicate_panel_pixels": "rejected",
+      "broken_panel_seam": "rejected",
+      "backdrop_layer_directive": "rejected"
+    },
+    "unique_panel_hashes": 4,
+    "transparent_index_0_pixels_per_panel": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "seam_mismatch_rows": [
+      0,
+      0,
+      0
+    ],
+    "visual_review": "pass: sunset and mountain portals render without green or black voids; floor and fighters remain readable",
+    "package_build": "not run in this scoped panel repair"
+  }
 }

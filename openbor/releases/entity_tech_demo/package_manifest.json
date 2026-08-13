@@ -1,0 +1,2530 @@
+{
+  "schema_version": 2,
+  "engine": "OpenBOR",
+  "engine_build": 7949,
+  "engine_reported_commit": "0ece95d",
+  "runtime_executable": {
+    "path": "OpenBOR.exe (not redistributed; supply pinned Build 7949 executable)",
+    "size": 7596782,
+    "sha256": "73f1b45549ec464b688ae6caed248d87b900e7831966181b98e9171bd48441c5"
+  },
+  "pose_showcase_provenance": {
+    "black_dave_schedule": {
+      "path": "openbor/data/chars/black_dave/black_dave_pose_qa_schedule.json",
+      "sha256": "17a584cde9280e1725e67104640ac82a70a2d8a2042f836c0925e4efd118541b"
+    },
+    "harness_sha256": "03663a154a330db5aeb3c150a32e115a2063f27184b646e7a0d4a32f3b4999e2",
+    "overlay_sha256": "f3a354ff3967a96817f6b7377431f2e4cf0c5cb4f612673975bf3b00cb0df950",
+    "pose_count": 460,
+    "baseline_index": 4095
+  },
+  "format": "PACK_v0_PAK32",
+  "profile": "entity_tech_demo_dependency_closure",
+  "release_gate_policy": {
+    "visible_pose_proof": "temporarily_bypassed_by_owner_for_demo_release",
+    "art_uniqueness_and_implementation_reachability": "required_and_passed"
+  },
+  "source_data": "openbor/data",
+  "file_count": 499,
+  "files": [
+    {
+      "path": "data/chars/black_dave/black_dave.txt",
+      "size": 38625,
+      "sha256": "f3bb3cbb57251775a9c8d1374e3d6cd835ad1d9b5dd6342c86bbe6944438ca1c"
+    },
+    {
+      "path": "data/chars/black_dave/black_dave_flame_fx.txt",
+      "size": 384,
+      "sha256": "ac399b1fee80251eeb8cf1561369408982dbb91d852b7c68439a05d8fdf6d03b"
+    },
+    {
+      "path": "data/chars/black_dave/black_dave_flame_shot.txt",
+      "size": 698,
+      "sha256": "b653f996cbec0d9907b38fd755718718f03c6ac36d7997843aa2bbf3d5c4e95f"
+    },
+    {
+      "path": "data/chars/black_dave/black_dave_impact_fx.txt",
+      "size": 389,
+      "sha256": "5fe0581e88154b2026b73d05826d1b6f007743727e9a3262d1bb11c3cb8a628d"
+    },
+    {
+      "path": "data/chars/black_dave/effects/black_dave_flame_00.png",
+      "size": 958,
+      "sha256": "8944ab31b901ac1acf1ffd268cc09f0b0f65a6c5a8ff846e7b02c8cd92fdb271"
+    },
+    {
+      "path": "data/chars/black_dave/effects/black_dave_flame_01.png",
+      "size": 978,
+      "sha256": "ad7b6d5b53c75b04b7172704d5a69b247d503abcfe40ea173f50ac95fa2f84ec"
+    },
+    {
+      "path": "data/chars/black_dave/effects/black_dave_flame_02.png",
+      "size": 993,
+      "sha256": "d652e014814cc54fead1cf9f404d8bffe83d3d8f5aa307b13edef7b5cd21c4b4"
+    },
+    {
+      "path": "data/chars/black_dave/effects/black_dave_flame_03.png",
+      "size": 976,
+      "sha256": "9a1bdd52e3cfe001d5cdc88e60900ecf2557fc0e60d3c5d6997577f2a5e7f18a"
+    },
+    {
+      "path": "data/chars/black_dave/effects/black_dave_impact_00.png",
+      "size": 984,
+      "sha256": "324b7b0d2247fa66d89c2eab9ca6269a3fae5eeada166b3888961abaf6c54794"
+    },
+    {
+      "path": "data/chars/black_dave/effects/black_dave_impact_01.png",
+      "size": 987,
+      "sha256": "d68778a6dd77f9b719e639f81e2ac5a6c3b5d8698e3af37c5b91372807007949"
+    },
+    {
+      "path": "data/chars/black_dave/effects/black_dave_impact_02.png",
+      "size": 985,
+      "sha256": "34be8a1066793d2df8898131cd0dc69f0670ed246292974a8aaaebf028e90a54"
+    },
+    {
+      "path": "data/chars/black_dave/effects/black_dave_impact_03.png",
+      "size": 987,
+      "sha256": "d68778a6dd77f9b719e639f81e2ac5a6c3b5d8698e3af37c5b91372807007949"
+    },
+    {
+      "path": "data/chars/black_dave/effects/black_dave_shot_00.png",
+      "size": 919,
+      "sha256": "4220033714a9e88cc9e9127457e3a19196488f1e17b7e8e0ccca6541c1019a4f"
+    },
+    {
+      "path": "data/chars/black_dave/effects/black_dave_shot_01.png",
+      "size": 948,
+      "sha256": "6111d8163d6a6babea8a262892737942a39c6e07275772d5c2d354e0552fac16"
+    },
+    {
+      "path": "data/chars/black_dave/effects/black_dave_shot_02.png",
+      "size": 975,
+      "sha256": "f1743b8881f44ee3daeee7d8d6ad09494d101c000a64c5ab85fda0187b31a8aa"
+    },
+    {
+      "path": "data/chars/black_dave/effects/black_dave_shot_03.png",
+      "size": 948,
+      "sha256": "6111d8163d6a6babea8a262892737942a39c6e07275772d5c2d354e0552fac16"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_air_kick_001.png",
+      "size": 3495,
+      "sha256": "393f3a2df91feb11c3e8816dcf93096834604692287aa916fce36a5ee938a649"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_air_kick_002.png",
+      "size": 4541,
+      "sha256": "71674c6f1fa84f33c3a3269d6287b21d60acc4d5ee8036017fbbca87bb82f996"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_air_kick_003.png",
+      "size": 3883,
+      "sha256": "4ddaea4ae00ada6e52d56802fd44c8a0bd3d896a88843bf7a45dfd7b0a47787d"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_air_kick_004.png",
+      "size": 4460,
+      "sha256": "cbaf7f09f5af5a0809abd7f198b4d27dd7ac311e6de7f897a93fe21e15e2d38a"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_air_kick_005.png",
+      "size": 4455,
+      "sha256": "b3278a472098ebe1d0cc13472c2136b01e0c5fd210f6e769e352be0ba8033f9c"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_air_kick_006.png",
+      "size": 4085,
+      "sha256": "8e7237ee8e53d018c1225ba468e3b256b80379bbd2245aa8929f4956e69f5cd3"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_air_kick_007.png",
+      "size": 3297,
+      "sha256": "6373c210f5df5a686cd1005fba16e9cbb46c649798a9e9c3c51c15a505910cb5"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_air_kick_008.png",
+      "size": 3463,
+      "sha256": "b9c645b97c1bb4db169e9b57ee2fbba5b6b439431647a9b3e9a47c386070454d"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_air_punch_001.png",
+      "size": 4583,
+      "sha256": "65a7fb87d04024b67a7391b23607941d53263f6bd2b0125a1bc04f801b6e69af"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_air_punch_002.png",
+      "size": 3743,
+      "sha256": "b72166a9f879ff9fb0eb938569495c90f982257730b4c86e5ef59c0946958c4a"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_air_punch_003.png",
+      "size": 4148,
+      "sha256": "01accd40e5782af98cb9288cf7d47394d1c4bf90c6ec168650f347240590f59d"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_air_punch_004.png",
+      "size": 4463,
+      "sha256": "0f9d562839d5645d71c42365bcabcbbdd77e17e37d38ca3aff834b82ac74ddf9"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_air_punch_005.png",
+      "size": 3800,
+      "sha256": "97a51dbf9c69a0240d29df0699b1b841ce6737766a028778a9d12b1fc28a53f4"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_air_punch_006.png",
+      "size": 3774,
+      "sha256": "a79ce48b6e08833bf024c54bdd91d4885e9432e395c3726596b4b3581455352d"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_air_punch_007.png",
+      "size": 3819,
+      "sha256": "a43f55be4de73ca00f3a1660ec490c9c7e69e0c5bcd142cf9951e9109983882c"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_air_punch_008.png",
+      "size": 4486,
+      "sha256": "f271e7f16d6bf88d2cf1232f2bb40562a016f6c4da6ef646ddaeb31a9d5f8a62"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_combat_shared_001.png",
+      "size": 4401,
+      "sha256": "fe780c7ba2c48e354a96bc6cb0ed1b2da4b78ac3968ecf64113244ad2732b9ff"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_combat_shared_002.png",
+      "size": 4343,
+      "sha256": "dd43865042848ca465fd4bce42ff1b575579a8f5b8fc71ed75a6705ec724e72b"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_combat_shared_003.png",
+      "size": 4464,
+      "sha256": "e583c310738f9a16227ab90113ce57a0917b03fc75d7da8ad18cd0cb896d972b"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_combat_shared_004.png",
+      "size": 4464,
+      "sha256": "9cba8fee4594f18cd63ef8bf4baa602206974b5a4063c6574723fcde7a3d2845"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_combat_shared_005.png",
+      "size": 3808,
+      "sha256": "b372171969f76c62daf2487f91b92afa5c775bdd17699021a6888c19809e7e3c"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_combat_shared_006.png",
+      "size": 4502,
+      "sha256": "3c137044294e724372e804fc49376b94bbc093f62c09eb054856044c1b02727a"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_combat_shared_007.png",
+      "size": 4403,
+      "sha256": "355e0746011ea0692a3a62d2e0cbc8cdfdb959c37e8b5b9978c72a4dc0aab3ca"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_combat_shared_008.png",
+      "size": 4438,
+      "sha256": "8a179effb2533b1568048acb2a4f5f3128ed95f38a84016d5f5b964079df7693"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_dodge_001.png",
+      "size": 4747,
+      "sha256": "e814d7ff672fca5d9b01e43f71c2525477199cfc637cc23c46eae3454000a17e"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_dodge_002.png",
+      "size": 4713,
+      "sha256": "a72f5bd3e324dcd3a8b66ccc3756d332d39ea0806a30643391086d8330f738fa"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_dodge_003.png",
+      "size": 4449,
+      "sha256": "dc2c0abcaf77dd94ce32fe56c9fd4033bf62da42c4a5be06872781b9c72e89ac"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_dodge_004.png",
+      "size": 5242,
+      "sha256": "833c113d4bb81f35f433a0bd234af2956e5e8a2fa273743c76604d8e4679562f"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_dodge_005.png",
+      "size": 4419,
+      "sha256": "8de66ede2fcc7656bb21210630da17d955b411c08fea14fd9f66015e9c57d77b"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_dodge_006.png",
+      "size": 5025,
+      "sha256": "23bc36f23784b942713741bf44d7b42ec7a5a2551f89852b2dcd98d284cb6161"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_dodge_007.png",
+      "size": 5034,
+      "sha256": "672983bf1a2168790122c553878bef30ab6229fcf0e81fa168b2ecc29b16907e"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_dodge_008.png",
+      "size": 4884,
+      "sha256": "2fa049fd3ebf1fdbc5fc5d0a1e7a41bb0a41754a2a4434906006f0f1d67a56bb"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_down_001.png",
+      "size": 3602,
+      "sha256": "8df0e1b1b89d39cac20ebead46a86802c24b25c0bf604e8c23e8200ae1d78d1d"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_down_002.png",
+      "size": 3554,
+      "sha256": "284f44058c66cc6e2996adde435a519a10ee395fcf83a2b4e2130391a9aa36ad"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_down_003.png",
+      "size": 3426,
+      "sha256": "3ce6a7df3beb91b2130eb7b494a44018db1a931401118846cf18b5d8e97e7021"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_down_004.png",
+      "size": 3729,
+      "sha256": "88037bbde8cb627e715e39e093cfd0e1e7529f83d06cb43738a8d2ca7d20cbbc"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_down_005.png",
+      "size": 4385,
+      "sha256": "aef04e3644e0d7ab07a5888b5573a7a5505f765f6f0edc6d89617697a30d12f9"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_down_006.png",
+      "size": 4190,
+      "sha256": "78bad05ab75ee9c946be9f62d5a24ff13c5f2a146c97b9744dbe537977c26b06"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_entry_respawn_001.png",
+      "size": 3765,
+      "sha256": "845f7b281e657fa59a74cb8c7dd63e8cb19da3ce2e7fe98d4dd7a841fcbce751"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_entry_respawn_002.png",
+      "size": 5378,
+      "sha256": "becbc4815893afd9eb4e7ce54d936873e23c3affbfedca1e089f4bd6e1b3b5f9"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_entry_respawn_003.png",
+      "size": 4931,
+      "sha256": "ad304dc0a3785c16834a524a006243dcb9c0d3c2a061231561e4e39d776c661b"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_entry_respawn_004.png",
+      "size": 5661,
+      "sha256": "21d5d178dc86b7742481ff743e01fb28db7da4a30ab0f46807f550811de95a3b"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_entry_respawn_005.png",
+      "size": 5580,
+      "sha256": "c768427c5f9a73d2784a13ab1781d5c655f09b447cfa7592aea152a653d6082b"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_entry_respawn_006.png",
+      "size": 5693,
+      "sha256": "f51bd56c56d6fd7133d3abe0cca2a1a36850d12c970a2db7f095d1f01ad1c3a9"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_guard_001.png",
+      "size": 5389,
+      "sha256": "9210844b78ae51393d4db89d495aa69b7071673645243a15eaf9659778f162b5"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_guard_002.png",
+      "size": 5305,
+      "sha256": "e9c74a999ce3545ca99e08900adfb73190558de06b9e583c6ca0a28cd9e65b86"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_guard_003.png",
+      "size": 4840,
+      "sha256": "5ec733008eb224de713e47dda293d3db4b6014ff19ef6e9933a7d949131126aa"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_guard_004.png",
+      "size": 5323,
+      "sha256": "5f720b824b029dcf1a89f24ad25123921269d3345fd733076b5b4bdf8800a71e"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_guard_005.png",
+      "size": 5372,
+      "sha256": "eaddd534f689d586f92a136775db24d85c40f6c047b30aa52be42723654be53f"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_guard_006.png",
+      "size": 4999,
+      "sha256": "0efc4838f0a6f234d3dd33a46c4cd72cca315dfafa3e275675a4d0c82862c7f7"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_guard_007.png",
+      "size": 5581,
+      "sha256": "a545622ac83d2ccc8459f4adfbbb0510217f4f08a53acb7b6b58186fff9d43c2"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_guard_008.png",
+      "size": 5169,
+      "sha256": "ef5c816b787e9667b5a249b67f00ddce59b70c0b4bcb11bdaf865e58d9342eea"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_heavy_pain_fall_001.png",
+      "size": 4853,
+      "sha256": "c15d6adf6227443bec9f58a55c943a8c9c23863cd5e6a2b052e0d3303a0de7aa"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_heavy_pain_fall_002.png",
+      "size": 4423,
+      "sha256": "babf0f52d291ed2cfc70849b99244fb12be884f459909213d12f72e0a6354500"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_heavy_pain_fall_003.png",
+      "size": 4722,
+      "sha256": "b160c0dfb3dcc7799aa0e161943385c717867d34ef2dca0bb4cad325a1702459"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_heavy_pain_fall_004.png",
+      "size": 5151,
+      "sha256": "2368baed8db020584c0f768cc14b26abd7976234d61d390e31723a98e80ed415"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_heavy_pain_fall_005.png",
+      "size": 4807,
+      "sha256": "6ba88563fd75b29ac50abb30478090770d09c03867c35d9836215d9e308b9f2a"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_heavy_pain_fall_006.png",
+      "size": 4701,
+      "sha256": "11f8daaba932740fea8dd776ec5112f9216b4b6167c054017b827070a9a8ba54"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_heavy_pain_fall_007.png",
+      "size": 3937,
+      "sha256": "3d1fcb5992c127e3b3eb8c767b252e6ccbf768de88f7346bfd271b554e2a87dd"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_heavy_pain_fall_008.png",
+      "size": 3494,
+      "sha256": "bf47e362cb9a17df78ace9a39b02fb1a63935baada1be0be488a0674451a7817"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_idle_001.png",
+      "size": 5456,
+      "sha256": "e1a089434d7bd9a53b4988a886c2cf53ade1e5f577470e2255f6f40d63e6dd0d"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_idle_002.png",
+      "size": 5420,
+      "sha256": "18cbe0f917706d74bc96a99dc38acfe10152eb2c09652e5d4f39da5cd832f5fb"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_idle_003.png",
+      "size": 5333,
+      "sha256": "131252fb5fd22c33f6854e8f09766c0741fbfb70d7cf8d2d0b9afb931d4a2f79"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_idle_004.png",
+      "size": 4889,
+      "sha256": "64d1bea1112e89ebf06b049a6834155ef4a14098e1d6160fffeec7f57cf89da5"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_idle_005.png",
+      "size": 5231,
+      "sha256": "ac0e54f96aa4b49f9ce74f863d2f75aac8213f83577e27ccfb755fb2692ab09a"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_idle_006.png",
+      "size": 5920,
+      "sha256": "6a9f7a7de65657c326de99cc55f623200f0b48158f5670a98b2bb377ddaeab3f"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_idle_007.png",
+      "size": 5568,
+      "sha256": "7d94d7f309cd4e6f739d2a33f752b7af9b5abd8735a62a977746066e85299f5e"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_idle_008.png",
+      "size": 5567,
+      "sha256": "ce6f61457864ec0da6a2f9cfe98d7edaefbacf8685fd54811b78e63a17213a66"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_interaction_pickup_001.png",
+      "size": 4093,
+      "sha256": "bb8f197b610cc66c0e2a2000f005ed5f08445dc0b57472f37fdd3db05ca1c23c"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_interaction_pickup_002.png",
+      "size": 4306,
+      "sha256": "607335c7289f19ef5ced1ccaf1d339ba56aa5224f8ead933f8b6a1be4cee4c24"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_interaction_pickup_003.png",
+      "size": 3797,
+      "sha256": "27622b43df48e67aa8eedb677edeb9e741fdb53e2027facf28e2a68eab8612ea"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_interaction_pickup_004.png",
+      "size": 3513,
+      "sha256": "517d81eed7b5f49a67423b70ba0206ff4af660e827bbb780b991b6244f56bc06"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_interaction_pickup_005.png",
+      "size": 3916,
+      "sha256": "08562a2b33ee29304034da0872c846585cc30951ab4553cf12954e8307b1c5e9"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_interaction_pickup_006.png",
+      "size": 4211,
+      "sha256": "e0b69621a534225e826ae84f478b672c27999097f7df8f35feace4b73e4b91cb"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_interaction_pickup_007.png",
+      "size": 4507,
+      "sha256": "01331b1285a0f5784ab8ef3629a22211db8edd5acd6adedf6571b29a06ada2b0"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_interaction_pickup_008.png",
+      "size": 4198,
+      "sha256": "e474f390832b7bd214333b2816d6841ac8a74e5a2fae3d014090151e4fe45e54"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_jump_family_001.png",
+      "size": 4673,
+      "sha256": "cedb5fb8ff1eb30ba82fa4cc4d21f76de41b7f8f931f374181d38fb15657d210"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_jump_family_002.png",
+      "size": 4564,
+      "sha256": "f2f1c7e5f353ef384c9c842f153348eb518f107c6c56ee84855650a3b4a3614b"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_jump_family_003.png",
+      "size": 5172,
+      "sha256": "5a3875d6549c8d8fe0819c27ba353deb92d5e7a2d4a7c3e2d2ee08a877d56f42"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_jump_family_004.png",
+      "size": 4604,
+      "sha256": "591a61d35d99b69f5eea8e3180c876fbdcedc8ea202068726c7974e31599f2a3"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_jump_family_005.png",
+      "size": 4587,
+      "sha256": "9360f6b51436d01993ac008ce99ed78c36de9c8c090ff16a5b2d42f6965722ad"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_jump_family_006.png",
+      "size": 4902,
+      "sha256": "b0b6e3d4d81c85ac96e8436f902fec037389380fa617576d6b39dcf735962c35"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_jump_family_007.png",
+      "size": 3560,
+      "sha256": "58fd3d4438323620c8e4b1973bfcb222dcabac35f97c18a008c63d1980ef5c02"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_jump_family_008.png",
+      "size": 4763,
+      "sha256": "38352365f443def28c52b09d7636867a0d31e0dbf50c97407632b47cb1d98711"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_jump_family_009.png",
+      "size": 4521,
+      "sha256": "b66509da59c5761674148dc8236a2c3a47126352009fbddad46a7df435091e67"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_jump_family_010.png",
+      "size": 4594,
+      "sha256": "2e2d93f2b619b743c9adb16a623872a7530d45c5580e189a2cb675f574eac3f7"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_jump_family_011.png",
+      "size": 4431,
+      "sha256": "c7b47ab14ebfc97bae4f5d4bbe9f727203b05755f4d022ceb58fa6eda084bbd4"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_jump_family_012.png",
+      "size": 4270,
+      "sha256": "60a0c4e9b33c60c7623de7007ffb2a94597098be1e664669c97ba2ef0f7e2ad7"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_jump_family_013.png",
+      "size": 4898,
+      "sha256": "d9b31d36b984df6f8a3759a3106912fdc311152d55ac531b4897becd07a67c96"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_jump_family_014.png",
+      "size": 5288,
+      "sha256": "9bbcbfe1ce5c038204829c5e93de6e498d435ee81f1e50b13b7dd13e5be19370"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_kick_01_specific_001.png",
+      "size": 3999,
+      "sha256": "e12ff1fc9336cb78075d1d14c96f1533472cec20d29c0972139114f312848925"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_kick_01_specific_002.png",
+      "size": 3986,
+      "sha256": "7289d8b277dd7d404afe0e9b6bf1f50e0a4d3a820db3e941982ca4e5d1b2474e"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_kick_01_specific_003.png",
+      "size": 4456,
+      "sha256": "1d95f187915174d2620aa1b9f01c0a5a89a2aa13224550cc2c06ba925ad8292b"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_kick_02_specific_001.png",
+      "size": 4305,
+      "sha256": "52adc70d855d01736a1308e73650128aa4fcba95bd779330855349ad5d37bb3a"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_kick_02_specific_002.png",
+      "size": 4345,
+      "sha256": "3db38158c83d482161817d8b4d06b388d4c08897384f3806edbc172d006f012e"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_kick_02_specific_003.png",
+      "size": 4263,
+      "sha256": "a62bf5c9aa175a428f385920f4fbccc6862133b909f1d835b2b3596ee98a509f"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_kick_03_specific_001.png",
+      "size": 4395,
+      "sha256": "d2fa5d1ca2964b319cd856d535e4fae39429512f36371f4ed351586e2dbd1da9"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_kick_03_specific_002.png",
+      "size": 4262,
+      "sha256": "b4bdf355203e4b7b9ffbfc555db1183241ce959f4cd5e4d5fab46927295f4e3b"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_kick_03_specific_003.png",
+      "size": 4157,
+      "sha256": "1dd1d34df5e83085e59d4cea4a81ad74cf873102856cdcfd8c1aa428771ae85a"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_kick_04_specific_001.png",
+      "size": 4227,
+      "sha256": "30b18eb0cc8fea3c707dad73f0626244c5c9bc09178c01b47e16a8ac6e726ec9"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_kick_04_specific_002.png",
+      "size": 4172,
+      "sha256": "941231b473a705ceb085fa7fe1ab07a2b8f3868a2eae1f8f4b5bcb5e2344ac50"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_kick_04_specific_003.png",
+      "size": 4272,
+      "sha256": "ea322c64c1583bb37a4f66502de68e300ee88cf573caf696d5cf5744f96a04f6"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_kick_05_specific_001.png",
+      "size": 4195,
+      "sha256": "d0d157e5039452e77a65341c58383b99ea101686eb007ecb2e0bfe5db2b74666"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_kick_05_specific_002.png",
+      "size": 3982,
+      "sha256": "03bbe6add1431ce397686f07c1757a568d9d043afd1f09a023bff9b7bcd6df82"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_kick_05_specific_003.png",
+      "size": 4191,
+      "sha256": "5b9b3457df47206c19a65ea4a2d0ac821de1d3508c891c0a6a8b2d7c6c86747a"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_kick_06_specific_001.png",
+      "size": 3695,
+      "sha256": "0f6fbe78c55fa96c368178fdb39215b4c3273e98d6c4327847df9c4f3ab7812d"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_kick_06_specific_002.png",
+      "size": 4028,
+      "sha256": "1b9fd672376124c65a97a5c88c0dfca12f0fd3fd3d26b538d79c4eff93de9c68"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_kick_06_specific_003.png",
+      "size": 4300,
+      "sha256": "39dd7b211ac3189b6cdca88f34e1d58d731caa20be707e70c6372f7d35ef9b9e"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_kick_07_specific_001.png",
+      "size": 4090,
+      "sha256": "7346d37ec28356a00bc86a5f1d9195ef4c93eeefa82ce3cde3b264fb0a63f76e"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_kick_07_specific_002.png",
+      "size": 3734,
+      "sha256": "8bad44b963507743f11bce8f5fd883edb8aaee23924aa580f100bdb827c17b95"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_kick_07_specific_003.png",
+      "size": 4216,
+      "sha256": "0098d517dd37e90f449d0dce502801cadba7fa4c0cb6df19bff2ef3353db0598"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_light_pain_001.png",
+      "size": 5111,
+      "sha256": "2485362d09219623755357d2a100388e2d8ce1522d634a854c3bf9fc31c5a9c3"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_light_pain_002.png",
+      "size": 4725,
+      "sha256": "effa6f904bf37804ffaf4da329924f37d64cdc30579b342d53fcbb1662069f34"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_light_pain_003.png",
+      "size": 5069,
+      "sha256": "969b774a7f6fb9d2925056a5e0c76f2ef5f46c514fd79a8a8ffa9bde2ed2e2f8"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_light_pain_004.png",
+      "size": 4831,
+      "sha256": "4077bb0754443d5ae2b5835a6c2a1ff3b40edea58f2b5b7643939d6a93cb6258"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_light_pain_005.png",
+      "size": 4824,
+      "sha256": "f38f9bdbc7cc14d3c185e3b05921ec75d527bd191596f930725db69abf13cf77"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_pivot_001.png",
+      "size": 5484,
+      "sha256": "651609688cf93a2c409f8423b4075e00fb9fb13a466f804182989612c7f92785"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_pivot_002.png",
+      "size": 5488,
+      "sha256": "27f038b26955d43388223b106c7184cc2678535c377e0e98109ba6a30ac22e65"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_pivot_003.png",
+      "size": 5601,
+      "sha256": "c324c619596ae8bb4eb9f0be0622e907c655d843a434c7c836e5f0e1e4cff53c"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_pivot_004.png",
+      "size": 5349,
+      "sha256": "1d36f8131260570e8854e508e99a41ac39fd385c1675eb6b23e8be44c671ce44"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_power_01_specific_001.png",
+      "size": 4755,
+      "sha256": "e575b405a5f498804386a435d03a12d5d343fb33afd0e17b84101e29f8bfc5ae"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_power_01_specific_002.png",
+      "size": 4158,
+      "sha256": "0aa8a828a1dd3d810d1dc1bccfab3be4c0d999574f5587d0575cad54ec150072"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_power_01_specific_003.png",
+      "size": 3813,
+      "sha256": "15020001731dde7b03d11dd84878e4204ca15c85a2478f6c59da42b69281e2dc"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_power_02_specific_001.png",
+      "size": 4381,
+      "sha256": "7d079a6e65b3d6b744034fb1d361166a2ee1850099e1bb6872c01518e3abe229"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_power_02_specific_002.png",
+      "size": 4314,
+      "sha256": "76450685e94eee4937bdb5309ec9c022a3a69e9f27fae512b36528916f5ab531"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_power_02_specific_003.png",
+      "size": 4022,
+      "sha256": "4d38fedf045a1595da120c75019c4a61b0b6f6851a524e72fa3d582a24c55e73"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_power_03_specific_001.png",
+      "size": 4409,
+      "sha256": "83a7119d61d42dd438e66cdb58b44984c6ecf341c9296afdce4ea52c08b9424a"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_power_03_specific_002.png",
+      "size": 4328,
+      "sha256": "e481890d90ae7b84b5b175128fcbdb7ab75d9d5815702d81a08d278ffab831f4"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_power_03_specific_003.png",
+      "size": 3910,
+      "sha256": "ac2b3617a0d37fab0cd9a8251ad484059e068fc0910559ed0b63320668f329b9"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_power_04_specific_001.png",
+      "size": 3859,
+      "sha256": "336b8db888ecd928bd5a25a19f7cb3101cc34a8454d15a02204a291aa2ebbaae"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_power_04_specific_002.png",
+      "size": 3981,
+      "sha256": "ccfd9b8066eae72f68ce719b51506daf496c9bc412e7ec6b0225a1942138f07d"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_power_04_specific_003.png",
+      "size": 3798,
+      "sha256": "81610f96a3e11e25722b0135a5bcd49d226e72660dcfe6df107d30513a268a39"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_power_05_specific_001.png",
+      "size": 3528,
+      "sha256": "702aeb69ff9ad499ecb450e5c6419465fff02a86bec2b3efeb3b78e93ac6379d"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_power_05_specific_002.png",
+      "size": 3812,
+      "sha256": "528aa3fa75a06ece61a9f2b5b86d6ca3a794166e4e2ce1fa1be3172fe5145475"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_power_05_specific_003.png",
+      "size": 3494,
+      "sha256": "5ec37fdddcbdaf1aeba8abd2c3d3dc499df2ea5f443de6c76550a4619d438c36"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_power_06_specific_001.png",
+      "size": 4287,
+      "sha256": "873b4b1f0b7d1913f7a5feee684324f0a59a8809be04119117f1a5978b0135fd"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_power_06_specific_002.png",
+      "size": 4205,
+      "sha256": "a6e78dbef8da9d7897b4334ca7cfd72a9a9b538609ec52c8d277bb35c69ec2f4"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_power_06_specific_003.png",
+      "size": 4112,
+      "sha256": "1cd8493f835df462189a34df872b2772bb8b01912ddd4612315fd5365628dd3d"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_power_07_specific_001.png",
+      "size": 3844,
+      "sha256": "f99bed1efba3f439c1f90c390b73a6dd4d9987eebfd8d00a2dbecc6efca3f966"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_power_07_specific_002.png",
+      "size": 4058,
+      "sha256": "e6bc3375c0a9fde8585ffdc9f6eff88b764e433a0b10793a269095721980a0fd"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_power_07_specific_003.png",
+      "size": 3972,
+      "sha256": "443f71d82257b65f29f1acdb58504516988e1bf3b2bf6367e05d86911f411a40"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_ranged_special_001.png",
+      "size": 4600,
+      "sha256": "7267086aca91442ce9ddd21609f7e8abac9ec9dbecb78de562adacce4ad1c3ca"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_ranged_special_002.png",
+      "size": 4465,
+      "sha256": "c2e2e0def0281b976e43d8c4f5f8c5326052fa9b9a9938796f251d059d8e1293"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_ranged_special_003.png",
+      "size": 4480,
+      "sha256": "081b67716e186b01eba8d97ff42b0c35ec49426fdad8a985e69c028c20ed48aa"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_ranged_special_004.png",
+      "size": 4947,
+      "sha256": "c0b78aae8915092c886d87fa533ba973e437b00663b59fa00a1f91290c1a2590"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_ranged_special_005.png",
+      "size": 4675,
+      "sha256": "9c5da8cc46f29d2f600f13f0da7e1ba51f0b056db5f4dc075d35d94a46832a7f"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_ranged_special_006.png",
+      "size": 4808,
+      "sha256": "28baec3bee132eb0271d581edda1b1d0ee636258ea4826cd6c079d54393752a1"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_ranged_special_007.png",
+      "size": 4879,
+      "sha256": "6ee09b9bc9803e7bcd7b9b5d88a366c64d6511733466c8813e0340ae3aa2d22c"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_ranged_special_008.png",
+      "size": 4436,
+      "sha256": "9b10f6e41257740ed7f753ad2ae9fefcf14fd380c24c4736dd53ff197a41a0da"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_ranged_special_009.png",
+      "size": 4318,
+      "sha256": "e07941cfb37eb23cc1f596104b9e976d45766c90a34d81f1b6e7f7a8b1e9e7c4"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_ranged_special_010.png",
+      "size": 4386,
+      "sha256": "be29165b0303ee72406cffb7e40df52c8df36ba14f5824e818fd58b40d9a64e1"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_ranged_special_011.png",
+      "size": 4537,
+      "sha256": "6e0edf5112849aa0b57b3e5cdf6be98b5982ca9ffae4e4bbdf64996088d967c2"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_ranged_special_012.png",
+      "size": 4363,
+      "sha256": "a49b65cdb9014090ab4f0d9e56d0daa6501909fa73ea25b80ca14a58128b4e9b"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_ranged_special_013.png",
+      "size": 4534,
+      "sha256": "f92fc1cca194236fa79be4b821158c37bb4fc17692f8756277e63ceaf1d46e7b"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_ranged_special_014.png",
+      "size": 4382,
+      "sha256": "97f5b30124aa154f6371337d3e04706ed163761af63d8faa7f478df84b25d0ed"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_regular_01_specific_001.png",
+      "size": 4584,
+      "sha256": "cb4ef3f54367d6f076c8f9e4794f6631143382e0c7f0808aa496228071421b65"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_regular_01_specific_002.png",
+      "size": 4716,
+      "sha256": "fecc99a4e6d5326bf9dde339b4e1d80983759b18aaeb1172bf382e60ff12c079"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_regular_01_specific_003.png",
+      "size": 4308,
+      "sha256": "21d802c48153e2b80dada7eec08a85db55b5a70b0dea79e78801887cdc21c20e"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_regular_02_specific_001.png",
+      "size": 4348,
+      "sha256": "5b294b95ba419fb92eb0d9bd8382ad7d30a8154afe7e7133e4931b591069272c"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_regular_02_specific_002.png",
+      "size": 4703,
+      "sha256": "586b7e96bdadc0d48727a726f6a56aa908d57de11bef5abe67a181adeb2ab7e3"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_regular_02_specific_003.png",
+      "size": 4344,
+      "sha256": "37a71c7d68d0faab41e204fdad9776d3db1a36158d649ddbef01acbe79ce3bd8"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_regular_03_specific_001.png",
+      "size": 4052,
+      "sha256": "3564a718b890ca4cc81bfa4b160443fbca86dd9fafb286f4217e100247f91eab"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_regular_03_specific_002.png",
+      "size": 4359,
+      "sha256": "1c2027840a11374dfd4b70387706362c4db150722d86e4abff54754cb2938845"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_regular_03_specific_003.png",
+      "size": 4327,
+      "sha256": "6a63d49e103c9df40b4305061feb46f3fa6ca25663be175dd944c0d22b034ff9"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_regular_04_specific_001.png",
+      "size": 4379,
+      "sha256": "c47f32eaebcaf9182a4783b4c88ef0a0a8ca81a0d125c561015bddfac46a1fac"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_regular_04_specific_002.png",
+      "size": 4260,
+      "sha256": "78a979bff90494ce6bf7a8b71653da3a2fdc0dce9358dfc9b18d10ec1fc2aed8"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_regular_04_specific_003.png",
+      "size": 4281,
+      "sha256": "f0f8592dbb5a9ba30861a82d77e524e6439a820056ee31770b87ca650c34605e"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_regular_05_specific_001.png",
+      "size": 3872,
+      "sha256": "6061d217e4c762951b527e48e0217a80f9dba8bae2ebd0c414cadb12a6982cf7"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_regular_05_specific_002.png",
+      "size": 3951,
+      "sha256": "838fe9983cebbe7ad2e41ca2c14190c1bc5144902eb629ef9d94abea9b8201ee"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_regular_05_specific_003.png",
+      "size": 4298,
+      "sha256": "b5287dd6514c179d4d47aea8631390f2aab188f7295ac8d8bc65ac39ed46ccf6"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_regular_06_specific_001.png",
+      "size": 4882,
+      "sha256": "c898d558b9f967a9668c2f9405fd362cfc7549d458a9bbaf4a480cf2501ca368"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_regular_06_specific_002.png",
+      "size": 4425,
+      "sha256": "103c4e3c3f058c83e1655da217da1f076e90c711f64096b2df92cedfd8aea1b1"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_regular_06_specific_003.png",
+      "size": 4176,
+      "sha256": "6f1069c4812253987637c3ed4f6879a343f818051b761d26cf88b2db82c43a20"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_regular_07_specific_001.png",
+      "size": 4591,
+      "sha256": "c8f0f462f55a72baac66d22a2ea07579ab6050a0102711d21ff5359123b8d70e"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_regular_07_specific_002.png",
+      "size": 3917,
+      "sha256": "062033e5e2360285a29d65274de15834eb8ecb779c9691559d3369a4b1068b1f"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_regular_07_specific_003.png",
+      "size": 4078,
+      "sha256": "906e99184112b49308c38912ea4496f63305183980177032721c7b59ea051b00"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_rise_001.png",
+      "size": 3724,
+      "sha256": "3978eb09d3c12d16a39b632206d94d35a80d5e530574ad5fcc8bc029ddabbec4"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_rise_002.png",
+      "size": 3798,
+      "sha256": "74652c5fec859a779934a0395bf7fbbb048867cbd3328fbb61071f69bb4aa9eb"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_rise_003.png",
+      "size": 4328,
+      "sha256": "a2201404b63a161f2d7d78bacfe6cf84dab7b2066ccbcbd0b1acde42a50cea15"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_rise_004.png",
+      "size": 3765,
+      "sha256": "56b68786fc3c7155d7ce20bd1ba406d2e2d11780e72e6e6165d63eaf4b62a79d"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_rise_005.png",
+      "size": 3693,
+      "sha256": "d89bd6b593610593ee5ddf43d6b915ae9e946ea92e4c387fa660e97563cccdb3"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_rise_006.png",
+      "size": 4635,
+      "sha256": "70d4c7c128636f9b3e976f74aca4f0d0123e8b28569d144771b53fcb381ba826"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_rise_007.png",
+      "size": 4522,
+      "sha256": "035a1fa9a360c25d1fcec0f96e5584a06a3d31db426422281b52930ea236e160"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_rise_008.png",
+      "size": 4642,
+      "sha256": "dc827110530431064ed865e480496bd10615afa50e774696a141d055ba333c66"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_super_001.png",
+      "size": 3873,
+      "sha256": "c76cc02031e3e5f49732aa13203a25870cf936ae13f49a056c8620a013bb7fb2"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_super_002.png",
+      "size": 4474,
+      "sha256": "28abd573ce0e220ecd54e42f13c24efba56f8ce3dc123105933ed5f8ce39e24e"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_super_003.png",
+      "size": 4486,
+      "sha256": "0d871cae84cba92e0c87438c8273a5ffc449b183c9877f181194b6405c847446"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_super_004.png",
+      "size": 4388,
+      "sha256": "a3534efb282513cec6b6fa9648232251f68117f818b30e3b3ba158cdd5cab7f9"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_super_005.png",
+      "size": 4385,
+      "sha256": "69cee87f975d52127af393b49c3c9affef3577e8f6c4ed32a7dfe49a32d46746"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_super_006.png",
+      "size": 4240,
+      "sha256": "a8c734a9e2e122a23b37020ac3a33b84e9760d232624e16adec6760fafae6089"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_super_007.png",
+      "size": 4629,
+      "sha256": "f45a83f84a4f925170d338ae28569d55c163fccdb7317e4af8154067a2e36e42"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_super_008.png",
+      "size": 4115,
+      "sha256": "41a79606f582e26c1532bba4b5126e6c77d08cb9cfb393256f7daadc631cab2f"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_super_009.png",
+      "size": 4130,
+      "sha256": "7bc5d21683d801528f7fedad1c808dcec130e6c522ecc7554acf6074f92d475c"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_super_010.png",
+      "size": 4212,
+      "sha256": "e173f644b7ceef8586f40098fe8c7a87c7f7b3121e791e72ba52b06f601baf98"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_super_011.png",
+      "size": 4297,
+      "sha256": "c1eb92fe5e665d5d85a12ec8000b98861c645c24c5426cdfb307223a050bc59d"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_super_012.png",
+      "size": 4338,
+      "sha256": "b316d352d1389f85733b147258e3afc21e9abe9261a15fb7d1dfe1b970d30102"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_super_013.png",
+      "size": 4148,
+      "sha256": "0faf9e6cbf448057ab797eb20a75cb49ee5782bd2a82439ca02de0ef48133af5"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_super_014.png",
+      "size": 4817,
+      "sha256": "91d56c11eca7084c2420cc4802e1d8d7286cdb7aec80fac61e177b771981de61"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_super_015.png",
+      "size": 4544,
+      "sha256": "5ad769930ddc5790994182442b39db749b4ae4dc7b4fb9a7ec8e0cee10bc2955"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_super_016.png",
+      "size": 4284,
+      "sha256": "72b70beed8364a4e1027277e34d2de91dc2546da02b2a1302d005593d66187ba"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_walk_loop_001.png",
+      "size": 4685,
+      "sha256": "72811d48d1173f7f07c00ddc516d8524cef779913b42dd70d158995cb2e51c92"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_walk_loop_002.png",
+      "size": 4885,
+      "sha256": "2322278cb19dff1e73f0c6ed6530ab367eb115bc2a5d3cc3a0f48edc22402094"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_walk_loop_003.png",
+      "size": 5176,
+      "sha256": "6c546163c11f5729dfe6ff520b0a626e0106f22524f7ba0b01bc5e4b79163076"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_walk_loop_004.png",
+      "size": 4804,
+      "sha256": "e8ad6aa646b3c3ed0e6ef10fae407eadd8128eb95271dc7c3755f73cb0aebd5a"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_walk_loop_005.png",
+      "size": 4906,
+      "sha256": "0114bd6563b28609bb2a84277a305358c5c0bc8e35615683a33e5e1af8a49b67"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_walk_loop_006.png",
+      "size": 4967,
+      "sha256": "33e01b2dad4fe2db8ef73105c41bf0808018a17dd54ca7dfce2f1bfa19eb1ebc"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_walk_loop_007.png",
+      "size": 4829,
+      "sha256": "e826de169f81cd2b6e279ed047425e490a02105e2915f5251d6af55665088c6c"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_walk_loop_008.png",
+      "size": 5032,
+      "sha256": "d60b17fc335fb377c86ca91086448c3b454e1de4b497a77439b0738f522421a5"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_walk_loop_009.png",
+      "size": 4709,
+      "sha256": "4e75f9d59b9744c56e1b0fb8f690c356f08de81ed79e254f0f5c66d6a30444d7"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_walk_loop_010.png",
+      "size": 4638,
+      "sha256": "b98c1435cbc17b3e8c6c799cab75dc2dfe57c837e393e515c18ee1e3d4a72b1a"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_walk_loop_011.png",
+      "size": 4844,
+      "sha256": "9c2df5931e4a8fe91c87e48415d6a63e3f463db361ed6eb1ddf47e8cffc29588"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_walk_loop_012.png",
+      "size": 4579,
+      "sha256": "586951f12093cfa437f3bddee8a5efac89e232ca55bb98e824ccbd8b7cb8a2e7"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_walk_start_001.png",
+      "size": 4850,
+      "sha256": "7d4468bd233d6786d1b49ff30ecdc940382915cd53e0ccbf33562046196e6425"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_walk_start_002.png",
+      "size": 5166,
+      "sha256": "3c780011846411da663e7b5c6b6721369d571b86a4ad4ea75c55376c440e7ba8"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_walk_start_003.png",
+      "size": 5319,
+      "sha256": "27ac9575e1c0cb8ed8329e2c62cfab971377b9b313e4afd9a05d7615f6bc24da"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_walk_start_004.png",
+      "size": 5039,
+      "sha256": "90808977c1d3a1a0f7cc2d687413c9efb1f61d73bd81a2ef8789a038d7577b77"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_walk_stop_001.png",
+      "size": 4746,
+      "sha256": "ddfabc0adc078cbe9df999df05d0e2cb385eda4b3a8d7096474006b7f540bbf0"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_walk_stop_002.png",
+      "size": 4906,
+      "sha256": "a0eeda37038d16bce89546cb04fa2ce2395580e343511b2431b2783d7ddb7bc2"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_walk_stop_003.png",
+      "size": 4964,
+      "sha256": "376fb16746c79ed9b66bf15d8e28b600b68bf8f47498d99b5cdd263d6a67d9bb"
+    },
+    {
+      "path": "data/chars/black_dave/sprites/bd_walk_stop_004.png",
+      "size": 5209,
+      "sha256": "8be7b7eff00ed27d05071203d51df23df4a127c58143d9435c106367f537c320"
+    },
+    {
+      "path": "data/chars/homeless_man/homeless_man.txt",
+      "size": 15414,
+      "sha256": "61d2a3881b56f6de675c3e3306664d619652a63900dba40d25fc603733b500c9"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_alert_aggro_001.png",
+      "size": 4846,
+      "sha256": "79c0fde062e74c46badc1bb9a726d51f6cd9473776c1c7d39619ed5e1f7af0f2"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_alert_aggro_002.png",
+      "size": 4860,
+      "sha256": "23f4e05796e324135d006b8f1aaf69711f9bfee21a38bfc2084c96dc32eef2fc"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_alert_aggro_003.png",
+      "size": 4889,
+      "sha256": "633cc95c4e3b3b76ff6ca756541e620105bc0d2b8878ed80fc160cbbc3067bb3"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_alert_aggro_004.png",
+      "size": 5032,
+      "sha256": "0a6edf7829ebf6ed445ed04d8e7b033873bc692a5ddea87346cf0d8e17a02098"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_death_001.png",
+      "size": 3985,
+      "sha256": "d6186d450abbdaf2c8b293298fe829de126f9c1dd664607add4ae93a830cd870"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_death_002.png",
+      "size": 4119,
+      "sha256": "986c0cdd6464222bc71b84ae4a78f51541e3531a36187c0d6231b4e6172d2e72"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_death_003.png",
+      "size": 4567,
+      "sha256": "556c5b9defee7c9965780916d58b7e3817ea5c68507e6307cf641ccf9000b45d"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_death_004.png",
+      "size": 4449,
+      "sha256": "7eccda329659c280e42390bfb69fc89b45a4620c62dc562c3d686921f0e14f1d"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_death_005.png",
+      "size": 4381,
+      "sha256": "0fb44b977a00090172d362e8263bb14bd35fd759fe86792e27d839efbed37150"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_death_006.png",
+      "size": 4664,
+      "sha256": "788e8b00e02a1241720a15699e167a5e924c93b223a97ebf3798199baf650495"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_death_007.png",
+      "size": 3411,
+      "sha256": "fd84abf06fcefa2a439121e29dead2ecd8bdbcd7c1de9642151930d621f033f9"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_death_008.png",
+      "size": 3435,
+      "sha256": "466cf72aad7849b523b8cf24eb388081bfc3c050bd7d6ccf2fb7ccc6fb03b7eb"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_death_009.png",
+      "size": 3183,
+      "sha256": "00dc9268bdefd2487aad26424005f003d4c4420bf1e985e010b2e5c8b03885d7"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_death_010.png",
+      "size": 3274,
+      "sha256": "9c6c6b56f409b82df4f91ba266ce47520c7247d89e52130e91dc78bb780be1bf"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_down_001.png",
+      "size": 3388,
+      "sha256": "8736478eae1e0b201c9654cf670c152c1b9a0b5c1d60ef327145498e58bdf53e"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_down_002.png",
+      "size": 3191,
+      "sha256": "3f4640d8cffa9aa1799c0ec09192bb46fb304a6ec9fa0d37be545dde78af2015"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_down_003.png",
+      "size": 2909,
+      "sha256": "e7f2749d49749c0c16a02039159593703a4e78ceb5cd9e485feb6875437de8bf"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_down_004.png",
+      "size": 3293,
+      "sha256": "58664429b3be33defafd44dbfd59b8a3279c8e784654047b5f5b80921b7944cd"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_down_005.png",
+      "size": 4440,
+      "sha256": "abda68ef773ec154f7b59822f2abf4e7f0f3ad351b2aba37873296f87df6117f"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_down_006.png",
+      "size": 3871,
+      "sha256": "f255b7aaa1d679dcd40c1487790433f4c9ecf2f02a9adeb559d1b3370625b52b"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_heavy_overhand_001.png",
+      "size": 4989,
+      "sha256": "80d68a7bbcd3b5c915d2cd1bc9ecb36d3d7dc3943447b64299238a04a59e8903"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_heavy_overhand_002.png",
+      "size": 4876,
+      "sha256": "b5c1e0a5f3f89e5708282b35251a4d79979fb8e4001754bb23d247ba1c6d0c04"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_heavy_overhand_003.png",
+      "size": 5071,
+      "sha256": "aacfc715ab72d39a686fb1c99a136677cc2aec4f413678779d79a5ba678dbc44"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_heavy_overhand_004.png",
+      "size": 4673,
+      "sha256": "4dc5fc6e7071dd59419f70ec93e3e62a369e1453baf783be3a310d9329ff3f52"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_heavy_overhand_005.png",
+      "size": 4561,
+      "sha256": "b680556a929b5c3ff7f7708eee2259f77463274b55ce1ac6b1da064d4da93794"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_heavy_overhand_006.png",
+      "size": 4186,
+      "sha256": "8e912fef31fae62867a23ab142836a627c029498f9b50fb4355153b8e2b0db77"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_heavy_overhand_007.png",
+      "size": 4306,
+      "sha256": "9312bd92e9accef4f96942dfbf08c9f34467030514f67be92ebeafca75be4380"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_heavy_overhand_008.png",
+      "size": 4417,
+      "sha256": "1ed1b3d4fc3621a69bbfa88b40b6c48e822f9691d6361a57b66647bd5968e313"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_heavy_overhand_009.png",
+      "size": 4563,
+      "sha256": "0986580bbc3ee80c700fb0ec8a0f878aa06521764971c25c845e0cbde81e8459"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_heavy_overhand_010.png",
+      "size": 4672,
+      "sha256": "2ee9b44426f995f61daa5b43e55f6adce1113925e6edd77073d137fa85db0553"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_heavy_pain_001.png",
+      "size": 4594,
+      "sha256": "3f77f51b1de35dbccb99c034bb630a01d1399f31ede56f0e3285cda50b480517"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_heavy_pain_002.png",
+      "size": 4690,
+      "sha256": "c995687d570e452e38b48866361470dbad78996d705648b8040fd8a6ba8765ff"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_heavy_pain_003.png",
+      "size": 4878,
+      "sha256": "21de2806bf515a0ba5a2cc74806ea90dc7b05c956e39d23830db6b3392bef6ce"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_heavy_pain_004.png",
+      "size": 4314,
+      "sha256": "908a9269622568c643642317453016d8c91ae201d14685b85f100c03cf8bd733"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_heavy_pain_005.png",
+      "size": 4425,
+      "sha256": "2950bb1ea2f660783e6af0c1583c5cfabba4e92ccc17d7fc9d0d4b316c020e6a"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_heavy_pain_006.png",
+      "size": 4580,
+      "sha256": "bbfa9dc0ae90a882849771c494ac3e6c3bb6ec49368ab3a2fa98fae7c0f36545"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_heavy_pain_007.png",
+      "size": 4647,
+      "sha256": "16a92716fd04962411c603b14bb063da0e3699a0702a6e3c61a18c48de9d7382"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_idle_001.png",
+      "size": 4755,
+      "sha256": "747a128a88a45af724e8f182d4a2b90bd84ac8147ef47f35908d8b1b1fa56a93"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_idle_002.png",
+      "size": 4682,
+      "sha256": "0996c4a979e7a0f119efb9ef2b3cd200bfacb0abf7d2d198ba39dc221d96e949"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_idle_003.png",
+      "size": 4629,
+      "sha256": "4b964f6fd49ec51f1c31412e5a91599e66807c639078c96079a820b54854e609"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_idle_004.png",
+      "size": 4939,
+      "sha256": "eaab8c354c652553a7e149021707ef426e47aadb65650cf2e2004d751290ca75"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_idle_005.png",
+      "size": 4661,
+      "sha256": "4b3373ae0c0d3ecd1baf441ca5a7d6b5f06230f8978763fd278a9e4ab9af6a88"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_idle_006.png",
+      "size": 4679,
+      "sha256": "43051c9d23734fa3ddd94b3a14763f0c871d201322d5781cf0e3c1ae5329f6f7"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_idle_007.png",
+      "size": 4542,
+      "sha256": "37d2fc5740f304abb47941db7d0f4522480d1dccfea2a5d832d3cdc7cca86823"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_idle_008.png",
+      "size": 4845,
+      "sha256": "8914ce974a019eed0c08c11e33c0731257f4ee00dc0bc8353ebf3bdf76f97a58"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_knockdown_fall_001.png",
+      "size": 4584,
+      "sha256": "6d2dcb9fa2e7fe38262dec3ae15534ee29074721899a7dd7b033e842ed07a873"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_knockdown_fall_002.png",
+      "size": 4406,
+      "sha256": "1685ac5e2085b8eac7429eaf1c209747b3f6877444b4e1653e3fec7922553d42"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_knockdown_fall_003.png",
+      "size": 4217,
+      "sha256": "5054fb4b3a1fbffb3ea00b58ab8d970e925099672eeed4d5a3bb9fb121c55084"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_knockdown_fall_004.png",
+      "size": 3991,
+      "sha256": "bc06ad678c5f812151fb7d793f6ad0548ee32bc8237464bb9124a49a7ba1a228"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_knockdown_fall_005.png",
+      "size": 4229,
+      "sha256": "f75704c6e9005d1ebf8fa9cfae9380653b03dbaacae4533326b57b2a6c8ef3f7"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_knockdown_fall_006.png",
+      "size": 4133,
+      "sha256": "3456a2b68f809bd0593177f3ee4820faf151542dec3582603e2b6a1ecf1f6990"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_knockdown_fall_007.png",
+      "size": 3809,
+      "sha256": "6c722ca05e924f3215ad1ecdced2121fd3c144d9984135ae38fa6276c11a0386"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_knockdown_fall_008.png",
+      "size": 3593,
+      "sha256": "af55f2a3b523a2dc85001d3075c39087de62e4269a0d4870365516d22ab66dc8"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_light_pain_001.png",
+      "size": 4833,
+      "sha256": "acd2d00928f1c18f76527611936fd714e549c93424c6c03c64bdf09a59d30f42"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_light_pain_002.png",
+      "size": 4222,
+      "sha256": "a5c24f38667298300ef10c1ee33459d94331c2445f9ce6bcbee1ded0b49cb687"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_light_pain_003.png",
+      "size": 4481,
+      "sha256": "012d45747d5cbac4defd4ce989a10385efa4fc463147a93b4af2435e123661fa"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_light_pain_004.png",
+      "size": 5052,
+      "sha256": "7aaa3a334b0ce124b6a2a3e2eb6b5affba7978e9fb0dea23e8539ebcfe3f04c3"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_light_pain_005.png",
+      "size": 4437,
+      "sha256": "4f45f641eb3371fb96ff9ef5127321d3c642a0171df913da4872386993bf5b3e"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_rise_001.png",
+      "size": 3967,
+      "sha256": "8106f23d75f17089da11d38e92d5b46cfbe6c3ce914554d7329f32e2d846f67d"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_rise_002.png",
+      "size": 3930,
+      "sha256": "8a7561ddd666bd49e4666f8298a2c1343e2268353111a199c0455c88198c1000"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_rise_003.png",
+      "size": 4159,
+      "sha256": "41c520e9b7e7b4ae3aa63fa202e4724694295f477d9b1a11e157b6a255f0fba3"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_rise_004.png",
+      "size": 4009,
+      "sha256": "6828490d688eda6ec191a53b377dbd250f98f8d7e76b0ab42a4f9842cbef099d"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_rise_005.png",
+      "size": 4325,
+      "sha256": "e5faa730660f9b76538b6e1f85015a080c6cba51a09efe58be2d8d53143654b9"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_rise_006.png",
+      "size": 4038,
+      "sha256": "acc16e6fd5e50aaddd7464792cda053fe0834b70ce37c0703ad9bb9de5922e34"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_rise_007.png",
+      "size": 4317,
+      "sha256": "6b99afea07b1f8ff7eb3c40e443626ffef522a2c7fd05b8e566e2be0ec16d38f"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_rise_008.png",
+      "size": 4549,
+      "sha256": "1c47fac27f8e276ec72b205bc253c489cf720b7043c9097925faf6de281d56a0"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_spawn_entry_001.png",
+      "size": 4763,
+      "sha256": "d1f54d1ef25f340fd987252bb230634d843f702b5fe0afa981367d6ede7d3bb0"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_spawn_entry_002.png",
+      "size": 4796,
+      "sha256": "1c1df8e9cbb0729c54faf9be9a79a2453f10f1e1ed52330e3da9194ff69aca47"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_spawn_entry_003.png",
+      "size": 5288,
+      "sha256": "18339ef2397ddf145adc1523498e4bc1bd5ca30c6fedd5efbbeffd88e5eb8b63"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_spawn_entry_004.png",
+      "size": 4816,
+      "sha256": "866745d749d3222be3d3bb0426d4bc1d45db33eb2854e5d3d00739d664308210"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_spawn_entry_005.png",
+      "size": 4783,
+      "sha256": "15466b7167c388883c916de21553ea47c9533c3d859659d25c7ea6f4082fd255"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_spawn_entry_006.png",
+      "size": 5019,
+      "sha256": "f1f6b033df7e7b3d291a7618ee4dbe73af87d004a3e9c381c8bd304b077317e3"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_taunt_hesitate_001.png",
+      "size": 4635,
+      "sha256": "14c403fd04b512f684505706d153d66d814a742980cfd0aea5b57e5c2fa4435d"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_taunt_hesitate_002.png",
+      "size": 4994,
+      "sha256": "e3952995b3aa7eec11d36e6893aec593648dfcf763b58ad3f4a8c835c527690a"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_taunt_hesitate_003.png",
+      "size": 4973,
+      "sha256": "5eac416eea6da1af012f2fd2485e22c49843ca4522f5d104cbd0f30813cb2de4"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_taunt_hesitate_004.png",
+      "size": 5051,
+      "sha256": "c40b033eb1ba9bb9e14b9eb264295290242545a651546a66e58b1dcc897543ad"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_taunt_hesitate_005.png",
+      "size": 4441,
+      "sha256": "174149edba1a444ed4dd8c2a43017eb6bde8745b69c7ec23235bf64a1dcd015b"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_taunt_hesitate_006.png",
+      "size": 4465,
+      "sha256": "e64bc7919ca1c859ee31144d688ae59103dd57f3440e02b068cb7a5d26c7aa47"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_taunt_hesitate_007.png",
+      "size": 4899,
+      "sha256": "e6949dc3022f01a9d46915bab49f8b00a1de9353cb3ddbd28570c2a5eab8a601"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_taunt_hesitate_008.png",
+      "size": 4604,
+      "sha256": "82385d66b3427a151ef737ebc053ef13f31a570632b8e7f408c6d55f0b178cee"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_turn_pivot_001.png",
+      "size": 5016,
+      "sha256": "8a16f7d45939fbeb9f38bf422743c7f104c9f610fc3ddd2428b0ee66c61119a8"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_turn_pivot_002.png",
+      "size": 5038,
+      "sha256": "11b8b82d232eed0a4cfe5676ef0ce3d30f89b6fb3b478d663a646eb49d0baabe"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_turn_pivot_003.png",
+      "size": 4656,
+      "sha256": "526cc0908a5e7c63f2ba804854c22c8c2fa0ef2786dab49ac5060d5fb166ba99"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_turn_pivot_004.png",
+      "size": 4070,
+      "sha256": "5f1057183453050f1a052ef479f7691f1edecdc960102271fe48065c496583b2"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_two_hand_shove_001.png",
+      "size": 4807,
+      "sha256": "56f5f0496ab73cba9c25d5a597f083374c99f7e88f1f38dbff4fcf03145c9904"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_two_hand_shove_002.png",
+      "size": 4786,
+      "sha256": "de4debce3c48bc1fe4c902c77d0cf798245ab0f48b30f3ec0afbd9a814cbad32"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_two_hand_shove_003.png",
+      "size": 4819,
+      "sha256": "3a0b3d3933ecdd5a7ae731edf5184d60ba87ad60c75ae5667470e79202a6741e"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_two_hand_shove_004.png",
+      "size": 4891,
+      "sha256": "3251bdd431ba0e359674b8621cde7b6494672017ac11b76bfe43acaa24562862"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_two_hand_shove_005.png",
+      "size": 4871,
+      "sha256": "db24ed9165a26d4f4d8a5bb9f51370df1bdf3f193a2731c27dae2d47176c9a45"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_two_hand_shove_006.png",
+      "size": 4802,
+      "sha256": "978c7c52d1e491c4e25430b07d50d2e1e3ea859f748672f0ee53c109605cd9ec"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_two_hand_shove_007.png",
+      "size": 4704,
+      "sha256": "28e382f3d59838340d47283be1cac1e4750642a9304105caf7fc1ce05da28164"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_two_hand_shove_008.png",
+      "size": 4717,
+      "sha256": "85003a9b9f22a67ae0fdeba4ba6bdf313fbf241683ab626c7f7feedcb7dcfb4a"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_unarmed_jab_001.png",
+      "size": 4946,
+      "sha256": "8f7a28b72ca2f5f3fe949f0b4b73bd6c363bc216512e82ffe6989c23fe25dd1c"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_unarmed_jab_002.png",
+      "size": 4926,
+      "sha256": "b6d2cc235dd79943411d404ff5062de2112a946b605025c3f8364a734aef6628"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_unarmed_jab_003.png",
+      "size": 4941,
+      "sha256": "ed9720fb730982d893d2f8c39aa1e65bb906933638b991ba3a8fcb96fb424138"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_unarmed_jab_004.png",
+      "size": 4901,
+      "sha256": "64e9f66d4c3d545363bb4f0b90661bb12e04f511cd3c499b3dde657cfd10e861"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_unarmed_jab_005.png",
+      "size": 4865,
+      "sha256": "520995eda498563dbbdc284975af98761f955028c009ffdec12d33774723ae83"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_unarmed_jab_006.png",
+      "size": 4799,
+      "sha256": "4e3d695d9e85e7375cc709b5739171bb5df172dceed182f6b05bf99b9b1e42e7"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_unarmed_jab_007.png",
+      "size": 4854,
+      "sha256": "316c8e023ba35f64276ccf36ed15a28ecf6f9aef2b65905ec10349e643f7fd96"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_unarmed_jab_008.png",
+      "size": 4792,
+      "sha256": "9a8dbd02e435d10a92848d82e8de541089b7cd2cc1f90f4b6dce9ec843c6d044"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_walk_loop_001.png",
+      "size": 4770,
+      "sha256": "f64a9406f1af0e1ae574a44cba4350da013e37e1391e95f7add04324968ec63d"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_walk_loop_002.png",
+      "size": 4775,
+      "sha256": "e3e0ccb240fc6c0b67234d3de8b38f9154aee70a961cbb259b948642fd54b363"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_walk_loop_003.png",
+      "size": 4304,
+      "sha256": "d2fa60a60b5dc2e34f7562bc51b323e6d0646fb85147d8e06de5bebd8b0db7f7"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_walk_loop_004.png",
+      "size": 4844,
+      "sha256": "a85a69d4622c7122a5ddea1a4c04d25e651890716c5c4d25f44cde740e8aeb77"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_walk_loop_005.png",
+      "size": 4912,
+      "sha256": "2b6073cbc246b78ca3fdfa56f8025deb1a9355fcdc21c4a19da55f69291b967b"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_walk_loop_006.png",
+      "size": 4528,
+      "sha256": "ca7e85e59637787f96250ae7de5f9c71cb0c0b429cf42e1b53916407d5405cb1"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_walk_loop_007.png",
+      "size": 5000,
+      "sha256": "f61c92d41e8b1453b50b73829e3b10adc3164fec15edb0c055a9adee59edf954"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_walk_loop_008.png",
+      "size": 4502,
+      "sha256": "3631e4169def1136290122deac7a875603825768c88f0445a3abc011f6606260"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_walk_loop_009.png",
+      "size": 4862,
+      "sha256": "e58e1373bf17f1f4fa405119200276dc33cce5f20c3a5db390b6d03413155ed9"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_walk_loop_010.png",
+      "size": 4865,
+      "sha256": "a2387258cfb8c5164be9ccf2d99b12667d1edf62e2ea00f29dfa07343fd83257"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_walk_loop_011.png",
+      "size": 4506,
+      "sha256": "aa1d1e28315b8f790c92a116855663b069496cb2b91ae809236763be5f8192d8"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_walk_loop_012.png",
+      "size": 4831,
+      "sha256": "17638f4c6f02d0f4e653509b7aaf775cdc7372dc1d17d703e344efd1f67f6af5"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_walk_start_001.png",
+      "size": 5422,
+      "sha256": "3f5a47368c01c88f8f1b77adb52f580bc97d00a167b73bf4bd492339b9cb6000"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_walk_start_002.png",
+      "size": 4848,
+      "sha256": "458a52a523706adc19c95120189f6c49cc59ec853e5d815f406ce28c0b8d3f61"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_walk_start_003.png",
+      "size": 4590,
+      "sha256": "588e3560dbc71ce4eb2b302b035259504d8363e3a85a4fe4e646c530fee1546c"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_walk_start_004.png",
+      "size": 4394,
+      "sha256": "3430c256e488052f7e4d447468c3e647e1d4a1a295f61da3e26d0781da5f8a73"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_walk_stop_001.png",
+      "size": 4801,
+      "sha256": "446a576b18c261adb29504b800e0ae3d58e6515e46c8fb59025ebffefdff9a79"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_walk_stop_002.png",
+      "size": 4789,
+      "sha256": "f79900721173ea138e784f6e504d3a100e5f082e7446f638ff1e33ec8779930e"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_walk_stop_003.png",
+      "size": 4723,
+      "sha256": "b89a4fa6b57e0d7be6bc98a3f1837e8b08757c0a62d382236e27d62bdb3b78e8"
+    },
+    {
+      "path": "data/chars/homeless_man/sprites/hm_walk_stop_004.png",
+      "size": 4881,
+      "sha256": "97ff9a19074a225847bc28992994ebe5a2fb7b4087df543c6c48e0e1a28c6c4e"
+    },
+    {
+      "path": "data/chars/police_officer/police_officer.txt",
+      "size": 15772,
+      "sha256": "b7b2bdd2fcd6956edd589a166a2a891485e5c0b33ff13aa77a7045d0d3fdf651"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_alert_command_001.png",
+      "size": 4767,
+      "sha256": "fa9b3bf1398ab5d3d2e139b9b1f7cf80b72b897f226a1f36cd1c69a07a238417"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_alert_command_002.png",
+      "size": 4721,
+      "sha256": "b8f999138443ab36506e0c71a2d2e8719cf5754bc22a6ab35bda0029dfbeab1c"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_alert_command_003.png",
+      "size": 4788,
+      "sha256": "75cbdfed10ccd48631383528578810a91cad3c000603ab9fa12fb3fddd6e498f"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_alert_command_004.png",
+      "size": 4681,
+      "sha256": "63ec6fd92030755abe2b4cc37678d432df8bbc94100c17653f0fb06bb3e9584b"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_alert_command_005.png",
+      "size": 4953,
+      "sha256": "0cfa017da909e151164b4d4c8c9de0cdc5e3b0420ab37f8569993e1ee6f00b46"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_alert_command_006.png",
+      "size": 4943,
+      "sha256": "ac97c687822e7e346631c40c3b5c2794a75bd01548b76c7405951790cb3bc08d"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_baton_backhand_001.png",
+      "size": 4614,
+      "sha256": "bb12b0066bc7fe7a4ac949107acf93c77349d24fb6069137cb42a33d338daac8"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_baton_backhand_002.png",
+      "size": 4524,
+      "sha256": "94d8d4f7ae8fa5903ac92f73ba332da5d431358137d225c85036a4c57f5b445a"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_baton_backhand_003.png",
+      "size": 4427,
+      "sha256": "dc6a46a484cf652fa3872def3b7f4545eb345555142038d26429792e8d688093"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_baton_backhand_004.png",
+      "size": 4566,
+      "sha256": "ac76d17513109459d968833adb2959287785b589f40fb178b908d676163de2d9"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_baton_backhand_005.png",
+      "size": 4343,
+      "sha256": "6d305699f3e397a915749ec7fe41b44921c9866339019cf22c3c4281350715a1"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_baton_backhand_006.png",
+      "size": 4445,
+      "sha256": "48e0d6e6b2b657c55f2093368cd061fb9c35794a4fee4622a9f727308233b982"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_baton_backhand_007.png",
+      "size": 4623,
+      "sha256": "89868d8dceec5b48e5864495c5896a76634a77d957200c70d0404398cf0f50d2"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_baton_backhand_008.png",
+      "size": 4520,
+      "sha256": "5bd04068575865be54c1f4ea01c1efefc383897ff49b06cb96531036420c5439"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_baton_jab_001.png",
+      "size": 4607,
+      "sha256": "ae6c50b7bdd3997390b828e37d3f250f0ffd8c67dacf049e7ed4ab33aed711a4"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_baton_jab_002.png",
+      "size": 4670,
+      "sha256": "903018ee45d80a74c6f4b01b7e953361a24fd8d968c69c78af13966a21edf2f9"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_baton_jab_003.png",
+      "size": 4576,
+      "sha256": "77930ce33e44e367e1b6e047d97165b498c62dc73bb2b3fcdc7ffaacc2972906"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_baton_jab_004.png",
+      "size": 4655,
+      "sha256": "2d8c5ef196974f6960fbc124ca808ad3d6ca8777e171412ba79522c3c9ca5dd5"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_baton_jab_005.png",
+      "size": 4760,
+      "sha256": "76c3bca99672471683c01c16363a782beb579a6d3d1a4b0ae12c4a00404bd21f"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_baton_jab_006.png",
+      "size": 4849,
+      "sha256": "50c6988c589c66fc6b6ff1250352b649af9621e0769eeb75e5f33ac58660c847"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_baton_jab_007.png",
+      "size": 4570,
+      "sha256": "e5d11754b7c1ecde1de6fd77248ba5a5c36799ed8485fea70b4f1ada3388c6a2"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_baton_jab_008.png",
+      "size": 4670,
+      "sha256": "8f811173eca92a0096ebeb49d2b0c7d3651e7e68a22d1d7ba82fc6aff065e62e"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_baton_overhead_001.png",
+      "size": 4678,
+      "sha256": "562f232bbc7aa6947b95e08851f87cd47d4f46cadf2aef8220e33a56031a609b"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_baton_overhead_002.png",
+      "size": 4872,
+      "sha256": "6c568f0703d5798b122043b4e48d97b3e958fee3137ac911e833642a2135208c"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_baton_overhead_003.png",
+      "size": 4755,
+      "sha256": "6d86ada8796e965a94ce3981c0a1ffe18b13bf97c88c111fc8e3378cdfd9fcaa"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_baton_overhead_004.png",
+      "size": 4901,
+      "sha256": "dd30cf0474a686cfce359212a7e8fd52778886dc3937f7920a7b2b969458e097"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_baton_overhead_005.png",
+      "size": 4764,
+      "sha256": "e5b84aa5ab1d206ad3ceeb8e70df378e8ab7cb7522fc7072da9edccc54793630"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_baton_overhead_006.png",
+      "size": 4694,
+      "sha256": "7d9149c3fe86276e9529db337395496de7666d41fdd157ff585ed6c078f8ee59"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_baton_overhead_007.png",
+      "size": 4515,
+      "sha256": "6e68a67540f1c226bbc7abb2803bb68fc87890f304f285f74d0428d78ad2fb4b"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_baton_overhead_008.png",
+      "size": 4534,
+      "sha256": "e97432327deee8bdddd538760589779d99c0aeb04c12b2153570c8018868a048"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_baton_overhead_009.png",
+      "size": 4585,
+      "sha256": "996c046af225715b4455914bd473bf440c7c7d204ea1dbccba8c0a2ceee58b93"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_baton_overhead_010.png",
+      "size": 4572,
+      "sha256": "2022805e0228122fce1c9c3dd39fe4933bfb5937906ba2641f37e5d9fc25f3f3"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_block_001.png",
+      "size": 4585,
+      "sha256": "e43d222ed6222542221c1db4915fc64de08466752cf0548b3847820747872622"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_block_002.png",
+      "size": 4313,
+      "sha256": "d6bcb6569476b27b2d1101262a470e5c442ed28ad806c7a9462c0d4325018cb5"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_block_003.png",
+      "size": 4457,
+      "sha256": "6c0f772769ddb073d81dc29b1b6e00df6b0c64962c3ebcd9ceb19d00b1495306"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_block_004.png",
+      "size": 4575,
+      "sha256": "946f34a3a891331fb5f971b2776d6397970405b67dd9bddb3cb36e527ddf457a"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_block_impact_001.png",
+      "size": 4535,
+      "sha256": "6367227f43cf2a3397056aaf3a4681867345fc8399d043fa20fad7923a83d4ac"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_block_impact_002.png",
+      "size": 4455,
+      "sha256": "d6db084d712c03c5570d20e1294a2ef07b8039ddda67e576a1573b8d10fe907f"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_block_impact_003.png",
+      "size": 4719,
+      "sha256": "849eb0ff9eabb9f461fed03ca30beaf409313cc1e7c94f2f27afb8aadbc165fd"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_death_001.png",
+      "size": 4870,
+      "sha256": "0dee98f7dce26ea2530474e61c03ae3aa0a77529f1c0451f5998926c931cdd5e"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_death_002.png",
+      "size": 4658,
+      "sha256": "9e23b2ccd746f0c5073f880cdfca294a471b671da460fa35e02387b5b5e14257"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_death_003.png",
+      "size": 4204,
+      "sha256": "3f886cb2a3f4489b70375a4be9d98758212d6a91a37033d218e2b85597c8b929"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_death_004.png",
+      "size": 4045,
+      "sha256": "4cfe6951817101aa3472520292da2bf59722c43d1fd51b700cd0952b16d99fa1"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_death_005.png",
+      "size": 3533,
+      "sha256": "b8f6bbdb94a0f72275f3cd1673be32a9b4b53c8ae98085cad4fd65f0014a3aa9"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_death_006.png",
+      "size": 3472,
+      "sha256": "02e772cf50ad776a88ef8a7c4e2deaa8db852d2603811aa0d16b7395e2c826c1"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_death_007.png",
+      "size": 3449,
+      "sha256": "2b29d099b083bd717d9fbfb9a44af425d4d74e19b11c1e277078a5e428ae8bdc"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_death_008.png",
+      "size": 3325,
+      "sha256": "0bad1ed3f909fff7b8b980ec7c0177ec6b9e534424a3e87b627d90a8fae2b901"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_death_009.png",
+      "size": 2901,
+      "sha256": "6e0e853713b06ca945424a47d3ed649bb2dccb62dd1ba1e972271092898b536a"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_death_010.png",
+      "size": 3182,
+      "sha256": "68bda5cda811885fd04ce832c8cffe626658e2c026e603632e3e144e69a29153"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_down_001.png",
+      "size": 3258,
+      "sha256": "5b91b88c69dac94e62be36c97a783e92725f05c9c6932c10eaf62300004329fe"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_down_002.png",
+      "size": 4273,
+      "sha256": "a94f026815928d05f2e778433615a7c09ab2cafd414aeba80ab1364b9b826500"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_down_003.png",
+      "size": 3260,
+      "sha256": "d5bc369f8f75077012938f85fa27bf8d5b97b036dfbf8da20f31efe6706df3b1"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_down_004.png",
+      "size": 3316,
+      "sha256": "64fa340a98015fab73f6a581e7a5b2f1185c94a8f8c679558f1b3cb662d3353d"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_down_005.png",
+      "size": 3799,
+      "sha256": "9eb5dbdc802b4d2db4b405b31ec9f1cc048c85c7b9abe06dc0a0bf8e1a68a0c9"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_down_006.png",
+      "size": 3154,
+      "sha256": "18b66ae088a4fc9f6b2587312e9d66eb17f4d8d41f963583f76f63b452b2c186"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_heavy_pain_001.png",
+      "size": 5072,
+      "sha256": "839de8c15bb33374d6838c132e68bd565437df1cb02437d8f63a3de615255e2b"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_heavy_pain_002.png",
+      "size": 5118,
+      "sha256": "40e736c141af1057767d53533022001021f46983f8b6639abb5e656d83f9fe55"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_heavy_pain_003.png",
+      "size": 4359,
+      "sha256": "63046d6d915eb7328e1ce82ccdc526d2fcbccffde23f8a948f85842e817acf97"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_heavy_pain_004.png",
+      "size": 5339,
+      "sha256": "34d4ae682354ab89f7bc4bec0eac7e1e3981480ef463c65d1133e16f80d0481d"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_heavy_pain_005.png",
+      "size": 4094,
+      "sha256": "4241b7951b08c99c4d34b05c928860c0e6d6718def2c6d240272a75f7d0dac62"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_heavy_pain_006.png",
+      "size": 4989,
+      "sha256": "cf1c8b536323b203e0bf5502a1d8175e71892071df80a26ae6fbf1fe6ead7c8e"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_heavy_pain_007.png",
+      "size": 4036,
+      "sha256": "976db052ab54cc0104b4d50611b1422572ed75d1092a8515c7cf924c8a55f0bf"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_idle_001.png",
+      "size": 4469,
+      "sha256": "d7bb218cfeae62d4d26ab66de276afed46f9b7facf5e078d8c873fe663947c58"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_idle_002.png",
+      "size": 4404,
+      "sha256": "917424bfcbd4490acd6a28c61d2fe78cbb63a0bfa32b70bf80edf25f4d100128"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_idle_003.png",
+      "size": 4444,
+      "sha256": "43f5f8c3a4f2d9bac492459324e2c60cd7415daba8ba156c384f8272bcd853f7"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_idle_004.png",
+      "size": 4335,
+      "sha256": "7adaf97a7807b7ffd51842e1c05655170d66eea93c2306c765a99188c6971038"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_idle_005.png",
+      "size": 4391,
+      "sha256": "a9c85d1ea1546c153920783d9845ed9a15c525565c66214dab64a19c5a8d90d8"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_idle_006.png",
+      "size": 4759,
+      "sha256": "252eb0510ecf03ddae86b63bd963ea4510bfb2584ec237bc427b1a395aacfa51"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_idle_007.png",
+      "size": 4715,
+      "sha256": "59a66ab0f52d8bb68cc52b207d59c370ed5c8fa9505169ad9d624af863bd8d62"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_idle_008.png",
+      "size": 4451,
+      "sha256": "9265485968b6e81eecf45954961a54d44a067aeb5bd68e0af7e3dcdeb270a885"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_knockdown_fall_001.png",
+      "size": 4600,
+      "sha256": "2eb86f3a129e71abeac5407f293c48020ba66a6b713cf718924dc2380d644aca"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_knockdown_fall_002.png",
+      "size": 4361,
+      "sha256": "7579f86614e19189bb543fcdc5e9363d1a4555d293850501ce7cde39f2fbcb08"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_knockdown_fall_003.png",
+      "size": 4040,
+      "sha256": "d9d34e3f16e3c6ce0db02618645e455e153dd549787013b0d4fa2cee193279fc"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_knockdown_fall_004.png",
+      "size": 4769,
+      "sha256": "0a265405d40a4372e2fe4112bfe3e5ac8ebab65a3055bd33b02ccb386af43d20"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_knockdown_fall_005.png",
+      "size": 4278,
+      "sha256": "59f23830eb041b107548df74e515cf341632ec7f906e881e1d1b82649b0bbca8"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_knockdown_fall_006.png",
+      "size": 3505,
+      "sha256": "2c50d5a5bfe179e428aaf5acecd4c3fb74112e1cd2120d62c418e7af09b1220b"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_knockdown_fall_007.png",
+      "size": 3885,
+      "sha256": "4b0def430b244d45b878b0367cce512470474c40e530430a77dba42bda8bef29"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_knockdown_fall_008.png",
+      "size": 4296,
+      "sha256": "07c418ede62aed2e3dc0263032b271a671915f8b1473019dd813dd7670ffaeaf"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_light_pain_001.png",
+      "size": 4555,
+      "sha256": "35683e81104d9977cfd329e42f57f6b1213a51bd354b0a4b8293df1d416940ae"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_light_pain_002.png",
+      "size": 4510,
+      "sha256": "3ff50c0d9b0c1b684e843759f0da81257a790d88b5b668e91ca8108fd40112bc"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_light_pain_003.png",
+      "size": 4522,
+      "sha256": "ad5229a602b5edf49c6d24fc10c5b541700c7f14281c32e71cb18a273dd854b9"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_light_pain_004.png",
+      "size": 4607,
+      "sha256": "f592da8ee60bfd87b43c177988782856bac56283fd23fdaa701ed817964ea096"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_light_pain_005.png",
+      "size": 5190,
+      "sha256": "31efc223a096d14c06524455248b5ecd43b4d1ee1076e887371d2174fe4de401"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_rise_001.png",
+      "size": 4255,
+      "sha256": "985ae3d346498c0476473f1e256f85bdc6001d7b37fbcc632f15fe9651bcf7df"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_rise_002.png",
+      "size": 4190,
+      "sha256": "6dee4d2b5538a94a2a88a3fc8c6935b911ee68fc5e5c47f06f0f0d6a4808e21f"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_rise_003.png",
+      "size": 3677,
+      "sha256": "b97390fb9d2f88e87112c0ca91686fbb72befb752aeff6916cc10ad262e4c38f"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_rise_004.png",
+      "size": 4167,
+      "sha256": "a2e31de38fdd4fc6deac74b58ab0ea1081efe545d903d734ad3a969ddcd77173"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_rise_005.png",
+      "size": 3870,
+      "sha256": "733ae97874b64c6cee2f8cdc3f81a1ddcc73a613ad5394cd50802aa862ed76cb"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_rise_006.png",
+      "size": 4376,
+      "sha256": "f2ce8f72369421540c7bc9831e27bcc174c180eb2a317ef98bb2aa9a584351fb"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_rise_007.png",
+      "size": 4444,
+      "sha256": "dd2eaa6b63435b5a9e620ea02bf51c5f2ba46008013b65c78f977bb9b3542e86"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_rise_008.png",
+      "size": 4340,
+      "sha256": "967c19fc4932e6fb128fa6f8528d6eefa81f0cc4b02e62876d3cedf1a44d1f18"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_spawn_entry_001.png",
+      "size": 4658,
+      "sha256": "6c2aedd926c42be8b2e1fee8c0cca5d4bc8febb71a46035f11c688d2167a2def"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_spawn_entry_002.png",
+      "size": 4637,
+      "sha256": "4ce5018ae9c9e5e6066a9109768f416736033d7dec9eae07e6223563ad71360d"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_spawn_entry_003.png",
+      "size": 4837,
+      "sha256": "c4ef7409bab1ad469353e8e119b799121228fd199291887434aa569289f5b831"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_spawn_entry_004.png",
+      "size": 4650,
+      "sha256": "f03f68ca5a383afbfc9ecebe0a0d403b4a4c4da7841f5f8aa713b55405042e80"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_spawn_entry_005.png",
+      "size": 4924,
+      "sha256": "c7fc35fc2378294d2012f5c9ff6ec47b04bc7645f180d03b20ec229320b1f331"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_turn_pivot_001.png",
+      "size": 4637,
+      "sha256": "158aa1e24f2ed4613d76997311a73a337d8668258af140c49253d4c126347093"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_turn_pivot_002.png",
+      "size": 4641,
+      "sha256": "1a1f394eb069cd8c95cc9a54828f245984b610426129c1b646518d1f5d61d2ad"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_turn_pivot_003.png",
+      "size": 4416,
+      "sha256": "868948b9184489ba2963efde6e3120b5f30670ca4ecc430cabbfb4eb555303db"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_turn_pivot_004.png",
+      "size": 4626,
+      "sha256": "744cb5023e138d923a9e47a97afcf984d9d90f0710dce803b7f20942fdc070bc"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_walk_loop_001.png",
+      "size": 4325,
+      "sha256": "2050c7e79e9640600ebb4a57739bfe5a84dc708b6358d07f18e54ad38a939d83"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_walk_loop_002.png",
+      "size": 4322,
+      "sha256": "a656abe042b30bec21585863984f99a080c75f8691b76c542e3b9c1eefc71f7d"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_walk_loop_003.png",
+      "size": 4500,
+      "sha256": "bc664073c40d3b4953d87b72f15b0a65599ac256dbe31b9c52461960bb6f19cc"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_walk_loop_004.png",
+      "size": 4336,
+      "sha256": "45e6408f2f0fb95368446e7ed248af43bd7106c10b113e887c5a7a1a7bb27062"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_walk_loop_005.png",
+      "size": 3993,
+      "sha256": "2b85eacfa4c4f5fef64bafcac9c177ed56800d3f1cc013a88033d27695348174"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_walk_loop_006.png",
+      "size": 4358,
+      "sha256": "32cabd1bcdc6690d42ccbbfcdf768e9670840d70c36d054af8bb37298496bd54"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_walk_loop_007.png",
+      "size": 4410,
+      "sha256": "81d734a89dace918bb4f2eeffb1aedc1bbaeced2a581f3ca1ae3d173c3eba5be"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_walk_loop_008.png",
+      "size": 4384,
+      "sha256": "475365f4628a16dfeb76e92c8c236e7302a8a0c667464818b2d93836254331c3"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_walk_loop_009.png",
+      "size": 4397,
+      "sha256": "cbc84d9248d258a53f6dcedec5e78732ecd083210e8ac115771bc06cb47a5982"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_walk_loop_010.png",
+      "size": 4405,
+      "sha256": "331c67f63932d5150d02a4b42087e81f51f930a77af6a93961c7b4976a90f6bf"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_walk_loop_011.png",
+      "size": 4342,
+      "sha256": "9ff481b921d9ff7bceb8c06728e1f8f85e40ff12d54ae53d7dfe8cd1d039529f"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_walk_loop_012.png",
+      "size": 4540,
+      "sha256": "ea59053fa7aa80309043109c6ea63aac641491e1e57bbdf45fe834dca254cbc7"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_walk_start_001.png",
+      "size": 4225,
+      "sha256": "afcf445f94b7513205954ec5a33924905c45760d0f338269c26b610472002919"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_walk_start_002.png",
+      "size": 4548,
+      "sha256": "6792c6fb559daa0bd1b9129e856e5247697ec0ad83b99e1f788d132b9fc39a4c"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_walk_start_003.png",
+      "size": 4710,
+      "sha256": "bc4b87278c5690d07dceda74dee02134442904307bbd594bd59ba0541fd98b02"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_walk_start_004.png",
+      "size": 4615,
+      "sha256": "ec9289e3de0227239cd3fbbe82acaaa4149dc4c064a8973e1aba20b44e83ce6f"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_walk_stop_001.png",
+      "size": 4577,
+      "sha256": "26eb11dd98a5fc5aa16f8089418a906a3d55ffd4f7760470f63518aee11b7bda"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_walk_stop_002.png",
+      "size": 4627,
+      "sha256": "2e74e8671ff3fed94bfb3158f87e8812acdf98aadc14a85ccb4a667a426a0e6e"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_walk_stop_003.png",
+      "size": 4632,
+      "sha256": "02bbdb36bae3a8caa3106209d266c57648557206fe7a1e8cf2e5e2100f7018be"
+    },
+    {
+      "path": "data/chars/police_officer/sprites/po_walk_stop_004.png",
+      "size": 4622,
+      "sha256": "2cf7748370010b717b44377640766559c9202bf3d5ddff7baf1d1a71011b2b17"
+    },
+    {
+      "path": "data/levels.txt",
+      "size": 170,
+      "sha256": "91cae4706ee4826203a469f659c58c5bae668d0a4c3f80becbba1b28ccc8311c"
+    },
+    {
+      "path": "data/levels/entity_combat_tech_demo.txt",
+      "size": 646,
+      "sha256": "213180db8ab18677c95a2cebe49435513d6876d50352bf6ed434d220f58fb30f"
+    },
+    {
+      "path": "data/levels/i8_underpass/panels/underpass_a.png",
+      "size": 69967,
+      "sha256": "a0e86bb6c2349a23fec1b3a0916e52e2cff9d230be4a11915b4a276fe8742842"
+    },
+    {
+      "path": "data/levels/i8_underpass/panels/underpass_b.png",
+      "size": 56444,
+      "sha256": "01695b5f8ce3562537c51472f5ea61b40d138d13ef7d926495de1090a4bcfa45"
+    },
+    {
+      "path": "data/levels/i8_underpass/panels/underpass_c.png",
+      "size": 53410,
+      "sha256": "5e6ac33577852c1f53d577e79a452f6a3a0910184c150ce2a21a981042cc2dbc"
+    },
+    {
+      "path": "data/levels/i8_underpass/panels/underpass_d.png",
+      "size": 77529,
+      "sha256": "d9a73f3e6d0970d15d6e6dacb2252c32bb3218e960a649aa64185e9f9419c0c5"
+    },
+    {
+      "path": "data/lifebar.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "data/models.txt",
+      "size": 505,
+      "sha256": "da59e3ba1b839305af9f4e5bb0ea8eccef521e1e673e96534d506e74e3893663"
+    },
+    {
+      "path": "data/pal.act",
+      "size": 768,
+      "sha256": "2c369c672f5f0c09e5c35e27e4bc33f43cac803405f9c48f47fa032d0b4a553d"
+    },
+    {
+      "path": "data/script.txt",
+      "size": 15,
+      "sha256": "907b7eaa495d3b57e2886bd086f97787940eb67c99ecdb928374be6ece2e0d67"
+    },
+    {
+      "path": "data/scripts/black_dave_block.c",
+      "size": 521,
+      "sha256": "5c296346db70e1ab52466f987b6a75efb4c3e6c3836338f30947748c68074040"
+    },
+    {
+      "path": "data/scripts/black_dave_contact.c",
+      "size": 2628,
+      "sha256": "20d0de766a7375d9492aaee1f5d27749d10b4b43eb5e99620f2d5200df296ac1"
+    },
+    {
+      "path": "data/scripts/black_dave_pose_qa.c",
+      "size": 34841,
+      "sha256": "8af73d7e210757506098c60a1346703c66593fc0e81b9007749531c076131c44"
+    },
+    {
+      "path": "data/scripts/entity_enemy_contact.c",
+      "size": 1698,
+      "sha256": "7009cd5a9616d345fee786a115ff938a929f1a171678e0cc668f05c1537448ec"
+    },
+    {
+      "path": "data/scripts/entity_pose_overlay.c",
+      "size": 35229,
+      "sha256": "f3a354ff3967a96817f6b7377431f2e4cf0c5cb4f612673975bf3b00cb0df950"
+    },
+    {
+      "path": "data/scripts/entity_tech_demo.c",
+      "size": 6065,
+      "sha256": "03663a154a330db5aeb3c150a32e115a2063f27184b646e7a0d4a32f3b4999e2"
+    },
+    {
+      "path": "data/scripts/homeless_man_ai.c",
+      "size": 75839,
+      "sha256": "28a64a626b35b71809c37c8d9ee7ffb63c338cdc3fc1d8ee144a4dfc84319e2f"
+    },
+    {
+      "path": "data/scripts/police_officer_ai.c",
+      "size": 77264,
+      "sha256": "2d456eac84ef95734fd4e5138aa50faf4a6188308c622ec18d5722a88413d5f5"
+    },
+    {
+      "path": "data/scripts/police_officer_block.c",
+      "size": 461,
+      "sha256": "d66d6f6448dd7f992176c67855472a894629e37c497e3370d60596311a38adde"
+    },
+    {
+      "path": "data/scripts/update.c",
+      "size": 69601,
+      "sha256": "839c3526c028b64a41a2b86e8da875820ba2f690f2e699a1504f21454c1c3b54"
+    },
+    {
+      "path": "data/video.txt",
+      "size": 14,
+      "sha256": "79c2a641501cf10fcbfb58bbc70e77023f68626b92e31a3cb8d2472e90c0121e"
+    }
+  ],
+  "table_offset": 2705562,
+  "output": "openbor/releases/entity_tech_demo/TheFadesOfFate2_EntityTechDemo.pak",
+  "sha256": "ed6c9fab1502ed419fe738cec5357b6430ec2b891c352911936cccaeb7c75c24",
+  "size": 2737945
+}

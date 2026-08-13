@@ -1,6 +1,11 @@
 # Fades of Fate 2.0 model registry
-maxattacks	4
-maxfollows	4
-jumpspecials	1
-
-load	black_dave	data/chars/black_dave/black_dave.txt
+# Build 7949-supported native animation capacity.
+maxattacks 4
+maxfreespecials 7
+nodropen
+load BlackDave data/chars/black_dave/black_dave.txt
+load HomelessMan data/chars/homeless_man/homeless_man.txt
+load PoliceOfficer data/chars/police_officer/police_officer.txt
+load BlackDaveImpact data/chars/black_dave/black_dave_impact_fx.txt
+load BlackDaveFlame data/chars/black_dave/black_dave_flame_fx.txt
+load BlackDaveFlameShot data/chars/black_dave/black_dave_flame_shot.txt

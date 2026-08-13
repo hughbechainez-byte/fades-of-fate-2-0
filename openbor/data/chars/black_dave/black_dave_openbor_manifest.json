@@ -1,475 +1,1547 @@
 {
-  "version": 1,
-  "engine": "OpenBOR",
+  "version": 2,
+  "engine": "OpenBOR 4.0 Build 7949",
   "model": "black_dave",
-  "status": "engine_ready_authored_pose_package",
-  "source": {
-    "metadata": "content/characters/black_dave/sprites/black_dave_full_library_v1.json",
-    "atlas": "content/characters/black_dave/sprites/black_dave_full_library_v1.png",
-    "atlas_sha256": "bc35fc68037de6d9b9c199ca35f4c131c9d426ac5fa5ccb4b4a0a793d45208d6"
-  },
+  "model_path": "openbor/data/chars/black_dave/black_dave.txt",
+  "model_sha256": "f3bb3cbb57251775a9c8d1374e3d6cd835ad1d9b5dd6342c86bbe6944438ca1c",
+  "controller_path": "openbor/data/scripts/update.c",
+  "controller_sha256": "839c3526c028b64a41a2b86e8da875820ba2f690f2e699a1504f21454c1c3b54",
+  "contact_callback_sha256": "20d0de766a7375d9492aaee1f5d27749d10b4b43eb5e99620f2d5200df296ac1",
+  "block_callback_sha256": "5c296346db70e1ab52466f987b6a75efb4c3e6c3836338f30947748c68074040",
+  "status": "implementation_static_pass_runtime_evidence_pending",
+  "source": "content/characters/black_dave/sprites/pose_manifest.json",
   "canvas": [
-    224,
+    192,
     160
   ],
   "offset": [
-    112,
+    96,
     156
   ],
   "pose_count": 220,
-  "clip_count": 44,
+  "unique_runtime_files": 220,
+  "clip_count": 42,
   "clips": {
-    "idle": {
-      "frames": [
-        "sprites/idle_000.png",
-        "sprites/idle_001.png",
-        "sprites/idle_002.png",
-        "sprites/idle_003.png",
-        "sprites/idle_004.png"
+    "spawn": {
+      "pose_ids": [
+        "bd_entry_respawn_001",
+        "bd_entry_respawn_002",
+        "bd_entry_respawn_003",
+        "bd_entry_respawn_004",
+        "bd_entry_respawn_005",
+        "bd_entry_respawn_006"
       ],
-      "delay_cs": 8
+      "frames": [
+        "data/chars/black_dave/sprites/bd_entry_respawn_001.png",
+        "data/chars/black_dave/sprites/bd_entry_respawn_002.png",
+        "data/chars/black_dave/sprites/bd_entry_respawn_003.png",
+        "data/chars/black_dave/sprites/bd_entry_respawn_004.png",
+        "data/chars/black_dave/sprites/bd_entry_respawn_005.png",
+        "data/chars/black_dave/sprites/bd_entry_respawn_006.png"
+      ],
+      "native_animation": "SPAWN",
+      "trigger": "level player spawn"
     },
-    "guard": {
-      "frames": [
-        "sprites/guard_000.png",
-        "sprites/guard_001.png",
-        "sprites/guard_002.png",
-        "sprites/guard_003.png",
-        "sprites/guard_004.png"
+    "respawn": {
+      "pose_ids": [
+        "bd_entry_respawn_001",
+        "bd_entry_respawn_002",
+        "bd_entry_respawn_003",
+        "bd_entry_respawn_004",
+        "bd_entry_respawn_005",
+        "bd_entry_respawn_006"
       ],
-      "delay_cs": 8
+      "frames": [
+        "data/chars/black_dave/sprites/bd_entry_respawn_001.png",
+        "data/chars/black_dave/sprites/bd_entry_respawn_002.png",
+        "data/chars/black_dave/sprites/bd_entry_respawn_003.png",
+        "data/chars/black_dave/sprites/bd_entry_respawn_004.png",
+        "data/chars/black_dave/sprites/bd_entry_respawn_005.png",
+        "data/chars/black_dave/sprites/bd_entry_respawn_006.png"
+      ],
+      "native_animation": "RESPAWN",
+      "trigger": "engine life recovery"
+    },
+    "level_intro": {
+      "pose_ids": [
+        "bd_entry_respawn_001",
+        "bd_entry_respawn_002",
+        "bd_entry_respawn_003",
+        "bd_entry_respawn_004",
+        "bd_entry_respawn_005",
+        "bd_entry_respawn_006",
+        "bd_idle_001",
+        "bd_idle_002",
+        "bd_idle_003",
+        "bd_idle_004",
+        "bd_idle_005",
+        "bd_idle_006",
+        "bd_idle_007",
+        "bd_idle_008"
+      ],
+      "frames": [
+        "data/chars/black_dave/sprites/bd_entry_respawn_001.png",
+        "data/chars/black_dave/sprites/bd_entry_respawn_002.png",
+        "data/chars/black_dave/sprites/bd_entry_respawn_003.png",
+        "data/chars/black_dave/sprites/bd_entry_respawn_004.png",
+        "data/chars/black_dave/sprites/bd_entry_respawn_005.png",
+        "data/chars/black_dave/sprites/bd_entry_respawn_006.png",
+        "data/chars/black_dave/sprites/bd_idle_001.png",
+        "data/chars/black_dave/sprites/bd_idle_002.png",
+        "data/chars/black_dave/sprites/bd_idle_003.png",
+        "data/chars/black_dave/sprites/bd_idle_004.png",
+        "data/chars/black_dave/sprites/bd_idle_005.png",
+        "data/chars/black_dave/sprites/bd_idle_006.png",
+        "data/chars/black_dave/sprites/bd_idle_007.png",
+        "data/chars/black_dave/sprites/bd_idle_008.png"
+      ],
+      "native_animation": "approved controller range",
+      "trigger": "tech-demo intro event"
+    },
+    "idle": {
+      "pose_ids": [
+        "bd_idle_001",
+        "bd_idle_002",
+        "bd_idle_003",
+        "bd_idle_004",
+        "bd_idle_005",
+        "bd_idle_006",
+        "bd_idle_007",
+        "bd_idle_008"
+      ],
+      "frames": [
+        "data/chars/black_dave/sprites/bd_idle_001.png",
+        "data/chars/black_dave/sprites/bd_idle_002.png",
+        "data/chars/black_dave/sprites/bd_idle_003.png",
+        "data/chars/black_dave/sprites/bd_idle_004.png",
+        "data/chars/black_dave/sprites/bd_idle_005.png",
+        "data/chars/black_dave/sprites/bd_idle_006.png",
+        "data/chars/black_dave/sprites/bd_idle_007.png",
+        "data/chars/black_dave/sprites/bd_idle_008.png"
+      ],
+      "native_animation": "IDLE",
+      "trigger": "grounded with no action"
     },
     "walk_start": {
-      "frames": [
-        "sprites/walk_start_000.png",
-        "sprites/walk_start_001.png",
-        "sprites/walk_start_002.png",
-        "sprites/walk_start_003.png",
-        "sprites/walk_start_004.png"
+      "pose_ids": [
+        "bd_walk_start_001",
+        "bd_walk_start_002",
+        "bd_walk_start_003",
+        "bd_walk_start_004"
       ],
-      "delay_cs": 8
+      "frames": [
+        "data/chars/black_dave/sprites/bd_walk_start_001.png",
+        "data/chars/black_dave/sprites/bd_walk_start_002.png",
+        "data/chars/black_dave/sprites/bd_walk_start_003.png",
+        "data/chars/black_dave/sprites/bd_walk_start_004.png"
+      ],
+      "native_animation": "controller range in WALK",
+      "trigger": "ground input produces displacement"
     },
     "walk": {
-      "frames": [
-        "sprites/walk_000.png",
-        "sprites/walk_001.png",
-        "sprites/walk_002.png",
-        "sprites/walk_003.png",
-        "sprites/walk_004.png"
+      "pose_ids": [
+        "bd_walk_loop_001",
+        "bd_walk_loop_002",
+        "bd_walk_loop_003",
+        "bd_walk_loop_004",
+        "bd_walk_loop_005",
+        "bd_walk_loop_006",
+        "bd_walk_loop_007",
+        "bd_walk_loop_008",
+        "bd_walk_loop_009",
+        "bd_walk_loop_010",
+        "bd_walk_loop_011",
+        "bd_walk_loop_012"
       ],
-      "delay_cs": 8
+      "frames": [
+        "data/chars/black_dave/sprites/bd_walk_loop_001.png",
+        "data/chars/black_dave/sprites/bd_walk_loop_002.png",
+        "data/chars/black_dave/sprites/bd_walk_loop_003.png",
+        "data/chars/black_dave/sprites/bd_walk_loop_004.png",
+        "data/chars/black_dave/sprites/bd_walk_loop_005.png",
+        "data/chars/black_dave/sprites/bd_walk_loop_006.png",
+        "data/chars/black_dave/sprites/bd_walk_loop_007.png",
+        "data/chars/black_dave/sprites/bd_walk_loop_008.png",
+        "data/chars/black_dave/sprites/bd_walk_loop_009.png",
+        "data/chars/black_dave/sprites/bd_walk_loop_010.png",
+        "data/chars/black_dave/sprites/bd_walk_loop_011.png",
+        "data/chars/black_dave/sprites/bd_walk_loop_012.png"
+      ],
+      "native_animation": "WALK",
+      "trigger": "sustained grounded displacement"
     },
     "walk_stop": {
-      "frames": [
-        "sprites/walk_stop_000.png",
-        "sprites/walk_stop_001.png",
-        "sprites/walk_stop_002.png",
-        "sprites/walk_stop_003.png",
-        "sprites/walk_stop_004.png"
+      "pose_ids": [
+        "bd_walk_stop_001",
+        "bd_walk_stop_002",
+        "bd_walk_stop_003",
+        "bd_walk_stop_004"
       ],
-      "delay_cs": 8
+      "frames": [
+        "data/chars/black_dave/sprites/bd_walk_stop_001.png",
+        "data/chars/black_dave/sprites/bd_walk_stop_002.png",
+        "data/chars/black_dave/sprites/bd_walk_stop_003.png",
+        "data/chars/black_dave/sprites/bd_walk_stop_004.png"
+      ],
+      "native_animation": "controller range in WALK",
+      "trigger": "movement input released or blocked"
     },
-    "walk_reverse": {
-      "frames": [
-        "sprites/walk_reverse_000.png",
-        "sprites/walk_reverse_001.png",
-        "sprites/walk_reverse_002.png",
-        "sprites/walk_reverse_003.png",
-        "sprites/walk_reverse_004.png"
+    "pivot": {
+      "pose_ids": [
+        "bd_pivot_001",
+        "bd_pivot_002",
+        "bd_pivot_003",
+        "bd_pivot_004"
       ],
-      "delay_cs": 8
+      "frames": [
+        "data/chars/black_dave/sprites/bd_pivot_001.png",
+        "data/chars/black_dave/sprites/bd_pivot_002.png",
+        "data/chars/black_dave/sprites/bd_pivot_003.png",
+        "data/chars/black_dave/sprites/bd_pivot_004.png"
+      ],
+      "native_animation": "TURN",
+      "trigger": "ground movement changes facing"
     },
-    "jump_takeoff": {
-      "frames": [
-        "sprites/jump_takeoff_000.png",
-        "sprites/jump_takeoff_001.png",
-        "sprites/jump_takeoff_002.png",
-        "sprites/jump_takeoff_003.png",
-        "sprites/jump_takeoff_004.png"
+    "jump_family": {
+      "pose_ids": [
+        "bd_jump_family_001",
+        "bd_jump_family_002",
+        "bd_jump_family_003",
+        "bd_jump_family_004",
+        "bd_jump_family_005",
+        "bd_jump_family_006",
+        "bd_jump_family_007",
+        "bd_jump_family_008",
+        "bd_jump_family_009",
+        "bd_jump_family_010",
+        "bd_jump_family_011",
+        "bd_jump_family_012",
+        "bd_jump_family_013",
+        "bd_jump_family_014"
       ],
-      "delay_cs": 8
+      "frames": [
+        "data/chars/black_dave/sprites/bd_jump_family_001.png",
+        "data/chars/black_dave/sprites/bd_jump_family_002.png",
+        "data/chars/black_dave/sprites/bd_jump_family_003.png",
+        "data/chars/black_dave/sprites/bd_jump_family_004.png",
+        "data/chars/black_dave/sprites/bd_jump_family_005.png",
+        "data/chars/black_dave/sprites/bd_jump_family_006.png",
+        "data/chars/black_dave/sprites/bd_jump_family_007.png",
+        "data/chars/black_dave/sprites/bd_jump_family_008.png",
+        "data/chars/black_dave/sprites/bd_jump_family_009.png",
+        "data/chars/black_dave/sprites/bd_jump_family_010.png",
+        "data/chars/black_dave/sprites/bd_jump_family_011.png",
+        "data/chars/black_dave/sprites/bd_jump_family_012.png",
+        "data/chars/black_dave/sprites/bd_jump_family_013.png",
+        "data/chars/black_dave/sprites/bd_jump_family_014.png"
+      ],
+      "native_animation": "JUMPDELAY/JUMP/JUMPLAND",
+      "trigger": "jump input while grounded"
     },
-    "jump_rise": {
-      "frames": [
-        "sprites/jump_rise_000.png",
-        "sprites/jump_rise_001.png",
-        "sprites/jump_rise_002.png",
-        "sprites/jump_rise_003.png",
-        "sprites/jump_rise_004.png"
+    "block": {
+      "pose_ids": [
+        "bd_guard_001",
+        "bd_guard_002",
+        "bd_guard_003",
+        "bd_guard_004",
+        "bd_guard_005",
+        "bd_guard_006",
+        "bd_guard_007",
+        "bd_guard_008"
       ],
-      "delay_cs": 8
-    },
-    "jump_apex": {
       "frames": [
-        "sprites/jump_apex_000.png",
-        "sprites/jump_apex_001.png",
-        "sprites/jump_apex_002.png",
-        "sprites/jump_apex_003.png",
-        "sprites/jump_apex_004.png"
+        "data/chars/black_dave/sprites/bd_guard_001.png",
+        "data/chars/black_dave/sprites/bd_guard_002.png",
+        "data/chars/black_dave/sprites/bd_guard_003.png",
+        "data/chars/black_dave/sprites/bd_guard_004.png",
+        "data/chars/black_dave/sprites/bd_guard_005.png",
+        "data/chars/black_dave/sprites/bd_guard_006.png",
+        "data/chars/black_dave/sprites/bd_guard_007.png",
+        "data/chars/black_dave/sprites/bd_guard_008.png"
       ],
-      "delay_cs": 8
-    },
-    "jump_fall": {
-      "frames": [
-        "sprites/jump_fall_000.png",
-        "sprites/jump_fall_001.png",
-        "sprites/jump_fall_002.png",
-        "sprites/jump_fall_003.png",
-        "sprites/jump_fall_004.png"
-      ],
-      "delay_cs": 8
-    },
-    "jump_land": {
-      "frames": [
-        "sprites/jump_land_000.png",
-        "sprites/jump_land_001.png",
-        "sprites/jump_land_002.png",
-        "sprites/jump_land_003.png",
-        "sprites/jump_land_004.png"
-      ],
-      "delay_cs": 8
+      "native_animation": "BLOCK/BLOCKPAIN",
+      "trigger": "held block while grounded"
     },
     "dodge": {
-      "frames": [
-        "sprites/dodge_000.png",
-        "sprites/dodge_001.png",
-        "sprites/dodge_002.png",
-        "sprites/dodge_003.png",
-        "sprites/dodge_004.png"
+      "pose_ids": [
+        "bd_dodge_001",
+        "bd_dodge_002",
+        "bd_dodge_003",
+        "bd_dodge_004",
+        "bd_dodge_005",
+        "bd_dodge_006",
+        "bd_dodge_007",
+        "bd_dodge_008"
       ],
-      "delay_cs": 8
-    },
-    "hurt": {
       "frames": [
-        "sprites/hurt_000.png",
-        "sprites/hurt_001.png",
-        "sprites/hurt_002.png",
-        "sprites/hurt_003.png",
-        "sprites/hurt_004.png"
+        "data/chars/black_dave/sprites/bd_dodge_001.png",
+        "data/chars/black_dave/sprites/bd_dodge_002.png",
+        "data/chars/black_dave/sprites/bd_dodge_003.png",
+        "data/chars/black_dave/sprites/bd_dodge_004.png",
+        "data/chars/black_dave/sprites/bd_dodge_005.png",
+        "data/chars/black_dave/sprites/bd_dodge_006.png",
+        "data/chars/black_dave/sprites/bd_dodge_007.png",
+        "data/chars/black_dave/sprites/bd_dodge_008.png"
       ],
-      "delay_cs": 8
-    },
-    "down": {
-      "frames": [
-        "sprites/down_000.png",
-        "sprites/down_001.png",
-        "sprites/down_002.png",
-        "sprites/down_003.png",
-        "sprites/down_004.png"
-      ],
-      "delay_cs": 8
-    },
-    "recovery": {
-      "frames": [
-        "sprites/recovery_000.png",
-        "sprites/recovery_001.png",
-        "sprites/recovery_002.png",
-        "sprites/recovery_003.png",
-        "sprites/recovery_004.png"
-      ],
-      "delay_cs": 8
+      "native_animation": "DODGE",
+      "trigger": "dodge input while grounded"
     },
     "ranged": {
-      "frames": [
-        "sprites/ranged_000.png",
-        "sprites/ranged_001.png",
-        "sprites/ranged_002.png",
-        "sprites/ranged_003.png",
-        "sprites/ranged_004.png"
+      "pose_ids": [
+        "bd_ranged_special_001",
+        "bd_ranged_special_002",
+        "bd_ranged_special_003",
+        "bd_ranged_special_004",
+        "bd_ranged_special_005",
+        "bd_ranged_special_006",
+        "bd_ranged_special_007",
+        "bd_ranged_special_008",
+        "bd_ranged_special_009",
+        "bd_ranged_special_010",
+        "bd_ranged_special_011",
+        "bd_ranged_special_012",
+        "bd_ranged_special_013",
+        "bd_ranged_special_014"
       ],
-      "delay_cs": 8
+      "frames": [
+        "data/chars/black_dave/sprites/bd_ranged_special_001.png",
+        "data/chars/black_dave/sprites/bd_ranged_special_002.png",
+        "data/chars/black_dave/sprites/bd_ranged_special_003.png",
+        "data/chars/black_dave/sprites/bd_ranged_special_004.png",
+        "data/chars/black_dave/sprites/bd_ranged_special_005.png",
+        "data/chars/black_dave/sprites/bd_ranged_special_006.png",
+        "data/chars/black_dave/sprites/bd_ranged_special_007.png",
+        "data/chars/black_dave/sprites/bd_ranged_special_008.png",
+        "data/chars/black_dave/sprites/bd_ranged_special_009.png",
+        "data/chars/black_dave/sprites/bd_ranged_special_010.png",
+        "data/chars/black_dave/sprites/bd_ranged_special_011.png",
+        "data/chars/black_dave/sprites/bd_ranged_special_012.png",
+        "data/chars/black_dave/sprites/bd_ranged_special_013.png",
+        "data/chars/black_dave/sprites/bd_ranged_special_014.png"
+      ],
+      "native_animation": "ATTACKUP",
+      "trigger": "ranged command with meter"
     },
     "super": {
-      "frames": [
-        "sprites/super_000.png",
-        "sprites/super_001.png",
-        "sprites/super_002.png",
-        "sprites/super_003.png",
-        "sprites/super_004.png"
+      "pose_ids": [
+        "bd_super_001",
+        "bd_super_002",
+        "bd_super_003",
+        "bd_super_004",
+        "bd_super_005",
+        "bd_super_006",
+        "bd_super_007",
+        "bd_super_008",
+        "bd_super_009",
+        "bd_super_010",
+        "bd_super_011",
+        "bd_super_012",
+        "bd_super_013",
+        "bd_super_014",
+        "bd_super_015",
+        "bd_super_016"
       ],
-      "delay_cs": 8
-    },
-    "pet": {
       "frames": [
-        "sprites/pet_000.png",
-        "sprites/pet_001.png",
-        "sprites/pet_002.png",
-        "sprites/pet_003.png",
-        "sprites/pet_004.png"
+        "data/chars/black_dave/sprites/bd_super_001.png",
+        "data/chars/black_dave/sprites/bd_super_002.png",
+        "data/chars/black_dave/sprites/bd_super_003.png",
+        "data/chars/black_dave/sprites/bd_super_004.png",
+        "data/chars/black_dave/sprites/bd_super_005.png",
+        "data/chars/black_dave/sprites/bd_super_006.png",
+        "data/chars/black_dave/sprites/bd_super_007.png",
+        "data/chars/black_dave/sprites/bd_super_008.png",
+        "data/chars/black_dave/sprites/bd_super_009.png",
+        "data/chars/black_dave/sprites/bd_super_010.png",
+        "data/chars/black_dave/sprites/bd_super_011.png",
+        "data/chars/black_dave/sprites/bd_super_012.png",
+        "data/chars/black_dave/sprites/bd_super_013.png",
+        "data/chars/black_dave/sprites/bd_super_014.png",
+        "data/chars/black_dave/sprites/bd_super_015.png",
+        "data/chars/black_dave/sprites/bd_super_016.png"
       ],
-      "delay_cs": 8
+      "native_animation": "SPECIAL",
+      "trigger": "super command with full meter"
     },
     "air_punch": {
-      "frames": [
-        "sprites/air_punch_000.png",
-        "sprites/air_punch_001.png",
-        "sprites/air_punch_002.png",
-        "sprites/air_punch_003.png",
-        "sprites/air_punch_004.png"
+      "pose_ids": [
+        "bd_air_punch_001",
+        "bd_air_punch_002",
+        "bd_air_punch_003",
+        "bd_air_punch_004",
+        "bd_air_punch_005",
+        "bd_air_punch_006",
+        "bd_air_punch_007",
+        "bd_air_punch_008"
       ],
-      "delay_cs": 8
+      "frames": [
+        "data/chars/black_dave/sprites/bd_air_punch_001.png",
+        "data/chars/black_dave/sprites/bd_air_punch_002.png",
+        "data/chars/black_dave/sprites/bd_air_punch_003.png",
+        "data/chars/black_dave/sprites/bd_air_punch_004.png",
+        "data/chars/black_dave/sprites/bd_air_punch_005.png",
+        "data/chars/black_dave/sprites/bd_air_punch_006.png",
+        "data/chars/black_dave/sprites/bd_air_punch_007.png",
+        "data/chars/black_dave/sprites/bd_air_punch_008.png"
+      ],
+      "native_animation": "JUMPATTACK",
+      "trigger": "regular input while airborne"
     },
     "air_kick": {
-      "frames": [
-        "sprites/air_kick_000.png",
-        "sprites/air_kick_001.png",
-        "sprites/air_kick_002.png",
-        "sprites/air_kick_003.png",
-        "sprites/air_kick_004.png"
+      "pose_ids": [
+        "bd_air_kick_001",
+        "bd_air_kick_002",
+        "bd_air_kick_003",
+        "bd_air_kick_004",
+        "bd_air_kick_005",
+        "bd_air_kick_006",
+        "bd_air_kick_007",
+        "bd_air_kick_008"
       ],
-      "delay_cs": 8
+      "frames": [
+        "data/chars/black_dave/sprites/bd_air_kick_001.png",
+        "data/chars/black_dave/sprites/bd_air_kick_002.png",
+        "data/chars/black_dave/sprites/bd_air_kick_003.png",
+        "data/chars/black_dave/sprites/bd_air_kick_004.png",
+        "data/chars/black_dave/sprites/bd_air_kick_005.png",
+        "data/chars/black_dave/sprites/bd_air_kick_006.png",
+        "data/chars/black_dave/sprites/bd_air_kick_007.png",
+        "data/chars/black_dave/sprites/bd_air_kick_008.png"
+      ],
+      "native_animation": "JUMPATTACK2",
+      "trigger": "kick input while airborne"
     },
-    "black_dave_v2_regular_01": {
-      "frames": [
-        "sprites/black_dave_v2_regular_01_000.png",
-        "sprites/black_dave_v2_regular_01_001.png",
-        "sprites/black_dave_v2_regular_01_002.png",
-        "sprites/black_dave_v2_regular_01_003.png",
-        "sprites/black_dave_v2_regular_01_004.png"
+    "light_pain": {
+      "pose_ids": [
+        "bd_light_pain_001",
+        "bd_light_pain_002",
+        "bd_light_pain_003",
+        "bd_light_pain_004",
+        "bd_light_pain_005"
       ],
-      "delay_cs": 8
+      "frames": [
+        "data/chars/black_dave/sprites/bd_light_pain_001.png",
+        "data/chars/black_dave/sprites/bd_light_pain_002.png",
+        "data/chars/black_dave/sprites/bd_light_pain_003.png",
+        "data/chars/black_dave/sprites/bd_light_pain_004.png",
+        "data/chars/black_dave/sprites/bd_light_pain_005.png"
+      ],
+      "native_animation": "PAIN",
+      "trigger": "non-knockdown confirmed damage"
     },
-    "black_dave_v2_regular_02": {
-      "frames": [
-        "sprites/black_dave_v2_regular_02_000.png",
-        "sprites/black_dave_v2_regular_02_001.png",
-        "sprites/black_dave_v2_regular_02_002.png",
-        "sprites/black_dave_v2_regular_02_003.png",
-        "sprites/black_dave_v2_regular_02_004.png"
+    "heavy_pain_fall": {
+      "pose_ids": [
+        "bd_heavy_pain_fall_001",
+        "bd_heavy_pain_fall_002",
+        "bd_heavy_pain_fall_003",
+        "bd_heavy_pain_fall_004",
+        "bd_heavy_pain_fall_005",
+        "bd_heavy_pain_fall_006",
+        "bd_heavy_pain_fall_007",
+        "bd_heavy_pain_fall_008"
       ],
-      "delay_cs": 8
+      "frames": [
+        "data/chars/black_dave/sprites/bd_heavy_pain_fall_001.png",
+        "data/chars/black_dave/sprites/bd_heavy_pain_fall_002.png",
+        "data/chars/black_dave/sprites/bd_heavy_pain_fall_003.png",
+        "data/chars/black_dave/sprites/bd_heavy_pain_fall_004.png",
+        "data/chars/black_dave/sprites/bd_heavy_pain_fall_005.png",
+        "data/chars/black_dave/sprites/bd_heavy_pain_fall_006.png",
+        "data/chars/black_dave/sprites/bd_heavy_pain_fall_007.png",
+        "data/chars/black_dave/sprites/bd_heavy_pain_fall_008.png"
+      ],
+      "native_animation": "FALL",
+      "trigger": "knockdown or high-stun confirmed damage"
     },
-    "black_dave_v2_regular_03": {
-      "frames": [
-        "sprites/black_dave_v2_regular_03_000.png",
-        "sprites/black_dave_v2_regular_03_001.png",
-        "sprites/black_dave_v2_regular_03_002.png",
-        "sprites/black_dave_v2_regular_03_003.png",
-        "sprites/black_dave_v2_regular_03_004.png"
+    "down": {
+      "pose_ids": [
+        "bd_down_001",
+        "bd_down_002",
+        "bd_down_003",
+        "bd_down_004",
+        "bd_down_005",
+        "bd_down_006"
       ],
-      "delay_cs": 8
+      "frames": [
+        "data/chars/black_dave/sprites/bd_down_001.png",
+        "data/chars/black_dave/sprites/bd_down_002.png",
+        "data/chars/black_dave/sprites/bd_down_003.png",
+        "data/chars/black_dave/sprites/bd_down_004.png",
+        "data/chars/black_dave/sprites/bd_down_005.png",
+        "data/chars/black_dave/sprites/bd_down_006.png"
+      ],
+      "native_animation": "engine down state",
+      "trigger": "fall completes with health above zero"
     },
-    "black_dave_v2_regular_04": {
-      "frames": [
-        "sprites/black_dave_v2_regular_04_000.png",
-        "sprites/black_dave_v2_regular_04_001.png",
-        "sprites/black_dave_v2_regular_04_002.png",
-        "sprites/black_dave_v2_regular_04_003.png",
-        "sprites/black_dave_v2_regular_04_004.png"
+    "rise": {
+      "pose_ids": [
+        "bd_rise_001",
+        "bd_rise_002",
+        "bd_rise_003",
+        "bd_rise_004",
+        "bd_rise_005",
+        "bd_rise_006",
+        "bd_rise_007",
+        "bd_rise_008"
       ],
-      "delay_cs": 8
+      "frames": [
+        "data/chars/black_dave/sprites/bd_rise_001.png",
+        "data/chars/black_dave/sprites/bd_rise_002.png",
+        "data/chars/black_dave/sprites/bd_rise_003.png",
+        "data/chars/black_dave/sprites/bd_rise_004.png",
+        "data/chars/black_dave/sprites/bd_rise_005.png",
+        "data/chars/black_dave/sprites/bd_rise_006.png",
+        "data/chars/black_dave/sprites/bd_rise_007.png",
+        "data/chars/black_dave/sprites/bd_rise_008.png"
+      ],
+      "native_animation": "RISE",
+      "trigger": "down timer expires with health above zero"
     },
-    "black_dave_v2_regular_05": {
-      "frames": [
-        "sprites/black_dave_v2_regular_05_000.png",
-        "sprites/black_dave_v2_regular_05_001.png",
-        "sprites/black_dave_v2_regular_05_002.png",
-        "sprites/black_dave_v2_regular_05_003.png",
-        "sprites/black_dave_v2_regular_05_004.png"
+    "zero_health_lethal_fall": {
+      "pose_ids": [
+        "bd_heavy_pain_fall_001",
+        "bd_heavy_pain_fall_002",
+        "bd_heavy_pain_fall_003",
+        "bd_heavy_pain_fall_004",
+        "bd_heavy_pain_fall_005",
+        "bd_heavy_pain_fall_006",
+        "bd_heavy_pain_fall_007",
+        "bd_heavy_pain_fall_008",
+        "bd_down_001",
+        "bd_down_002",
+        "bd_down_003",
+        "bd_down_004",
+        "bd_down_005",
+        "bd_down_006"
       ],
-      "delay_cs": 8
+      "frames": [
+        "data/chars/black_dave/sprites/bd_heavy_pain_fall_001.png",
+        "data/chars/black_dave/sprites/bd_heavy_pain_fall_002.png",
+        "data/chars/black_dave/sprites/bd_heavy_pain_fall_003.png",
+        "data/chars/black_dave/sprites/bd_heavy_pain_fall_004.png",
+        "data/chars/black_dave/sprites/bd_heavy_pain_fall_005.png",
+        "data/chars/black_dave/sprites/bd_heavy_pain_fall_006.png",
+        "data/chars/black_dave/sprites/bd_heavy_pain_fall_007.png",
+        "data/chars/black_dave/sprites/bd_heavy_pain_fall_008.png",
+        "data/chars/black_dave/sprites/bd_down_001.png",
+        "data/chars/black_dave/sprites/bd_down_002.png",
+        "data/chars/black_dave/sprites/bd_down_003.png",
+        "data/chars/black_dave/sprites/bd_down_004.png",
+        "data/chars/black_dave/sprites/bd_down_005.png",
+        "data/chars/black_dave/sprites/bd_down_006.png"
+      ],
+      "native_animation": "FALL",
+      "trigger": "health reaches zero"
     },
-    "black_dave_v2_regular_06": {
-      "frames": [
-        "sprites/black_dave_v2_regular_06_000.png",
-        "sprites/black_dave_v2_regular_06_001.png",
-        "sprites/black_dave_v2_regular_06_002.png",
-        "sprites/black_dave_v2_regular_06_003.png",
-        "sprites/black_dave_v2_regular_06_004.png"
+    "item_pickup": {
+      "pose_ids": [
+        "bd_interaction_pickup_001",
+        "bd_interaction_pickup_002",
+        "bd_interaction_pickup_003",
+        "bd_interaction_pickup_004",
+        "bd_interaction_pickup_005",
+        "bd_interaction_pickup_006",
+        "bd_interaction_pickup_007",
+        "bd_interaction_pickup_008"
       ],
-      "delay_cs": 8
+      "frames": [
+        "data/chars/black_dave/sprites/bd_interaction_pickup_001.png",
+        "data/chars/black_dave/sprites/bd_interaction_pickup_002.png",
+        "data/chars/black_dave/sprites/bd_interaction_pickup_003.png",
+        "data/chars/black_dave/sprites/bd_interaction_pickup_004.png",
+        "data/chars/black_dave/sprites/bd_interaction_pickup_005.png",
+        "data/chars/black_dave/sprites/bd_interaction_pickup_006.png",
+        "data/chars/black_dave/sprites/bd_interaction_pickup_007.png",
+        "data/chars/black_dave/sprites/bd_interaction_pickup_008.png"
+      ],
+      "native_animation": "GET",
+      "trigger": "pickup contact plus action input"
     },
-    "black_dave_v2_regular_07": {
-      "frames": [
-        "sprites/black_dave_v2_regular_07_000.png",
-        "sprites/black_dave_v2_regular_07_001.png",
-        "sprites/black_dave_v2_regular_07_002.png",
-        "sprites/black_dave_v2_regular_07_003.png",
-        "sprites/black_dave_v2_regular_07_004.png"
+    "regular_01": {
+      "pose_ids": [
+        "bd_combat_shared_001",
+        "bd_combat_shared_002",
+        "bd_combat_shared_003",
+        "bd_combat_shared_004",
+        "bd_combat_shared_005",
+        "bd_regular_01_specific_001",
+        "bd_regular_01_specific_002",
+        "bd_regular_01_specific_003"
       ],
-      "delay_cs": 8
+      "frames": [
+        "data/chars/black_dave/sprites/bd_combat_shared_001.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_002.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_003.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_004.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_005.png",
+        "data/chars/black_dave/sprites/bd_regular_01_specific_001.png",
+        "data/chars/black_dave/sprites/bd_regular_01_specific_002.png",
+        "data/chars/black_dave/sprites/bd_regular_01_specific_003.png"
+      ],
+      "native_animation": "FREESPECIAL1",
+      "trigger": "regular route input reaches step 1"
     },
-    "black_dave_v2_kick_01": {
-      "frames": [
-        "sprites/black_dave_v2_kick_01_000.png",
-        "sprites/black_dave_v2_kick_01_001.png",
-        "sprites/black_dave_v2_kick_01_002.png",
-        "sprites/black_dave_v2_kick_01_003.png",
-        "sprites/black_dave_v2_kick_01_004.png"
+    "regular_02": {
+      "pose_ids": [
+        "bd_combat_shared_001",
+        "bd_combat_shared_002",
+        "bd_combat_shared_003",
+        "bd_combat_shared_004",
+        "bd_combat_shared_005",
+        "bd_regular_02_specific_001",
+        "bd_regular_02_specific_002",
+        "bd_regular_02_specific_003"
       ],
-      "delay_cs": 8
+      "frames": [
+        "data/chars/black_dave/sprites/bd_combat_shared_001.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_002.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_003.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_004.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_005.png",
+        "data/chars/black_dave/sprites/bd_regular_02_specific_001.png",
+        "data/chars/black_dave/sprites/bd_regular_02_specific_002.png",
+        "data/chars/black_dave/sprites/bd_regular_02_specific_003.png"
+      ],
+      "native_animation": "FREESPECIAL2",
+      "trigger": "regular route input reaches step 2"
     },
-    "black_dave_v2_kick_02": {
-      "frames": [
-        "sprites/black_dave_v2_kick_02_000.png",
-        "sprites/black_dave_v2_kick_02_001.png",
-        "sprites/black_dave_v2_kick_02_002.png",
-        "sprites/black_dave_v2_kick_02_003.png",
-        "sprites/black_dave_v2_kick_02_004.png"
+    "regular_03": {
+      "pose_ids": [
+        "bd_combat_shared_001",
+        "bd_combat_shared_002",
+        "bd_combat_shared_003",
+        "bd_combat_shared_004",
+        "bd_combat_shared_005",
+        "bd_regular_03_specific_001",
+        "bd_regular_03_specific_002",
+        "bd_regular_03_specific_003"
       ],
-      "delay_cs": 8
+      "frames": [
+        "data/chars/black_dave/sprites/bd_combat_shared_001.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_002.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_003.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_004.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_005.png",
+        "data/chars/black_dave/sprites/bd_regular_03_specific_001.png",
+        "data/chars/black_dave/sprites/bd_regular_03_specific_002.png",
+        "data/chars/black_dave/sprites/bd_regular_03_specific_003.png"
+      ],
+      "native_animation": "FREESPECIAL3",
+      "trigger": "regular route input reaches step 3"
     },
-    "black_dave_v2_kick_03": {
-      "frames": [
-        "sprites/black_dave_v2_kick_03_000.png",
-        "sprites/black_dave_v2_kick_03_001.png",
-        "sprites/black_dave_v2_kick_03_002.png",
-        "sprites/black_dave_v2_kick_03_003.png",
-        "sprites/black_dave_v2_kick_03_004.png"
+    "regular_04": {
+      "pose_ids": [
+        "bd_combat_shared_001",
+        "bd_combat_shared_002",
+        "bd_combat_shared_003",
+        "bd_combat_shared_004",
+        "bd_combat_shared_005",
+        "bd_regular_04_specific_001",
+        "bd_regular_04_specific_002",
+        "bd_regular_04_specific_003"
       ],
-      "delay_cs": 8
+      "frames": [
+        "data/chars/black_dave/sprites/bd_combat_shared_001.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_002.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_003.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_004.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_005.png",
+        "data/chars/black_dave/sprites/bd_regular_04_specific_001.png",
+        "data/chars/black_dave/sprites/bd_regular_04_specific_002.png",
+        "data/chars/black_dave/sprites/bd_regular_04_specific_003.png"
+      ],
+      "native_animation": "FREESPECIAL4",
+      "trigger": "regular route input reaches step 4"
     },
-    "black_dave_v2_kick_04": {
-      "frames": [
-        "sprites/black_dave_v2_kick_04_000.png",
-        "sprites/black_dave_v2_kick_04_001.png",
-        "sprites/black_dave_v2_kick_04_002.png",
-        "sprites/black_dave_v2_kick_04_003.png",
-        "sprites/black_dave_v2_kick_04_004.png"
+    "regular_05": {
+      "pose_ids": [
+        "bd_combat_shared_001",
+        "bd_combat_shared_002",
+        "bd_combat_shared_003",
+        "bd_combat_shared_004",
+        "bd_combat_shared_005",
+        "bd_regular_05_specific_001",
+        "bd_regular_05_specific_002",
+        "bd_regular_05_specific_003"
       ],
-      "delay_cs": 8
+      "frames": [
+        "data/chars/black_dave/sprites/bd_combat_shared_001.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_002.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_003.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_004.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_005.png",
+        "data/chars/black_dave/sprites/bd_regular_05_specific_001.png",
+        "data/chars/black_dave/sprites/bd_regular_05_specific_002.png",
+        "data/chars/black_dave/sprites/bd_regular_05_specific_003.png"
+      ],
+      "native_animation": "FREESPECIAL5",
+      "trigger": "regular route input reaches step 5"
     },
-    "black_dave_v2_kick_05": {
-      "frames": [
-        "sprites/black_dave_v2_kick_05_000.png",
-        "sprites/black_dave_v2_kick_05_001.png",
-        "sprites/black_dave_v2_kick_05_002.png",
-        "sprites/black_dave_v2_kick_05_003.png",
-        "sprites/black_dave_v2_kick_05_004.png"
+    "regular_06": {
+      "pose_ids": [
+        "bd_combat_shared_001",
+        "bd_combat_shared_002",
+        "bd_combat_shared_003",
+        "bd_combat_shared_004",
+        "bd_combat_shared_005",
+        "bd_regular_06_specific_001",
+        "bd_regular_06_specific_002",
+        "bd_regular_06_specific_003"
       ],
-      "delay_cs": 8
+      "frames": [
+        "data/chars/black_dave/sprites/bd_combat_shared_001.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_002.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_003.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_004.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_005.png",
+        "data/chars/black_dave/sprites/bd_regular_06_specific_001.png",
+        "data/chars/black_dave/sprites/bd_regular_06_specific_002.png",
+        "data/chars/black_dave/sprites/bd_regular_06_specific_003.png"
+      ],
+      "native_animation": "FREESPECIAL6",
+      "trigger": "regular route input reaches step 6"
     },
-    "black_dave_v2_kick_06": {
-      "frames": [
-        "sprites/black_dave_v2_kick_06_000.png",
-        "sprites/black_dave_v2_kick_06_001.png",
-        "sprites/black_dave_v2_kick_06_002.png",
-        "sprites/black_dave_v2_kick_06_003.png",
-        "sprites/black_dave_v2_kick_06_004.png"
+    "regular_07": {
+      "pose_ids": [
+        "bd_combat_shared_001",
+        "bd_combat_shared_002",
+        "bd_combat_shared_003",
+        "bd_combat_shared_004",
+        "bd_combat_shared_005",
+        "bd_regular_07_specific_001",
+        "bd_regular_07_specific_002",
+        "bd_regular_07_specific_003"
       ],
-      "delay_cs": 8
+      "frames": [
+        "data/chars/black_dave/sprites/bd_combat_shared_001.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_002.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_003.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_004.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_005.png",
+        "data/chars/black_dave/sprites/bd_regular_07_specific_001.png",
+        "data/chars/black_dave/sprites/bd_regular_07_specific_002.png",
+        "data/chars/black_dave/sprites/bd_regular_07_specific_003.png"
+      ],
+      "native_animation": "FREESPECIAL7",
+      "trigger": "regular route input reaches step 7"
     },
-    "black_dave_v2_kick_07": {
-      "frames": [
-        "sprites/black_dave_v2_kick_07_000.png",
-        "sprites/black_dave_v2_kick_07_001.png",
-        "sprites/black_dave_v2_kick_07_002.png",
-        "sprites/black_dave_v2_kick_07_003.png",
-        "sprites/black_dave_v2_kick_07_004.png"
+    "kick_01": {
+      "pose_ids": [
+        "bd_combat_shared_001",
+        "bd_combat_shared_002",
+        "bd_combat_shared_003",
+        "bd_combat_shared_004",
+        "bd_combat_shared_005",
+        "bd_kick_01_specific_001",
+        "bd_kick_01_specific_002",
+        "bd_kick_01_specific_003"
       ],
-      "delay_cs": 8
+      "frames": [
+        "data/chars/black_dave/sprites/bd_combat_shared_001.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_002.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_003.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_004.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_005.png",
+        "data/chars/black_dave/sprites/bd_kick_01_specific_001.png",
+        "data/chars/black_dave/sprites/bd_kick_01_specific_002.png",
+        "data/chars/black_dave/sprites/bd_kick_01_specific_003.png"
+      ],
+      "native_animation": "FREESPECIAL1",
+      "trigger": "kick route input reaches step 1"
     },
-    "black_dave_v2_power_01": {
-      "frames": [
-        "sprites/black_dave_v2_power_01_000.png",
-        "sprites/black_dave_v2_power_01_001.png",
-        "sprites/black_dave_v2_power_01_002.png",
-        "sprites/black_dave_v2_power_01_003.png",
-        "sprites/black_dave_v2_power_01_004.png"
+    "kick_02": {
+      "pose_ids": [
+        "bd_combat_shared_001",
+        "bd_combat_shared_002",
+        "bd_combat_shared_003",
+        "bd_combat_shared_004",
+        "bd_combat_shared_005",
+        "bd_kick_02_specific_001",
+        "bd_kick_02_specific_002",
+        "bd_kick_02_specific_003"
       ],
-      "delay_cs": 8
+      "frames": [
+        "data/chars/black_dave/sprites/bd_combat_shared_001.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_002.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_003.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_004.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_005.png",
+        "data/chars/black_dave/sprites/bd_kick_02_specific_001.png",
+        "data/chars/black_dave/sprites/bd_kick_02_specific_002.png",
+        "data/chars/black_dave/sprites/bd_kick_02_specific_003.png"
+      ],
+      "native_animation": "FREESPECIAL2",
+      "trigger": "kick route input reaches step 2"
     },
-    "black_dave_v2_power_02": {
-      "frames": [
-        "sprites/black_dave_v2_power_02_000.png",
-        "sprites/black_dave_v2_power_02_001.png",
-        "sprites/black_dave_v2_power_02_002.png",
-        "sprites/black_dave_v2_power_02_003.png",
-        "sprites/black_dave_v2_power_02_004.png"
+    "kick_03": {
+      "pose_ids": [
+        "bd_combat_shared_001",
+        "bd_combat_shared_002",
+        "bd_combat_shared_003",
+        "bd_combat_shared_004",
+        "bd_combat_shared_005",
+        "bd_kick_03_specific_001",
+        "bd_kick_03_specific_002",
+        "bd_kick_03_specific_003"
       ],
-      "delay_cs": 8
+      "frames": [
+        "data/chars/black_dave/sprites/bd_combat_shared_001.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_002.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_003.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_004.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_005.png",
+        "data/chars/black_dave/sprites/bd_kick_03_specific_001.png",
+        "data/chars/black_dave/sprites/bd_kick_03_specific_002.png",
+        "data/chars/black_dave/sprites/bd_kick_03_specific_003.png"
+      ],
+      "native_animation": "FREESPECIAL3",
+      "trigger": "kick route input reaches step 3"
     },
-    "black_dave_v2_power_03": {
-      "frames": [
-        "sprites/black_dave_v2_power_03_000.png",
-        "sprites/black_dave_v2_power_03_001.png",
-        "sprites/black_dave_v2_power_03_002.png",
-        "sprites/black_dave_v2_power_03_003.png",
-        "sprites/black_dave_v2_power_03_004.png"
+    "kick_04": {
+      "pose_ids": [
+        "bd_combat_shared_001",
+        "bd_combat_shared_002",
+        "bd_combat_shared_003",
+        "bd_combat_shared_004",
+        "bd_combat_shared_005",
+        "bd_kick_04_specific_001",
+        "bd_kick_04_specific_002",
+        "bd_kick_04_specific_003"
       ],
-      "delay_cs": 8
+      "frames": [
+        "data/chars/black_dave/sprites/bd_combat_shared_001.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_002.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_003.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_004.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_005.png",
+        "data/chars/black_dave/sprites/bd_kick_04_specific_001.png",
+        "data/chars/black_dave/sprites/bd_kick_04_specific_002.png",
+        "data/chars/black_dave/sprites/bd_kick_04_specific_003.png"
+      ],
+      "native_animation": "FREESPECIAL4",
+      "trigger": "kick route input reaches step 4"
     },
-    "black_dave_v2_power_04": {
-      "frames": [
-        "sprites/black_dave_v2_power_04_000.png",
-        "sprites/black_dave_v2_power_04_001.png",
-        "sprites/black_dave_v2_power_04_002.png",
-        "sprites/black_dave_v2_power_04_003.png",
-        "sprites/black_dave_v2_power_04_004.png"
+    "kick_05": {
+      "pose_ids": [
+        "bd_combat_shared_001",
+        "bd_combat_shared_002",
+        "bd_combat_shared_003",
+        "bd_combat_shared_004",
+        "bd_combat_shared_005",
+        "bd_kick_05_specific_001",
+        "bd_kick_05_specific_002",
+        "bd_kick_05_specific_003"
       ],
-      "delay_cs": 8
+      "frames": [
+        "data/chars/black_dave/sprites/bd_combat_shared_001.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_002.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_003.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_004.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_005.png",
+        "data/chars/black_dave/sprites/bd_kick_05_specific_001.png",
+        "data/chars/black_dave/sprites/bd_kick_05_specific_002.png",
+        "data/chars/black_dave/sprites/bd_kick_05_specific_003.png"
+      ],
+      "native_animation": "FREESPECIAL5",
+      "trigger": "kick route input reaches step 5"
     },
-    "black_dave_v2_power_05": {
-      "frames": [
-        "sprites/black_dave_v2_power_05_000.png",
-        "sprites/black_dave_v2_power_05_001.png",
-        "sprites/black_dave_v2_power_05_002.png",
-        "sprites/black_dave_v2_power_05_003.png",
-        "sprites/black_dave_v2_power_05_004.png"
+    "kick_06": {
+      "pose_ids": [
+        "bd_combat_shared_001",
+        "bd_combat_shared_002",
+        "bd_combat_shared_003",
+        "bd_combat_shared_004",
+        "bd_combat_shared_005",
+        "bd_kick_06_specific_001",
+        "bd_kick_06_specific_002",
+        "bd_kick_06_specific_003"
       ],
-      "delay_cs": 8
+      "frames": [
+        "data/chars/black_dave/sprites/bd_combat_shared_001.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_002.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_003.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_004.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_005.png",
+        "data/chars/black_dave/sprites/bd_kick_06_specific_001.png",
+        "data/chars/black_dave/sprites/bd_kick_06_specific_002.png",
+        "data/chars/black_dave/sprites/bd_kick_06_specific_003.png"
+      ],
+      "native_animation": "FREESPECIAL6",
+      "trigger": "kick route input reaches step 6"
     },
-    "black_dave_v2_power_06": {
-      "frames": [
-        "sprites/black_dave_v2_power_06_000.png",
-        "sprites/black_dave_v2_power_06_001.png",
-        "sprites/black_dave_v2_power_06_002.png",
-        "sprites/black_dave_v2_power_06_003.png",
-        "sprites/black_dave_v2_power_06_004.png"
+    "kick_07": {
+      "pose_ids": [
+        "bd_combat_shared_001",
+        "bd_combat_shared_002",
+        "bd_combat_shared_003",
+        "bd_combat_shared_004",
+        "bd_combat_shared_005",
+        "bd_kick_07_specific_001",
+        "bd_kick_07_specific_002",
+        "bd_kick_07_specific_003"
       ],
-      "delay_cs": 8
+      "frames": [
+        "data/chars/black_dave/sprites/bd_combat_shared_001.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_002.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_003.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_004.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_005.png",
+        "data/chars/black_dave/sprites/bd_kick_07_specific_001.png",
+        "data/chars/black_dave/sprites/bd_kick_07_specific_002.png",
+        "data/chars/black_dave/sprites/bd_kick_07_specific_003.png"
+      ],
+      "native_animation": "FREESPECIAL7",
+      "trigger": "kick route input reaches step 7"
     },
-    "black_dave_v2_power_07": {
-      "frames": [
-        "sprites/black_dave_v2_power_07_000.png",
-        "sprites/black_dave_v2_power_07_001.png",
-        "sprites/black_dave_v2_power_07_002.png",
-        "sprites/black_dave_v2_power_07_003.png",
-        "sprites/black_dave_v2_power_07_004.png"
+    "power_01": {
+      "pose_ids": [
+        "bd_combat_shared_001",
+        "bd_combat_shared_002",
+        "bd_combat_shared_003",
+        "bd_combat_shared_004",
+        "bd_combat_shared_005",
+        "bd_combat_shared_006",
+        "bd_combat_shared_007",
+        "bd_combat_shared_008",
+        "bd_power_01_specific_001",
+        "bd_power_01_specific_002",
+        "bd_power_01_specific_003"
       ],
-      "delay_cs": 8
+      "frames": [
+        "data/chars/black_dave/sprites/bd_combat_shared_001.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_002.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_003.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_004.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_005.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_006.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_007.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_008.png",
+        "data/chars/black_dave/sprites/bd_power_01_specific_001.png",
+        "data/chars/black_dave/sprites/bd_power_01_specific_002.png",
+        "data/chars/black_dave/sprites/bd_power_01_specific_003.png"
+      ],
+      "native_animation": "FREESPECIAL1",
+      "trigger": "power route input reaches step 1"
     },
-    "black_dave_full_identity_transition_01": {
-      "frames": [
-        "sprites/black_dave_full_identity_transition_01_000.png",
-        "sprites/black_dave_full_identity_transition_01_001.png",
-        "sprites/black_dave_full_identity_transition_01_002.png",
-        "sprites/black_dave_full_identity_transition_01_003.png",
-        "sprites/black_dave_full_identity_transition_01_004.png"
+    "power_02": {
+      "pose_ids": [
+        "bd_combat_shared_001",
+        "bd_combat_shared_002",
+        "bd_combat_shared_003",
+        "bd_combat_shared_004",
+        "bd_combat_shared_005",
+        "bd_combat_shared_006",
+        "bd_combat_shared_007",
+        "bd_combat_shared_008",
+        "bd_power_02_specific_001",
+        "bd_power_02_specific_002",
+        "bd_power_02_specific_003"
       ],
-      "delay_cs": 8
+      "frames": [
+        "data/chars/black_dave/sprites/bd_combat_shared_001.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_002.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_003.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_004.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_005.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_006.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_007.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_008.png",
+        "data/chars/black_dave/sprites/bd_power_02_specific_001.png",
+        "data/chars/black_dave/sprites/bd_power_02_specific_002.png",
+        "data/chars/black_dave/sprites/bd_power_02_specific_003.png"
+      ],
+      "native_animation": "FREESPECIAL2",
+      "trigger": "power route input reaches step 2"
     },
-    "black_dave_full_identity_transition_02": {
-      "frames": [
-        "sprites/black_dave_full_identity_transition_02_000.png",
-        "sprites/black_dave_full_identity_transition_02_001.png",
-        "sprites/black_dave_full_identity_transition_02_002.png",
-        "sprites/black_dave_full_identity_transition_02_003.png",
-        "sprites/black_dave_full_identity_transition_02_004.png"
+    "power_03": {
+      "pose_ids": [
+        "bd_combat_shared_001",
+        "bd_combat_shared_002",
+        "bd_combat_shared_003",
+        "bd_combat_shared_004",
+        "bd_combat_shared_005",
+        "bd_combat_shared_006",
+        "bd_combat_shared_007",
+        "bd_combat_shared_008",
+        "bd_power_03_specific_001",
+        "bd_power_03_specific_002",
+        "bd_power_03_specific_003"
       ],
-      "delay_cs": 8
+      "frames": [
+        "data/chars/black_dave/sprites/bd_combat_shared_001.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_002.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_003.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_004.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_005.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_006.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_007.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_008.png",
+        "data/chars/black_dave/sprites/bd_power_03_specific_001.png",
+        "data/chars/black_dave/sprites/bd_power_03_specific_002.png",
+        "data/chars/black_dave/sprites/bd_power_03_specific_003.png"
+      ],
+      "native_animation": "FREESPECIAL3",
+      "trigger": "power route input reaches step 3"
     },
-    "black_dave_full_identity_transition_03": {
-      "frames": [
-        "sprites/black_dave_full_identity_transition_03_000.png",
-        "sprites/black_dave_full_identity_transition_03_001.png",
-        "sprites/black_dave_full_identity_transition_03_002.png",
-        "sprites/black_dave_full_identity_transition_03_003.png",
-        "sprites/black_dave_full_identity_transition_03_004.png"
+    "power_04": {
+      "pose_ids": [
+        "bd_combat_shared_001",
+        "bd_combat_shared_002",
+        "bd_combat_shared_003",
+        "bd_combat_shared_004",
+        "bd_combat_shared_005",
+        "bd_combat_shared_006",
+        "bd_combat_shared_007",
+        "bd_combat_shared_008",
+        "bd_power_04_specific_001",
+        "bd_power_04_specific_002",
+        "bd_power_04_specific_003"
       ],
-      "delay_cs": 8
+      "frames": [
+        "data/chars/black_dave/sprites/bd_combat_shared_001.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_002.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_003.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_004.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_005.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_006.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_007.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_008.png",
+        "data/chars/black_dave/sprites/bd_power_04_specific_001.png",
+        "data/chars/black_dave/sprites/bd_power_04_specific_002.png",
+        "data/chars/black_dave/sprites/bd_power_04_specific_003.png"
+      ],
+      "native_animation": "FREESPECIAL4",
+      "trigger": "power route input reaches step 4"
+    },
+    "power_05": {
+      "pose_ids": [
+        "bd_combat_shared_001",
+        "bd_combat_shared_002",
+        "bd_combat_shared_003",
+        "bd_combat_shared_004",
+        "bd_combat_shared_005",
+        "bd_combat_shared_006",
+        "bd_combat_shared_007",
+        "bd_combat_shared_008",
+        "bd_power_05_specific_001",
+        "bd_power_05_specific_002",
+        "bd_power_05_specific_003"
+      ],
+      "frames": [
+        "data/chars/black_dave/sprites/bd_combat_shared_001.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_002.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_003.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_004.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_005.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_006.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_007.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_008.png",
+        "data/chars/black_dave/sprites/bd_power_05_specific_001.png",
+        "data/chars/black_dave/sprites/bd_power_05_specific_002.png",
+        "data/chars/black_dave/sprites/bd_power_05_specific_003.png"
+      ],
+      "native_animation": "FREESPECIAL5",
+      "trigger": "power route input reaches step 5"
+    },
+    "power_06": {
+      "pose_ids": [
+        "bd_combat_shared_001",
+        "bd_combat_shared_002",
+        "bd_combat_shared_003",
+        "bd_combat_shared_004",
+        "bd_combat_shared_005",
+        "bd_combat_shared_006",
+        "bd_combat_shared_007",
+        "bd_combat_shared_008",
+        "bd_power_06_specific_001",
+        "bd_power_06_specific_002",
+        "bd_power_06_specific_003"
+      ],
+      "frames": [
+        "data/chars/black_dave/sprites/bd_combat_shared_001.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_002.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_003.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_004.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_005.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_006.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_007.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_008.png",
+        "data/chars/black_dave/sprites/bd_power_06_specific_001.png",
+        "data/chars/black_dave/sprites/bd_power_06_specific_002.png",
+        "data/chars/black_dave/sprites/bd_power_06_specific_003.png"
+      ],
+      "native_animation": "FREESPECIAL6",
+      "trigger": "power route input reaches step 6"
+    },
+    "power_07": {
+      "pose_ids": [
+        "bd_combat_shared_001",
+        "bd_combat_shared_002",
+        "bd_combat_shared_003",
+        "bd_combat_shared_004",
+        "bd_combat_shared_005",
+        "bd_combat_shared_006",
+        "bd_combat_shared_007",
+        "bd_combat_shared_008",
+        "bd_power_07_specific_001",
+        "bd_power_07_specific_002",
+        "bd_power_07_specific_003"
+      ],
+      "frames": [
+        "data/chars/black_dave/sprites/bd_combat_shared_001.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_002.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_003.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_004.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_005.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_006.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_007.png",
+        "data/chars/black_dave/sprites/bd_combat_shared_008.png",
+        "data/chars/black_dave/sprites/bd_power_07_specific_001.png",
+        "data/chars/black_dave/sprites/bd_power_07_specific_002.png",
+        "data/chars/black_dave/sprites/bd_power_07_specific_003.png"
+      ],
+      "native_animation": "FREESPECIAL7",
+      "trigger": "power route input reaches step 7"
     }
   },
-  "environment_grade": {
-    "profile": "cool_underpass_dusk_v1",
-    "saturation_mix": 0.76,
-    "shadow_tint": [
-      18,
-      28,
-      48
-    ],
-    "edge_rule": "hard_alpha_preserved_with_navy_shadow_contours",
-    "grounding": "runtime_contact_shadow_and_shared_logical_ground_plane"
+  "routing": {
+    "native": {
+      "spawn": {
+        "count": 6
+      },
+      "respawn": {
+        "count": 6
+      },
+      "idle": {
+        "count": 8
+      },
+      "walk": {
+        "count": 20
+      },
+      "turn": {
+        "count": 4
+      },
+      "jumpdelay": {
+        "count": 4
+      },
+      "jump": {
+        "count": 6
+      },
+      "jumpland": {
+        "count": 4
+      },
+      "block": {
+        "count": 6
+      },
+      "blockpain": {
+        "count": 2
+      },
+      "dodge": {
+        "count": 8
+      },
+      "attackup": {
+        "count": 14
+      },
+      "special": {
+        "count": 16
+      },
+      "jumpattack": {
+        "count": 8
+      },
+      "jumpattack2": {
+        "count": 8
+      },
+      "pain": {
+        "count": 5
+      },
+      "fall": {
+        "count": 14
+      },
+      "rise": {
+        "count": 8
+      },
+      "get": {
+        "count": 8
+      }
+    },
+    "combat_banks": {
+      "freespecial1": {
+        "regular": {
+          "offset": 0,
+          "count": 8,
+          "clip": "regular_01",
+          "phase_layout": {
+            "startup_ticks": 5,
+            "active_ticks": 4,
+            "declared_recovery_ticks": 8,
+            "effective_recovery_ticks": 8,
+            "startup_pose_count": 2,
+            "active_pose_start": 2,
+            "active_pose_count": 2,
+            "recovery_pose_start": 4,
+            "recovery_pose_count": 4
+          }
+        },
+        "kick": {
+          "offset": 8,
+          "count": 8,
+          "clip": "kick_01",
+          "phase_layout": {
+            "startup_ticks": 4,
+            "active_ticks": 4,
+            "declared_recovery_ticks": 7,
+            "effective_recovery_ticks": 8,
+            "startup_pose_count": 2,
+            "active_pose_start": 2,
+            "active_pose_count": 2,
+            "recovery_pose_start": 4,
+            "recovery_pose_count": 4
+          }
+        },
+        "power": {
+          "offset": 16,
+          "count": 11,
+          "clip": "power_01",
+          "phase_layout": {
+            "startup_ticks": 11,
+            "active_ticks": 5,
+            "declared_recovery_ticks": 13,
+            "effective_recovery_ticks": 13,
+            "startup_pose_count": 5,
+            "active_pose_start": 5,
+            "active_pose_count": 2,
+            "recovery_pose_start": 7,
+            "recovery_pose_count": 4
+          }
+        }
+      },
+      "freespecial2": {
+        "regular": {
+          "offset": 0,
+          "count": 8,
+          "clip": "regular_02",
+          "phase_layout": {
+            "startup_ticks": 4,
+            "active_ticks": 4,
+            "declared_recovery_ticks": 7,
+            "effective_recovery_ticks": 8,
+            "startup_pose_count": 2,
+            "active_pose_start": 2,
+            "active_pose_count": 2,
+            "recovery_pose_start": 4,
+            "recovery_pose_count": 4
+          }
+        },
+        "kick": {
+          "offset": 8,
+          "count": 8,
+          "clip": "kick_02",
+          "phase_layout": {
+            "startup_ticks": 5,
+            "active_ticks": 4,
+            "declared_recovery_ticks": 8,
+            "effective_recovery_ticks": 8,
+            "startup_pose_count": 2,
+            "active_pose_start": 2,
+            "active_pose_count": 2,
+            "recovery_pose_start": 4,
+            "recovery_pose_count": 4
+          }
+        },
+        "power": {
+          "offset": 16,
+          "count": 11,
+          "clip": "power_02",
+          "phase_layout": {
+            "startup_ticks": 11,
+            "active_ticks": 5,
+            "declared_recovery_ticks": 14,
+            "effective_recovery_ticks": 14,
+            "startup_pose_count": 5,
+            "active_pose_start": 5,
+            "active_pose_count": 2,
+            "recovery_pose_start": 7,
+            "recovery_pose_count": 4
+          }
+        }
+      },
+      "freespecial3": {
+        "regular": {
+          "offset": 0,
+          "count": 8,
+          "clip": "regular_03",
+          "phase_layout": {
+            "startup_ticks": 7,
+            "active_ticks": 6,
+            "declared_recovery_ticks": 14,
+            "effective_recovery_ticks": 14,
+            "startup_pose_count": 3,
+            "active_pose_start": 3,
+            "active_pose_count": 2,
+            "recovery_pose_start": 5,
+            "recovery_pose_count": 3
+          }
+        },
+        "kick": {
+          "offset": 8,
+          "count": 8,
+          "clip": "kick_03",
+          "phase_layout": {
+            "startup_ticks": 5,
+            "active_ticks": 5,
+            "declared_recovery_ticks": 10,
+            "effective_recovery_ticks": 10,
+            "startup_pose_count": 2,
+            "active_pose_start": 2,
+            "active_pose_count": 2,
+            "recovery_pose_start": 4,
+            "recovery_pose_count": 4
+          }
+        },
+        "power": {
+          "offset": 16,
+          "count": 11,
+          "clip": "power_03",
+          "phase_layout": {
+            "startup_ticks": 13,
+            "active_ticks": 6,
+            "declared_recovery_ticks": 17,
+            "effective_recovery_ticks": 17,
+            "startup_pose_count": 6,
+            "active_pose_start": 6,
+            "active_pose_count": 2,
+            "recovery_pose_start": 8,
+            "recovery_pose_count": 3
+          }
+        }
+      },
+      "freespecial4": {
+        "regular": {
+          "offset": 0,
+          "count": 8,
+          "clip": "regular_04",
+          "phase_layout": {
+            "startup_ticks": 5,
+            "active_ticks": 5,
+            "declared_recovery_ticks": 10,
+            "effective_recovery_ticks": 10,
+            "startup_pose_count": 2,
+            "active_pose_start": 2,
+            "active_pose_count": 2,
+            "recovery_pose_start": 4,
+            "recovery_pose_count": 4
+          }
+        },
+        "kick": {
+          "offset": 8,
+          "count": 8,
+          "clip": "kick_04",
+          "phase_layout": {
+            "startup_ticks": 8,
+            "active_ticks": 6,
+            "declared_recovery_ticks": 17,
+            "effective_recovery_ticks": 17,
+            "startup_pose_count": 4,
+            "active_pose_start": 4,
+            "active_pose_count": 2,
+            "recovery_pose_start": 6,
+            "recovery_pose_count": 2
+          }
+        },
+        "power": {
+          "offset": 16,
+          "count": 11,
+          "clip": "power_04",
+          "phase_layout": {
+            "startup_ticks": 14,
+            "active_ticks": 7,
+            "declared_recovery_ticks": 20,
+            "effective_recovery_ticks": 20,
+            "startup_pose_count": 7,
+            "active_pose_start": 7,
+            "active_pose_count": 2,
+            "recovery_pose_start": 9,
+            "recovery_pose_count": 2
+          }
+        }
+      },
+      "freespecial5": {
+        "regular": {
+          "offset": 0,
+          "count": 8,
+          "clip": "regular_05",
+          "phase_layout": {
+            "startup_ticks": 10,
+            "active_ticks": 6,
+            "declared_recovery_ticks": 18,
+            "effective_recovery_ticks": 18,
+            "startup_pose_count": 5,
+            "active_pose_start": 5,
+            "active_pose_count": 2,
+            "recovery_pose_start": 7,
+            "recovery_pose_count": 1
+          }
+        },
+        "kick": {
+          "offset": 8,
+          "count": 8,
+          "clip": "kick_05",
+          "phase_layout": {
+            "startup_ticks": 7,
+            "active_ticks": 6,
+            "declared_recovery_ticks": 14,
+            "effective_recovery_ticks": 14,
+            "startup_pose_count": 3,
+            "active_pose_start": 3,
+            "active_pose_count": 2,
+            "recovery_pose_start": 5,
+            "recovery_pose_count": 3
+          }
+        },
+        "power": {
+          "offset": 16,
+          "count": 11,
+          "clip": "power_05",
+          "phase_layout": {
+            "startup_ticks": 10,
+            "active_ticks": 7,
+            "declared_recovery_ticks": 14,
+            "effective_recovery_ticks": 14,
+            "startup_pose_count": 5,
+            "active_pose_start": 5,
+            "active_pose_count": 2,
+            "recovery_pose_start": 7,
+            "recovery_pose_count": 4
+          }
+        }
+      },
+      "freespecial6": {
+        "regular": {
+          "offset": 0,
+          "count": 8,
+          "clip": "regular_06",
+          "phase_layout": {
+            "startup_ticks": 8,
+            "active_ticks": 6,
+            "declared_recovery_ticks": 17,
+            "effective_recovery_ticks": 17,
+            "startup_pose_count": 4,
+            "active_pose_start": 4,
+            "active_pose_count": 2,
+            "recovery_pose_start": 6,
+            "recovery_pose_count": 2
+          }
+        },
+        "kick": {
+          "offset": 8,
+          "count": 8,
+          "clip": "kick_06",
+          "phase_layout": {
+            "startup_ticks": 10,
+            "active_ticks": 6,
+            "declared_recovery_ticks": 18,
+            "effective_recovery_ticks": 18,
+            "startup_pose_count": 5,
+            "active_pose_start": 5,
+            "active_pose_count": 2,
+            "recovery_pose_start": 7,
+            "recovery_pose_count": 1
+          }
+        },
+        "power": {
+          "offset": 16,
+          "count": 11,
+          "clip": "power_06",
+          "phase_layout": {
+            "startup_ticks": 11,
+            "active_ticks": 7,
+            "declared_recovery_ticks": 16,
+            "effective_recovery_ticks": 16,
+            "startup_pose_count": 5,
+            "active_pose_start": 5,
+            "active_pose_count": 2,
+            "recovery_pose_start": 7,
+            "recovery_pose_count": 4
+          }
+        }
+      },
+      "freespecial7": {
+        "regular": {
+          "offset": 0,
+          "count": 8,
+          "clip": "regular_07",
+          "phase_layout": {
+            "startup_ticks": 6,
+            "active_ticks": 5,
+            "declared_recovery_ticks": 10,
+            "effective_recovery_ticks": 10,
+            "startup_pose_count": 3,
+            "active_pose_start": 3,
+            "active_pose_count": 2,
+            "recovery_pose_start": 5,
+            "recovery_pose_count": 3
+          }
+        },
+        "kick": {
+          "offset": 8,
+          "count": 8,
+          "clip": "kick_07",
+          "phase_layout": {
+            "startup_ticks": 6,
+            "active_ticks": 5,
+            "declared_recovery_ticks": 10,
+            "effective_recovery_ticks": 10,
+            "startup_pose_count": 3,
+            "active_pose_start": 3,
+            "active_pose_count": 2,
+            "recovery_pose_start": 5,
+            "recovery_pose_count": 3
+          }
+        },
+        "power": {
+          "offset": 16,
+          "count": 11,
+          "clip": "power_07",
+          "phase_layout": {
+            "startup_ticks": 12,
+            "active_ticks": 8,
+            "declared_recovery_ticks": 19,
+            "effective_recovery_ticks": 19,
+            "startup_pose_count": 6,
+            "active_pose_start": 6,
+            "active_pose_count": 2,
+            "recovery_pose_start": 8,
+            "recovery_pose_count": 3
+          }
+        }
+      }
+    }
   },
-  "combat_routes": "data/chars/black_dave/black_dave_combat_routes.json"
+  "effects": {
+    "impact": [
+      "data/chars/black_dave/effects/black_dave_impact_00.png",
+      "data/chars/black_dave/effects/black_dave_impact_01.png",
+      "data/chars/black_dave/effects/black_dave_impact_02.png",
+      "data/chars/black_dave/effects/black_dave_impact_03.png"
+    ],
+    "flame": [
+      "data/chars/black_dave/effects/black_dave_flame_00.png",
+      "data/chars/black_dave/effects/black_dave_flame_01.png",
+      "data/chars/black_dave/effects/black_dave_flame_02.png",
+      "data/chars/black_dave/effects/black_dave_flame_03.png"
+    ],
+    "shot": [
+      "data/chars/black_dave/effects/black_dave_shot_00.png",
+      "data/chars/black_dave/effects/black_dave_shot_01.png",
+      "data/chars/black_dave/effects/black_dave_shot_02.png",
+      "data/chars/black_dave/effects/black_dave_shot_03.png"
+    ]
+  },
+  "deterministic_pose_qa": {
+    "script": "data/scripts/black_dave_pose_qa.c",
+    "schedule": "data/chars/black_dave/black_dave_pose_qa_schedule.json",
+    "trigger": "fof2_qa_dave_enabled == 1 or getrecordingstatus() == 2",
+    "requests": 220,
+    "hold_ticks": 12
+  },
+  "gameplay_evidence": []
 }

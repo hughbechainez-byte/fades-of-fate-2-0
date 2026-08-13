@@ -1,4 +1,11 @@
-# First playable stage — I-8 underpass setpiece (approved visual)
-set	Underpass_Test
-nointro	1
-file	data/levels/i8_underpass.txt
+set Entity_Combat_Tech_Demo
+skiptoset 0
+lives 5
+credits 5
+cansave 0
+z 252 326 252
+maxplayers 1
+skipselect BlackDave
+file data/levels/entity_combat_tech_demo.txt
+next
+end

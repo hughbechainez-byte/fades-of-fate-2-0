@@ -1,0 +1,451 @@
+{
+  "schema_version": 1,
+  "entity_id": "police_officer",
+  "runtime_name": "PoliceOfficer",
+  "runtime_build": "OpenBOR 4.0 Build 7949",
+  "source_pose_manifest": "content/characters/police_officer/sprites/pose_manifest.json",
+  "model": "openbor/data/chars/police_officer/police_officer.txt",
+  "model_sha256": "b7b2bdd2fcd6956edd589a166a2a891485e5c0b33ff13aa77a7045d0d3fdf651",
+  "controller": "data/scripts/police_officer_ai.c",
+  "controller_sha256": "2d456eac84ef95734fd4e5138aa50faf4a6188308c622ec18d5722a88413d5f5",
+  "contact_callback": "data/scripts/entity_enemy_contact.c",
+  "contact_callback_sha256": "7009cd5a9616d345fee786a115ff938a929f1a171678e0cc668f05c1537448ec",
+  "root": [
+    96,
+    156
+  ],
+  "unique_approved": 120,
+  "unique_referenced": 120,
+  "unique_runtime_reachable": 120,
+  "animation_owner": "thinkscript",
+  "damage_route": "native drop/falling signal -> scripted FALL range -> scripted down range -> RISE",
+  "death_route": "health zero -> 60-tick DEATH presentation -> killentity removal; QA death holds for capture while health remains positive",
+  "death_config": [
+    "death_air",
+    "death_ground",
+    "remove_vanish_air",
+    "remove_vanish_ground"
+  ],
+  "native_animation_banks": [
+    "spawn",
+    "idle",
+    "walk",
+    "turn",
+    "attack1",
+    "attack2",
+    "attack3",
+    "block",
+    "blockpain",
+    "pain",
+    "pain2",
+    "fall",
+    "rise",
+    "death"
+  ],
+  "clips": {
+    "spawn": {
+      "native_animation": "spawn",
+      "frame_start": 0,
+      "frame_end": 4,
+      "pose_ids": [
+        "po_spawn_entry_001",
+        "po_spawn_entry_002",
+        "po_spawn_entry_003",
+        "po_spawn_entry_004",
+        "po_spawn_entry_005"
+      ],
+      "production_trigger": "level spawn",
+      "timing_ticks": {
+        "total": 30
+      },
+      "qa_request": 1,
+      "frame_owner": "thinkscript"
+    },
+    "idle": {
+      "native_animation": "idle",
+      "frame_start": 0,
+      "frame_end": 7,
+      "pose_ids": [
+        "po_idle_001",
+        "po_idle_002",
+        "po_idle_003",
+        "po_idle_004",
+        "po_idle_005",
+        "po_idle_006",
+        "po_idle_007",
+        "po_idle_008"
+      ],
+      "production_trigger": "no active AI action",
+      "timing_ticks": {
+        "loop": 96
+      },
+      "qa_request": 2,
+      "frame_owner": "thinkscript"
+    },
+    "alert_command": {
+      "native_animation": "idle",
+      "frame_start": 8,
+      "frame_end": 13,
+      "pose_ids": [
+        "po_alert_command_001",
+        "po_alert_command_002",
+        "po_alert_command_003",
+        "po_alert_command_004",
+        "po_alert_command_005",
+        "po_alert_command_006"
+      ],
+      "production_trigger": "first aggro or authored level event",
+      "timing_ticks": {
+        "total": 42
+      },
+      "qa_request": 3,
+      "frame_owner": "thinkscript"
+    },
+    "walk_start": {
+      "native_animation": "walk",
+      "frame_start": 0,
+      "frame_end": 3,
+      "pose_ids": [
+        "po_walk_start_001",
+        "po_walk_start_002",
+        "po_walk_start_003",
+        "po_walk_start_004"
+      ],
+      "production_trigger": "AI chase begins and displacement succeeds",
+      "timing_ticks": {
+        "total": 12
+      },
+      "qa_request": 4,
+      "frame_owner": "thinkscript"
+    },
+    "walk_loop": {
+      "native_animation": "walk",
+      "frame_start": 4,
+      "frame_end": 15,
+      "pose_ids": [
+        "po_walk_loop_001",
+        "po_walk_loop_002",
+        "po_walk_loop_003",
+        "po_walk_loop_004",
+        "po_walk_loop_005",
+        "po_walk_loop_006",
+        "po_walk_loop_007",
+        "po_walk_loop_008",
+        "po_walk_loop_009",
+        "po_walk_loop_010",
+        "po_walk_loop_011",
+        "po_walk_loop_012"
+      ],
+      "production_trigger": "AI chase remains active",
+      "timing_ticks": {
+        "loop": 52
+      },
+      "qa_request": 5,
+      "frame_owner": "thinkscript"
+    },
+    "walk_stop": {
+      "native_animation": "walk",
+      "frame_start": 16,
+      "frame_end": 19,
+      "pose_ids": [
+        "po_walk_stop_001",
+        "po_walk_stop_002",
+        "po_walk_stop_003",
+        "po_walk_stop_004"
+      ],
+      "production_trigger": "attack range reached or chase stops",
+      "timing_ticks": {
+        "total": 12
+      },
+      "qa_request": 6,
+      "frame_owner": "thinkscript"
+    },
+    "turn_pivot": {
+      "native_animation": "turn",
+      "frame_start": 0,
+      "frame_end": 3,
+      "pose_ids": [
+        "po_turn_pivot_001",
+        "po_turn_pivot_002",
+        "po_turn_pivot_003",
+        "po_turn_pivot_004"
+      ],
+      "production_trigger": "target crosses facing",
+      "timing_ticks": {
+        "total": 10
+      },
+      "qa_request": 7,
+      "frame_owner": "thinkscript"
+    },
+    "baton_jab": {
+      "native_animation": "attack1",
+      "frame_start": 0,
+      "frame_end": 7,
+      "pose_ids": [
+        "po_baton_jab_001",
+        "po_baton_jab_002",
+        "po_baton_jab_003",
+        "po_baton_jab_004",
+        "po_baton_jab_005",
+        "po_baton_jab_006",
+        "po_baton_jab_007",
+        "po_baton_jab_008"
+      ],
+      "production_trigger": "close-range AI attack choice A with token",
+      "timing_ticks": {
+        "startup": 8,
+        "active": 4,
+        "recovery": 18
+      },
+      "qa_request": 8,
+      "frame_owner": "thinkscript"
+    },
+    "baton_backhand": {
+      "native_animation": "attack2",
+      "frame_start": 0,
+      "frame_end": 7,
+      "pose_ids": [
+        "po_baton_backhand_001",
+        "po_baton_backhand_002",
+        "po_baton_backhand_003",
+        "po_baton_backhand_004",
+        "po_baton_backhand_005",
+        "po_baton_backhand_006",
+        "po_baton_backhand_007",
+        "po_baton_backhand_008"
+      ],
+      "production_trigger": "close-range AI attack choice B with token",
+      "timing_ticks": {
+        "startup": 12,
+        "active": 5,
+        "recovery": 19
+      },
+      "qa_request": 9,
+      "frame_owner": "thinkscript"
+    },
+    "baton_overhead": {
+      "native_animation": "attack3",
+      "frame_start": 0,
+      "frame_end": 9,
+      "pose_ids": [
+        "po_baton_overhead_001",
+        "po_baton_overhead_002",
+        "po_baton_overhead_003",
+        "po_baton_overhead_004",
+        "po_baton_overhead_005",
+        "po_baton_overhead_006",
+        "po_baton_overhead_007",
+        "po_baton_overhead_008",
+        "po_baton_overhead_009",
+        "po_baton_overhead_010"
+      ],
+      "production_trigger": "telegraphed heavy AI choice with token",
+      "timing_ticks": {
+        "startup": 20,
+        "active": 6,
+        "recovery": 24
+      },
+      "qa_request": 10,
+      "frame_owner": "thinkscript"
+    },
+    "block": {
+      "native_animation": "block",
+      "frame_start": 0,
+      "frame_end": 3,
+      "pose_ids": [
+        "po_block_001",
+        "po_block_002",
+        "po_block_003",
+        "po_block_004"
+      ],
+      "production_trigger": "incoming attack windup inside guard range and block cooldown clear",
+      "timing_ticks": {
+        "enter": 6,
+        "hold_max": 30,
+        "release": 8
+      },
+      "qa_request": 11,
+      "frame_owner": "thinkscript"
+    },
+    "block_impact": {
+      "native_animation": "blockpain",
+      "frame_start": 0,
+      "frame_end": 2,
+      "pose_ids": [
+        "po_block_impact_001",
+        "po_block_impact_002",
+        "po_block_impact_003"
+      ],
+      "production_trigger": "confirmed blocked hit",
+      "timing_ticks": {
+        "total": 10
+      },
+      "qa_request": 12,
+      "frame_owner": "thinkscript"
+    },
+    "light_pain": {
+      "native_animation": "pain",
+      "frame_start": 0,
+      "frame_end": 4,
+      "pose_ids": [
+        "po_light_pain_001",
+        "po_light_pain_002",
+        "po_light_pain_003",
+        "po_light_pain_004",
+        "po_light_pain_005"
+      ],
+      "production_trigger": "non-knockdown damage",
+      "timing_ticks": {
+        "total": 18
+      },
+      "qa_request": 13,
+      "frame_owner": "thinkscript"
+    },
+    "heavy_pain": {
+      "native_animation": "pain2",
+      "frame_start": 0,
+      "frame_end": 6,
+      "pose_ids": [
+        "po_heavy_pain_001",
+        "po_heavy_pain_002",
+        "po_heavy_pain_003",
+        "po_heavy_pain_004",
+        "po_heavy_pain_005",
+        "po_heavy_pain_006",
+        "po_heavy_pain_007"
+      ],
+      "production_trigger": "high-stun damage without knockdown",
+      "timing_ticks": {
+        "total": 26
+      },
+      "qa_request": 14,
+      "frame_owner": "thinkscript"
+    },
+    "knockdown_fall": {
+      "native_animation": "fall",
+      "frame_start": 0,
+      "frame_end": 7,
+      "pose_ids": [
+        "po_knockdown_fall_001",
+        "po_knockdown_fall_002",
+        "po_knockdown_fall_003",
+        "po_knockdown_fall_004",
+        "po_knockdown_fall_005",
+        "po_knockdown_fall_006",
+        "po_knockdown_fall_007",
+        "po_knockdown_fall_008"
+      ],
+      "production_trigger": "knockdown damage",
+      "timing_ticks": {
+        "total": 38
+      },
+      "qa_request": 15,
+      "frame_owner": "thinkscript"
+    },
+    "down": {
+      "native_animation": "fall",
+      "frame_start": 8,
+      "frame_end": 13,
+      "pose_ids": [
+        "po_down_001",
+        "po_down_002",
+        "po_down_003",
+        "po_down_004",
+        "po_down_005",
+        "po_down_006"
+      ],
+      "production_trigger": "fall completes with health above zero",
+      "timing_ticks": {
+        "minimum": 42
+      },
+      "qa_request": 16,
+      "frame_owner": "thinkscript"
+    },
+    "rise": {
+      "native_animation": "rise",
+      "frame_start": 0,
+      "frame_end": 7,
+      "pose_ids": [
+        "po_rise_001",
+        "po_rise_002",
+        "po_rise_003",
+        "po_rise_004",
+        "po_rise_005",
+        "po_rise_006",
+        "po_rise_007",
+        "po_rise_008"
+      ],
+      "production_trigger": "down timer expires with health above zero",
+      "timing_ticks": {
+        "total": 42
+      },
+      "qa_request": 17,
+      "frame_owner": "thinkscript"
+    },
+    "death": {
+      "native_animation": "death",
+      "frame_start": 0,
+      "frame_end": 9,
+      "pose_ids": [
+        "po_death_001",
+        "po_death_002",
+        "po_death_003",
+        "po_death_004",
+        "po_death_005",
+        "po_death_006",
+        "po_death_007",
+        "po_death_008",
+        "po_death_009",
+        "po_death_010"
+      ],
+      "production_trigger": "health reaches zero",
+      "timing_ticks": {
+        "total": 60
+      },
+      "qa_request": 18,
+      "frame_owner": "thinkscript"
+    }
+  },
+  "qa": {
+    "request_global": "fof2_qa_po_request",
+    "request_range": [
+      1,
+      18
+    ],
+    "request_zero": "exit QA hold and resume production AI",
+    "state_requests": {
+      "spawn": 1,
+      "idle": 2,
+      "alert_command": 3,
+      "walk_start": 4,
+      "walk_loop": 5,
+      "walk_stop": 6,
+      "turn_pivot": 7,
+      "baton_jab": 8,
+      "baton_backhand": 9,
+      "baton_overhead": 10,
+      "block": 11,
+      "block_impact": 12,
+      "light_pain": 13,
+      "heavy_pain": 14,
+      "knockdown_fall": 15,
+      "down": 16,
+      "rise": 17,
+      "death": 18
+    },
+    "pose_log_prefix": "[FOF2_POSE] ",
+    "direct_pose_request_global": "fof2_qa_po_pose",
+    "direct_pose_entity_global": "fof2_qa_po_entity",
+    "direct_pose_request_range": [
+      0,
+      119
+    ],
+    "direct_pose_off": "absent or -1 resumes normal controller state",
+    "direct_pose_mapping": "pose-manifest order; exact native animation and frame; held until request changes",
+    "qa_death": "nonlethal held presentation; real health-zero death still removes after 60 ticks"
+  },
+  "gameplay_evidence": [],
+  "block_callback": "data/scripts/police_officer_block.c",
+  "block_callback_sha256": "d66d6f6448dd7f992176c67855472a894629e37c497e3370d60596311a38adde",
+  "source_pose_manifest_sha256": "d8dfa84b6d24e6a1657102f8715cd2a4157acd90e3f21f158298c94daf0cfaea"
+}

@@ -1,0 +1,476 @@
+{
+  "schema_version": 1,
+  "entity": "black_dave",
+  "status": "implementation_ready_static_validation",
+  "engine": "OpenBOR 4.0 Build 7949",
+  "model": "openbor/data/chars/black_dave/black_dave.txt",
+  "model_sha256": "f3bb3cbb57251775a9c8d1374e3d6cd835ad1d9b5dd6342c86bbe6944438ca1c",
+  "controller": "openbor/data/scripts/update.c",
+  "controller_sha256": "839c3526c028b64a41a2b86e8da875820ba2f690f2e699a1504f21454c1c3b54",
+  "contact_callback": "openbor/data/scripts/black_dave_contact.c",
+  "contact_callback_sha256": "20d0de766a7375d9492aaee1f5d27749d10b4b43eb5e99620f2d5200df296ac1",
+  "block_callback": "openbor/data/scripts/black_dave_block.c",
+  "block_callback_sha256": "5c296346db70e1ab52466f987b6a75efb4c3e6c3836338f30947748c68074040",
+  "source_pose_manifest": "content/characters/black_dave/sprites/pose_manifest.json",
+  "source_art_fingerprint_sha256": "f548706967882bc88b9141e8db60340784e374f87adf23a8c15bcea142123f31",
+  "pose_count": 220,
+  "unique_runtime_files": 220,
+  "root_offset": [
+    96,
+    156
+  ],
+  "simulation_hz": 60,
+  "authored_pose_hz": 30,
+  "animation_owner": "fixed-60Hz scripted pose selection; native timer frozen with delay 10000; explicit native death-removal handoff only after authored down hold",
+  "route_source": "content/characters/black_dave/metadata/black_dave_v2_routes.json",
+  "route_count": 21,
+  "routing": {
+    "native": {
+      "spawn": {
+        "count": 6
+      },
+      "respawn": {
+        "count": 6
+      },
+      "idle": {
+        "count": 8
+      },
+      "walk": {
+        "count": 20
+      },
+      "turn": {
+        "count": 4
+      },
+      "jumpdelay": {
+        "count": 4
+      },
+      "jump": {
+        "count": 6
+      },
+      "jumpland": {
+        "count": 4
+      },
+      "block": {
+        "count": 6
+      },
+      "blockpain": {
+        "count": 2
+      },
+      "dodge": {
+        "count": 8
+      },
+      "attackup": {
+        "count": 14
+      },
+      "special": {
+        "count": 16
+      },
+      "jumpattack": {
+        "count": 8
+      },
+      "jumpattack2": {
+        "count": 8
+      },
+      "pain": {
+        "count": 5
+      },
+      "fall": {
+        "count": 14
+      },
+      "rise": {
+        "count": 8
+      },
+      "get": {
+        "count": 8
+      }
+    },
+    "combat_banks": {
+      "freespecial1": {
+        "regular": {
+          "offset": 0,
+          "count": 8,
+          "clip": "regular_01",
+          "phase_layout": {
+            "startup_ticks": 5,
+            "active_ticks": 4,
+            "declared_recovery_ticks": 8,
+            "effective_recovery_ticks": 8,
+            "startup_pose_count": 2,
+            "active_pose_start": 2,
+            "active_pose_count": 2,
+            "recovery_pose_start": 4,
+            "recovery_pose_count": 4
+          }
+        },
+        "kick": {
+          "offset": 8,
+          "count": 8,
+          "clip": "kick_01",
+          "phase_layout": {
+            "startup_ticks": 4,
+            "active_ticks": 4,
+            "declared_recovery_ticks": 7,
+            "effective_recovery_ticks": 8,
+            "startup_pose_count": 2,
+            "active_pose_start": 2,
+            "active_pose_count": 2,
+            "recovery_pose_start": 4,
+            "recovery_pose_count": 4
+          }
+        },
+        "power": {
+          "offset": 16,
+          "count": 11,
+          "clip": "power_01",
+          "phase_layout": {
+            "startup_ticks": 11,
+            "active_ticks": 5,
+            "declared_recovery_ticks": 13,
+            "effective_recovery_ticks": 13,
+            "startup_pose_count": 5,
+            "active_pose_start": 5,
+            "active_pose_count": 2,
+            "recovery_pose_start": 7,
+            "recovery_pose_count": 4
+          }
+        }
+      },
+      "freespecial2": {
+        "regular": {
+          "offset": 0,
+          "count": 8,
+          "clip": "regular_02",
+          "phase_layout": {
+            "startup_ticks": 4,
+            "active_ticks": 4,
+            "declared_recovery_ticks": 7,
+            "effective_recovery_ticks": 8,
+            "startup_pose_count": 2,
+            "active_pose_start": 2,
+            "active_pose_count": 2,
+            "recovery_pose_start": 4,
+            "recovery_pose_count": 4
+          }
+        },
+        "kick": {
+          "offset": 8,
+          "count": 8,
+          "clip": "kick_02",
+          "phase_layout": {
+            "startup_ticks": 5,
+            "active_ticks": 4,
+            "declared_recovery_ticks": 8,
+            "effective_recovery_ticks": 8,
+            "startup_pose_count": 2,
+            "active_pose_start": 2,
+            "active_pose_count": 2,
+            "recovery_pose_start": 4,
+            "recovery_pose_count": 4
+          }
+        },
+        "power": {
+          "offset": 16,
+          "count": 11,
+          "clip": "power_02",
+          "phase_layout": {
+            "startup_ticks": 11,
+            "active_ticks": 5,
+            "declared_recovery_ticks": 14,
+            "effective_recovery_ticks": 14,
+            "startup_pose_count": 5,
+            "active_pose_start": 5,
+            "active_pose_count": 2,
+            "recovery_pose_start": 7,
+            "recovery_pose_count": 4
+          }
+        }
+      },
+      "freespecial3": {
+        "regular": {
+          "offset": 0,
+          "count": 8,
+          "clip": "regular_03",
+          "phase_layout": {
+            "startup_ticks": 7,
+            "active_ticks": 6,
+            "declared_recovery_ticks": 14,
+            "effective_recovery_ticks": 14,
+            "startup_pose_count": 3,
+            "active_pose_start": 3,
+            "active_pose_count": 2,
+            "recovery_pose_start": 5,
+            "recovery_pose_count": 3
+          }
+        },
+        "kick": {
+          "offset": 8,
+          "count": 8,
+          "clip": "kick_03",
+          "phase_layout": {
+            "startup_ticks": 5,
+            "active_ticks": 5,
+            "declared_recovery_ticks": 10,
+            "effective_recovery_ticks": 10,
+            "startup_pose_count": 2,
+            "active_pose_start": 2,
+            "active_pose_count": 2,
+            "recovery_pose_start": 4,
+            "recovery_pose_count": 4
+          }
+        },
+        "power": {
+          "offset": 16,
+          "count": 11,
+          "clip": "power_03",
+          "phase_layout": {
+            "startup_ticks": 13,
+            "active_ticks": 6,
+            "declared_recovery_ticks": 17,
+            "effective_recovery_ticks": 17,
+            "startup_pose_count": 6,
+            "active_pose_start": 6,
+            "active_pose_count": 2,
+            "recovery_pose_start": 8,
+            "recovery_pose_count": 3
+          }
+        }
+      },
+      "freespecial4": {
+        "regular": {
+          "offset": 0,
+          "count": 8,
+          "clip": "regular_04",
+          "phase_layout": {
+            "startup_ticks": 5,
+            "active_ticks": 5,
+            "declared_recovery_ticks": 10,
+            "effective_recovery_ticks": 10,
+            "startup_pose_count": 2,
+            "active_pose_start": 2,
+            "active_pose_count": 2,
+            "recovery_pose_start": 4,
+            "recovery_pose_count": 4
+          }
+        },
+        "kick": {
+          "offset": 8,
+          "count": 8,
+          "clip": "kick_04",
+          "phase_layout": {
+            "startup_ticks": 8,
+            "active_ticks": 6,
+            "declared_recovery_ticks": 17,
+            "effective_recovery_ticks": 17,
+            "startup_pose_count": 4,
+            "active_pose_start": 4,
+            "active_pose_count": 2,
+            "recovery_pose_start": 6,
+            "recovery_pose_count": 2
+          }
+        },
+        "power": {
+          "offset": 16,
+          "count": 11,
+          "clip": "power_04",
+          "phase_layout": {
+            "startup_ticks": 14,
+            "active_ticks": 7,
+            "declared_recovery_ticks": 20,
+            "effective_recovery_ticks": 20,
+            "startup_pose_count": 7,
+            "active_pose_start": 7,
+            "active_pose_count": 2,
+            "recovery_pose_start": 9,
+            "recovery_pose_count": 2
+          }
+        }
+      },
+      "freespecial5": {
+        "regular": {
+          "offset": 0,
+          "count": 8,
+          "clip": "regular_05",
+          "phase_layout": {
+            "startup_ticks": 10,
+            "active_ticks": 6,
+            "declared_recovery_ticks": 18,
+            "effective_recovery_ticks": 18,
+            "startup_pose_count": 5,
+            "active_pose_start": 5,
+            "active_pose_count": 2,
+            "recovery_pose_start": 7,
+            "recovery_pose_count": 1
+          }
+        },
+        "kick": {
+          "offset": 8,
+          "count": 8,
+          "clip": "kick_05",
+          "phase_layout": {
+            "startup_ticks": 7,
+            "active_ticks": 6,
+            "declared_recovery_ticks": 14,
+            "effective_recovery_ticks": 14,
+            "startup_pose_count": 3,
+            "active_pose_start": 3,
+            "active_pose_count": 2,
+            "recovery_pose_start": 5,
+            "recovery_pose_count": 3
+          }
+        },
+        "power": {
+          "offset": 16,
+          "count": 11,
+          "clip": "power_05",
+          "phase_layout": {
+            "startup_ticks": 10,
+            "active_ticks": 7,
+            "declared_recovery_ticks": 14,
+            "effective_recovery_ticks": 14,
+            "startup_pose_count": 5,
+            "active_pose_start": 5,
+            "active_pose_count": 2,
+            "recovery_pose_start": 7,
+            "recovery_pose_count": 4
+          }
+        }
+      },
+      "freespecial6": {
+        "regular": {
+          "offset": 0,
+          "count": 8,
+          "clip": "regular_06",
+          "phase_layout": {
+            "startup_ticks": 8,
+            "active_ticks": 6,
+            "declared_recovery_ticks": 17,
+            "effective_recovery_ticks": 17,
+            "startup_pose_count": 4,
+            "active_pose_start": 4,
+            "active_pose_count": 2,
+            "recovery_pose_start": 6,
+            "recovery_pose_count": 2
+          }
+        },
+        "kick": {
+          "offset": 8,
+          "count": 8,
+          "clip": "kick_06",
+          "phase_layout": {
+            "startup_ticks": 10,
+            "active_ticks": 6,
+            "declared_recovery_ticks": 18,
+            "effective_recovery_ticks": 18,
+            "startup_pose_count": 5,
+            "active_pose_start": 5,
+            "active_pose_count": 2,
+            "recovery_pose_start": 7,
+            "recovery_pose_count": 1
+          }
+        },
+        "power": {
+          "offset": 16,
+          "count": 11,
+          "clip": "power_06",
+          "phase_layout": {
+            "startup_ticks": 11,
+            "active_ticks": 7,
+            "declared_recovery_ticks": 16,
+            "effective_recovery_ticks": 16,
+            "startup_pose_count": 5,
+            "active_pose_start": 5,
+            "active_pose_count": 2,
+            "recovery_pose_start": 7,
+            "recovery_pose_count": 4
+          }
+        }
+      },
+      "freespecial7": {
+        "regular": {
+          "offset": 0,
+          "count": 8,
+          "clip": "regular_07",
+          "phase_layout": {
+            "startup_ticks": 6,
+            "active_ticks": 5,
+            "declared_recovery_ticks": 10,
+            "effective_recovery_ticks": 10,
+            "startup_pose_count": 3,
+            "active_pose_start": 3,
+            "active_pose_count": 2,
+            "recovery_pose_start": 5,
+            "recovery_pose_count": 3
+          }
+        },
+        "kick": {
+          "offset": 8,
+          "count": 8,
+          "clip": "kick_07",
+          "phase_layout": {
+            "startup_ticks": 6,
+            "active_ticks": 5,
+            "declared_recovery_ticks": 10,
+            "effective_recovery_ticks": 10,
+            "startup_pose_count": 3,
+            "active_pose_start": 3,
+            "active_pose_count": 2,
+            "recovery_pose_start": 5,
+            "recovery_pose_count": 3
+          }
+        },
+        "power": {
+          "offset": 16,
+          "count": 11,
+          "clip": "power_07",
+          "phase_layout": {
+            "startup_ticks": 12,
+            "active_ticks": 8,
+            "declared_recovery_ticks": 19,
+            "effective_recovery_ticks": 19,
+            "startup_pose_count": 6,
+            "active_pose_start": 6,
+            "active_pose_count": 2,
+            "recovery_pose_start": 8,
+            "recovery_pose_count": 3
+          }
+        }
+      }
+    }
+  },
+  "collision": "per-pose bbox and contact-pose-only attack boxes",
+  "contact": "didhitscript-confirmed latch owns Dave-only contact pose pause and impact VFX; world time is not frozen",
+  "input_owner": "data/scripts/update.c scopes player 0 by exact BlackDave name, accumulates engine time at 60Hz, clears takeaction while owned, and restores native control on release",
+  "meter": {
+    "power_step_cost": 10,
+    "ranged_cost": 20,
+    "super_full_gate_and_cost": 100
+  },
+  "effects": {
+    "impact": [
+      "data/chars/black_dave/effects/black_dave_impact_00.png",
+      "data/chars/black_dave/effects/black_dave_impact_01.png",
+      "data/chars/black_dave/effects/black_dave_impact_02.png",
+      "data/chars/black_dave/effects/black_dave_impact_03.png"
+    ],
+    "flame": [
+      "data/chars/black_dave/effects/black_dave_flame_00.png",
+      "data/chars/black_dave/effects/black_dave_flame_01.png",
+      "data/chars/black_dave/effects/black_dave_flame_02.png",
+      "data/chars/black_dave/effects/black_dave_flame_03.png"
+    ],
+    "shot": [
+      "data/chars/black_dave/effects/black_dave_shot_00.png",
+      "data/chars/black_dave/effects/black_dave_shot_01.png",
+      "data/chars/black_dave/effects/black_dave_shot_02.png",
+      "data/chars/black_dave/effects/black_dave_shot_03.png"
+    ]
+  },
+  "deterministic_pose_qa": {
+    "script": "openbor/data/scripts/black_dave_pose_qa.c",
+    "schedule": "openbor/data/chars/black_dave/black_dave_pose_qa_schedule.json",
+    "trigger": "fof2_qa_dave_enabled == 1 or getrecordingstatus() == 2",
+    "requests": 220,
+    "hold_ticks": 12
+  },
+  "gameplay_evidence": []
+}
