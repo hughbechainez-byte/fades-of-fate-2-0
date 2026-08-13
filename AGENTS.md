@@ -2,6 +2,12 @@
 
 Read **`2.0_CHARTER.md` first**. It wins over any older doc, chat memory, or quarantined FoF1 file.
 
+## Mandatory task-specific standards
+
+- Before starting any model, character, entity, animation, combat, collision, or combat-VFX work, read **`docs/OPENBOR_ENTITY_PIXEL_ART_AND_ANIMATION_STANDARD.md`** completely.
+- Before starting any stage, level, background, setpiece, parallax, environmental-art, traversal, or stage-geometry work, read **`docs/OPENBOR_LAYERED_2_5D_STAGE_CREATION_STANDARD.md`** completely.
+- If a task touches both areas, read both standards before planning, editing, generating assets, scripting, or testing. These task-specific standards supplement **`docs/OPENBOR_COMPATIBILITY_STANDARD.md`**; all applicable gates remain binding.
+
 ## Stop before any entity work: mandatory art gate
 
 Before creating or changing any playable character, enemy, elite, boss, NPC, summon, or interactive animated entity, read **`docs/OPENBOR_COMPATIBILITY_STANDARD.md`**, especially **Entity art-first pose completeness gate**. This applies to new entities and existing entities touched by a task.
