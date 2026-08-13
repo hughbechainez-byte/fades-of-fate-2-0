@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import hashlib
 import json
-import shutil
 from pathlib import Path
 
 from PIL import Image
@@ -16,7 +15,6 @@ META_PATH = CONTENT / "sprites/black_dave_full_library_v1.json"
 ATLAS_PATH = CONTENT / "sprites/black_dave_full_library_v1.png"
 OUT = ROOT / "openbor/data/chars/black_dave"
 FRAME_ROOT = OUT / "sprites"
-LEVEL_ART = ROOT / "openbor/data/levels/i8_underpass/art"
 
 
 def sha256(path: Path) -> str:
@@ -239,33 +237,11 @@ def write_combat_routes(metadata: dict, frame_map: dict[str, list[Path]]) -> Non
     (OUT / "black_dave_combat_routes.json").write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
 
 
-def copy_underpass_package() -> None:
-    source_root = ROOT / "content/setpieces/underpass_i8/art"
-    LEVEL_ART.mkdir(parents=True, exist_ok=True)
-    for name in ("main.png", "far.png", "near.png", "haze.png", "haze_tile.png"):
-        source = Image.open(source_root / name).convert("RGBA")
-        indexed_sprite(source, build_master_palette(source)).save(LEVEL_ART / name, optimize=False)
-    source_manifest = json.loads((source_root / "manifest.json").read_text(encoding="utf-8"))
-    local_manifest = {
-        **source_manifest,
-        "engine": "OpenBOR",
-        "runtime_assets": {name: f"data/levels/i8_underpass/art/{name}" for name in ("main.png", "far.png", "near.png", "haze.png", "haze_tile.png")},
-        "source_manifest": "content/setpieces/underpass_i8/art/manifest.json",
-    }
-    (ROOT / "openbor/data/levels/i8_underpass/underpass_manifest.json").write_text(json.dumps(local_manifest, indent=2) + "\n", encoding="utf-8")
-
-
 def main() -> None:
     metadata = json.loads(META_PATH.read_text(encoding="utf-8"))
     if metadata.get("status") != "production_full_library" or int(metadata.get("pose_count", 0)) < 220:
         raise SystemExit("Black Dave source library is below the production pose floor")
     frame_map = build_frames(metadata)
-    background = ROOT / "content/setpieces/underpass_i8/art/main.png"
-    level_background = ROOT / "openbor/data/levels/i8_underpass/background.png"
-    level_background.parent.mkdir(parents=True, exist_ok=True)
-    background_image = Image.open(background).convert("RGBA")
-    indexed_sprite(background_image, build_master_palette(background_image)).save(level_background, optimize=False)
-    copy_underpass_package()
     write_model(metadata, frame_map)
     write_combat_routes(metadata, frame_map)
     write_manifests(metadata, frame_map)

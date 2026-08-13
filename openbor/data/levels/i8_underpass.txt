@@ -1,18 +1,71 @@
+# Fades of Fate 2.0 - layered I-8 sunset underpass tech demo
+# OpenBOR 4.0 Build 7949: 4 unique indexed 640x360 panels, order abcd.
 settime 0
 notime 1
 noslow 1
 direction both
+
 spawn1 200 280 0
 levelscript data/scripts/contract.c
+
+# Small palette-safe base only. Never replace this with a wide background.
 background data/levels/i8_underpass/background.png
+
+# Distant sky/hills and middle silhouettes show through authored panel portals.
+bglayer data/levels/i8_underpass/art/far.png 0.30 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 0
+bglayer data/levels/i8_underpass/art/mid.png 0.60 0 0 0 0 0 1 1 1 0 0 0 0 0 0 0 0
+
+# Authoritative world plane and continuous walkable floor.
+panel data/levels/i8_underpass/panels/underpass_a.png
+panel data/levels/i8_underpass/panels/underpass_b.png
+panel data/levels/i8_underpass/panels/underpass_c.png
+panel data/levels/i8_underpass/panels/underpass_d.png
+order abcd
+
+# Slow sparse haze draws above the panels but behind all player Z lanes.
+bgspeed 0.02 0
+layer data/levels/i8_underpass/art/haze.png 210 0 0 0 0 0 0 1 1 1 1 0 0 0 0 1 0 0
+
 cameratype 0
-order a
 
-scrollx 0 750
+# Rooted curb foliage is real three-frame pixel animation behind the player.
+# Separate triggers stagger the cycles and keep every clump attached to scenery.
+spawn UnderpassFoliage
+alias Foliage_A1
+coords 145 248 0
 at 0
 
-spawn BlackDave
-coords 200 280 0
+spawn UnderpassFoliage
+alias Foliage_A2
+coords 535 248 0
 at 0
-wait
-at 750
+
+spawn UnderpassFoliage
+alias Foliage_B1
+coords 425 248 0
+at 400
+
+spawn UnderpassFoliage
+alias Foliage_B2
+coords 420 248 0
+at 760
+
+spawn UnderpassFoliage
+alias Foliage_C1
+coords 425 248 0
+at 1080
+
+spawn UnderpassFoliage
+alias Foliage_C2
+coords 410 248 0
+at 1420
+
+spawn UnderpassFoliage
+alias Foliage_D1
+coords 415 248 0
+at 1760
+
+spawn UnderpassFoliage
+alias Foliage_D2
+coords 490 248 0
+at 1920

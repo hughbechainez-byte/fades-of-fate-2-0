@@ -1,36 +1,15 @@
-# Playable test stage — I-8 Underpass (OpenBOR)
+# Playable tech demo — I-8 Sunset Underpass
 
-## Visual match
+OpenBOR 4.0 Build 7949 loads four unique indexed 640×360 panels with sunset parallax, drifting haze, and three-pose rooted curb foliage behind Dave. Pixel posters, glyphs, cracks, aggregate, wrappers, and crushed cans are baked into the world plane and walkable asphalt. The free-walk floor spans X `0–2559` and Z `252–326`; no enemies, holes, platforms, or physical props are active.
 
-Background = **exact approved clean underpass still**  
-`content/setpieces/underpass_i8/lookdev/target_renders/ch1_l2_i8_underpass_target_clean.png`  
-copied to `data/bgs/underpass_i8.png` at **1280×720**.
+## Build and install
 
-Player = **Black Dave** authored full-library pose cells.
-
-## Run (Linux)
-
-```bash
-./tools/run_underpass_test.sh
+```powershell
+powershell -ExecutionPolicy Bypass -File tools\Build-Underpass-FreeWalk.ps1
 ```
 
-Engine binary: `openbor_engine/OpenBOR.AppImage` (v4 Build 7533).
+The installed demo is written to `C:\Users\blowb\Desktop\Fades of Fate 2.0 - Sunset Underpass Tech Demo`. Launch it with `Launch_Black_Dave_Underpass_Demo.cmd`.
 
-## Run (Windows)
+Controls: arrows move, Ctrl attacks, Alt jumps, Enter starts. Press F12 for an OpenBOR screenshot.
 
-See Desktop folder:
-
-`Fades of Fate 2.0 - Review Photos/OpenBOR_Underpass_Test/HOW_TO_PLAY.txt`
-
-Or unzip `fof2_underpass_openbor_data.zip` next to `OpenBOR.exe` from  
-https://github.com/DCurrent/openbor/releases
-
-## Controls
-
-OpenBOR defaults (configure in engine Options). Typical: arrows move, Ctrl attack, Alt jump, Enter start.
-
-## Scope (charter)
-
-- OpenBOR only — not FoF1 Pygame  
-- No FoF1 cars / Couch / campaign  
-- Free-walk character test on the underpass setpiece  
+The runtime acceptance gate is the packaged Build 7949 traversal evidence recorded in `data/levels/i8_underpass/underpass_manifest.json`; lookdev stills and layer previews do not replace gameplay.

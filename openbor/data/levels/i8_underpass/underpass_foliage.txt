@@ -1,0 +1,17 @@
+# Rooted, non-interactive stage foliage for the I-8 underpass.
+name UnderpassFoliage
+type none
+health 1
+shadow 0
+nomove 1
+subject_to_gravity 0
+offscreenkill 4096
+
+anim idle
+loop 1
+delay 42
+offset 24 36
+frame data/levels/i8_underpass/scenery/foliage_sway_01.png
+frame data/levels/i8_underpass/scenery/foliage_sway_02.png
+frame data/levels/i8_underpass/scenery/foliage_sway_03.png
+frame data/levels/i8_underpass/scenery/foliage_sway_02.png

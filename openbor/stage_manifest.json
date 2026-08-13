@@ -1,14 +1,14 @@
 {
-  "stage_id": "underpass_i8",
-  "engine": "OpenBOR",
-  "title": "I-8 Underpass playable test",
-  "background": "data/bgs/underpass_i8.png",
-  "background_source": "content/setpieces/underpass_i8/lookdev/target_renders/ch1_l2_i8_underpass_target_clean.png",
-  "background_pixels": [1280, 720],
-  "video": "a1280x720",
-  "player": "BlackDave",
-  "player_sprites": "content/characters/black_dave/sprites (full library cells)",
+  "schema_version": 2,
+  "stage_id": "i8_underpass_sunset_techdemo",
+  "title": "I-8 Sunset Underpass Tech Demo",
+  "engine": "OpenBOR 4.0 Build 7949",
+  "active_level": "data/levels/i8_underpass.txt",
+  "authoritative_manifest": "data/levels/i8_underpass/underpass_manifest.json",
+  "viewport": [640, 360],
+  "world_size": [2560, 360],
+  "panel_order": "abcd",
+  "layers": ["far", "mid", "detailed_panels", "drifting_haze", "rooted_animated_curb_foliage"],
   "fof1_content": false,
-  "enemies": false,
-  "notes": "Visually identical plate to the approved underpass lookdev still. OpenBOR ground-up pack only."
+  "enemies": false
 }

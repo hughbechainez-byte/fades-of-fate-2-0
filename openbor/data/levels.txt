@@ -1,10 +1,10 @@
 # First playable stage - I-8 underpass setpiece
 skiptoset 0
-set Underpass_Test
+set Underpass_Sunset_TechDemo
 lives 3
 credits 3
 cansave 0
-z 232 327 232
+z 252 326 252
 maxplayers 1
 skipselect BlackDave
 file data/levels/i8_underpass.txt

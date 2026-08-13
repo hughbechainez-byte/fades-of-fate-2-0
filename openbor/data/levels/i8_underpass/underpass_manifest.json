@@ -1,31 +1,314 @@
 {
-  "theme": "underpass_setpiece_v1",
-  "display_name": "I-8 Underpass Setpiece (ground-up)",
-  "world_width": 1600,
-  "height": 360,
-  "main": "assets/stage/setpieces/underpass_i8_v1/main.png",
-  "far": "assets/stage/setpieces/underpass_i8_v1/far.png",
-  "near": "assets/stage/setpieces/underpass_i8_v1/near.png",
-  "haze": "assets/stage/setpieces/underpass_i8_v1/haze.png",
-  "atmosphere_profile": "i8_underpass_dimming",
-  "source_plate": "docs/visual_direction/target_renders/ch1_l2_i8_underpass_target_clean.png",
-  "engine": "OpenBOR",
-  "runtime_assets": {
-    "main.png": "data/levels/i8_underpass/art/main.png",
-    "far.png": "data/levels/i8_underpass/art/far.png",
-    "near.png": "data/levels/i8_underpass/art/near.png",
-    "haze.png": "data/levels/i8_underpass/art/haze.png",
-    "haze_tile.png": "data/levels/i8_underpass/art/haze_tile.png"
-  },
-  "source_manifest": "content/setpieces/underpass_i8/art/manifest.json",
-  "stage_id": "i8_underpass",
-  "background": "data/levels/i8_underpass/background.png",
-  "background_source": "content/setpieces/underpass_i8/lookdev/target_renders/ch1_l2_i8_underpass_target_clean.png",
-  "background_pixels": [
-    1280,
-    720
+  "schema_version": 3,
+  "stage_id": "i8_underpass_sunset_techdemo",
+  "display_name": "I-8 Sunset Underpass Tech Demo",
+  "engine": "OpenBOR 4.0 Build 7949",
+  "maturity": "playable_stage_candidate",
+  "one_screen_promise": "Cross cracked wet asphalt from an open coral sunset into a cool compressed overpass core, then emerge toward a wider violet-orange mountain portal.",
+  "viewport": [
+    640,
+    360
   ],
-  "player_model": "black_dave",
-  "visual_match": "approved_underpass_lookdev_still",
-  "fof1_content": false
+  "world_size": [
+    2560,
+    360
+  ],
+  "panel_order": "abcd",
+  "panel_dimensions": [
+    640,
+    360
+  ],
+  "palette_sha256": "2c369c672f5f0c09e5c35e27e4bc33f43cac803405f9c48f47fa032d0b4a553d",
+  "palette_index_0": "transparent",
+  "source_commit": "d85033b9be857e4f59c7b99646496c0af7934647",
+  "source_art": {
+    "panel_a": {
+      "path": "content/setpieces/underpass_i8/art_source/sunset_techdemo/panel_a_source.png",
+      "sha256": "8efbdbf738d6a7beb4e84f057193d2df626ee3df1fb7be205485b7df68be3abe",
+      "role": "generated original pixel-art source; concept image used as mood/structure reference only"
+    },
+    "panel_b": {
+      "path": "content/setpieces/underpass_i8/art_source/sunset_techdemo/panel_b_source.png",
+      "sha256": "5e5c8ae5093e903a3460c89bc4810a6fcb143bd1e950a6a50af8806f96d06986",
+      "role": "generated original pixel-art source; concept image used as mood/structure reference only"
+    },
+    "panel_c": {
+      "path": "content/setpieces/underpass_i8/art_source/sunset_techdemo/panel_c_source.png",
+      "sha256": "1d4e2e2a65b68878d8caf1767b2b2f83c5a157a656769250d5a8a6624ed1f816",
+      "role": "generated original pixel-art source; concept image used as mood/structure reference only"
+    },
+    "panel_d": {
+      "path": "content/setpieces/underpass_i8/art_source/sunset_techdemo/panel_d_source.png",
+      "sha256": "f1fbb055e70d26642929fd25033201056ec82fa1b3aca9dbab26c57ef365a6ae",
+      "role": "generated original pixel-art source; concept image used as mood/structure reference only"
+    }
+  },
+  "environmental_entity_contract": {
+    "name": "UnderpassFoliage",
+    "classification": "noninteractive environmental scenery",
+    "maturity": "production",
+    "exact_unique_pose_target": 3,
+    "allocation": {
+      "idle_sway": 3
+    },
+    "action_reachability": [
+      "auto-spawned by stage events",
+      "looped idle sway"
+    ],
+    "controls_ai_combat_collision": "none",
+    "runtime_sequence": [
+      1,
+      2,
+      3,
+      2
+    ]
+  },
+  "beat_map": [
+    {
+      "panel": "a",
+      "world_x": [
+        0,
+        639
+      ],
+      "beat": "sunset_mouth",
+      "landmark": "angled wing wall and offset pier",
+      "light": "warm approach",
+      "view": "pier gate"
+    },
+    {
+      "panel": "b",
+      "world_x": [
+        640,
+        1279
+      ],
+      "beat": "pier_gate",
+      "landmark": "staggered piers and transformer beyond fence",
+      "light": "cool fill with warm slit",
+      "view": "shadow core"
+    },
+    {
+      "panel": "c",
+      "world_x": [
+        1280,
+        1919
+      ],
+      "beat": "shadow_core",
+      "landmark": "drainage gate and diagonal conduit",
+      "light": "coolest compression",
+      "view": "exit cue"
+    },
+    {
+      "panel": "d",
+      "world_x": [
+        1920,
+        2559
+      ],
+      "beat": "sunset_release",
+      "landmark": "final pier, gate, embankment and mountain portal",
+      "light": "amber release",
+      "view": "sealed end edge"
+    }
+  ],
+  "layers": [
+    {
+      "job": "base",
+      "path": "data/levels/i8_underpass/background.png",
+      "size": [
+        640,
+        360
+      ],
+      "motion": "static palette holder"
+    },
+    {
+      "job": "far",
+      "path": "data/levels/i8_underpass/art/far.png",
+      "size": [
+        2048,
+        360
+      ],
+      "xratio": 0.3,
+      "motion": "camera parallax"
+    },
+    {
+      "job": "mid",
+      "path": "data/levels/i8_underpass/art/mid.png",
+      "size": [
+        1792,
+        360
+      ],
+      "xratio": 0.6,
+      "motion": "camera parallax"
+    },
+    {
+      "job": "panel",
+      "paths": [
+        "data/levels/i8_underpass/panels/underpass_a.png",
+        "data/levels/i8_underpass/panels/underpass_b.png",
+        "data/levels/i8_underpass/panels/underpass_c.png",
+        "data/levels/i8_underpass/panels/underpass_d.png"
+      ],
+      "size": [
+        640,
+        360
+      ],
+      "xratio": 0.0,
+      "motion": "world locked"
+    },
+    {
+      "job": "haze_effect",
+      "path": "data/levels/i8_underpass/art/haze.png",
+      "size": [
+        2816,
+        360
+      ],
+      "z": 210,
+      "xratio": 0.0,
+      "alpha": 1,
+      "bgspeedratio": 1.0,
+      "motion": "slow horizontal drift behind actors"
+    },
+    {
+      "job": "static_pixel_details",
+      "location": "baked into panel plane",
+      "motion": "static",
+      "content": [
+        "pier posters and glyphs",
+        "curb litter",
+        "asphalt cracks and aggregate",
+        "walkable wrappers and crushed cans"
+      ]
+    },
+    {
+      "job": "rooted_foliage_scenery",
+      "model": "data/levels/i8_underpass/underpass_foliage.txt",
+      "frames": [
+        "levels/i8_underpass/scenery/foliage_sway_01.png",
+        "levels/i8_underpass/scenery/foliage_sway_02.png",
+        "levels/i8_underpass/scenery/foliage_sway_03.png"
+      ],
+      "unique_frames": 3,
+      "runtime_sequence": [
+        1,
+        2,
+        3,
+        2
+      ],
+      "anchor_z": 248,
+      "world_x": [
+        145,
+        535,
+        825,
+        1180,
+        1505,
+        1830,
+        2175,
+        2410
+      ],
+      "motion": "localized hand-drawn lean cycle behind actors; no water distortion"
+    }
+  ],
+  "geometry": {
+    "revision": 1,
+    "walkable_floor": {
+      "world_x": [
+        0,
+        2559
+      ],
+      "z": [
+        252,
+        326
+      ],
+      "classification": "walkable"
+    },
+    "rear_curb_and_fence": {
+      "z": [
+        246,
+        251
+      ],
+      "classification": "background-only visual boundary; player Z minimum supplies traversal bound"
+    },
+    "front_edge": {
+      "z": 326,
+      "classification": "player Z maximum; no painted drop"
+    },
+    "puddles_reflections_cracks": {
+      "classification": "walkable decals"
+    },
+    "deck_piers_fence_boxes_gate_hills_palms": {
+      "classification": "background-only beyond rear bound"
+    },
+    "foliage": {
+      "classification": "non-interactive animated background scenery rooted at the rear curb; behind every player Z lane"
+    },
+    "walls": [],
+    "holes": [],
+    "platforms": [],
+    "physical_props": []
+  },
+  "runtime_assets": {
+    "levels/i8_underpass/background.png": "76014cb7f543f77d65084e1ea6cc94e6c33cff8415f6ae7f7bd9dc59b7651d30",
+    "levels/i8_underpass/panels/underpass_a.png": "49ef42eccbdfa7fedac536fd1ed6ba832162861cafdd79958313f24103b09a9a",
+    "levels/i8_underpass/panels/underpass_b.png": "3d04f2b1539e34451fe29a5d6b3bd97aa9d79df2a49a74462d5934404c0d08d6",
+    "levels/i8_underpass/panels/underpass_c.png": "22f2b9e0be352720aa1dd06e4e1437e058040c6f0ccafca025abb6c8467e97f4",
+    "levels/i8_underpass/panels/underpass_d.png": "95c5bf518354f4f1a061f3618afcf6fef43cf4c01e1921ed8ee0fa3fb22f9d26",
+    "levels/i8_underpass/art/far.png": "c1a406d156fb05faaa2c7aa0f7f76d59573db703a6a2541aeadfe89fbf5e0ce9",
+    "levels/i8_underpass/art/mid.png": "8b5ab8416b2d3a6ab6f9d7805f66cd261940267ece786ce28c6d4dc98f60bada",
+    "levels/i8_underpass/art/haze.png": "6aac6b12191f3f0259ee8a18de9cbeae29b9d7b37f58311e6957071fef9be3d8",
+    "levels/i8_underpass/scenery/foliage_sway_01.png": "d0f49cedd4c59a30e9f94f9c4500de4da98307e32e3ec7580b413b99c4c60fbe",
+    "levels/i8_underpass/scenery/foliage_sway_02.png": "5bfdac652c7e75fd01c72574d01a1bb8b5b4487df9e19cd0b737542d071f4fab",
+    "levels/i8_underpass/scenery/foliage_sway_03.png": "3e1f98445d1347893e7e75fdbf6857d086dc7dc409e55d43a1d475a88cc1fba4",
+    "levels/i8_underpass/underpass_foliage.txt": "567f9bb073c05beaa9b8e0d535bba4327fc44d5620d8e580b47aee043c6ae38d"
+  },
+  "asset_set_sha256": "4d6b50433b8c70016599351a34fc9fe945df6a3b1daa249418bc72e212962704",
+  "directives": {
+    "video": "video 640x360",
+    "level": "data/levels/i8_underpass.txt",
+    "background_rule": "single 640x360 indexed background holder; no wide background directive"
+  },
+  "review_artifacts": [
+    "content/setpieces/underpass_i8/review/sunset_techdemo/sunset_underpass_layer_preview.png",
+    "content/setpieces/underpass_i8/review/sunset_techdemo/sunset_underpass_value_study.png"
+  ],
+  "runtime_validation": {
+    "status": "pass",
+    "runtime": "OpenBOR 4.0 Build 7949 (0ece95d)",
+    "package_sha256": null,
+    "package_hash_source": "build/underpass_techdemo/package_manifest.json (external to the PAK to avoid a circular self-hash)",
+    "package_file_count": 301,
+    "installed_package_hash_match": true,
+    "log": "content/setpieces/underpass_i8/runtime_evidence/sunset_techdemo/packaged_runtime_OpenBorLog.txt",
+    "log_gates": [
+      "Game Selected: .\\Paks\\UnderpassTechDemo.pak",
+      "Level Loaded: 'data/levels/i8_underpass.txt'",
+      "[FOF2_DAVE] spawn_bound"
+    ],
+    "foliage_motion_audit": {
+      "declared_unique_drawings": 3,
+      "rendered_unique_drawings": 3,
+      "root_rows_invariant": true,
+      "motion_bbox_frame_1_to_3": [
+        7,
+        13,
+        39,
+        29
+      ]
+    },
+    "evidence": [
+      {
+        "path": "content/setpieces/underpass_i8/runtime_evidence/sunset_techdemo/final_packaged_idle_foliage.mp4",
+        "sha256": "288d4286a92646d2f3691a17a734488856aab534b1b3bff03d086be308985b80",
+        "gate": "packaged Dave readability, grounded detail, and localized foliage motion"
+      },
+      {
+        "path": "content/setpieces/underpass_i8/runtime_evidence/sunset_techdemo/underpass_stage_seam_pass.mp4",
+        "sha256": "04eb389499548343810e8e7a6303ff10b57e4399e56f89526fb542336f235427",
+        "gate": "asset-identical Build 7949 forward and reverse camera seam probe"
+      },
+      {
+        "path": "content/setpieces/underpass_i8/runtime_evidence/sunset_techdemo/underpass_seam_contact_sheet.png",
+        "sha256": "9c4f9089647d713df2685b56924e86f9c0488077ee708fbbdf59bb0018547d38",
+        "gate": "all four authored stage beats and both traversal directions"
+      }
+    ]
+  }
 }

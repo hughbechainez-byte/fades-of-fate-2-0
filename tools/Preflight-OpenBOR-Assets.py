@@ -3,15 +3,24 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import re
 import struct
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 from PIL import Image
 
 
 PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
 REJECTED_DIRECTIVES = {"shadow_coords"}
+I8_UNDERPASS_LEVEL = PurePosixPath("levels/i8_underpass.txt")
+STAGE_IMAGE_SIZE = (640, 360)
+UNDERPASS_FOLIAGE_FRAME_SIZE = (48, 40)
+LAYER_MAX_ARGUMENTS = {
+    "bglayer": 18,  # path plus the 17 Build 7949 background-layer properties
+    "layer": 19,  # path, Z, plus the 17 shared layer properties
+    "fglayer": 19,  # path, Z, plus the 17 shared layer properties
+}
 
 
 def png_header(path: Path) -> tuple[int, int, int, int, int, int, int]:
@@ -84,6 +93,202 @@ def check_text_directives(data_root: Path) -> list[str]:
     return checked
 
 
+def resolve_case_stable_data_path(
+    data_root: Path,
+    raw_path: str,
+    declaration_path: Path,
+    line_number: int,
+) -> Path:
+    """Resolve an OpenBOR data/... path while enforcing exact component case."""
+    if not raw_path.isascii() or "\\" in raw_path:
+        raise ValueError(
+            f"{declaration_path}:{line_number}: asset path must be ASCII and use forward slashes: {raw_path!r}"
+        )
+    components = raw_path.split("/")
+    if not components or components[0] != "data" or any(part in {"", ".", ".."} for part in components):
+        raise ValueError(
+            f"{declaration_path}:{line_number}: asset path must be a normalized, case-stable data/... path: {raw_path!r}"
+        )
+
+    current = data_root
+    for component in components[1:]:
+        if not current.is_dir():
+            raise ValueError(f"{declaration_path}:{line_number}: asset path does not exist: {raw_path}")
+        entries = list(current.iterdir())
+        exact = next((entry for entry in entries if entry.name == component), None)
+        if exact is None:
+            case_matches = sorted(entry.name for entry in entries if entry.name.casefold() == component.casefold())
+            if case_matches:
+                raise ValueError(
+                    f"{declaration_path}:{line_number}: asset path case mismatch in {raw_path!r}; "
+                    f"filesystem spelling is {case_matches[0]!r}"
+                )
+            raise ValueError(f"{declaration_path}:{line_number}: asset path does not exist: {raw_path}")
+        current = exact
+
+    if not current.is_file():
+        raise ValueError(f"{declaration_path}:{line_number}: asset path is not a file: {raw_path}")
+    return current
+
+
+def check_stage_indexed_image(path: Path, *, require_transparency: bool) -> bytes:
+    """Validate the pinned underpass image contract and return rendered pixels."""
+    width, height, bit_depth, color_type, compression, filtering, interlace = png_header(path)
+    if (
+        (width, height) != STAGE_IMAGE_SIZE
+        or bit_depth != 8
+        or color_type != 3
+        or compression != 0
+        or filtering != 0
+        or interlace != 0
+    ):
+        raise ValueError(
+            f"{path}: underpass stage image must be a non-interlaced 8-bit indexed 640x360 PNG "
+            f"(size={width}x{height}, bit_depth={bit_depth}, color_type={color_type}, interlace={interlace})"
+        )
+    with Image.open(path) as image:
+        if image.mode != "P":
+            raise ValueError(f"{path}: underpass stage image must use Pillow indexed mode P")
+        if require_transparency and image.info.get("transparency") != 0:
+            raise ValueError(f"{path}: underpass panel must reserve palette index 0 for transparency")
+        return image.convert("RGBA").tobytes()
+
+
+def check_i8_underpass_stage(data_root: Path) -> None:
+    """Validate the active Build 7949 panel/layer contract when the stage is present."""
+    stage_path = data_root.joinpath(*I8_UNDERPASS_LEVEL.parts)
+    if not stage_path.is_file():
+        return
+
+    directives: list[tuple[int, str, list[str]]] = []
+    for line_number, line in enumerate(stage_path.read_text(encoding="utf-8", errors="strict").splitlines(), 1):
+        content = line.split("#", 1)[0].strip()
+        if not content:
+            continue
+        tokens = content.split()
+        directives.append((line_number, tokens[0].lower(), tokens[1:]))
+
+    panel_declarations = [(line_number, args) for line_number, command, args in directives if command == "panel"]
+    if not panel_declarations:
+        raise ValueError(f"{stage_path}: active i8_underpass stage must declare at least one 640x360 panel")
+    if len(panel_declarations) > 26:
+        raise ValueError(f"{stage_path}: Build 7949 panel definitions are limited to a-z (26 panels)")
+
+    panel_digests: dict[bytes, Path] = {}
+    for line_number, args in panel_declarations:
+        if not args:
+            raise ValueError(f"{stage_path}:{line_number}: panel directive is missing its asset path")
+        panel_path = resolve_case_stable_data_path(data_root, args[0], stage_path, line_number)
+        pixels = check_stage_indexed_image(panel_path, require_transparency=True)
+        digest = hashlib.sha256(pixels).digest()
+        if digest in panel_digests:
+            raise ValueError(
+                f"{stage_path}:{line_number}: panel {panel_path} duplicates exact rendered pixels from "
+                f"{panel_digests[digest]}"
+            )
+        panel_digests[digest] = panel_path
+
+    order_declarations = [(line_number, args) for line_number, command, args in directives if command == "order"]
+    if not order_declarations:
+        raise ValueError(f"{stage_path}: active i8_underpass stage must declare panel order")
+    for line_number, args in order_declarations:
+        if not args:
+            raise ValueError(f"{stage_path}:{line_number}: order directive is missing its panel sequence")
+        for symbol in args[0]:
+            if not symbol.isascii() or not symbol.isalpha():
+                raise ValueError(f"{stage_path}:{line_number}: invalid panel order symbol {symbol!r}")
+            panel_index = ord(symbol.lower()) - ord("a")
+            if panel_index < 0 or panel_index >= len(panel_declarations):
+                raise ValueError(
+                    f"{stage_path}:{line_number}: panel order references undefined panel {symbol!r}; "
+                    f"only a-{chr(ord('a') + len(panel_declarations) - 1)} are defined"
+                )
+
+    background_declarations = [
+        (line_number, args) for line_number, command, args in directives if command == "background"
+    ]
+    if len(background_declarations) != 1:
+        raise ValueError(f"{stage_path}: active i8_underpass stage must declare exactly one 640x360 background")
+    background_line, background_args = background_declarations[0]
+    if not background_args:
+        raise ValueError(f"{stage_path}:{background_line}: background directive is missing its asset path")
+    background_path = resolve_case_stable_data_path(
+        data_root, background_args[0], stage_path, background_line
+    )
+    check_stage_indexed_image(background_path, require_transparency=False)
+
+    for line_number, command, args in directives:
+        maximum = LAYER_MAX_ARGUMENTS.get(command)
+        if maximum is None:
+            continue
+        if not args:
+            raise ValueError(f"{stage_path}:{line_number}: {command} directive is missing its asset path")
+        if len(args) > maximum:
+            raise ValueError(
+                f"{stage_path}:{line_number}: {command} has {len(args)} arguments after the directive; "
+                f"Build 7949 accepts at most {maximum}"
+            )
+        resolve_case_stable_data_path(data_root, args[0], stage_path, line_number)
+
+    detached_foliage = [
+        (line_number, args[0])
+        for line_number, command, args in directives
+        if command == "fglayer" and args and "foliage" in args[0].casefold()
+    ]
+    if detached_foliage:
+        line_number, asset = detached_foliage[0]
+        raise ValueError(
+            f"{stage_path}:{line_number}: underpass foliage must be rooted animated scenery behind players, "
+            f"not a distorted foreground layer ({asset})"
+        )
+
+    foliage_model = data_root / "levels/i8_underpass/underpass_foliage.txt"
+    if not foliage_model.is_file():
+        raise ValueError(f"{foliage_model}: rooted underpass foliage model is missing")
+    foliage_text = foliage_model.read_text(encoding="utf-8", errors="strict")
+    frame_refs = re.findall(r"(?m)^\s*frame\s+(data/levels/i8_underpass/scenery/\S+\.png)\s*$", foliage_text)
+    if len(frame_refs) != 4 or len(set(frame_refs)) != 3:
+        raise ValueError(
+            f"{foliage_model}: expected a four-cel 1-2-3-2 sway using exactly three unique pixel drawings"
+        )
+    expected_palette: bytes | None = None
+    rendered_frames: set[bytes] = set()
+    for frame_ref in sorted(set(frame_refs)):
+        frame_path = resolve_case_stable_data_path(data_root, frame_ref, foliage_model, 1)
+        width, height, bit_depth, color_type, compression, filtering, interlace = png_header(frame_path)
+        if (
+            (width, height) != UNDERPASS_FOLIAGE_FRAME_SIZE
+            or bit_depth != 8
+            or color_type != 3
+            or compression != 0
+            or filtering != 0
+            or interlace != 0
+        ):
+            raise ValueError(
+                f"{frame_path}: rooted foliage frame must be non-interlaced indexed "
+                f"{UNDERPASS_FOLIAGE_FRAME_SIZE[0]}x{UNDERPASS_FOLIAGE_FRAME_SIZE[1]}"
+            )
+        with Image.open(frame_path) as frame_image:
+            if frame_image.mode != "P" or frame_image.info.get("transparency") != 0:
+                raise ValueError(f"{frame_path}: foliage frame must reserve palette index 0 for transparency")
+            palette = bytes(frame_image.getpalette() or [])
+            rendered_frames.add(hashlib.sha256(frame_image.convert("RGBA").tobytes()).digest())
+        if expected_palette is None:
+            expected_palette = palette
+        elif palette != expected_palette:
+            raise ValueError(f"{frame_path}: foliage frames must share one identical indexed palette")
+    if len(rendered_frames) != 3:
+        raise ValueError(f"{foliage_model}: foliage sway must contain three unique rendered drawings")
+
+    model_registry = (data_root / "models.txt").read_text(encoding="utf-8", errors="strict")
+    expected_load = "load UnderpassFoliage data/levels/i8_underpass/underpass_foliage.txt"
+    if expected_load not in model_registry:
+        raise ValueError(f"{data_root / 'models.txt'}: missing rooted foliage model load")
+    spawn_count = sum(1 for _, command, args in directives if command == "spawn" and args == ["UnderpassFoliage"])
+    if spawn_count < 4:
+        raise ValueError(f"{stage_path}: expected multiple localized UnderpassFoliage scenery spawns")
+
+
 def check_animation_capacity(data_root: Path) -> None:
     models = data_root / "models.txt"
     model_text = models.read_text(encoding="utf-8", errors="strict")
@@ -147,6 +352,7 @@ def main() -> int:
     check_character_palettes(data_root)
     check_video_config(data_root)
     check_animation_capacity(data_root)
+    check_i8_underpass_stage(data_root)
     text_files = check_text_directives(data_root)
     entries = check_pack(data_root, args.pak.resolve()) if args.pak else None
     print({"status": "pass", "pngs": len(pngs), "text_files": len(text_files), "pak_entries": entries})
