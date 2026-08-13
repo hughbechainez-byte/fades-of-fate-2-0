@@ -95,7 +95,7 @@ Use native animations where they express the state:
 - `DEATH` and approved numbered variants
 - `GET` for item pickup
 
-Build 7949 exposes only eight safe native freespecial constants. Do not invent `freespecial9+` or arbitrary animation constants. Black Dave currently banks authored route clips into `freespecial1` through `freespecial7`; the eighth slot remains within the engine ceiling but must not be consumed casually. A route bank must declare sufficient `maxfreespecials`, and the player model must explicitly define a valid `atchain`.
+Build 7949 exposes only eight safe native freespecial constants. Do not invent `freespecial9+` or arbitrary animation constants. The Fades route-bank design allocates authored combo steps across `freespecial1` through `freespecial7`; the eighth slot remains within the engine ceiling but must not be consumed casually. Any implementation must verify this binding in its generated manifest and full model. A route bank must declare sufficient `maxfreespecials`, and the player model must explicitly define a valid `atchain`.
 
 ### 2.5 Collision and event ownership
 
