@@ -1,2 +1,1 @@
-# Attack VFX are kept separate from the rooted whole-cel body, per the 2.0 art contract.
-name	black_dave_attack_fx
+# Attack VFX remain separate from the rooted whole-cel body in the combat route metadata.`r`n

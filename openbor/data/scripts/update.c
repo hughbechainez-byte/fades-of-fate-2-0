@@ -107,20 +107,31 @@ int state_duration(int state)
 
 int pose_hold_ticks(int state, int pose, int phase)
 {
-    // At 60 simulation ticks per second these authored holds present on a
-    // stable 30 Hz grid. Anticipation and recovery deliberately breathe while
-    // travel/contact drawings pass quickly.
+    // The simulation remains fixed at 60 Hz, but pose presentation is authored
+    // independently. Locomotion uses 7.5 poses/second so the five-drawing walk
+    // reads as weight transfer instead of flicker. Attacks use longer holds for
+    // anticipation and recovery, with the contact drawings passing faster.
     if(state == 21)
     {
-        if(pose == 0) return 4;
-        if(pose == 1) return 2;
-        if(pose == 2) return 2;
-        if(pose == 3) return 2;
-        return phase == 2 ? 4 : 2;
+        int route;
+        route = getglobalvar("fades_bd_route");
+        if(route == 3)
+        {
+            if(pose == 0) return 8;
+            if(pose == 1) return 5;
+            if(pose == 2) return 4;
+            if(pose == 3) return 4;
+            return 10;
+        }
+        if(pose == 0) return 6;
+        if(pose == 1) return 4;
+        if(pose == 2) return 3;
+        if(pose == 3) return 3;
+        return phase == 2 ? 8 : 4;
     }
     if(state == 1 || state == 2) return 6;
     if(state == 3 || state == 5 || state == 6 || state == 11 || state == 15) return 2;
-    if(state == 4) return 2;
+    if(state == 4) return 8;
     if(state == 7 || state == 9 || state == 12 || state == 13 || state == 14) return 3;
     return 2;
 }
@@ -948,7 +959,6 @@ void progress_attack_sequence(void player, int tick)
     int total;
     int cancel_allowed;
     int buffer_route;
-    int clip;
 
     route = getglobalvar("fades_bd_route");
     step = getglobalvar("fades_bd_step");
@@ -970,8 +980,9 @@ void progress_attack_sequence(void player, int tick)
     {
         emit_event(1102, route, step, tick);
         setglobalvar("fades_bd_state_phase", 1);
-        clip = clamp_route_anim(route, step);
-        performattack(player, clip, 1);
+        // start_attack_sequence() already selected the correct bank and route.
+        // Calling performattack() here hands frame ownership back to OpenBOR's
+        // native attack clock and can replace the power bank mid-action.
         setglobalvar("fades_bd_event_payload", 1);
     }
     if(state_t == startup + active + 1)

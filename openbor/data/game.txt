@@ -1,4 +1,7 @@
-# Fades of Fate 2.0 ground-up OpenBOR module
-name	Fades of Fate 2.0
-models	data/models.txt
-levels	data/levels.txt
+name Fades of Fate 2.0
+video 640x360
+colourdepth 32bit
+maxplayers 1
+models data/models.txt
+levels data/levels.txt
+script data/script.txt

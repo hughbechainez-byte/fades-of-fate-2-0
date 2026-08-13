@@ -1,0 +1,2 @@
+alwaysupdate 1
+maxglobalvars 256

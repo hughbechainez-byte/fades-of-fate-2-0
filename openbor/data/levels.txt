@@ -1,4 +1,12 @@
-# First playable stage — I-8 underpass setpiece (approved visual)
-set	Underpass_Test
-nointro	1
-file	data/levels/i8_underpass.txt
+# First playable stage - I-8 underpass setpiece
+skiptoset 0
+set Underpass_Test
+lives 3
+credits 3
+cansave 0
+z 232 327 232
+maxplayers 1
+skipselect BlackDave
+file data/levels/i8_underpass.txt
+next
+end
