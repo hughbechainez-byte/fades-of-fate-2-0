@@ -53,6 +53,7 @@ No other characters, levels, bosses, or systems until the user asks.
 - Do not report FoF1 Desktop hash parity as 2.0 completion.  
 - After art review, put review images on the user’s Desktop review folder if they use that workflow; that is for **review**, not FoF1 packaging.
 - Before every OpenBOR PAK or desktop build, run `python tools/Preflight-OpenBOR-Assets.py --data openbor/data`. Character sprites must be non-interlaced 8-bit indexed PNGs; backgrounds may use the documented background formats.
+- Preflight must require every level `background.png` to be non-interlaced 8-bit indexed PNG and require `data/video.txt` to contain exactly one parser-compatible `video WIDTHxHEIGHT` directive; reject shorthand tokens such as `a1280x720`.
 - The PAK builder must run the preflight before and after packing with `--pak`; verify source payload hashes, package entries, and file counts so stale or manually copied PAKs cannot pass.
 - Reject unsupported OpenBOR directives such as `shadow_coords` before launch. Use only directives accepted by the pinned runtime, and record the runtime/build in the package manifest.
 - A desktop launch check is incomplete unless the executable is started from its package directory, the sibling `Paks/` file is selected, and the log is checked for asset-load errors.
