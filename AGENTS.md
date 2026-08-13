@@ -2,6 +2,18 @@
 
 Read **`2.0_CHARTER.md` first**. It wins over any older doc, chat memory, or quarantined FoF1 file.
 
+## Stop before any entity work: mandatory art gate
+
+Before creating or changing any playable character, enemy, elite, boss, NPC, summon, or interactive animated entity, read **`docs/OPENBOR_COMPATIBILITY_STANDARD.md`**, especially **Entity art-first pose completeness gate**. This applies to new entities and existing entities touched by a task.
+
+- Determine and record the entity class, production or `(alpha)` maturity, one exact unique-pose target, per-state allocation, and complete action/reachability list. If any item is unclear, stop and ask the user before doing art or code.
+- Established production bands are playable hero `220-320`, basic enemy `90-130`, elite enemy `150-240`, and boss `250-400`; lower preproduction bands do not satisfy production. The selected exact target is mandatory and may not be reduced later.
+- A pose count means unique, approved, whole-body drawings. Atlas slots, filenames, aliases, mirrored/recolored frames, VFX variants, translations, jitter, padding changes, and reused drawings do not increase the count.
+- Except for an explicitly labeled `(alpha)` cohesion prototype, the complete art target and automated uniqueness audit must pass before model, controller, AI, combat, collision, VFX, or package implementation begins.
+- `(alpha)` work must remain labeled in its manifest, evidence, package, and report. It cannot be called complete, fully authored, production-ready, or used to pass a release gate.
+- Before implementation, before every PAK build, and after runtime integration, fail on duplicate inflation, missing references, unreachable poses, truncated/zero-duration poses, incomplete gait transitions, root/anatomy/scale drift, dead controls/AI triggers, generic bank-wide hitboxes, or native/script dual animation ownership.
+- Do not approve or report completion until the declared target, unique approved count, unique referenced-pose count, unique runtime-reachable-pose count, and unique visibly exercised packaged-gameplay-pose count all reconcile and meet the exact target.
+
 ## Source of truth
 
 - **Repo:** `https://github.com/hughbechainez-byte/fades-of-fate-2-0`  
