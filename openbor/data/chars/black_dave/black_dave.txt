@@ -16,7 +16,7 @@ com a4 freespecial3
 ondoattackscript data/scripts/black_dave_contact.c
 
 anim spawn
-    delay 8
+    delay 10000
     offset 96 156
     bbox 24 18 144 138 18
     frame data/chars/black_dave/sprites/idle_000.png
@@ -27,7 +27,7 @@ anim spawn
 
 anim idle
     loop 1
-    delay 8
+    delay 10000
     offset 96 156
     bbox 24 18 144 138 18
     frame data/chars/black_dave/sprites/idle_000.png
@@ -38,7 +38,7 @@ anim idle
 
 anim walk
     loop 1
-    delay 8
+    delay 10000
     offset 96 156
     bbox 24 18 144 138 18
     frame data/chars/black_dave/sprites/walk_000.png
@@ -48,7 +48,7 @@ anim walk
     frame data/chars/black_dave/sprites/walk_004.png
 
 anim pain
-    delay 8
+    delay 10000
     offset 96 156
     bbox 24 18 144 138 18
     frame data/chars/black_dave/sprites/hurt_000.png
@@ -58,7 +58,7 @@ anim pain
     frame data/chars/black_dave/sprites/hurt_004.png
 
 anim fall
-    delay 8
+    delay 10000
     offset 96 156
     bbox 24 18 144 138 18
     frame data/chars/black_dave/sprites/down_000.png
@@ -68,7 +68,7 @@ anim fall
     frame data/chars/black_dave/sprites/down_004.png
 
 anim rise
-    delay 8
+    delay 10000
     offset 96 156
     bbox 24 18 144 138 18
     frame data/chars/black_dave/sprites/recovery_000.png
@@ -78,7 +78,7 @@ anim rise
     frame data/chars/black_dave/sprites/recovery_004.png
 
 anim attack1
-    delay 8
+    delay 10000
     offset 96 156
     bbox 24 18 144 138 18
     attack 0
@@ -91,7 +91,7 @@ anim attack1
     attack 0
 
 anim attack2
-    delay 8
+    delay 10000
     offset 96 156
     bbox 24 18 144 138 18
     attack 0
@@ -104,7 +104,7 @@ anim attack2
     attack 0
 
 anim attack3
-    delay 8
+    delay 10000
     offset 96 156
     bbox 24 18 144 138 18
     attack 0
@@ -117,7 +117,7 @@ anim attack3
     attack 0
 
 anim attack4
-    delay 8
+    delay 10000
     offset 96 156
     bbox 24 18 144 138 18
     attack 0
@@ -132,7 +132,7 @@ anim attack4
 anim freespecial1
     offset 96 156
     bbox 24 18 144 138 18
-    delay 8
+    delay 10000
     attack 0
     attack 28 108 56 24 16 0 0 0 4 24
     frame data/chars/black_dave/sprites/black_dave_v2_regular_01_000.png
@@ -170,7 +170,7 @@ anim freespecial1
 anim freespecial2
     offset 96 156
     bbox 24 18 144 138 18
-    delay 8
+    delay 10000
     attack 0
     attack 28 108 56 24 16 0 0 0 4 24
     frame data/chars/black_dave/sprites/black_dave_v2_regular_02_000.png
@@ -203,7 +203,7 @@ anim freespecial2
 anim freespecial3
     offset 96 156
     bbox 24 18 144 138 18
-    delay 8
+    delay 10000
     attack 0
     attack 28 108 56 24 16 0 0 0 4 24
     frame data/chars/black_dave/sprites/black_dave_v2_regular_03_000.png
@@ -236,7 +236,7 @@ anim freespecial3
 anim freespecial4
     offset 96 156
     bbox 24 18 144 138 18
-    delay 8
+    delay 10000
     attack 0
     attack 28 108 56 24 16 0 0 0 4 24
     frame data/chars/black_dave/sprites/black_dave_v2_regular_04_000.png
@@ -269,7 +269,7 @@ anim freespecial4
 anim freespecial5
     offset 96 156
     bbox 24 18 144 138 18
-    delay 8
+    delay 10000
     attack 0
     attack 28 108 56 24 16 0 0 0 4 24
     frame data/chars/black_dave/sprites/black_dave_v2_regular_05_000.png
@@ -302,7 +302,7 @@ anim freespecial5
 anim freespecial6
     offset 96 156
     bbox 24 18 144 138 18
-    delay 8
+    delay 10000
     attack 0
     attack 28 108 56 24 16 0 0 0 4 24
     frame data/chars/black_dave/sprites/black_dave_v2_regular_06_000.png
@@ -335,7 +335,7 @@ anim freespecial6
 anim freespecial7
     offset 96 156
     bbox 24 18 144 138 18
-    delay 8
+    delay 10000
     attack 0
     attack 28 108 56 24 16 0 0 0 4 24
     frame data/chars/black_dave/sprites/black_dave_v2_regular_07_000.png

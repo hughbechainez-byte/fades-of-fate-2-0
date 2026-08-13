@@ -1007,80 +1007,34 @@ void progress_attack_sequence(void player, int tick)
     }
 }
 
-void progress_walk_loop(void player, int travel_axis, int walked, int tick)
+void progress_walk_loop(void player, int travel_axis, int moving, int tick)
 {
     int state;
-    int state_t;
     state = getglobalvar("fades_bd_state");
-    state_t = getglobalvar("fades_bd_state_tick");
 
-    if(travel_axis == 0)
+    if(moving == 0)
     {
-        set_state(6, tick);
-        apply_animation_for_state(player, 6, 0, 0);
+        set_state(1, tick);
+        apply_animation_for_state(player, 1, 0, 0);
         emit_event(1201, 0, 0, tick);
         return;
     }
-
-    if(state == 3 && state_t >= 1)
+    if(travel_axis < 0)
     {
-        if(walked == 1)
-        {
-            set_state(4, tick);
-            emit_event(1202, travel_axis, 0, tick);
-            apply_animation_for_state(player, 4, 0, 0);
-        }
-        else
-        {
-            set_state(6, tick);
-            emit_event(1201, 0, 0, tick);
-            apply_animation_for_state(player, 6, 0, 0);
-        }
-        return;
+        changeentityproperty(player, "direction", 0);
+        setglobalvar("fades_bd_face", 0);
     }
-    if(state == 4)
+    else if(travel_axis > 0)
     {
-        if(walked == 0)
-        {
-            set_state(6, tick);
-            emit_event(1201, travel_axis, 0, tick);
-            apply_animation_for_state(player, 6, 0, 0);
-            return;
-        }
-        if(getglobalvar("fades_bd_last_face") != travel_axis)
-        {
-            set_state(5, tick);
-            emit_event(1203, travel_axis, getglobalvar("fades_bd_last_face"), tick);
-            apply_animation_for_state(player, 5, 0, 0);
-            return;
-        }
+        changeentityproperty(player, "direction", 1);
+        setglobalvar("fades_bd_face", 1);
     }
-    if(state == 5 && state_t >= 6)
+    if(state != 4)
     {
-        if(walked == 1)
-        {
-            set_state(4, tick);
-            apply_animation_for_state(player, 4, 0, 0);
-        }
-        else
-        {
-            set_state(6, tick);
-            emit_event(1201, travel_axis, 0, tick);
-            apply_animation_for_state(player, 6, 0, 0);
-        }
-        return;
+        set_state(4, tick);
+        emit_event(1202, travel_axis, 0, tick);
+        apply_animation_for_state(player, 4, 0, 0);
     }
-    if(state == 6)
-    {
-        if(walked == 1)
-        {
-            set_state(3, tick);
-            emit_event(1202, travel_axis, 0, tick);
-            apply_animation_for_state(player, 3, 0, 0);
-            return;
-        }
-    }
-
 }
 
 void progress_jump_loop(void player, int tick, int air_attack, int travel_axis, int route_buffer, int route_buffered_from_jump)
@@ -1178,6 +1132,7 @@ void main()
     int route_ttl;
     int route_buffer_ttl;
     int walked_this_tick;
+    int moving_held;
     float x;
     float x_prev;
     float z;
@@ -1253,6 +1208,7 @@ void main()
     right_held = playerkeys(0, 0, "moveright") != 0;
     up_held = playerkeys(0, 0, "moveup") != 0;
     down_held = playerkeys(0, 0, "movedown") != 0;
+    moving_held = left_held || right_held || up_held || down_held;
     attack_edge = playerkeys(0, 1, "attack") != 0;
     jump_attack_input = attack_edge;
     jump_edge = playerkeys(0, 1, "jump") != 0;
@@ -1315,7 +1271,7 @@ void main()
         }
         if(x < x_prev)
         {
-            setglobalvar("fades_bd_face", 2);
+            setglobalvar("fades_bd_face", 0);
         }
     }
 
@@ -1347,7 +1303,7 @@ void main()
     }
     else if(state == 3 || state == 4 || state == 5 || state == 6)
     {
-        progress_walk_loop(player, travel_axis, walked_this_tick, tick);
+        progress_walk_loop(player, travel_axis, moving_held, tick);
         if(route_buffer != 0 && state == 4 && state_t == 1)
         {
             start_attack_sequence(player, route_buffer, 1, 0, tick);
@@ -1428,14 +1384,14 @@ void main()
                 clear_buffer();
             }
         }
-        if(travel_axis != 0 && getglobalvar("fades_bd_state") == 1)
+        if(moving_held != 0 && getglobalvar("fades_bd_state") == 1)
         {
             if(getglobalvar("fades_bd_face") == 0)
             {
                 setglobalvar("fades_bd_face", travel_axis);
             }
-            set_state(3, tick);
-            apply_animation_for_state(player, 3, 0, 0);
+            set_state(4, tick);
+            apply_animation_for_state(player, 4, 0, 0);
             setglobalvar("fades_bd_last_face", getglobalvar("fades_bd_face"));
         }
     }

@@ -146,7 +146,7 @@ def write_model(metadata: dict, frame_map: dict[str, list[Path]]) -> None:
         lines += [f"anim {animation_name}"]
         if animation_name in {"idle", "walk"}:
             lines += ["    loop 1"]
-        lines += ["    delay 8", "    offset 96 156", "    bbox 24 18 144 138 18"]
+        lines += ["    delay 10000", "    offset 96 156", "    bbox 24 18 144 138 18"]
         if animation_name in attack_specs:
             damage, x, width, height = attack_specs[animation_name]
             lines += ["    attack 0", f"    attack {x} 108 {width} {height} {damage} 0 0 0 4 24"]
@@ -161,7 +161,7 @@ def write_model(metadata: dict, frame_map: dict[str, list[Path]]) -> None:
         route_banks[index % 7].append(clip_id)
     for bank_index, bank_clips in enumerate(route_banks, start=1):
         animation_name = f"freespecial{bank_index}"
-        lines += [f"anim {animation_name}", "    offset 96 156", "    bbox 24 18 144 138 18", "    delay 8", "    attack 0", "    attack 28 108 56 24 16 0 0 0 4 24"]
+        lines += [f"anim {animation_name}", "    offset 96 156", "    bbox 24 18 144 138 18", "    delay 10000", "    attack 0", "    attack 28 108 56 24 16 0 0 0 4 24"]
         for clip_id in bank_clips:
             for frame in frame_map[clip_id]:
                 lines.append(f"    frame data/chars/black_dave/sprites/{frame.name}")
