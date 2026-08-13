@@ -22,6 +22,8 @@ if ([System.IO.Path]::IsPathFullyQualified($OutputRoot)) {
 
 $pakPath = Join-Path $repoRoot "build\openbor_black_dave\TheFadesOfFate2.pak"
 $runtimePath = Join-Path $repoRoot "openbor\runtime\OpenBOR.exe"
+$godotPath = Join-Path $repoRoot "dist\godot\TheFadesOfFate-Godot.exe"
+$godotPckPath = Join-Path $repoRoot "dist\godot\TheFadesOfFate-Godot.pck"
 $licensePath = Join-Path $repoRoot "openbor\runtime\OPENBOR-LICENSE.txt"
 $readmePath = Join-Path $repoRoot "openbor\runtime\OPENBOR-README.txt"
 $exePath = Join-Path $outputPath "FadesOfFate2.exe"
@@ -41,7 +43,14 @@ try {
     New-Item -ItemType Directory -Force -Path (Join-Path $outputPath "Paks") | Out-Null
     New-Item -ItemType Directory -Force -Path (Join-Path $outputPath "Logs") | Out-Null
 
-    Copy-Item -LiteralPath $runtimePath -Destination $exePath -Force
+    if ((Test-Path $godotPath) -and (Test-Path $godotPckPath)) {
+        Copy-Item -LiteralPath $godotPath -Destination $exePath -Force
+        Copy-Item -LiteralPath $godotPckPath -Destination (Join-Path $outputPath "FadesOfFate2.pck") -Force
+        $runtimeLabel = "Godot desktop export"
+    } else {
+        Copy-Item -LiteralPath $runtimePath -Destination $exePath -Force
+        $runtimeLabel = "OpenBOR 4.0 Build 7949"
+    }
     Copy-Item -LiteralPath $pakPath -Destination $pakOutputPath -Force
     if (Test-Path $licensePath) { Copy-Item -LiteralPath $licensePath -Destination (Join-Path $outputPath "OPENBOR-LICENSE.txt") -Force }
     if (Test-Path $readmePath) { Copy-Item -LiteralPath $readmePath -Destination (Join-Path $outputPath "OPENBOR-README.txt") -Force }
@@ -66,7 +75,7 @@ try {
         product = "Fades of Fate 2.0 desktop demo"
         executable = "FadesOfFate2.exe"
         package = "Paks/TheFadesOfFate2.pak"
-        runtime = "OpenBOR 4.0 Build 7949"
+        runtime = $runtimeLabel
         source_commit = ((& git -C $repoRoot rev-parse HEAD).Trim())
         built_utc = ([DateTime]::UtcNow.ToString("o"))
         executable_sha256 = (Get-FileHash -Algorithm SHA256 -LiteralPath $exePath).Hash
