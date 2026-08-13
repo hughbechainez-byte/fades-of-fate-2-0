@@ -1,469 +1,547 @@
-name	black_dave
-type	player
-health	100
-mp	100
-speed	4
-jumpheight	5
-subject_to_gravity	1
-shadow	1
-shadow_coords	0 0 0
-load	black_dave_attack_fx	data/chars/black_dave/black_dave_attack_fx.txt
+name BlackDave
+type player
+health 100
+mp 100
+speed 4
+jumpheight 5
+subject_to_gravity 1
+shadow 1
+ondoattackscript data/scripts/black_dave_contact.c
 
-anim	idle
-	offset	112 156
-	delay	8
-	frame	data/chars/black_dave/sprites/idle_000.png
-	frame	data/chars/black_dave/sprites/idle_001.png
-	frame	data/chars/black_dave/sprites/idle_002.png
-	frame	data/chars/black_dave/sprites/idle_003.png
-	frame	data/chars/black_dave/sprites/idle_004.png
-	loop	1
+anim spawn
+    delay 8
+    offset 112 156
+    bbox 40 18 144 138 18
+    frame data/chars/black_dave/sprites/idle_000.png
+    frame data/chars/black_dave/sprites/idle_001.png
+    frame data/chars/black_dave/sprites/idle_002.png
+    frame data/chars/black_dave/sprites/idle_003.png
+    frame data/chars/black_dave/sprites/idle_004.png
 
-anim	walk_start
-	offset	112 156
-	delay	8
-	frame	data/chars/black_dave/sprites/walk_start_000.png
-	frame	data/chars/black_dave/sprites/walk_start_001.png
-	frame	data/chars/black_dave/sprites/walk_start_002.png
-	frame	data/chars/black_dave/sprites/walk_start_003.png
-	frame	data/chars/black_dave/sprites/walk_start_004.png
+anim idle
+    loop 1
+    delay 8
+    offset 112 156
+    bbox 40 18 144 138 18
+    frame data/chars/black_dave/sprites/idle_000.png
+    frame data/chars/black_dave/sprites/idle_001.png
+    frame data/chars/black_dave/sprites/idle_002.png
+    frame data/chars/black_dave/sprites/idle_003.png
+    frame data/chars/black_dave/sprites/idle_004.png
 
-anim	walk
-	offset	112 156
-	delay	8
-	frame	data/chars/black_dave/sprites/walk_000.png
-	frame	data/chars/black_dave/sprites/walk_001.png
-	frame	data/chars/black_dave/sprites/walk_002.png
-	frame	data/chars/black_dave/sprites/walk_003.png
-	frame	data/chars/black_dave/sprites/walk_004.png
-	loop	1
+anim walk
+    loop 1
+    delay 8
+    offset 112 156
+    bbox 40 18 144 138 18
+    frame data/chars/black_dave/sprites/walk_000.png
+    frame data/chars/black_dave/sprites/walk_001.png
+    frame data/chars/black_dave/sprites/walk_002.png
+    frame data/chars/black_dave/sprites/walk_003.png
+    frame data/chars/black_dave/sprites/walk_004.png
 
-anim	walk_stop
-	offset	112 156
-	delay	8
-	frame	data/chars/black_dave/sprites/walk_stop_000.png
-	frame	data/chars/black_dave/sprites/walk_stop_001.png
-	frame	data/chars/black_dave/sprites/walk_stop_002.png
-	frame	data/chars/black_dave/sprites/walk_stop_003.png
-	frame	data/chars/black_dave/sprites/walk_stop_004.png
+anim pain
+    delay 8
+    offset 112 156
+    bbox 40 18 144 138 18
+    frame data/chars/black_dave/sprites/hurt_000.png
+    frame data/chars/black_dave/sprites/hurt_001.png
+    frame data/chars/black_dave/sprites/hurt_002.png
+    frame data/chars/black_dave/sprites/hurt_003.png
+    frame data/chars/black_dave/sprites/hurt_004.png
 
-anim	walk_reverse
-	offset	112 156
-	delay	8
-	frame	data/chars/black_dave/sprites/walk_reverse_000.png
-	frame	data/chars/black_dave/sprites/walk_reverse_001.png
-	frame	data/chars/black_dave/sprites/walk_reverse_002.png
-	frame	data/chars/black_dave/sprites/walk_reverse_003.png
-	frame	data/chars/black_dave/sprites/walk_reverse_004.png
+anim fall
+    delay 8
+    offset 112 156
+    bbox 40 18 144 138 18
+    frame data/chars/black_dave/sprites/down_000.png
+    frame data/chars/black_dave/sprites/down_001.png
+    frame data/chars/black_dave/sprites/down_002.png
+    frame data/chars/black_dave/sprites/down_003.png
+    frame data/chars/black_dave/sprites/down_004.png
 
-anim	jump_takeoff
-	offset	112 156
-	delay	8
-	frame	data/chars/black_dave/sprites/jump_takeoff_000.png
-	frame	data/chars/black_dave/sprites/jump_takeoff_001.png
-	frame	data/chars/black_dave/sprites/jump_takeoff_002.png
-	frame	data/chars/black_dave/sprites/jump_takeoff_003.png
-	frame	data/chars/black_dave/sprites/jump_takeoff_004.png
+anim rise
+    delay 8
+    offset 112 156
+    bbox 40 18 144 138 18
+    frame data/chars/black_dave/sprites/recovery_000.png
+    frame data/chars/black_dave/sprites/recovery_001.png
+    frame data/chars/black_dave/sprites/recovery_002.png
+    frame data/chars/black_dave/sprites/recovery_003.png
+    frame data/chars/black_dave/sprites/recovery_004.png
 
-anim	jump_rise
-	offset	112 156
-	delay	8
-	frame	data/chars/black_dave/sprites/jump_rise_000.png
-	frame	data/chars/black_dave/sprites/jump_rise_001.png
-	frame	data/chars/black_dave/sprites/jump_rise_002.png
-	frame	data/chars/black_dave/sprites/jump_rise_003.png
-	frame	data/chars/black_dave/sprites/jump_rise_004.png
+anim jumpattack
+    delay 8
+    offset 112 156
+    bbox 40 18 144 138 18
+    frame data/chars/black_dave/sprites/air_punch_000.png
+    frame data/chars/black_dave/sprites/air_punch_001.png
+    frame data/chars/black_dave/sprites/air_punch_002.png
+    frame data/chars/black_dave/sprites/air_punch_003.png
+    frame data/chars/black_dave/sprites/air_punch_004.png
 
-anim	jump_apex
-	offset	112 156
-	delay	8
-	frame	data/chars/black_dave/sprites/jump_apex_000.png
-	frame	data/chars/black_dave/sprites/jump_apex_001.png
-	frame	data/chars/black_dave/sprites/jump_apex_002.png
-	frame	data/chars/black_dave/sprites/jump_apex_003.png
-	frame	data/chars/black_dave/sprites/jump_apex_004.png
+anim jumpattack2
+    delay 8
+    offset 112 156
+    bbox 40 18 144 138 18
+    frame data/chars/black_dave/sprites/air_kick_000.png
+    frame data/chars/black_dave/sprites/air_kick_001.png
+    frame data/chars/black_dave/sprites/air_kick_002.png
+    frame data/chars/black_dave/sprites/air_kick_003.png
+    frame data/chars/black_dave/sprites/air_kick_004.png
 
-anim	jump_fall
-	offset	112 156
-	delay	8
-	frame	data/chars/black_dave/sprites/jump_fall_000.png
-	frame	data/chars/black_dave/sprites/jump_fall_001.png
-	frame	data/chars/black_dave/sprites/jump_fall_002.png
-	frame	data/chars/black_dave/sprites/jump_fall_003.png
-	frame	data/chars/black_dave/sprites/jump_fall_004.png
+anim attack1
+    delay 8
+    offset 112 156
+    bbox 40 18 144 138 18
+    attack 0
+    attack 28 108 38 16 12 0 0 0 4 24
+    frame data/chars/black_dave/sprites/black_dave_v2_regular_01_000.png
+    frame data/chars/black_dave/sprites/black_dave_v2_regular_01_001.png
+    frame data/chars/black_dave/sprites/black_dave_v2_regular_01_002.png
+    frame data/chars/black_dave/sprites/black_dave_v2_regular_01_003.png
+    frame data/chars/black_dave/sprites/black_dave_v2_regular_01_004.png
+    attack 0
 
-anim	jump_land
-	offset	112 156
-	delay	8
-	frame	data/chars/black_dave/sprites/jump_land_000.png
-	frame	data/chars/black_dave/sprites/jump_land_001.png
-	frame	data/chars/black_dave/sprites/jump_land_002.png
-	frame	data/chars/black_dave/sprites/jump_land_003.png
-	frame	data/chars/black_dave/sprites/jump_land_004.png
+anim attack2
+    delay 8
+    offset 112 156
+    bbox 40 18 144 138 18
+    attack 0
+    attack 30 108 42 16 14 0 0 0 4 24
+    frame data/chars/black_dave/sprites/black_dave_v2_regular_02_000.png
+    frame data/chars/black_dave/sprites/black_dave_v2_regular_02_001.png
+    frame data/chars/black_dave/sprites/black_dave_v2_regular_02_002.png
+    frame data/chars/black_dave/sprites/black_dave_v2_regular_02_003.png
+    frame data/chars/black_dave/sprites/black_dave_v2_regular_02_004.png
+    attack 0
 
-anim	dodge
-	offset	112 156
-	delay	8
-	frame	data/chars/black_dave/sprites/dodge_000.png
-	frame	data/chars/black_dave/sprites/dodge_001.png
-	frame	data/chars/black_dave/sprites/dodge_002.png
-	frame	data/chars/black_dave/sprites/dodge_003.png
-	frame	data/chars/black_dave/sprites/dodge_004.png
+anim attack3
+    delay 8
+    offset 112 156
+    bbox 40 18 144 138 18
+    attack 0
+    attack 32 108 48 22 16 0 0 0 4 24
+    frame data/chars/black_dave/sprites/black_dave_v2_regular_03_000.png
+    frame data/chars/black_dave/sprites/black_dave_v2_regular_03_001.png
+    frame data/chars/black_dave/sprites/black_dave_v2_regular_03_002.png
+    frame data/chars/black_dave/sprites/black_dave_v2_regular_03_003.png
+    frame data/chars/black_dave/sprites/black_dave_v2_regular_03_004.png
+    attack 0
 
-anim	hurt
-	offset	112 156
-	delay	8
-	frame	data/chars/black_dave/sprites/hurt_000.png
-	frame	data/chars/black_dave/sprites/hurt_001.png
-	frame	data/chars/black_dave/sprites/hurt_002.png
-	frame	data/chars/black_dave/sprites/hurt_003.png
-	frame	data/chars/black_dave/sprites/hurt_004.png
+anim attack4
+    delay 8
+    offset 112 156
+    bbox 40 18 144 138 18
+    attack 0
+    attack 34 108 52 18 14 0 0 0 4 24
+    frame data/chars/black_dave/sprites/black_dave_v2_kick_01_000.png
+    frame data/chars/black_dave/sprites/black_dave_v2_kick_01_001.png
+    frame data/chars/black_dave/sprites/black_dave_v2_kick_01_002.png
+    frame data/chars/black_dave/sprites/black_dave_v2_kick_01_003.png
+    frame data/chars/black_dave/sprites/black_dave_v2_kick_01_004.png
+    attack 0
 
-anim	down
-	offset	112 156
-	delay	8
-	frame	data/chars/black_dave/sprites/down_000.png
-	frame	data/chars/black_dave/sprites/down_001.png
-	frame	data/chars/black_dave/sprites/down_002.png
-	frame	data/chars/black_dave/sprites/down_003.png
-	frame	data/chars/black_dave/sprites/down_004.png
+anim block
+    delay 8
+    offset 112 156
+    bbox 40 18 144 138 18
+    frame data/chars/black_dave/sprites/guard_000.png
+    frame data/chars/black_dave/sprites/guard_001.png
+    frame data/chars/black_dave/sprites/guard_002.png
+    frame data/chars/black_dave/sprites/guard_003.png
+    frame data/chars/black_dave/sprites/guard_004.png
 
-anim	recovery
-	offset	112 156
-	delay	8
-	frame	data/chars/black_dave/sprites/recovery_000.png
-	frame	data/chars/black_dave/sprites/recovery_001.png
-	frame	data/chars/black_dave/sprites/recovery_002.png
-	frame	data/chars/black_dave/sprites/recovery_003.png
-	frame	data/chars/black_dave/sprites/recovery_004.png
+anim run
+    delay 8
+    offset 112 156
+    bbox 40 18 144 138 18
+    frame data/chars/black_dave/sprites/walk_start_000.png
+    frame data/chars/black_dave/sprites/walk_start_001.png
+    frame data/chars/black_dave/sprites/walk_start_002.png
+    frame data/chars/black_dave/sprites/walk_start_003.png
+    frame data/chars/black_dave/sprites/walk_start_004.png
 
-anim	ranged
-	offset	112 156
-	delay	8
-	frame	data/chars/black_dave/sprites/ranged_000.png
-	frame	data/chars/black_dave/sprites/ranged_001.png
-	frame	data/chars/black_dave/sprites/ranged_002.png
-	frame	data/chars/black_dave/sprites/ranged_003.png
-	frame	data/chars/black_dave/sprites/ranged_004.png
+anim backwalk
+    delay 8
+    offset 112 156
+    bbox 40 18 144 138 18
+    frame data/chars/black_dave/sprites/walk_stop_000.png
+    frame data/chars/black_dave/sprites/walk_stop_001.png
+    frame data/chars/black_dave/sprites/walk_stop_002.png
+    frame data/chars/black_dave/sprites/walk_stop_003.png
+    frame data/chars/black_dave/sprites/walk_stop_004.png
 
-anim	super
-	offset	112 156
-	delay	8
-	frame	data/chars/black_dave/sprites/super_000.png
-	frame	data/chars/black_dave/sprites/super_001.png
-	frame	data/chars/black_dave/sprites/super_002.png
-	frame	data/chars/black_dave/sprites/super_003.png
-	frame	data/chars/black_dave/sprites/super_004.png
+anim turn
+    delay 8
+    offset 112 156
+    bbox 40 18 144 138 18
+    frame data/chars/black_dave/sprites/walk_reverse_000.png
+    frame data/chars/black_dave/sprites/walk_reverse_001.png
+    frame data/chars/black_dave/sprites/walk_reverse_002.png
+    frame data/chars/black_dave/sprites/walk_reverse_003.png
+    frame data/chars/black_dave/sprites/walk_reverse_004.png
 
-anim	pet
-	offset	112 156
-	delay	8
-	frame	data/chars/black_dave/sprites/pet_000.png
-	frame	data/chars/black_dave/sprites/pet_001.png
-	frame	data/chars/black_dave/sprites/pet_002.png
-	frame	data/chars/black_dave/sprites/pet_003.png
-	frame	data/chars/black_dave/sprites/pet_004.png
+anim jumpdelay
+    delay 8
+    offset 112 156
+    bbox 40 18 144 138 18
+    frame data/chars/black_dave/sprites/jump_takeoff_000.png
+    frame data/chars/black_dave/sprites/jump_takeoff_001.png
+    frame data/chars/black_dave/sprites/jump_takeoff_002.png
+    frame data/chars/black_dave/sprites/jump_takeoff_003.png
+    frame data/chars/black_dave/sprites/jump_takeoff_004.png
 
-anim	air_punch
-	offset	112 156
-	delay	8
-	frame	data/chars/black_dave/sprites/air_punch_000.png
-	frame	data/chars/black_dave/sprites/air_punch_001.png
-	frame	data/chars/black_dave/sprites/air_punch_002.png
-	frame	data/chars/black_dave/sprites/air_punch_003.png
-	frame	data/chars/black_dave/sprites/air_punch_004.png
+anim forwardjump
+    delay 8
+    offset 112 156
+    bbox 40 18 144 138 18
+    frame data/chars/black_dave/sprites/jump_rise_000.png
+    frame data/chars/black_dave/sprites/jump_rise_001.png
+    frame data/chars/black_dave/sprites/jump_rise_002.png
+    frame data/chars/black_dave/sprites/jump_rise_003.png
+    frame data/chars/black_dave/sprites/jump_rise_004.png
 
-anim	air_kick
-	offset	112 156
-	delay	8
-	frame	data/chars/black_dave/sprites/air_kick_000.png
-	frame	data/chars/black_dave/sprites/air_kick_001.png
-	frame	data/chars/black_dave/sprites/air_kick_002.png
-	frame	data/chars/black_dave/sprites/air_kick_003.png
-	frame	data/chars/black_dave/sprites/air_kick_004.png
+anim jump
+    delay 8
+    offset 112 156
+    bbox 40 18 144 138 18
+    frame data/chars/black_dave/sprites/jump_apex_000.png
+    frame data/chars/black_dave/sprites/jump_apex_001.png
+    frame data/chars/black_dave/sprites/jump_apex_002.png
+    frame data/chars/black_dave/sprites/jump_apex_003.png
+    frame data/chars/black_dave/sprites/jump_apex_004.png
 
-anim	guard
-	offset	112 156
-	delay	8
-	frame	data/chars/black_dave/sprites/guard_000.png
-	frame	data/chars/black_dave/sprites/guard_001.png
-	frame	data/chars/black_dave/sprites/guard_002.png
-	frame	data/chars/black_dave/sprites/guard_003.png
-	frame	data/chars/black_dave/sprites/guard_004.png
+anim runjump
+    delay 8
+    offset 112 156
+    bbox 40 18 144 138 18
+    frame data/chars/black_dave/sprites/jump_fall_000.png
+    frame data/chars/black_dave/sprites/jump_fall_001.png
+    frame data/chars/black_dave/sprites/jump_fall_002.png
+    frame data/chars/black_dave/sprites/jump_fall_003.png
+    frame data/chars/black_dave/sprites/jump_fall_004.png
 
-anim	black_dave_v2_regular_01
-	offset	112 156
-	delay	8
-	frame	data/chars/black_dave/sprites/black_dave_v2_regular_01_000.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_regular_01_001.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_regular_01_002.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_regular_01_003.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_regular_01_004.png
+anim jumpland
+    delay 8
+    offset 112 156
+    bbox 40 18 144 138 18
+    frame data/chars/black_dave/sprites/jump_land_000.png
+    frame data/chars/black_dave/sprites/jump_land_001.png
+    frame data/chars/black_dave/sprites/jump_land_002.png
+    frame data/chars/black_dave/sprites/jump_land_003.png
+    frame data/chars/black_dave/sprites/jump_land_004.png
 
-anim	black_dave_v2_regular_02
-	offset	112 156
-	delay	8
-	frame	data/chars/black_dave/sprites/black_dave_v2_regular_02_000.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_regular_02_001.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_regular_02_002.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_regular_02_003.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_regular_02_004.png
+anim dodge
+    delay 8
+    offset 112 156
+    bbox 40 18 144 138 18
+    frame data/chars/black_dave/sprites/dodge_000.png
+    frame data/chars/black_dave/sprites/dodge_001.png
+    frame data/chars/black_dave/sprites/dodge_002.png
+    frame data/chars/black_dave/sprites/dodge_003.png
+    frame data/chars/black_dave/sprites/dodge_004.png
 
-anim	black_dave_v2_regular_03
-	offset	112 156
-	delay	8
-	frame	data/chars/black_dave/sprites/black_dave_v2_regular_03_000.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_regular_03_001.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_regular_03_002.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_regular_03_003.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_regular_03_004.png
+anim attackup
+    delay 8
+    offset 112 156
+    bbox 40 18 144 138 18
+    frame data/chars/black_dave/sprites/ranged_000.png
+    frame data/chars/black_dave/sprites/ranged_001.png
+    frame data/chars/black_dave/sprites/ranged_002.png
+    frame data/chars/black_dave/sprites/ranged_003.png
+    frame data/chars/black_dave/sprites/ranged_004.png
 
-anim	black_dave_v2_regular_04
-	offset	112 156
-	delay	8
-	frame	data/chars/black_dave/sprites/black_dave_v2_regular_04_000.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_regular_04_001.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_regular_04_002.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_regular_04_003.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_regular_04_004.png
+anim special
+    delay 8
+    offset 112 156
+    bbox 40 18 144 138 18
+    frame data/chars/black_dave/sprites/super_000.png
+    frame data/chars/black_dave/sprites/super_001.png
+    frame data/chars/black_dave/sprites/super_002.png
+    frame data/chars/black_dave/sprites/super_003.png
+    frame data/chars/black_dave/sprites/super_004.png
 
-anim	black_dave_v2_regular_05
-	offset	112 156
-	delay	8
-	frame	data/chars/black_dave/sprites/black_dave_v2_regular_05_000.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_regular_05_001.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_regular_05_002.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_regular_05_003.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_regular_05_004.png
+anim sleep
+    delay 8
+    offset 112 156
+    bbox 40 18 144 138 18
+    frame data/chars/black_dave/sprites/pet_000.png
+    frame data/chars/black_dave/sprites/pet_001.png
+    frame data/chars/black_dave/sprites/pet_002.png
+    frame data/chars/black_dave/sprites/pet_003.png
+    frame data/chars/black_dave/sprites/pet_004.png
 
-anim	black_dave_v2_regular_06
-	offset	112 156
-	delay	8
-	frame	data/chars/black_dave/sprites/black_dave_v2_regular_06_000.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_regular_06_001.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_regular_06_002.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_regular_06_003.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_regular_06_004.png
+anim freespecial1
+    offset 112 156
+    bbox 40 18 144 138 18
+    delay 8
+    attack 0
+    attack 28 108 56 24 16 0 0 0 4 24
+    frame data/chars/black_dave/sprites/black_dave_v2_regular_01_000.png
+    frame data/chars/black_dave/sprites/black_dave_v2_regular_01_001.png
+    frame data/chars/black_dave/sprites/black_dave_v2_regular_01_002.png
+    frame data/chars/black_dave/sprites/black_dave_v2_regular_01_003.png
+    frame data/chars/black_dave/sprites/black_dave_v2_regular_01_004.png
+    attack 0
 
-anim	black_dave_v2_regular_07
-	offset	112 156
-	delay	8
-	frame	data/chars/black_dave/sprites/black_dave_v2_regular_07_000.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_regular_07_001.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_regular_07_002.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_regular_07_003.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_regular_07_004.png
+anim freespecial2
+    offset 112 156
+    bbox 40 18 144 138 18
+    delay 8
+    attack 0
+    attack 28 108 56 24 16 0 0 0 4 24
+    frame data/chars/black_dave/sprites/black_dave_v2_regular_02_000.png
+    frame data/chars/black_dave/sprites/black_dave_v2_regular_02_001.png
+    frame data/chars/black_dave/sprites/black_dave_v2_regular_02_002.png
+    frame data/chars/black_dave/sprites/black_dave_v2_regular_02_003.png
+    frame data/chars/black_dave/sprites/black_dave_v2_regular_02_004.png
+    attack 0
 
-anim	black_dave_v2_kick_01
-	offset	112 156
-	delay	8
-	frame	data/chars/black_dave/sprites/black_dave_v2_kick_01_000.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_kick_01_001.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_kick_01_002.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_kick_01_003.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_kick_01_004.png
+anim freespecial3
+    offset 112 156
+    bbox 40 18 144 138 18
+    delay 8
+    attack 0
+    attack 28 108 56 24 16 0 0 0 4 24
+    frame data/chars/black_dave/sprites/black_dave_v2_regular_03_000.png
+    frame data/chars/black_dave/sprites/black_dave_v2_regular_03_001.png
+    frame data/chars/black_dave/sprites/black_dave_v2_regular_03_002.png
+    frame data/chars/black_dave/sprites/black_dave_v2_regular_03_003.png
+    frame data/chars/black_dave/sprites/black_dave_v2_regular_03_004.png
+    attack 0
 
-anim	black_dave_v2_kick_02
-	offset	112 156
-	delay	8
-	frame	data/chars/black_dave/sprites/black_dave_v2_kick_02_000.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_kick_02_001.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_kick_02_002.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_kick_02_003.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_kick_02_004.png
+anim freespecial4
+    offset 112 156
+    bbox 40 18 144 138 18
+    delay 8
+    attack 0
+    attack 28 108 56 24 16 0 0 0 4 24
+    frame data/chars/black_dave/sprites/black_dave_v2_regular_04_000.png
+    frame data/chars/black_dave/sprites/black_dave_v2_regular_04_001.png
+    frame data/chars/black_dave/sprites/black_dave_v2_regular_04_002.png
+    frame data/chars/black_dave/sprites/black_dave_v2_regular_04_003.png
+    frame data/chars/black_dave/sprites/black_dave_v2_regular_04_004.png
+    attack 0
 
-anim	black_dave_v2_kick_03
-	offset	112 156
-	delay	8
-	frame	data/chars/black_dave/sprites/black_dave_v2_kick_03_000.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_kick_03_001.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_kick_03_002.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_kick_03_003.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_kick_03_004.png
+anim freespecial5
+    offset 112 156
+    bbox 40 18 144 138 18
+    delay 8
+    attack 0
+    attack 28 108 56 24 16 0 0 0 4 24
+    frame data/chars/black_dave/sprites/black_dave_v2_regular_05_000.png
+    frame data/chars/black_dave/sprites/black_dave_v2_regular_05_001.png
+    frame data/chars/black_dave/sprites/black_dave_v2_regular_05_002.png
+    frame data/chars/black_dave/sprites/black_dave_v2_regular_05_003.png
+    frame data/chars/black_dave/sprites/black_dave_v2_regular_05_004.png
+    attack 0
 
-anim	black_dave_v2_kick_04
-	offset	112 156
-	delay	8
-	frame	data/chars/black_dave/sprites/black_dave_v2_kick_04_000.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_kick_04_001.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_kick_04_002.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_kick_04_003.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_kick_04_004.png
+anim freespecial6
+    offset 112 156
+    bbox 40 18 144 138 18
+    delay 8
+    attack 0
+    attack 28 108 56 24 16 0 0 0 4 24
+    frame data/chars/black_dave/sprites/black_dave_v2_regular_06_000.png
+    frame data/chars/black_dave/sprites/black_dave_v2_regular_06_001.png
+    frame data/chars/black_dave/sprites/black_dave_v2_regular_06_002.png
+    frame data/chars/black_dave/sprites/black_dave_v2_regular_06_003.png
+    frame data/chars/black_dave/sprites/black_dave_v2_regular_06_004.png
+    attack 0
 
-anim	black_dave_v2_kick_05
-	offset	112 156
-	delay	8
-	frame	data/chars/black_dave/sprites/black_dave_v2_kick_05_000.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_kick_05_001.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_kick_05_002.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_kick_05_003.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_kick_05_004.png
+anim freespecial7
+    offset 112 156
+    bbox 40 18 144 138 18
+    delay 8
+    attack 0
+    attack 28 108 56 24 16 0 0 0 4 24
+    frame data/chars/black_dave/sprites/black_dave_v2_regular_07_000.png
+    frame data/chars/black_dave/sprites/black_dave_v2_regular_07_001.png
+    frame data/chars/black_dave/sprites/black_dave_v2_regular_07_002.png
+    frame data/chars/black_dave/sprites/black_dave_v2_regular_07_003.png
+    frame data/chars/black_dave/sprites/black_dave_v2_regular_07_004.png
+    attack 0
 
-anim	black_dave_v2_kick_06
-	offset	112 156
-	delay	8
-	frame	data/chars/black_dave/sprites/black_dave_v2_kick_06_000.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_kick_06_001.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_kick_06_002.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_kick_06_003.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_kick_06_004.png
+anim freespecial8
+    offset 112 156
+    bbox 40 18 144 138 18
+    delay 8
+    attack 0
+    attack 28 108 56 24 16 0 0 0 4 24
+    frame data/chars/black_dave/sprites/black_dave_v2_kick_01_000.png
+    frame data/chars/black_dave/sprites/black_dave_v2_kick_01_001.png
+    frame data/chars/black_dave/sprites/black_dave_v2_kick_01_002.png
+    frame data/chars/black_dave/sprites/black_dave_v2_kick_01_003.png
+    frame data/chars/black_dave/sprites/black_dave_v2_kick_01_004.png
+    attack 0
 
-anim	black_dave_v2_kick_07
-	offset	112 156
-	delay	8
-	frame	data/chars/black_dave/sprites/black_dave_v2_kick_07_000.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_kick_07_001.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_kick_07_002.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_kick_07_003.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_kick_07_004.png
+anim freespecial9
+    offset 112 156
+    bbox 40 18 144 138 18
+    delay 8
+    attack 0
+    attack 28 108 56 24 16 0 0 0 4 24
+    frame data/chars/black_dave/sprites/black_dave_v2_kick_02_000.png
+    frame data/chars/black_dave/sprites/black_dave_v2_kick_02_001.png
+    frame data/chars/black_dave/sprites/black_dave_v2_kick_02_002.png
+    frame data/chars/black_dave/sprites/black_dave_v2_kick_02_003.png
+    frame data/chars/black_dave/sprites/black_dave_v2_kick_02_004.png
+    attack 0
 
-anim	black_dave_v2_power_01
-	offset	112 156
-	delay	8
-	frame	data/chars/black_dave/sprites/black_dave_v2_power_01_000.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_power_01_001.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_power_01_002.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_power_01_003.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_power_01_004.png
+anim freespecial10
+    offset 112 156
+    bbox 40 18 144 138 18
+    delay 8
+    attack 0
+    attack 28 108 56 24 16 0 0 0 4 24
+    frame data/chars/black_dave/sprites/black_dave_v2_kick_03_000.png
+    frame data/chars/black_dave/sprites/black_dave_v2_kick_03_001.png
+    frame data/chars/black_dave/sprites/black_dave_v2_kick_03_002.png
+    frame data/chars/black_dave/sprites/black_dave_v2_kick_03_003.png
+    frame data/chars/black_dave/sprites/black_dave_v2_kick_03_004.png
+    attack 0
 
-anim	black_dave_v2_power_02
-	offset	112 156
-	delay	8
-	frame	data/chars/black_dave/sprites/black_dave_v2_power_02_000.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_power_02_001.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_power_02_002.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_power_02_003.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_power_02_004.png
+anim freespecial11
+    offset 112 156
+    bbox 40 18 144 138 18
+    delay 8
+    attack 0
+    attack 28 108 56 24 16 0 0 0 4 24
+    frame data/chars/black_dave/sprites/black_dave_v2_kick_04_000.png
+    frame data/chars/black_dave/sprites/black_dave_v2_kick_04_001.png
+    frame data/chars/black_dave/sprites/black_dave_v2_kick_04_002.png
+    frame data/chars/black_dave/sprites/black_dave_v2_kick_04_003.png
+    frame data/chars/black_dave/sprites/black_dave_v2_kick_04_004.png
+    attack 0
 
-anim	black_dave_v2_power_03
-	offset	112 156
-	delay	8
-	frame	data/chars/black_dave/sprites/black_dave_v2_power_03_000.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_power_03_001.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_power_03_002.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_power_03_003.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_power_03_004.png
+anim freespecial12
+    offset 112 156
+    bbox 40 18 144 138 18
+    delay 8
+    attack 0
+    attack 28 108 56 24 16 0 0 0 4 24
+    frame data/chars/black_dave/sprites/black_dave_v2_kick_05_000.png
+    frame data/chars/black_dave/sprites/black_dave_v2_kick_05_001.png
+    frame data/chars/black_dave/sprites/black_dave_v2_kick_05_002.png
+    frame data/chars/black_dave/sprites/black_dave_v2_kick_05_003.png
+    frame data/chars/black_dave/sprites/black_dave_v2_kick_05_004.png
+    attack 0
 
-anim	black_dave_v2_power_04
-	offset	112 156
-	delay	8
-	frame	data/chars/black_dave/sprites/black_dave_v2_power_04_000.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_power_04_001.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_power_04_002.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_power_04_003.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_power_04_004.png
+anim freespecial13
+    offset 112 156
+    bbox 40 18 144 138 18
+    delay 8
+    attack 0
+    attack 28 108 56 24 16 0 0 0 4 24
+    frame data/chars/black_dave/sprites/black_dave_v2_kick_06_000.png
+    frame data/chars/black_dave/sprites/black_dave_v2_kick_06_001.png
+    frame data/chars/black_dave/sprites/black_dave_v2_kick_06_002.png
+    frame data/chars/black_dave/sprites/black_dave_v2_kick_06_003.png
+    frame data/chars/black_dave/sprites/black_dave_v2_kick_06_004.png
+    attack 0
 
-anim	black_dave_v2_power_05
-	offset	112 156
-	delay	8
-	frame	data/chars/black_dave/sprites/black_dave_v2_power_05_000.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_power_05_001.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_power_05_002.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_power_05_003.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_power_05_004.png
+anim freespecial14
+    offset 112 156
+    bbox 40 18 144 138 18
+    delay 8
+    attack 0
+    attack 28 108 56 24 16 0 0 0 4 24
+    frame data/chars/black_dave/sprites/black_dave_v2_kick_07_000.png
+    frame data/chars/black_dave/sprites/black_dave_v2_kick_07_001.png
+    frame data/chars/black_dave/sprites/black_dave_v2_kick_07_002.png
+    frame data/chars/black_dave/sprites/black_dave_v2_kick_07_003.png
+    frame data/chars/black_dave/sprites/black_dave_v2_kick_07_004.png
+    attack 0
 
-anim	black_dave_v2_power_06
-	offset	112 156
-	delay	8
-	frame	data/chars/black_dave/sprites/black_dave_v2_power_06_000.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_power_06_001.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_power_06_002.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_power_06_003.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_power_06_004.png
+anim freespecial15
+    offset 112 156
+    bbox 40 18 144 138 18
+    delay 8
+    attack 0
+    attack 28 108 56 24 16 0 0 0 4 24
+    frame data/chars/black_dave/sprites/black_dave_v2_power_01_000.png
+    frame data/chars/black_dave/sprites/black_dave_v2_power_01_001.png
+    frame data/chars/black_dave/sprites/black_dave_v2_power_01_002.png
+    frame data/chars/black_dave/sprites/black_dave_v2_power_01_003.png
+    frame data/chars/black_dave/sprites/black_dave_v2_power_01_004.png
+    attack 0
 
-anim	black_dave_v2_power_07
-	offset	112 156
-	delay	8
-	frame	data/chars/black_dave/sprites/black_dave_v2_power_07_000.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_power_07_001.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_power_07_002.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_power_07_003.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_power_07_004.png
+anim freespecial16
+    offset 112 156
+    bbox 40 18 144 138 18
+    delay 8
+    attack 0
+    attack 28 108 56 24 16 0 0 0 4 24
+    frame data/chars/black_dave/sprites/black_dave_v2_power_02_000.png
+    frame data/chars/black_dave/sprites/black_dave_v2_power_02_001.png
+    frame data/chars/black_dave/sprites/black_dave_v2_power_02_002.png
+    frame data/chars/black_dave/sprites/black_dave_v2_power_02_003.png
+    frame data/chars/black_dave/sprites/black_dave_v2_power_02_004.png
+    attack 0
 
-anim	black_dave_full_identity_transition_01
-	offset	112 156
-	delay	8
-	frame	data/chars/black_dave/sprites/black_dave_full_identity_transition_01_000.png
-	frame	data/chars/black_dave/sprites/black_dave_full_identity_transition_01_001.png
-	frame	data/chars/black_dave/sprites/black_dave_full_identity_transition_01_002.png
-	frame	data/chars/black_dave/sprites/black_dave_full_identity_transition_01_003.png
-	frame	data/chars/black_dave/sprites/black_dave_full_identity_transition_01_004.png
+anim freespecial17
+    offset 112 156
+    bbox 40 18 144 138 18
+    delay 8
+    attack 0
+    attack 28 108 56 24 16 0 0 0 4 24
+    frame data/chars/black_dave/sprites/black_dave_v2_power_03_000.png
+    frame data/chars/black_dave/sprites/black_dave_v2_power_03_001.png
+    frame data/chars/black_dave/sprites/black_dave_v2_power_03_002.png
+    frame data/chars/black_dave/sprites/black_dave_v2_power_03_003.png
+    frame data/chars/black_dave/sprites/black_dave_v2_power_03_004.png
+    attack 0
 
-anim	black_dave_full_identity_transition_02
-	offset	112 156
-	delay	8
-	frame	data/chars/black_dave/sprites/black_dave_full_identity_transition_02_000.png
-	frame	data/chars/black_dave/sprites/black_dave_full_identity_transition_02_001.png
-	frame	data/chars/black_dave/sprites/black_dave_full_identity_transition_02_002.png
-	frame	data/chars/black_dave/sprites/black_dave_full_identity_transition_02_003.png
-	frame	data/chars/black_dave/sprites/black_dave_full_identity_transition_02_004.png
+anim freespecial18
+    offset 112 156
+    bbox 40 18 144 138 18
+    delay 8
+    attack 0
+    attack 28 108 56 24 16 0 0 0 4 24
+    frame data/chars/black_dave/sprites/black_dave_v2_power_04_000.png
+    frame data/chars/black_dave/sprites/black_dave_v2_power_04_001.png
+    frame data/chars/black_dave/sprites/black_dave_v2_power_04_002.png
+    frame data/chars/black_dave/sprites/black_dave_v2_power_04_003.png
+    frame data/chars/black_dave/sprites/black_dave_v2_power_04_004.png
+    attack 0
 
-anim	black_dave_full_identity_transition_03
-	offset	112 156
-	delay	8
-	frame	data/chars/black_dave/sprites/black_dave_full_identity_transition_03_000.png
-	frame	data/chars/black_dave/sprites/black_dave_full_identity_transition_03_001.png
-	frame	data/chars/black_dave/sprites/black_dave_full_identity_transition_03_002.png
-	frame	data/chars/black_dave/sprites/black_dave_full_identity_transition_03_003.png
-	frame	data/chars/black_dave/sprites/black_dave_full_identity_transition_03_004.png
+anim freespecial19
+    offset 112 156
+    bbox 40 18 144 138 18
+    delay 8
+    attack 0
+    attack 28 108 56 24 16 0 0 0 4 24
+    frame data/chars/black_dave/sprites/black_dave_v2_power_05_000.png
+    frame data/chars/black_dave/sprites/black_dave_v2_power_05_001.png
+    frame data/chars/black_dave/sprites/black_dave_v2_power_05_002.png
+    frame data/chars/black_dave/sprites/black_dave_v2_power_05_003.png
+    frame data/chars/black_dave/sprites/black_dave_v2_power_05_004.png
+    attack 0
 
-anim	attack1
-	offset	112 156
-	delay	8
-	attack	28 108 38 16 12 0 0
-	frame	data/chars/black_dave/sprites/black_dave_v2_regular_01_000.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_regular_01_001.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_regular_01_002.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_regular_01_003.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_regular_01_004.png
+anim freespecial20
+    offset 112 156
+    bbox 40 18 144 138 18
+    delay 8
+    attack 0
+    attack 28 108 56 24 16 0 0 0 4 24
+    frame data/chars/black_dave/sprites/black_dave_v2_power_06_000.png
+    frame data/chars/black_dave/sprites/black_dave_v2_power_06_001.png
+    frame data/chars/black_dave/sprites/black_dave_v2_power_06_002.png
+    frame data/chars/black_dave/sprites/black_dave_v2_power_06_003.png
+    frame data/chars/black_dave/sprites/black_dave_v2_power_06_004.png
+    attack 0
 
-anim	attack2
-	offset	112 156
-	delay	8
-	attack	30 108 42 16 14 0 0
-	frame	data/chars/black_dave/sprites/black_dave_v2_regular_02_000.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_regular_02_001.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_regular_02_002.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_regular_02_003.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_regular_02_004.png
-
-anim	attack3
-	offset	112 156
-	delay	8
-	attack	32 108 48 22 16 0 0
-	frame	data/chars/black_dave/sprites/black_dave_v2_regular_03_000.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_regular_03_001.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_regular_03_002.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_regular_03_003.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_regular_03_004.png
-
-anim	attack4
-	offset	112 156
-	delay	8
-	attack	34 108 52 18 14 0 0
-	frame	data/chars/black_dave/sprites/black_dave_v2_kick_01_000.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_kick_01_001.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_kick_01_002.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_kick_01_003.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_kick_01_004.png
-
-anim	attack5
-	offset	112 156
-	delay	8
-	attack	36 108 56 18 14 0 0
-	frame	data/chars/black_dave/sprites/black_dave_v2_kick_02_000.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_kick_02_001.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_kick_02_002.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_kick_02_003.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_kick_02_004.png
-
-anim	special
-	offset	112 156
-	delay	8
-	attack	36 108 62 26 20 0 0
-	frame	data/chars/black_dave/sprites/black_dave_v2_power_01_000.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_power_01_001.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_power_01_002.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_power_01_003.png
-	frame	data/chars/black_dave/sprites/black_dave_v2_power_01_004.png
+anim freespecial21
+    offset 112 156
+    bbox 40 18 144 138 18
+    delay 8
+    attack 0
+    attack 28 108 56 24 16 0 0 0 4 24
+    frame data/chars/black_dave/sprites/black_dave_v2_power_07_000.png
+    frame data/chars/black_dave/sprites/black_dave_v2_power_07_001.png
+    frame data/chars/black_dave/sprites/black_dave_v2_power_07_002.png
+    frame data/chars/black_dave/sprites/black_dave_v2_power_07_003.png
+    frame data/chars/black_dave/sprites/black_dave_v2_power_07_004.png
+    attack 0
 
