@@ -1249,18 +1249,18 @@ void main()
         last_health = health;
     }
 
-    left_held = playerkeys(0, 0, "moveleft");
-    right_held = playerkeys(0, 0, "moveright");
-    up_held = playerkeys(0, 0, "moveup");
-    down_held = playerkeys(0, 0, "movedown");
-    attack_edge = playerkeys(0, 1, "attack");
+    left_held = playerkeys(0, 0, "moveleft") != 0;
+    right_held = playerkeys(0, 0, "moveright") != 0;
+    up_held = playerkeys(0, 0, "moveup") != 0;
+    down_held = playerkeys(0, 0, "movedown") != 0;
+    attack_edge = playerkeys(0, 1, "attack") != 0;
     jump_attack_input = attack_edge;
-    jump_edge = playerkeys(0, 1, "jump");
-    defend_edge = playerkeys(0, 0, "attack2");
-    defend_pressed = playerkeys(0, 1, "attack2");
-    ranged_edge = playerkeys(0, 1, "attack3");
-    pet_edge = playerkeys(0, 1, "attack4");
-    special_edge = playerkeys(0, 1, "special");
+    jump_edge = playerkeys(0, 1, "jump") != 0;
+    defend_edge = playerkeys(0, 0, "attack2") != 0;
+    defend_pressed = playerkeys(0, 1, "attack2") != 0;
+    ranged_edge = playerkeys(0, 1, "attack3") != 0;
+    pet_edge = playerkeys(0, 1, "attack4") != 0;
+    special_edge = playerkeys(0, 1, "special") != 0;
 
     if(left_held == 1)
     {
