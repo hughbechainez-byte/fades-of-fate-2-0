@@ -4,5 +4,5 @@ Generated from the approved rooted whole-cel library. Keep `black_dave_full_libr
 
 Authored frames: 220
 Animations: 44
-Canvas/root: [224, 160] / [112, 156]
+Canvas/root: [192, 160] / [96, 156]
 Grade: cool_underpass_dusk_v1

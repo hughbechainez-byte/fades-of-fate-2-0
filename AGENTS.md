@@ -48,6 +48,9 @@ No other characters, levels, bosses, or systems until the user asks.
 
 ## Workflow
 
+- Read **`docs/OPENBOR_COMPATIBILITY_STANDARD.md` before creating or changing any OpenBOR sprite, background, setpiece, model, level, script, or package. No such work is complete until every applicable gate in that standard passes.**
+- All frames belonging to one character model must use one identical 256-entry indexed palette, with palette index 0 reserved for transparency. Never quantize animation frames independently.
+
 - Prefer small commits on this repo’s `main` (or short-lived branches merged to it).  
 - Do not force-push.  
 - Do not report FoF1 Desktop hash parity as 2.0 completion.  

@@ -8,12 +8,16 @@
     "atlas": "content/characters/black_dave/sprites/black_dave_full_library_v1.png",
     "atlas_sha256": "bc35fc68037de6d9b9c199ca35f4c131c9d426ac5fa5ccb4b4a0a793d45208d6"
   },
-  "canvas": [
+  "source_canvas": [
     224,
     160
   ],
+  "canvas": [
+    192,
+    160
+  ],
   "offset": [
-    112,
+    96,
     156
   ],
   "pose_count": 220,
@@ -471,5 +475,42 @@
     "edge_rule": "hard_alpha_preserved_with_navy_shadow_contours",
     "grounding": "runtime_contact_shadow_and_shared_logical_ground_plane"
   },
-  "combat_routes": "data/chars/black_dave/black_dave_combat_routes.json"
+  "combat_routes": "data/chars/black_dave/black_dave_combat_routes.json",
+  "native_animation_bindings": {
+    "freespecial1": [
+      "black_dave_v2_regular_01",
+      "black_dave_v2_kick_01",
+      "black_dave_v2_power_01"
+    ],
+    "freespecial2": [
+      "black_dave_v2_regular_02",
+      "black_dave_v2_kick_02",
+      "black_dave_v2_power_02"
+    ],
+    "freespecial3": [
+      "black_dave_v2_regular_03",
+      "black_dave_v2_kick_03",
+      "black_dave_v2_power_03"
+    ],
+    "freespecial4": [
+      "black_dave_v2_regular_04",
+      "black_dave_v2_kick_04",
+      "black_dave_v2_power_04"
+    ],
+    "freespecial5": [
+      "black_dave_v2_regular_05",
+      "black_dave_v2_kick_05",
+      "black_dave_v2_power_05"
+    ],
+    "freespecial6": [
+      "black_dave_v2_regular_06",
+      "black_dave_v2_kick_06",
+      "black_dave_v2_power_06"
+    ],
+    "freespecial7": [
+      "black_dave_v2_regular_07",
+      "black_dave_v2_kick_07",
+      "black_dave_v2_power_07"
+    ]
+  }
 }

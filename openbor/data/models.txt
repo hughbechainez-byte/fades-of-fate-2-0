@@ -1,5 +1,5 @@
 # Fades of Fate 2.0 model registry
 # Source: OpenBOR Models registry convention.
 maxattacks 4
-maxfreespecials 21
+maxfreespecials 7
 load BlackDave data/chars/black_dave/black_dave.txt

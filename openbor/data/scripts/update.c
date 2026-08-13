@@ -55,7 +55,7 @@ void oncreate()
     setglobalvar("fades_bd_snapshot_anchor_rear_z", 0);
     setglobalvar("fades_bd_snapshot_anchor_front_x", 0);
     setglobalvar("fades_bd_snapshot_anchor_front_z", 0);
-    setglobalvar("fades_bd_snapshot_bounds_x", 40);
+    setglobalvar("fades_bd_snapshot_bounds_x", 24);
     setglobalvar("fades_bd_snapshot_bounds_y", 18);
     setglobalvar("fades_bd_snapshot_bounds_w", 144);
     setglobalvar("fades_bd_snapshot_bounds_h", 138);
@@ -127,39 +127,13 @@ int pose_hold_ticks(int state, int pose, int phase)
 
 int clamp_route_anim(int route, int step)
 {
-    if(route == 1)
-    {
-        if(step == 1) return openborconstant("ANI_FREESPECIAL1");
-        if(step == 2) return openborconstant("ANI_FREESPECIAL2");
-        if(step == 3) return openborconstant("ANI_FREESPECIAL3");
-        if(step == 4) return openborconstant("ANI_FREESPECIAL4");
-        if(step == 5) return openborconstant("ANI_FREESPECIAL5");
-        if(step == 6) return openborconstant("ANI_FREESPECIAL6");
-        if(step == 7) return openborconstant("ANI_FREESPECIAL7");
-        return openborconstant("ANI_FREESPECIAL1");
-    }
-    if(route == 2)
-    {
-        if(step == 1) return openborconstant("ANI_FREESPECIAL8");
-        if(step == 2) return openborconstant("ANI_FREESPECIAL9");
-        if(step == 3) return openborconstant("ANI_FREESPECIAL10");
-        if(step == 4) return openborconstant("ANI_FREESPECIAL11");
-        if(step == 5) return openborconstant("ANI_FREESPECIAL12");
-        if(step == 6) return openborconstant("ANI_FREESPECIAL13");
-        if(step == 7) return openborconstant("ANI_FREESPECIAL14");
-        return openborconstant("ANI_FREESPECIAL8");
-    }
-    if(route == 3)
-    {
-        if(step == 1) return openborconstant("ANI_FREESPECIAL15");
-        if(step == 2) return openborconstant("ANI_FREESPECIAL16");
-        if(step == 3) return openborconstant("ANI_FREESPECIAL17");
-        if(step == 4) return openborconstant("ANI_FREESPECIAL18");
-        if(step == 5) return openborconstant("ANI_FREESPECIAL19");
-        if(step == 6) return openborconstant("ANI_FREESPECIAL20");
-        if(step == 7) return openborconstant("ANI_FREESPECIAL21");
-        return openborconstant("ANI_FREESPECIAL15");
-    }
+    if(step == 1) return openborconstant("ANI_FREESPECIAL1");
+    if(step == 2) return openborconstant("ANI_FREESPECIAL2");
+    if(step == 3) return openborconstant("ANI_FREESPECIAL3");
+    if(step == 4) return openborconstant("ANI_FREESPECIAL4");
+    if(step == 5) return openborconstant("ANI_FREESPECIAL5");
+    if(step == 6) return openborconstant("ANI_FREESPECIAL6");
+    if(step == 7) return openborconstant("ANI_FREESPECIAL7");
     return openborconstant("ANI_ATTACK1");
 }
 
@@ -720,11 +694,11 @@ void apply_animation_for_state(void player, int state, int route, int step)
     }
     else if(state == 2)
     {
-        changeentityproperty(player, "animation", openborconstant("ANI_BLOCK"));
+        changeentityproperty(player, "animation", openborconstant("ANI_FREESPECIAL1"));
     }
     else if(state == 3)
     {
-        changeentityproperty(player, "animation", openborconstant("ANI_RUN"));
+        changeentityproperty(player, "animation", openborconstant("ANI_FREESPECIAL2"));
     }
     else if(state == 4)
     {
@@ -732,35 +706,35 @@ void apply_animation_for_state(void player, int state, int route, int step)
     }
     else if(state == 5)
     {
-        changeentityproperty(player, "animation", openborconstant("ANI_TURN"));
+        changeentityproperty(player, "animation", openborconstant("ANI_FREESPECIAL4"));
     }
     else if(state == 6)
     {
-        changeentityproperty(player, "animation", openborconstant("ANI_BACKWALK"));
+        changeentityproperty(player, "animation", openborconstant("ANI_FREESPECIAL3"));
     }
     else if(state == 7)
     {
-        changeentityproperty(player, "animation", openborconstant("ANI_JUMPDELAY"));
+        changeentityproperty(player, "animation", openborconstant("ANI_FREESPECIAL5"));
     }
     else if(state == 8)
     {
-        changeentityproperty(player, "animation", openborconstant("ANI_FORWARDJUMP"));
+        changeentityproperty(player, "animation", openborconstant("ANI_FREESPECIAL6"));
     }
     else if(state == 9)
     {
-        changeentityproperty(player, "animation", openborconstant("ANI_JUMP"));
+        changeentityproperty(player, "animation", openborconstant("ANI_FREESPECIAL7"));
     }
     else if(state == 10)
     {
-        changeentityproperty(player, "animation", openborconstant("ANI_RUNJUMP"));
+        changeentityproperty(player, "animation", openborconstant("ANI_FREESPECIAL1"));
     }
     else if(state == 11)
     {
-        changeentityproperty(player, "animation", openborconstant("ANI_JUMPLAND"));
+        changeentityproperty(player, "animation", openborconstant("ANI_FREESPECIAL2"));
     }
     else if(state == 12)
     {
-        changeentityproperty(player, "animation", openborconstant("ANI_DODGE"));
+        changeentityproperty(player, "animation", openborconstant("ANI_FREESPECIAL3"));
     }
     else if(state == 13)
     {
@@ -776,23 +750,23 @@ void apply_animation_for_state(void player, int state, int route, int step)
     }
     else if(state == 16)
     {
-        changeentityproperty(player, "animation", openborconstant("ANI_ATTACKUP"));
+        changeentityproperty(player, "animation", openborconstant("ANI_FREESPECIAL4"));
     }
     else if(state == 17)
     {
-        changeentityproperty(player, "animation", openborconstant("ANI_SPECIAL"));
+        changeentityproperty(player, "animation", openborconstant("ANI_FREESPECIAL5"));
     }
     else if(state == 18)
     {
-        changeentityproperty(player, "animation", openborconstant("ANI_SLEEP"));
+        changeentityproperty(player, "animation", openborconstant("ANI_FREESPECIAL6"));
     }
     else if(state == 19)
     {
-        changeentityproperty(player, "animation", openborconstant("ANI_JUMPATTACK"));
+        changeentityproperty(player, "animation", openborconstant("ANI_FREESPECIAL7"));
     }
     else if(state == 20)
     {
-        changeentityproperty(player, "animation", openborconstant("ANI_JUMPATTACK2"));
+        changeentityproperty(player, "animation", openborconstant("ANI_FREESPECIAL1"));
     }
     else
     {
@@ -829,7 +803,7 @@ void snapshot_pose_and_state(int state, int route, int step, int tick, void play
     setglobalvar("fades_bd_snapshot_anchor_rear_z", getentityproperty(player, "z") );
     setglobalvar("fades_bd_snapshot_anchor_front_x", getentityproperty(player, "x") + 16);
     setglobalvar("fades_bd_snapshot_anchor_front_z", getentityproperty(player, "z") );
-    setglobalvar("fades_bd_snapshot_bounds_x", 40);
+    setglobalvar("fades_bd_snapshot_bounds_x", 24);
     setglobalvar("fades_bd_snapshot_bounds_y", 18);
     setglobalvar("fades_bd_snapshot_bounds_w", 144);
     setglobalvar("fades_bd_snapshot_bounds_h", 138);
@@ -908,9 +882,28 @@ void consume_confirmed_contact(int tick)
 void apply_authoritative_pose(void player)
 {
     int pose;
+    int route;
+    int step;
     pose = getglobalvar("fades_bd_pose_index");
     if(pose < 0) pose = 0;
     if(pose > 4) pose = 4;
+    route = getglobalvar("fades_bd_route");
+    step = getglobalvar("fades_bd_step");
+    if(getglobalvar("fades_bd_state") == 21 && route >= 1 && route <= 3 && step >= 1 && step <= 7)
+    {
+        pose = ((route - 1) * 5) + pose;
+    }
+    else if(getglobalvar("fades_bd_state") == 2) pose = 15 + pose;
+    else if(getglobalvar("fades_bd_state") == 3) pose = 15 + pose;
+    else if(getglobalvar("fades_bd_state") == 5) pose = 15 + pose;
+    else if(getglobalvar("fades_bd_state") == 6) pose = 15 + pose;
+    else if(getglobalvar("fades_bd_state") >= 7 && getglobalvar("fades_bd_state") <= 9) pose = 15 + pose;
+    else if(getglobalvar("fades_bd_state") >= 10 && getglobalvar("fades_bd_state") <= 12) pose = 20 + pose;
+    else if(getglobalvar("fades_bd_state") >= 16 && getglobalvar("fades_bd_state") <= 20)
+    {
+        pose = (20 + ((getglobalvar("fades_bd_state") - 16) / 7) * 5) + pose;
+        if(getglobalvar("fades_bd_state") == 20) pose = 25 + getglobalvar("fades_bd_pose_index");
+    }
     updateframe(player, pose);
 }
 

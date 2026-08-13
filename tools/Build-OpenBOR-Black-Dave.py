@@ -27,14 +27,25 @@ def safe_id(value: str) -> str:
     return "".join(char if char.isalnum() else "_" for char in value)
 
 
-def indexed_sprite(image: Image.Image) -> Image.Image:
-    """Return an OpenBOR-compatible indexed PNG with palette index 0 transparent."""
+def build_master_palette(image: Image.Image) -> Image.Image:
+    """Create the one palette shared by every frame in the model."""
+    compatibility_palette = ROOT / "openbor/runtime/data/sprites/black_dave/idle/00.png"
+    if compatibility_palette.is_file():
+        return Image.open(compatibility_palette).convert("P")
     rgba = image.convert("RGBA")
-    opaque = rgba.convert("RGB").quantize(colors=255, method=Image.Quantize.FASTOCTREE, dither=Image.Dither.NONE)
+    opaque = Image.new("RGB", rgba.size, (0, 0, 0))
+    opaque.paste(rgba.convert("RGB"), mask=rgba.getchannel("A"))
+    return opaque.quantize(colors=255, method=Image.Quantize.FASTOCTREE, dither=Image.Dither.NONE)
+
+
+def indexed_sprite(image: Image.Image, master_palette: Image.Image) -> Image.Image:
+    """Return an indexed frame using the model palette and transparent index 0."""
+    rgba = image.convert("RGBA")
+    opaque = rgba.convert("RGB").quantize(palette=master_palette, dither=Image.Dither.NONE)
     source_indices = opaque.load()
     alpha = rgba.getchannel("A")
     output = Image.new("P", rgba.size, 0)
-    output.putpalette([0, 0, 0] + list(opaque.getpalette()[:765]))
+    output.putpalette([0, 0, 0] + list(master_palette.getpalette()[:765]))
     target_indices = output.load()
     alpha_values = alpha.load()
     for y in range(rgba.height):
@@ -46,6 +57,7 @@ def indexed_sprite(image: Image.Image) -> Image.Image:
 
 def build_frames(metadata: dict) -> dict[str, list[Path]]:
     atlas = Image.open(ATLAS_PATH).convert("RGBA")
+    master_palette = build_master_palette(atlas)
     cell_width, cell_height = map(int, metadata["cell_size"])
     columns = int(metadata["columns"])
     FRAME_ROOT.mkdir(parents=True, exist_ok=True)
@@ -58,8 +70,9 @@ def build_frames(metadata: dict) -> dict[str, list[Path]]:
         for index in range(columns):
             frame_id = f"{safe_id(clip_id)}_{index:03d}.png"
             path = FRAME_ROOT / frame_id
-            cell = atlas.crop((index * cell_width, row * cell_height, (index + 1) * cell_width, (row + 1) * cell_height))
-            indexed_sprite(cell).save(path, optimize=False)
+            source_cell = atlas.crop((index * cell_width, row * cell_height, (index + 1) * cell_width, (row + 1) * cell_height))
+            cell = source_cell.crop((16, 0, cell_width - 16, cell_height))
+            indexed_sprite(cell, master_palette).save(path, optimize=False)
             frames.append(path)
         frame_map[clip_id] = frames
     return frame_map
@@ -73,8 +86,6 @@ def write_model(metadata: dict, frame_map: dict[str, list[Path]]) -> None:
         "pain": "hurt",
         "fall": "down",
         "rise": "recovery",
-        "jumpattack": "air_punch",
-        "jumpattack2": "air_kick",
         "attack1": "black_dave_v2_regular_01",
         "attack2": "black_dave_v2_regular_02",
         "attack3": "black_dave_v2_regular_03",
@@ -94,6 +105,8 @@ def write_model(metadata: dict, frame_map: dict[str, list[Path]]) -> None:
         ("attackup", "ranged"),
         ("special", "super"),
         ("sleep", "pet"),
+        ("jumpattack", "air_punch"),
+        ("jumpattack2", "air_kick"),
     ]
     lines = [
         "name BlackDave",
@@ -101,9 +114,16 @@ def write_model(metadata: dict, frame_map: dict[str, list[Path]]) -> None:
         "health 100",
         "mp 100",
         "speed 4",
+        "jumpspeed 2.0",
         "jumpheight 5",
+        "grabdistance 34",
         "subject_to_gravity 1",
         "shadow 1",
+        "gfxshadow 1",
+        "atchain 1 2 3 4",
+        "com a2 freespecial1",
+        "com a3 freespecial2",
+        "com a4 freespecial3",
         "ondoattackscript data/scripts/black_dave_contact.c",
         "",
     ]
@@ -126,7 +146,7 @@ def write_model(metadata: dict, frame_map: dict[str, list[Path]]) -> None:
         lines += [f"anim {animation_name}"]
         if animation_name in {"idle", "walk"}:
             lines += ["    loop 1"]
-        lines += ["    delay 8", "    offset 112 156", "    bbox 40 18 144 138 18"]
+        lines += ["    delay 8", "    offset 96 156", "    bbox 24 18 144 138 18"]
         if animation_name in attack_specs:
             damage, x, width, height = attack_specs[animation_name]
             lines += ["    attack 0", f"    attack {x} 108 {width} {height} {damage} 0 0 0 4 24"]
@@ -135,23 +155,16 @@ def write_model(metadata: dict, frame_map: dict[str, list[Path]]) -> None:
         if animation_name in attack_specs:
             lines += ["    attack 0"]
         lines += [""]
-    for animation_name, clip_id in state_aliases:
-        if animation_name in aliases:
-            continue
-        if clip_id not in frame_map:
-            continue
-        lines += [f"anim {animation_name}"]
-        if animation_name in {"idle", "walk"}:
-            lines += ["    loop 1"]
-        lines += ["    delay 8", "    offset 112 156", "    bbox 40 18 144 138 18"]
-        for frame in frame_map[clip_id]:
-            lines.append(f"    frame data/chars/black_dave/sprites/{frame.name}")
-        lines += [""]
-    for slot, clip_id in enumerate(route_clips, start=1):
-        animation_name = f"freespecial{slot}"
-        lines += [f"anim {animation_name}", "    offset 112 156", "    bbox 40 18 144 138 18", "    delay 8", "    attack 0", "    attack 28 108 56 24 16 0 0 0 4 24"]
-        for frame in frame_map[clip_id]:
-            lines.append(f"    frame data/chars/black_dave/sprites/{frame.name}")
+    state_bank_clips = [clip_id for _, clip_id in state_aliases]
+    route_banks = [[route_clips[step], route_clips[7 + step], route_clips[14 + step]] for step in range(7)]
+    for index, clip_id in enumerate(state_bank_clips):
+        route_banks[index % 7].append(clip_id)
+    for bank_index, bank_clips in enumerate(route_banks, start=1):
+        animation_name = f"freespecial{bank_index}"
+        lines += [f"anim {animation_name}", "    offset 96 156", "    bbox 24 18 144 138 18", "    delay 8", "    attack 0", "    attack 28 108 56 24 16 0 0 0 4 24"]
+        for clip_id in bank_clips:
+            for frame in frame_map[clip_id]:
+                lines.append(f"    frame data/chars/black_dave/sprites/{frame.name}")
         lines += ["    attack 0", ""]
     # The full authored library remains manifest-backed; only native action
     # aliases are emitted here because OpenBOR reserves animation identifiers.
@@ -169,18 +182,21 @@ def write_manifests(metadata: dict, frame_map: dict[str, list[Path]]) -> None:
             "atlas": "content/characters/black_dave/sprites/black_dave_full_library_v1.png",
             "atlas_sha256": sha256(ATLAS_PATH),
         },
-        "canvas": metadata["cell_size"],
-        "offset": metadata["root"],
+        "source_canvas": metadata["cell_size"],
+        "canvas": [192, 160],
+        "offset": [96, 156],
         "pose_count": sum(len(frames) for frames in frame_map.values()),
         "clip_count": len(frame_map),
         "clips": {clip: {"frames": [str(path.relative_to(OUT)).replace("\\", "/") for path in frames], "delay_cs": 8} for clip, frames in frame_map.items()},
         "environment_grade": metadata["environment_grade"],
         "combat_routes": "data/chars/black_dave/black_dave_combat_routes.json",
-        "native_animation_bindings": {f"freespecial{index}": clip for index, clip in enumerate([
-            *(f"black_dave_v2_regular_{slot:02d}" for slot in range(1, 8)),
-            *(f"black_dave_v2_kick_{slot:02d}" for slot in range(1, 8)),
-            *(f"black_dave_v2_power_{slot:02d}" for slot in range(1, 8)),
-        ], start=1)},
+        "native_animation_bindings": {
+            f"freespecial{step}": [
+                f"black_dave_v2_regular_{step:02d}",
+                f"black_dave_v2_kick_{step:02d}",
+                f"black_dave_v2_power_{step:02d}",
+            ] for step in range(1, 8)
+        },
     }
     (OUT / "black_dave_openbor_manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     (OUT / "README.md").write_text(
@@ -198,14 +214,12 @@ def write_combat_routes(metadata: dict, frame_map: dict[str, list[Path]]) -> Non
     source_path = CONTENT / "metadata/black_dave_v2_routes.json"
     source = json.loads(source_path.read_text(encoding="utf-8"))
     route_map = source.get("routes", {})
-    native_slot = 1
     routes = []
     for name, steps in route_map.items():
         mapped_steps = []
         for step in steps:
             mapped = dict(step)
-            mapped["native_animation"] = f"freespecial{native_slot}"
-            native_slot += 1
+            mapped["native_animation"] = f"freespecial{len(mapped_steps) + 1}"
             mapped_steps.append(mapped)
         routes.append({"id": name, "steps": mapped_steps})
     for route in routes:
@@ -230,7 +244,7 @@ def copy_underpass_package() -> None:
     LEVEL_ART.mkdir(parents=True, exist_ok=True)
     for name in ("main.png", "far.png", "near.png", "haze.png", "haze_tile.png"):
         source = Image.open(source_root / name).convert("RGBA")
-        indexed_sprite(source).save(LEVEL_ART / name, optimize=False)
+        indexed_sprite(source, build_master_palette(source)).save(LEVEL_ART / name, optimize=False)
     source_manifest = json.loads((source_root / "manifest.json").read_text(encoding="utf-8"))
     local_manifest = {
         **source_manifest,
@@ -249,7 +263,8 @@ def main() -> None:
     background = ROOT / "content/setpieces/underpass_i8/art/main.png"
     level_background = ROOT / "openbor/data/levels/i8_underpass/background.png"
     level_background.parent.mkdir(parents=True, exist_ok=True)
-    indexed_sprite(Image.open(background).convert("RGBA")).save(level_background, optimize=False)
+    background_image = Image.open(background).convert("RGBA")
+    indexed_sprite(background_image, build_master_palette(background_image)).save(level_background, optimize=False)
     copy_underpass_package()
     write_model(metadata, frame_map)
     write_combat_routes(metadata, frame_map)

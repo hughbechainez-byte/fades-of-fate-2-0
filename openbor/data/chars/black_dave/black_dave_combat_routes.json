@@ -32,7 +32,8 @@
           "vfx_events": [
             "flame_trail",
             "fist_contact"
-          ]
+          ],
+          "native_animation": "freespecial1"
         },
         {
           "id": "bdv2_regular_02",
@@ -59,7 +60,8 @@
           "vfx_events": [
             "flame_trail",
             "fist_contact"
-          ]
+          ],
+          "native_animation": "freespecial2"
         },
         {
           "id": "bdv2_regular_03",
@@ -85,7 +87,8 @@
           "vfx_events": [
             "flame_trail",
             "fist_contact"
-          ]
+          ],
+          "native_animation": "freespecial3"
         },
         {
           "id": "bdv2_regular_04",
@@ -112,7 +115,8 @@
           "vfx_events": [
             "flame_trail",
             "fist_contact"
-          ]
+          ],
+          "native_animation": "freespecial4"
         },
         {
           "id": "bdv2_regular_05",
@@ -138,7 +142,8 @@
           "vfx_events": [
             "flame_trail",
             "fist_contact"
-          ]
+          ],
+          "native_animation": "freespecial5"
         },
         {
           "id": "bdv2_regular_06",
@@ -164,7 +169,8 @@
           "vfx_events": [
             "flame_trail",
             "fist_contact"
-          ]
+          ],
+          "native_animation": "freespecial6"
         },
         {
           "id": "bdv2_regular_07",
@@ -187,7 +193,8 @@
           "vfx_events": [
             "flame_burst",
             "fist_contact"
-          ]
+          ],
+          "native_animation": "freespecial7"
         }
       ]
     },
@@ -219,7 +226,8 @@
           "vfx_events": [
             "flame_trail",
             "kick_contact"
-          ]
+          ],
+          "native_animation": "freespecial1"
         },
         {
           "id": "bdv2_kick_02",
@@ -246,7 +254,8 @@
           "vfx_events": [
             "flame_trail",
             "kick_contact"
-          ]
+          ],
+          "native_animation": "freespecial2"
         },
         {
           "id": "bdv2_kick_03",
@@ -273,7 +282,8 @@
           "vfx_events": [
             "flame_trail",
             "kick_contact"
-          ]
+          ],
+          "native_animation": "freespecial3"
         },
         {
           "id": "bdv2_kick_04",
@@ -299,7 +309,8 @@
           "vfx_events": [
             "flame_trail",
             "kick_contact"
-          ]
+          ],
+          "native_animation": "freespecial4"
         },
         {
           "id": "bdv2_kick_05",
@@ -325,7 +336,8 @@
           "vfx_events": [
             "flame_trail",
             "kick_contact"
-          ]
+          ],
+          "native_animation": "freespecial5"
         },
         {
           "id": "bdv2_kick_06",
@@ -351,7 +363,8 @@
           "vfx_events": [
             "flame_trail",
             "kick_contact"
-          ]
+          ],
+          "native_animation": "freespecial6"
         },
         {
           "id": "bdv2_kick_07",
@@ -374,7 +387,8 @@
           "vfx_events": [
             "flame_burst",
             "kick_contact"
-          ]
+          ],
+          "native_animation": "freespecial7"
         }
       ]
     },
@@ -404,7 +418,8 @@
           "vfx_events": [
             "flame_trail",
             "power_contact"
-          ]
+          ],
+          "native_animation": "freespecial1"
         },
         {
           "id": "bdv2_power_02",
@@ -429,7 +444,8 @@
           "vfx_events": [
             "flame_trail",
             "power_contact"
-          ]
+          ],
+          "native_animation": "freespecial2"
         },
         {
           "id": "bdv2_power_03",
@@ -454,7 +470,8 @@
           "vfx_events": [
             "flame_trail",
             "power_contact"
-          ]
+          ],
+          "native_animation": "freespecial3"
         },
         {
           "id": "bdv2_power_04",
@@ -479,7 +496,8 @@
           "vfx_events": [
             "flame_trail",
             "power_contact"
-          ]
+          ],
+          "native_animation": "freespecial4"
         },
         {
           "id": "bdv2_power_05",
@@ -504,7 +522,8 @@
           "vfx_events": [
             "flame_burst",
             "shockwave"
-          ]
+          ],
+          "native_animation": "freespecial5"
         },
         {
           "id": "bdv2_power_06",
@@ -529,7 +548,8 @@
           "vfx_events": [
             "flame_burst",
             "shockwave"
-          ]
+          ],
+          "native_animation": "freespecial6"
         },
         {
           "id": "bdv2_power_07",
@@ -552,7 +572,8 @@
           "vfx_events": [
             "flame_burst",
             "shockwave"
-          ]
+          ],
+          "native_animation": "freespecial7"
         }
       ]
     }

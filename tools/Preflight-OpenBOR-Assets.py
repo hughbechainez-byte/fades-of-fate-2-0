@@ -7,6 +7,8 @@ import re
 import struct
 from pathlib import Path
 
+from PIL import Image
+
 
 PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
 REJECTED_DIRECTIVES = {"shadow_coords"}
@@ -38,6 +40,25 @@ def check_pngs(data_root: Path) -> list[str]:
     return checked
 
 
+def check_character_palettes(data_root: Path) -> None:
+    """A model's indexed frames must use one palette; OpenBOR uses a model palette base."""
+    for sprite_root in sorted(data_root.glob("chars/*/sprites")):
+        images = sorted(sprite_root.rglob("*.png"))
+        if not images:
+            continue
+        expected: bytes | None = None
+        expected_path: Path | None = None
+        for path in images:
+            with Image.open(path) as image:
+                if image.mode != "P" or image.info.get("transparency") != 0:
+                    raise ValueError(f"{path}: character frame must be indexed with palette index 0 transparent")
+                palette = bytes(image.getpalette() or [])
+            if expected is None:
+                expected, expected_path = palette, path
+            elif palette != expected:
+                raise ValueError(f"{path}: palette differs from model palette base {expected_path}")
+
+
 def check_video_config(data_root: Path) -> None:
     path = data_root / "video.txt"
     if not path.is_file():
@@ -61,6 +82,19 @@ def check_text_directives(data_root: Path) -> list[str]:
                 raise ValueError(f"{path}:{line_number}: unsupported OpenBOR directive '{command}'")
         checked.append(path.relative_to(data_root).as_posix())
     return checked
+
+
+def check_animation_capacity(data_root: Path) -> None:
+    models = data_root / "models.txt"
+    model_text = models.read_text(encoding="utf-8", errors="strict")
+    match = re.search(r"(?m)^\s*maxfreespecials\s+(\d+)\s*$", model_text)
+    if match and int(match.group(1)) > 8:
+        raise ValueError(f"{models}: Build 7949 supports at most eight safe native freespecial slots")
+    unsupported = re.compile(r"ANI_FREESPECIAL(?:9|[1-9][0-9]+)")
+    for path in sorted(data_root.rglob("*.c")):
+        hit = unsupported.search(path.read_text(encoding="utf-8", errors="strict"))
+        if hit:
+            raise ValueError(f"{path}: unsupported Build 7949 animation constant {hit.group(0)}")
 
 
 def check_pack(source_root: Path, pak_path: Path) -> int:
@@ -110,7 +144,9 @@ def main() -> int:
     args = parser.parse_args()
     data_root = args.data.resolve()
     pngs = check_pngs(data_root)
+    check_character_palettes(data_root)
     check_video_config(data_root)
+    check_animation_capacity(data_root)
     text_files = check_text_directives(data_root)
     entries = check_pack(data_root, args.pak.resolve()) if args.pak else None
     print({"status": "pass", "pngs": len(pngs), "text_files": len(text_files), "pak_entries": entries})
