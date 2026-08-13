@@ -14,6 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 STAGE_DATA = ROOT / "build/underpass_freewalk_data"
 PACKAGE_DIR = ROOT / "build/underpass_freewalk"
 SOURCE_DATA = ROOT / "openbor/data"
+MASTER_ART = ROOT / "content/setpieces/underpass_i8/art/black_dave_demo_master.png"
 
 
 def run(*args: str) -> None:
@@ -21,22 +22,18 @@ def run(*args: str) -> None:
 
 
 def make_panels() -> None:
-    background = STAGE_DATA / "levels/i8_underpass/background.png"
     panels = STAGE_DATA / "levels/i8_underpass/panels"
     panels.mkdir(parents=True, exist_ok=True)
-    image = Image.open(background).convert("P")
-    if image.size[1] != 360:
-        raise ValueError(f"underpass background must be 360px high, got {image.size}")
-    width = image.size[0]
-    starts = [0, 640, max(0, width - 640)]
+    source = Image.open(MASTER_ART).convert("RGB")
+    # A single master palette keeps every panel deterministic in Build 7949.
+    palette = source.quantize(colors=255, method=Image.Quantize.FASTOCTREE, dither=Image.Dither.NONE)
+    crops = ((0.00, 0.74), (0.13, 0.87), (0.26, 1.00))
     names: list[str] = []
-    for index, start in enumerate(starts, 1):
-        panel = image.crop((start, 0, min(start + 640, width), 360))
-        if panel.width < 640:
-            padded = Image.new("P", (640, 360), 0)
-            padded.putpalette(image.getpalette())
-            padded.paste(panel, (0, 0))
-            panel = padded
+    for index, (left_ratio, right_ratio) in enumerate(crops, 1):
+        left = round(source.width * left_ratio)
+        right = round(source.width * right_ratio)
+        view = source.crop((left, 0, right, source.height)).resize((640, 360), Image.Resampling.LANCZOS)
+        panel = view.quantize(palette=palette, dither=Image.Dither.NONE)
         panel.info["transparency"] = 0
         name = f"underpass_{index:02d}.png"
         panel.save(panels / name, optimize=False)
@@ -49,13 +46,14 @@ def make_panels() -> None:
                 "notime 1",
                 "noslow 1",
                 "direction both",
-                "spawn1 200 280 0",
+                "spawn1 220 280 0",
                 "levelscript data/scripts/contract.c",
                 *[f"panel data/levels/i8_underpass/panels/{name}" for name in names],
                 "order abc",
+                "cameratype 0",
                 "at 0",
                 "wait",
-                "at 750",
+                "at 1500",
                 "",
             ]
         ),
@@ -64,15 +62,14 @@ def make_panels() -> None:
 
 
 def make_freewalk_model() -> None:
-    runtime_data = ROOT / "openbor/runtime/data"
-    shutil.copytree(runtime_data / "sprites/black_dave", STAGE_DATA / "sprites/black_dave", dirs_exist_ok=True)
-    (STAGE_DATA / "models").mkdir(parents=True, exist_ok=True)
-    shutil.copy2(runtime_data / "models/black_dave.txt", STAGE_DATA / "models/black_dave.txt")
+    legacy_black_dave = STAGE_DATA / "chars" / "blackdave"
+    if legacy_black_dave.exists():
+        shutil.rmtree(legacy_black_dave)
     (STAGE_DATA / "models.txt").write_text(
         "# OpenBOR 4.0 compatibility model registry\n"
         "maxattacks 4\n"
-        "maxfreespecials 3\n"
-        "load BlackDave data/models/black_dave.txt\n",
+        "maxfreespecials 7\n"
+        "load BlackDave data/chars/black_dave/black_dave.txt\n",
         encoding="utf-8",
     )
 
