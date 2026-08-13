@@ -43,7 +43,7 @@ def check_video_config(data_root: Path) -> None:
     if not path.is_file():
         raise ValueError(f"{path}: required OpenBOR video configuration is missing")
     lines = [line.strip() for line in path.read_text(encoding="utf-8", errors="strict").splitlines() if line.strip() and not line.lstrip().startswith("#")]
-    video_lines = [line for line in lines if line.startswith("video ")]
+    video_lines = [line for line in lines if line.split(maxsplit=1)[0] == "video"]
     if len(video_lines) != 1 or not re.fullmatch(r"video\s+[0-9]+x[0-9]+", video_lines[0]):
         raise ValueError(f"{path}: expected exactly one parser-compatible 'video WIDTHxHEIGHT' directive")
     for line in lines:

@@ -57,6 +57,7 @@ No other characters, levels, bosses, or systems until the user asks.
 - The PAK builder must run the preflight before and after packing with `--pak`; verify source payload hashes, package entries, and file counts so stale or manually copied PAKs cannot pass.
 - Reject unsupported OpenBOR directives such as `shadow_coords` before launch. Use only directives accepted by the pinned runtime, and record the runtime/build in the package manifest.
 - A desktop launch check is incomplete unless the executable is started from its package directory, the sibling `Paks/` file is selected, and the log is checked for asset-load errors.
+- The Build 7949 underpass free-walk demo must use indexed 640×360 `panel` assets; do not ship the wide `background` directive in that demo because this runtime crashes after level load. Quarantine any old loose Desktop `data/` tree so it cannot shadow the verified PAK.
 
 ## If you discover FoF1 bleed
 
